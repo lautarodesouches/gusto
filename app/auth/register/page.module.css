@@ -1,0 +1,174 @@
+.register {
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 2.5%;
+}
+
+.register__main {
+    background: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex: 1;
+    padding: 5%;
+    border-radius: 5px;
+}
+
+.register__aside {
+    display: none;
+}
+
+.header {
+    text-align: center;
+}
+
+.header__img {
+    width: 200px;
+    height: auto;
+}
+
+.form {
+    width: 100%;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.form__subtitle {
+    color: var(--white);
+    background: var(--primary);
+    width: max-content;
+    margin: auto;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.form__title {
+    margin-top: 15px;
+    font-size: 1.7rem;
+    color: var(--secondary);
+}
+
+.form__grid {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.form__group {
+    width: 100%;
+    background: var(--black);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.form__icon {
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    color: var(--light);
+}
+
+.form__input {
+    color: var(--white);
+    border: none;
+    background: var(--black);
+    width: 100%;
+    font-size: 1.1rem;
+}
+
+.form__input:focus-visible{
+    outline: none;
+}
+
+.form__group:focus-within {
+    outline: 1px solid var(--primary);
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.button {
+    width: 100%;
+    background: var(--white);
+    border: none;
+    border-radius: 10px;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.icons::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--light);
+}
+
+.icons {
+    position: relative;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+}
+
+.icons__div {
+    text-align: center;
+    flex: 1;
+    background: var(--black);
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.icons__icon {
+    width: 20px;
+    height: 20px;
+    color: var(--grey);
+}
+
+.alt {
+    margin-top: 30px;
+}
+
+.alt__span {
+    color: var(--grey);
+}
+
+.alt__link {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+@media (min-width: 768px) {
+    .form__grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .form__grid > :first-child {
+        grid-column: span 2;
+    }
+
+    .form__grid > :last-child {
+        grid-column: span 2;
+    }
+}
