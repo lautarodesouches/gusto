@@ -1,15 +1,21 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({
-    variable: '--font-geist-sans',
+const plusJakartaSans = Plus_Jakarta_Sans({
     subsets: ['latin'],
+    variable: '--font-plus',
 })
 
-const geistMono = Geist_Mono({
-    variable: '--font-geist-mono',
-    subsets: ['latin'],
+const gliker = localFont({
+    src: [
+        {
+            path: '../public/fonts/Gliker/Gliker-Bold.woff2',
+            weight: '700',
+            style: 'normal',
+        },
+    ],
 })
 
 export const metadata: Metadata = {
@@ -21,7 +27,10 @@ export const metadata: Metadata = {
                 url: '/images/brand/gusto-small.svg',
                 media: '(prefers-color-scheme: light)',
             },
-            { url: '/images/brand/gusto-small-negative.svg', media: '(prefers-color-scheme: dark)' },
+            {
+                url: '/images/brand/gusto-small-negative.svg',
+                media: '(prefers-color-scheme: dark)',
+            },
         ],
     },
 }
@@ -33,7 +42,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="es">
-            <body className={`${geistSans.variable} ${geistMono.variable}`}>
+            <body
+                className={`${plusJakartaSans.className} ${gliker.className}`}
+            >
                 {children}
             </body>
         </html>
