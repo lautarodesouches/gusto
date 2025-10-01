@@ -37,8 +37,6 @@ export default function Form() {
 
     return (
         <form className={styles.form}>
-            <h3 className={styles.form__subtitle}>Registro</h3>
-            <h2 className={styles.form__title}>Bienvenido</h2>
             <div className={styles.form__grid}>
                 <div className={styles.form__group}>
                     <FontAwesomeIcon

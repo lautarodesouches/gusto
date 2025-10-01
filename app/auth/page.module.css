@@ -1,0 +1,22 @@
+.main {
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 2.5%;
+}
+
+.main__div {
+    background: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex: 1;
+    padding: 5%;
+    border-radius: 5px;
+}
+
+.main__aside {
+    display: none;
+}

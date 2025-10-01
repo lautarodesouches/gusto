@@ -2,16 +2,16 @@ import { ROUTES } from '@/routes'
 import Form from './form'
 import { AuthContainer, AuthSocial } from '@/components'
 
-export default function Register() {
+export default function Login() {
     return (
         <>
             <AuthContainer
-                subtitle="REGISTRO"
-                title="BIENVENIDO"
+                subtitle="INICIO DE SESIÓN"
+                title="BIENVENIDO DE NUEVO"
                 alt={{
-                    text: 'Ya tienes cuenta?',
-                    link__url: ROUTES.LOGIN,
-                    link__text: 'INICIA SESIÓN',
+                    text: 'No tienes cuenta?',
+                    link__url: ROUTES.REGISTRO,
+                    link__text: 'REGISTRATE',
                 }}
             >
                 <Form />

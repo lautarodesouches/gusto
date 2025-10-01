@@ -1,14 +1,39 @@
+.header {
+    text-align: center;
+}
+
+.header__img {
+    width: 200px;
+    height: auto;
+}
+
 .form {
     width: 100%;
     margin-top: 30px;
     text-align: center;
 }
 
+.form__subtitle {
+    color: var(--white);
+    background: var(--primary);
+    width: max-content;
+    margin: auto;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.form__title {
+    margin-top: 15px;
+    font-size: 1.7rem;
+    color: var(--secondary);
+}
+
 .form__grid {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
-    gap: .5rem;
+    gap: 0.5rem;
 }
 
 .form__group {
@@ -36,7 +61,7 @@
     font-size: 1.1rem;
 }
 
-.form__input:focus-visible{
+.form__input:focus-visible {
     outline: none;
 }
 
@@ -56,6 +81,19 @@
     text-align: center;
     padding: 15px;
     font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.alt {
+    margin-top: 30px;
+}
+
+.alt__span {
+    color: var(--grey);
+}
+
+.alt__link {
+    color: var(--primary);
     font-weight: 700;
 }
 

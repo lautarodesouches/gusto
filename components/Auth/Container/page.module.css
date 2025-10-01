@@ -1,0 +1,38 @@
+.header {
+    text-align: center;
+}
+
+.header__img {
+    width: 200px;
+    height: auto;
+}
+
+.header__subtitle {
+    margin: auto;
+    margin-top: 20px;
+    color: var(--white);
+    background: var(--primary);
+    width: max-content;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.header__title {
+    margin-top: 15px;
+    font-size: 1.7rem;
+    color: var(--secondary);
+}
+
+.alt {
+    margin-top: 30px;
+}
+
+.alt__span {
+    color: var(--grey);
+}
+
+.alt__link {
+    color: var(--primary);
+    font-weight: 700;
+}
