@@ -1,13 +1,16 @@
+'use client'
 import styles from './page.module.css'
+import { useStep } from '@/hooks/useStep'
 
 interface Props {
     steps?: number
-    activeStep: number
 }
 
-export default function Progress({ steps = 4, activeStep }: Props) {
+export default function Progress({ steps = 4 }: Props) {
+    const activeStep = useStep()
+
     return (
-        <aside className={styles.timeline}>
+        <div className={styles.timeline}>
             {Array.from({ length: steps }, (_, i) => {
                 const step = i + 1
                 const isActive = step === activeStep
@@ -16,7 +19,7 @@ export default function Progress({ steps = 4, activeStep }: Props) {
                 return (
                     <div key={step} className={styles.stepWrapper}>
                         {/* Número del paso */}
-                        <div
+                        <span
                             className={`${styles.step} ${
                                 isActive
                                     ? styles.active
@@ -26,7 +29,7 @@ export default function Progress({ steps = 4, activeStep }: Props) {
                             }`}
                         >
                             {step}
-                        </div>
+                        </span>
 
                         {/* Línea con animación */}
                         {step < steps && (
@@ -45,6 +48,6 @@ export default function Progress({ steps = 4, activeStep }: Props) {
                     </div>
                 )
             })}
-        </aside>
+        </div>
     )
 }

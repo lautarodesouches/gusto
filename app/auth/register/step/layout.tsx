@@ -1,20 +1,21 @@
 'use client'
+import { RegisterProvider } from '@/context/RegisterContext'
+import styles from './page.module.css'
 import { AuthProgress } from '@/components'
-import { useState } from 'react'
-import { useEffect } from 'react'
 
-export default function Layout() {
+interface Props {
+    children: React.ReactNode
+}
 
-    const [step, setStep] = useState(1)
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setStep(prev => prev < 4 ? prev + 1 : 1)
-        }, 1000)
-        return () => clearInterval(interval)
-    }, [])
-
-    return <>
-        <AuthProgress activeStep={step} />
-    </>
+export default function Layout({ children }: Props) {
+    return (
+        <RegisterProvider>
+            <div className={styles.container}>
+                <aside className={styles.progress}>
+                    <AuthProgress />
+                </aside>
+                <div>{children}</div>
+            </div>
+        </RegisterProvider>
+    )
 }

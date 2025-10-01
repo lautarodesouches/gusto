@@ -6,7 +6,7 @@ const getData = async () => {
     let data: RegisterItem[] = []
 
     try {
-        const res = await fetch(`${API_URL}/Gusto`)
+        const res = await fetch(`${API_URL}/CondicionMedica`)
 
         if (!res.ok) {
             throw new Error('Error en el fetch')
@@ -21,16 +21,15 @@ const getData = async () => {
     return data
 }
 
-export default async function Step() {
-    const content = await getData()
+export default async function StepThree() {
+    const data = await getData()
 
     return (
         <AuthStep
-            title="¿Que te gusta comer?"
-            description="Seleccioná hasta 5 tipos de cocina o platos que
-                prefieras (podés agregar otros)"
-            inputDescription="Escribe una comida"
-            content={content}
+            title="Condiciones médicas o dietas especiales"
+            description="Información que afecta a las recomendaciones (ej: diabetes)"
+            inputDescription="Escribe tus condiciones médicas o dietas"
+            content={data}
         />
     )
 }
