@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
 import { useStep } from '@/hooks/useStep'
+import { ROUTES } from '@/routes'
 
 interface Props {
     steps?: number
@@ -13,7 +14,7 @@ export default function Progress({ steps = 4 }: Props) {
     const router = useRouter()
 
     const handleStepClick = (stepNumber: number) => {
-        router.push(`/auth/register/step/${stepNumber}`)
+        router.push(`${ROUTES.STEPS}/${stepNumber}`)
     }
 
     return (
