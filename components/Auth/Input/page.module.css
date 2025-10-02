@@ -1,0 +1,41 @@
+.form__group {
+    width: 100%;
+    background: var(--black);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.form__icon {
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    color: var(--light);
+}
+
+.form__input {
+    color: var(--white);
+    border: none;
+    background: var(--black);
+    width: 100%;
+    font-size: 1.1rem;
+}
+
+.form__input:focus-visible {
+    outline: none;
+}
+
+.form__group:focus-within {
+    outline: 1px solid var(--primary);
+}
+
+.error {
+    text-align: start;
+    display: block;
+    color: var(--primary);
+    margin: 1rem;
+    font-size: 0.9rem;
+    font-weight: 300;
+}

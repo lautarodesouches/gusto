@@ -21,8 +21,8 @@ export default function SocialAuth({ title, subtitle, children, alt }: Props) {
                     src="/images/brand/gusto-center-negative.svg"
                     alt="Logo Gusto!"
                     className={styles.header__img}
-                    width={200}
-                    height={200}
+                    width={0}
+                    height={0}
                     priority
                 />
                 <h3 className={styles.header__subtitle}>{subtitle}</h3>

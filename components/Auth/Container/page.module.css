@@ -8,6 +8,7 @@
 }
 
 .header__subtitle {
+    font-family: var(--font-gliker);
     margin: auto;
     margin-top: 20px;
     color: var(--white);
@@ -19,6 +20,7 @@
 }
 
 .header__title {
+    font-family: var(--font-gliker);
     margin-top: 15px;
     font-size: 1.7rem;
     color: var(--secondary);
