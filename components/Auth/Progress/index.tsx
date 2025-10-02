@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
 import { useStep } from '@/hooks/useStep'
 
@@ -8,6 +9,12 @@ interface Props {
 
 export default function Progress({ steps = 4 }: Props) {
     const activeStep = useStep()
+
+    const router = useRouter()
+
+    const handleStepClick = (stepNumber: number) => {
+        router.push(`/auth/register/step/${stepNumber}`)
+    }
 
     return (
         <div className={styles.timeline}>
@@ -27,6 +34,7 @@ export default function Progress({ steps = 4 }: Props) {
                                     ? styles.completed
                                     : ''
                             }`}
+                            onClick={() => handleStepClick(step)}
                         >
                             {step}
                         </span>
