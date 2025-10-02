@@ -1,21 +1,23 @@
 :root {
-  --primary: #FF5050;
-  --secondary: #FFEECF;
-  --background: #2D2D2B;
-  --white: #FFF;
-  --black: #262624;
-  --grey: #5B5B5B;
-  --light: #969696;
+    --primary: #ff5050;
+    --secondary: #ffeecf;
+    --background: #2d2d2b;
+    --white: #fff;
+    --black: #262624;
+    --grey: #5b5b5b;
+    --light: #969696;
+    --font-plus: 'Plus Jakarta Sans', sans-serif;
+    --font-gliker: 'Gliker', sans-serif;
 }
 
 * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  font-family: var(--font-plus);
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-plus);
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }

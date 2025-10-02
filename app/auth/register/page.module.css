@@ -24,6 +24,7 @@
     padding: 15px;
     font-size: 1.2rem;
     font-weight: 700;
+    font-family: var(--font-gliker);
 }
 
 @media (min-width: 768px) {
