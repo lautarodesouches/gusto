@@ -7,6 +7,8 @@ import { registerUser } from '@/lib/register'
 import { FormState } from '@/types'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
+import { auth } from '@/lib/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 const fields = [
     { name: 'email', type: 'email', placeholder: 'ejemplo@gmail.com' },
@@ -50,6 +52,19 @@ export default function Form() {
         }
 
         try {
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                form.email.value,
+                form.password.value
+            )
+
+            const user = userCredential.user
+
+            // Obtener el idToken de Firebase
+            const token = await user.getIdToken()
+
+            console.log({ token })
+
             const data = await registerUser({
                 nombre: form.name.value,
                 apellido: form.lastname.value,
