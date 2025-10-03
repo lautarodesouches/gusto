@@ -15,6 +15,16 @@ export default function Map() {
     const [isFiltersVisible, setIsFiltersVisible] = useState(false)
     const [isSocialVisible, setIsSocialVisible] = useState(false)
 
+    const handleClickFilters = () => {
+        setIsFiltersVisible(prev => !prev) // alterna filtros
+        setIsSocialVisible(false) // cierra social
+    }
+
+    const handleClickSocial = () => {
+        setIsSocialVisible(prev => !prev) // alterna social
+        setIsFiltersVisible(false) // cierra filtros
+    }
+
     return (
         <main className={styles.main}>
             <nav className={styles.nav}>
@@ -23,7 +33,12 @@ export default function Map() {
                         icon={faSearch}
                         className={styles.nav__icon}
                     />
-                    <input type="text" className={styles.nav__input} />
+                    <input
+                        type="text"
+                        placeholder="Escribe un lugar"
+                        name="search"
+                        className={styles.nav__input}
+                    />
                 </fieldset>
                 <div className={styles.nav__div}>
                     <FontAwesomeIcon
@@ -41,20 +56,26 @@ export default function Map() {
             <div className={styles.map}></div>
             <section className={styles.bottom}>
                 <div className={styles.bottom__container}>
-                    <div className={styles.bottom__div}>
+                    <button
+                        className={styles.bottom__button}
+                        onClick={handleClickFilters}
+                    >
                         <FontAwesomeIcon
                             icon={faFilter}
                             className={styles.bottom__icon}
                         />
-                        <span>Filtros</span>
-                    </div>
-                    <div className={styles.bottom__div}>
+                        <span className={styles.bottom__span}>Filtros</span>
+                    </button>
+                    <button
+                        className={styles.bottom__button}
+                        onClick={handleClickSocial}
+                    >
                         <FontAwesomeIcon
                             icon={faUsers}
                             className={styles.bottom__icon}
                         />
-                        <span>Social</span>
-                    </div>
+                        <span className={styles.bottom__span}>Social</span>
+                    </button>
                 </div>
                 <HomeFilter
                     isVisible={isFiltersVisible}

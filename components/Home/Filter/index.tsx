@@ -71,65 +71,79 @@ export default function Filter({ isVisible, handleClose }: Props) {
                     onClick={handleClose}
                 />
             </header>
-            <div className={styles.filter__div}>
-                <h3 className={styles.filter__category}>Tipo</h3>
-                <hr className={styles.filter__line} />
-                <ul className={styles.filter__list}>
-                    {categories.map((item, index) => (
-                        <li
-                            className={styles.filter__item}
-                            key={index}
-                            onClick={() => handleCategoryClick(item.name)}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={item.checked}
-                                className={styles.filter__input}
-                            />
-                            <span>{item.name}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className={styles.filter__div}>
-                <h3 className={styles.filter__category}>Platos</h3>
-                <hr className={styles.filter__line} />
-                <ul className={styles.filter__list}>
-                    {dishes.map((item, index) => (
-                        <li
-                            className={styles.filter__item}
-                            key={index}
-                            onClick={() => handleDishClick(item.name)}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={item.checked}
-                                className={styles.filter__input}
-                            />
-                            <span>{item.name}</span>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-            <div className={styles.filter__div}>
-                <h3 className={styles.filter__category}>Valoración</h3>
-                <hr className={styles.filter__line} />
-                <ul className={styles.filter__list}>
-                    {ratings.map((item, index) => (
-                        <li
-                            className={styles.filter__item}
-                            key={index}
-                            onClick={() => handleRatingClick(item.name)}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={item.checked}
-                                className={styles.filter__input}
-                            />
-                            <span>{item.name}+</span>
-                        </li>
-                    ))}
-                </ul>
+            <div className={styles.filter__content}>
+                <div className={styles.filter__div}>
+                    <h3 className={styles.filter__category}>Tipo</h3>
+                    <hr className={styles.filter__line} />
+                    <ul className={styles.filter__list}>
+                        {categories.map((item, index) => (
+                            <li
+                                className={styles.filter__item}
+                                key={index}
+                                onClick={() => handleCategoryClick(item.name)}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={item.checked}
+                                    readOnly
+                                    className={styles.filter__input}
+                                />
+                                <span className={styles.checkmark}></span>
+                                <span className={styles.filter__span}>
+                                    {item.name}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className={styles.filter__div}>
+                    <h3 className={styles.filter__category}>Platos</h3>
+                    <hr className={styles.filter__line} />
+                    <ul className={styles.filter__list}>
+                        {dishes.map((item, index) => (
+                            <li
+                                className={styles.filter__item}
+                                key={index}
+                                onClick={() => handleDishClick(item.name)}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={item.checked}
+                                    readOnly
+                                    className={styles.filter__input}
+                                />
+                                <span className={styles.checkmark}></span>
+                                <span className={styles.filter__span}>
+                                    {item.name}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className={styles.filter__div}>
+                    <h3 className={styles.filter__category}>Valoración</h3>
+                    <hr className={styles.filter__line} />
+                    <ul className={styles.filter__list}>
+                        {ratings.map((item, index) => (
+                            <li
+                                className={styles.filter__item}
+                                key={index}
+                                onClick={() => handleRatingClick(item.name)}
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={item.checked}
+                                    readOnly
+                                    className={styles.filter__input}
+                                />
+                                <span className={styles.checkmark}></span>
+                                <span className={styles.filter__span}>
+                                    {item.name}+
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </section>
     )
