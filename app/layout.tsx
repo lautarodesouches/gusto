@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
+import { AuthProvider } from '@/context/AuthContext'
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     subsets: ['latin'],
@@ -45,7 +46,7 @@ export default function RootLayout({
             <body
                 className={`${plusJakartaSans.className} ${gliker.className}`}
             >
-                {children}
+                <AuthProvider>{children}</AuthProvider>
             </body>
         </html>
     )
