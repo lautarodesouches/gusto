@@ -10,30 +10,44 @@ import {
 export default function Home() {
     return (
         <main className={styles.main}>
-            <nav>
-                <fieldset>
-                    <FontAwesomeIcon icon={faSearch} />
-                    <input type="text" />
+            <nav className={styles.nav}>
+                <fieldset className={styles.nav__fieldset}>
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className={styles.nav__icon}
+                    />
+                    <input type="text" className={styles.nav__input} />
                 </fieldset>
-                <div>
-                    <button>
-                        <FontAwesomeIcon icon={faBell} />
-                    </button>
+                <div className={styles.nav__div}>
+                    <FontAwesomeIcon
+                        icon={faBell}
+                        className={styles.nav__icon}
+                    />
                 </div>
             </nav>
-            <div></div>
-            <div>
-                <div>
-                    <FontAwesomeIcon icon={faFilter} />
-                    <span>Filtros</span>
+            <div className={styles.map}></div>
+            <div className={styles.bottom}>
+                <div className={styles.bottom__container}>
+                    <div className={styles.bottom__div}>
+                        <FontAwesomeIcon
+                            icon={faFilter}
+                            className={styles.bottom__icon}
+                        />
+                        <span>Filtros</span>
+                    </div>
+                    <div className={styles.bottom__div}>
+                        <FontAwesomeIcon
+                            icon={faUsers}
+                            className={styles.bottom__icon}
+                        />
+                        <span>Social</span>
+                    </div>
+                    <div className={styles.bottom__div}>
+                        <span>LD</span>
+                    </div>
                 </div>
-                <div>
-                    <FontAwesomeIcon icon={faUsers} />
-                    <span>Social</span>
-                </div>
-                <div>
-                    <span>LD</span>
-                </div>
+                <div className={styles.bottom__filter}></div>
+                <div className={styles.bottom__social}></div>
             </div>
         </main>
     )
