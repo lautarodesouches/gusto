@@ -71,13 +71,24 @@ export default function Form() {
                 email: form.email.value,
                 fotoPerfilUrl: '',
                 idUsuario: 0,
-            })
+                token, 
+            });
 
             console.log('Usuario registrado con éxito ✅', data)
 
             router.push(`${ROUTES.STEPS}/1/`)
         } catch (error) {
-            console.error(error)
+            // Improve error logging: include HTTP status and response body when available
+            const err = error as any
+            console.error('Registro fallo:', {
+                message: err?.message,
+                status: err?.status,
+                body: err?.body,
+                full: err,
+            })
+            // Optionally surface a user-friendly message
+            // You can replace this with UI error state instead of alert
+            if (err?.message) alert(`Error: ${err.message}`)
         } finally {
             setIsButtonDisabled(false)
         }
