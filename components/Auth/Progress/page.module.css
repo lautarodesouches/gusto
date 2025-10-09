@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0;
 }
 
 .stepWrapper {
@@ -11,50 +12,97 @@
 }
 
 .step {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    background-color: #333;
-    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background-color: var(--background);
+    color: var(--grey);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font-gliker);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.step:hover {
+    border-color: var(--grey);
 }
 
 .active {
-    background-color: #e74c3c; /* rojo activo */
+    background-color: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
 }
 
 .completed {
-    background-color: #555; /* pasos completados (ej. gris distinto) */
+    background-color: var(--grey);
+    color: var(--white);
 }
 
 .line {
-    width: 2px;
-    height: 40px;
-    background-color: #333;
+    width: 3px;
+    height: 50px;
+    background-color: var(--background);
     position: relative;
     overflow: hidden;
-    transform: rotate(180deg);
 }
 
 .lineFill {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
     width: 100%;
-    background-color: #e74c3c;
+    background-color: var(--primary);
     height: 0%;
     transition: height 0.5s ease;
 }
 
 .fillPartial {
-    height: 75%;
+    height: 50%;
 }
 
 .fillFull {
     height: 100%;
+}
+
+@media (max-width: 768px) {
+    .timeline {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .stepWrapper {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .step {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .line {
+        width: 50px;
+        height: 4px;
+    }
+    
+    .lineFill {
+        width: 0%;
+        height: 100%;
+    }
+    
+    .fillPartial {
+        width: 50%;
+        height: 100%;
+    }
+    
+    .fillFull {
+        width: 100%;
+        height: 100%;
+    }
 }

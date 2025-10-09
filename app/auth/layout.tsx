@@ -1,19 +1,24 @@
+'use client'
 import { Metadata } from 'next'
 import styles from './page.module.css'
-
-export const metadata: Metadata = {
-    title: 'Bienvenido',
-}
+import { usePathname } from 'next/navigation'
 
 export default function Layout({
     children,
 }: Readonly<{
     children: React.ReactNode
 }>) {
+    const pathname = usePathname()
+    const isStepRoute = pathname?.includes('/step/')
+
     return (
-        <main className={styles.main}>
+        <main className={`${styles.main} ${isStepRoute ? styles.stepRoute : ''}`}>
             <div className={styles.main__div}>{children}</div>
-            <aside className={styles.main__aside}></aside>
+            {!isStepRoute && (
+                <aside className={styles.main__aside}>
+                    <span>IMG/ VIDEO</span>
+                </aside>
+            )}
         </main>
     )
 }

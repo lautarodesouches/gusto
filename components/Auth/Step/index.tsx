@@ -47,36 +47,59 @@ export default function Step({
         router.push(`/auth/register/step/${step + 1}`)
     }
 
+    const handleBack = () => {
+        if (step > 1) {
+            router.push(`/auth/register/step/${step - 1}`)
+        } else {
+            router.push('/auth/register')
+        }
+    }
+
     return (
-        <>
-            <h3>Paso {step}</h3>
-            <h2>{title}</h2>
-            <p>{description}</p>
-            <div>
-                <div>
-                    <FontAwesomeIcon icon={faSearch} />
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <p className={styles.stepLabel}>Paso {step}</p>
+                <h2 className={styles.title}>{title}</h2>
+                <p className={styles.description}>{description}</p>
+            </div>
+
+            <div className={styles.searchContainer}>
+                <div className={styles.searchBox}>
+                    <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
                     <input
                         type="text"
                         placeholder={inputDescription}
                         className={styles.input}
                     />
                 </div>
-                <div>
-                    <span>/5</span>
+                <div className={styles.counter}>
+                    <span>{(selected as number[]).length}/5</span>
                 </div>
             </div>
-            <ul>
-                {content.map(({ id, nombre }) => (
-                    <li
-                        key={id}
-                        onClick={() => handleSelect(id)}
-                        className="cursor-pointer hover:underline"
-                    >
-                        {nombre}
-                    </li>
-                ))}
-            </ul>
-            <button onClick={handleNext}>Siguiente</button>
-        </>
+
+            <div className={styles.gridContainer}>
+                {content.map(({ id, nombre }) => {
+                    const isSelected = (selected as number[]).includes(id)
+                    return (
+                        <button
+                            key={id}
+                            onClick={() => handleSelect(id)}
+                            className={`${styles.gridItem} ${isSelected ? styles.selected : ''}`}
+                        >
+                            {nombre}
+                        </button>
+                    )
+                })}
+            </div>
+
+            <div className={styles.actions}>
+                <button onClick={handleBack} className={styles.backButton}>
+                    VOLVER
+                </button>
+                <button onClick={handleNext} className={styles.skipButton}>
+                    SALTAR
+                </button>
+            </div>
+        </div>
     )
 }

@@ -26,7 +26,7 @@ export default async function Step() {
 
     return (
         <AuthStep
-            title="¿Alguna alergia o intolerancia?"
+            title="Alguna alergia o intolerancia?"
             description="Selecciona las que corresponden; son preferencias críticas"
             inputDescription="Escribe tus alergias o intolerancias"
             content={data}

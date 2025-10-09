@@ -11,12 +11,12 @@ import { auth } from '@/lib/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 const fields = [
-    { name: 'email', type: 'email', placeholder: 'ejemplo@gmail.com' },
-    { name: 'password', type: 'password', placeholder: 'Contraseña' },
-    { name: 'repeat', type: 'password', placeholder: 'Repetir' },
-    { name: 'name', type: 'text', placeholder: 'Nombre' },
-    { name: 'lastname', type: 'text', placeholder: 'Apellido' },
-    { name: 'username', type: 'text', placeholder: 'Usuario' },
+    { name: 'email', type: 'email', placeholder: 'ejemplo@gmail.com', isPassword: false },
+    { name: 'password', type: 'password', placeholder: 'Contraseña', isPassword: true },
+    { name: 'repeat', type: 'password', placeholder: 'Repetir', isPassword: true },
+    { name: 'name', type: 'text', placeholder: 'Nombre', isPassword: false },
+    { name: 'lastname', type: 'text', placeholder: 'Apellido', isPassword: false },
+    { name: 'username', type: 'text', placeholder: 'Usuario', isPassword: false },
 ]
 
 export default function Form() {
@@ -110,6 +110,7 @@ export default function Form() {
                         value={form[field.name as keyof FormState].value}
                         error={form[field.name as keyof FormState].error}
                         onChange={handleChange}
+                        isPassword={field.isPassword}
                     />
                 ))}
             </div>

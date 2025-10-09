@@ -2,10 +2,8 @@
 import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    faEnvelope,
-    faEye,
-} from '@fortawesome/free-regular-svg-icons'
+import { faEye } from '@fortawesome/free-regular-svg-icons'
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 interface Form {
     email: string
@@ -18,6 +16,8 @@ export default function Form() {
         password: '',
     })
 
+    const [showPassword, setShowPassword] = useState(false)
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setForm(prevForm => ({
@@ -26,14 +26,14 @@ export default function Form() {
         }))
     }
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword)
+    }
+
     return (
         <form className={styles.form}>
             <div className={styles.form__grid}>
                 <div className={styles.form__group}>
-                    <FontAwesomeIcon
-                        icon={faEnvelope}
-                        className={styles.form__icon}
-                    />
                     <input
                         name="email"
                         type="email"
@@ -44,17 +44,18 @@ export default function Form() {
                     />
                 </div>
                 <div className={styles.form__group}>
-                    <FontAwesomeIcon
-                        icon={faEye}
-                        className={styles.form__icon}
-                    />
                     <input
                         name="password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Contraseña"
                         className={styles.form__input}
                         value={form.password}
                         onChange={handleChange}
+                    />
+                    <FontAwesomeIcon
+                        icon={showPassword ? faEyeSlash : faEye}
+                        className={styles.form__icon__toggle}
+                        onClick={togglePasswordVisibility}
                     />
                 </div>
             </div>
