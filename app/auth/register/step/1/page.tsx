@@ -26,7 +26,7 @@ export default async function Step() {
 
     return (
         <AuthStep
-            title="¿Que te gusta comer?"
+            title="Que te gusta comer?"
             description="Seleccioná hasta 5 tipos de cocina o platos que
                 prefieras (podés agregar otros)"
             inputDescription="Escribe una comida"

@@ -25,11 +25,21 @@
     flex: 1;
     background: var(--black);
     border-radius: 10px;
-    padding: 5px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .icons__icon {
     width: 20px;
     height: 20px;
     color: var(--grey);
+}
+
+.icons__div:hover {
+    background: var(--grey);
+}
+
+.icons__div:hover .icons__icon {
+    color: var(--white);
 }

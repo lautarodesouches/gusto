@@ -1,5 +1,9 @@
+'use client'
+import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { faEye } from '@fortawesome/free-regular-svg-icons'
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 
 type InputFieldProps = {
@@ -10,6 +14,7 @@ type InputFieldProps = {
     error?: string
     icon?: IconDefinition
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    isPassword?: boolean
 }
 
 export default function InputField({
@@ -20,11 +25,21 @@ export default function InputField({
     error,
     icon,
     onChange,
+    isPassword = false,
 }: InputFieldProps) {
+    const [showPassword, setShowPassword] = useState(false)
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword)
+    }
+
+    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type
+
     return (
-        <div>
+        <div className={styles.container}>
+            {error && <span className={styles.error}>* {error}</span>}
             <div className={styles.form__group}>
-                {icon && (
+                {icon && !isPassword && (
                     <FontAwesomeIcon
                         icon={icon}
                         className={styles.form__icon}
@@ -32,14 +47,20 @@ export default function InputField({
                 )}
                 <input
                     name={name}
-                    type={type}
+                    type={inputType}
                     placeholder={placeholder}
                     className={styles.form__input}
                     value={value}
                     onChange={onChange}
                 />
+                {isPassword && (
+                    <FontAwesomeIcon
+                        icon={showPassword ? faEyeSlash : faEye}
+                        className={styles.form__icon__toggle}
+                        onClick={togglePasswordVisibility}
+                    />
+                )}
             </div>
-            {error && <span className={styles.error}>* {error}</span>}
         </div>
     )
 }

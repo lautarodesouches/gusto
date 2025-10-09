@@ -1,3 +1,8 @@
+.container {
+    position: relative;
+    width: 100%;
+}
+
 .form__group {
     width: 100%;
     background: var(--black);
@@ -13,6 +18,19 @@
     width: 20px;
     height: 20px;
     color: var(--light);
+}
+
+.form__icon__toggle {
+    align-self: center;
+    width: 20px;
+    height: 20px;
+    color: var(--light);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.form__icon__toggle:hover {
+    color: var(--white);
 }
 
 .form__input {
@@ -32,10 +50,15 @@
 }
 
 .error {
+    position: absolute;
+    bottom: calc(100% + 5px);
+    left: 10px;
     text-align: start;
-    display: block;
     color: var(--primary);
-    margin: 1rem;
-    font-size: 0.9rem;
-    font-weight: 300;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 10;
+    background: var(--background);
+    padding: 2px 5px;
+    border-radius: 3px;
 }

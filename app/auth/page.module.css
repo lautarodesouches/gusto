@@ -4,6 +4,7 @@
     flex-direction: column;
     min-height: 100vh;
     padding: 2.5%;
+    gap: 2.5%;
 }
 
 .main__div {
@@ -19,4 +20,54 @@
 
 .main__aside {
     display: none;
+}
+
+/* Cuando es una ruta de step */
+.main.stepRoute {
+    gap: 0;
+    padding: 0;
+}
+
+.main.stepRoute .main__div {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+}
+
+@media (min-width: 1024px) {
+    .main {
+        flex-direction: row;
+    }
+
+    .main__div {
+        width: 50%;
+        max-width: 50%;
+        padding: 3% 5%;
+    }
+
+    .main__aside {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50%;
+        max-width: 50%;
+        background: var(--background);
+        border-radius: 5px;
+        color: var(--grey);
+        font-size: 3rem;
+        font-family: var(--font-gliker);
+        font-weight: 700;
+    }
+    
+    /* En rutas de step, siempre ocupar todo el ancho */
+    .main.stepRoute {
+        flex-direction: column;
+    }
+    
+    .main.stepRoute .main__div {
+        width: 100%;
+        max-width: 100%;
+    }
 }
