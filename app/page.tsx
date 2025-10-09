@@ -7,7 +7,7 @@ export default function Home() {
         <main className={styles.main}>
             <Link href={ROUTES.LOGIN}>LOGIN</Link>
             <Link href={ROUTES.REGISTRO}>REGISTER</Link>
-            <Link href={ROUTES.STEPS}>STEPS</Link>
+            <Link href={`${ROUTES.STEPS}/1/`}>STEPS</Link>
             <Link href={ROUTES.MAP}>MAP</Link>
         </main>
     )
