@@ -71,15 +71,19 @@ export default function Form() {
                 email: form.email.value,
                 fotoPerfilUrl: '',
                 idUsuario: 0,
-                token, 
-            });
+                token,
+            })
 
             console.log('Usuario registrado con éxito ✅', data)
 
             router.push(`${ROUTES.STEPS}/1/`)
         } catch (error) {
             // Improve error logging: include HTTP status and response body when available
-            const err = error as any
+            const err = error as {
+                message: string
+                status?: number
+                body?: unknown
+            }
             console.error('Registro fallo:', {
                 message: err?.message,
                 status: err?.status,
