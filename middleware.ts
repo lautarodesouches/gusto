@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import jwt from 'jsonwebtoken'
+import { ROUTES } from './routes'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret'
 
@@ -13,7 +14,7 @@ export function middleware(req: NextRequest) {
 
         if (!token) {
             const url = req.nextUrl.clone()
-            url.pathname = '/auth'
+            url.pathname = ROUTES.LOGIN
             return NextResponse.redirect(url)
         }
 

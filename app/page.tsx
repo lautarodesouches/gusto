@@ -1,14 +1,6 @@
-import styles from './page.module.css'
-import Link from 'next/link'
 import { ROUTES } from '@/routes'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-    return (
-        <main className={styles.main}>
-            <Link href={ROUTES.LOGIN}>LOGIN</Link>
-            <Link href={ROUTES.REGISTRO}>REGISTER</Link>
-            <Link href={`${ROUTES.STEPS}/1/`}>STEPS</Link>
-            <Link href={ROUTES.MAP}>MAP</Link>
-        </main>
-    )
+    return redirect(ROUTES.LOGIN)
 }
