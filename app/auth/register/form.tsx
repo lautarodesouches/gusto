@@ -108,7 +108,7 @@ export default function Form() {
 
             if (!res.ok) {
                 const errorData = await res.json()
-                console.log({ errorData })
+                console.error({ errorData })
 
                 throw new Error(errorData.message || 'Error en el registro')
             }

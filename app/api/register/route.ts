@@ -14,10 +14,6 @@ export async function POST(req: Request) {
             )
         }
 
-        // Validate token
-        //const decoded = await admin.auth().verifyIdToken(firebaseToken)
-        //console.log({ decoded })
-
         // Database
         const res = await fetch(`${API_URL}/Usuario/registrar`, {
             method: 'POST',

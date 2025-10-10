@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
-import { ResponseRegister } from '@/types'
+import { cookies } from 'next/headers'
 
 export async function POST(req: Request) {
     try {
@@ -9,51 +9,74 @@ export async function POST(req: Request) {
         // Alergias - Condiciones - Gustos
         const { step1, step2, step3 } = body
 
-        // get token from cookies
-        const token = req.headers.get('token')?.split(' ')[1]
-        console.log({ token })
+        // Obtener todas las cookies
+        const cookieStore = await cookies()
+
+        // Buscar una cookie específica (por ejemplo, "token")
+        const token = cookieStore.get('token')?.value
 
         if (!token) {
-            return NextResponse.redirect('/auth/register/')
-        }
-
-        // Database
-        const res = await fetch(`${API_URL}/Usuario/gustos`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                ids: [],
-                skip: false,
-            }),
-        })
-
-        const data: ResponseRegister = await res.json()
-
-        if (!res.ok) {
-            console.error('Error en registro externo:', data)
             return NextResponse.json(
-                { error: 'Error en el registro externo' },
-                { status: res.status }
+                { error: 'No token found' },
+                { status: 401 }
             )
         }
 
-        // Cookie
-        const response = NextResponse.json({
-            success: true,
-            user: data.user?.usuario,
-        })
-        response.cookies.set('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 días
-        })
+        // Database
+        // 1
+        try {
+            await fetch(`${API_URL}/Usuario/restricciones`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ids: step1.map((item: { id: number }) => item.id),
+                    skip: step1.length === 0,
+                }),
+            })
+        } catch (error) {
+            console.error(error)
+        }
 
-        return response
+        // 2
+        try {
+            await fetch(`${API_URL}/Usuario/condiciones`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ids: step2.map((item: { id: number }) => item.id),
+                    skip: step2.length === 0,
+                }),
+            })
+        } catch (error) {
+            console.error(error)
+        }
+
+        // 3
+        try {
+            await fetch(`${API_URL}/Usuario/gustos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ids: step3.map((item: { id: number }) => item.id),
+                    skip: step3.length === 0,
+                }),
+            })
+        } catch (error) {
+            console.error(error)
+        }
+
+        return NextResponse.json({
+            success: true,
+        })
     } catch (error) {
         console.error('Error en /api/steps: ', error)
         return NextResponse.json({ error: 'Error interno' }, { status: 500 })
