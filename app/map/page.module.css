@@ -3,6 +3,8 @@
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    height: 100dvh;
+    width: 100dvw;
 }
 
 .nav {
