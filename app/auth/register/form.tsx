@@ -45,27 +45,20 @@ const fields = [
 
 export default function Form() {
     const router = useRouter()
-
-    const [form, setForm] = useState<FormState>({
-        email: { value: '', error: '' },
-        password: { value: '', error: '' },
-        repeat: { value: '', error: '' },
-        name: { value: '', error: '' },
-        lastname: { value: '', error: '' },
-        username: { value: '', error: '' },
-    })
-
+    const [form, setForm] = useState<FormState>(
+        Object.fromEntries(
+            fields.map(f => [f.name, { value: '', error: '' }])
+        ) as FormState
+    )
     const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+    const [globalError, setGlobalError] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        setForm(prev => ({
-            ...prev,
-            [name]: { value, error: '' },
-        }))
+        setForm(prev => ({ ...prev, [name]: { value, error: '' } }))
     }
 
-    const handleError = (field: keyof FormState, message: string) => {
+    const setFieldError = (field: keyof FormState, message: string) => {
         setForm(prev => ({
             ...prev,
             [field]: { value: prev[field].value, error: message },
@@ -75,7 +68,9 @@ export default function Form() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsButtonDisabled(true)
+        setGlobalError('')
 
+        // Validación local
         const isValid = validateRegisterForm(form, setForm)
         if (!isValid) {
             setIsButtonDisabled(false)
@@ -83,16 +78,16 @@ export default function Form() {
         }
 
         try {
+            // Firebase
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 form.email.value,
                 form.password.value
             )
-
             const user = userCredential.user
-
             const idToken = await user.getIdToken()
 
+            // Registro en backend
             const res = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -103,46 +98,40 @@ export default function Form() {
                     username: form.username.value,
                     firebaseToken: idToken,
                 }),
-                redirect: 'manual',
             })
 
             if (!res.ok) {
-                const errorData = await res.json()
-                console.error({ errorData })
-
-                throw new Error(errorData.message || 'Error en el registro')
+                const data = await res.json()
+                throw new Error(data.error || 'Error en el registro')
             }
 
             router.push(`${ROUTES.STEPS}/1/`)
         } catch (error: unknown) {
-            if (error instanceof Error) {
-                if ('code' in error) {
-                    const fbError = error as { code: string; message: string }
-                    switch (fbError.code) {
-                        case 'auth/email-already-in-use':
-                            handleError('email', 'El email ya está registrado.')
-                            break
-                        case 'auth/weak-password':
-                            handleError(
-                                'password',
-                                'La contraseña es muy débil.'
-                            )
-                            break
-                        case 'auth/invalid-email':
-                            handleError(
-                                'email',
-                                'El email ingresado no es válido.'
-                            )
-                            break
-                    }
+            type FirebaseErrorLike = { code?: string; message: string }
+
+            if (error && typeof error === 'object' && 'code' in error) {
+                const fbError = error as FirebaseErrorLike
+                switch (fbError.code) {
+                    case 'auth/email-already-in-use':
+                        setFieldError('email', 'El email ya está registrado.')
+                        break
+                    case 'auth/weak-password':
+                        setFieldError('password', 'La contraseña es muy débil.')
+                        break
+                    case 'auth/invalid-email':
+                        setFieldError(
+                            'email',
+                            'El email ingresado no es válido.'
+                        )
+                        break
+                    default:
+                        setGlobalError(fbError.message)
                 }
+            } else if (error instanceof Error) {
+                setGlobalError(error.message)
+            } else {
+                setGlobalError('Error inesperado')
             }
-
-            handleError(
-                'email',
-                error instanceof Error ? error.message : String(error)
-            )
-
             console.error('Registro falló:', error)
         } finally {
             setIsButtonDisabled(false)
@@ -152,20 +141,25 @@ export default function Form() {
     return (
         <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.form__grid}>
-                {fields.map(field => (
-                    <AuthInput
-                        key={field.name}
-                        name={field.name}
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        value={form[field.name as keyof FormState].value}
-                        error={form[field.name as keyof FormState].error}
-                        onChange={handleChange}
-                        isPassword={field.isPassword}
-                    />
-                ))}
+                {fields.map(f => {
+                    const field = f.name as keyof FormState
+                    return (
+                        <AuthInput
+                            key={f.name}
+                            name={f.name}
+                            type={f.type}
+                            placeholder={f.placeholder}
+                            value={form[field].value}
+                            error={form[field].error}
+                            onChange={handleChange}
+                            isPassword={f.isPassword}
+                        />
+                    )
+                })}
             </div>
-            <span className={styles.error}>{}</span>
+
+            {globalError && <span className={styles.error}>{globalError}</span>}
+
             <div className={styles.container}>
                 <button className={styles.button} disabled={isButtonDisabled}>
                     Registrarme
