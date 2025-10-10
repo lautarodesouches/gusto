@@ -108,7 +108,9 @@ export default function Form() {
 
             if (!res.ok) {
                 const errorData = await res.json()
-                throw new Error(errorData.error || 'Error en el registro')
+                console.log({ errorData })
+
+                throw new Error(errorData.message || 'Error en el registro')
             }
 
             router.push(`${ROUTES.STEPS}/1/`)
@@ -135,6 +137,11 @@ export default function Form() {
                     }
                 }
             }
+
+            handleError(
+                'email',
+                error instanceof Error ? error.message : String(error)
+            )
 
             console.error('Registro falló:', error)
         } finally {

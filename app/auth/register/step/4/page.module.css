@@ -103,41 +103,56 @@
     background: #ff3333;
 }
 
+.selectionList {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.selectionItem {
+    background: var(--background-light);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    color: var(--text);
+}
+
 @media (max-width: 768px) {
     .header {
         text-align: center;
         gap: 15px;
     }
-    
+
     .stepLabel {
         font-size: 1rem;
     }
-    
+
     .title {
         font-size: 1.8rem;
     }
-    
+
     .description {
         font-size: 1rem;
     }
-    
+
     .reviewCard {
         padding: 25px;
     }
-    
+
     .reviewTitle {
         font-size: 1.3rem;
     }
-    
+
     .reviewText {
         font-size: 1rem;
     }
-    
+
     .actions {
         flex-direction: column-reverse;
         gap: 12px;
     }
-    
+
     .backButton,
     .finishButton {
         width: 100%;
@@ -145,4 +160,3 @@
         font-size: 1.1rem;
     }
 }
-

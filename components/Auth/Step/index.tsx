@@ -22,24 +22,30 @@ export default function Step({
 }: Props) {
     const step = useStep()
 
-    const { setData } = useRegister()
+    const { data, setData } = useRegister()
     const router = useRouter()
 
-    const stepKey = `step${step}` as keyof typeof content
-    const selected = content[stepKey] || []
+    const stepKey = `step${step}` as keyof typeof data
+    const selected = data[stepKey] ?? []
 
-    const handleSelect = (value: number) => {
-        const current = selected as number[]
+    const handleSelect = (id: number) => {
+        const current = selected as RegisterItem[]
+        const alreadySelected = current.some(item => item.id === id)
 
-        // Si ya está seleccionado, lo quitamos
-        if (current.includes(value)) {
-            setData({ [stepKey]: current.filter(v => v !== value) })
+        if (alreadySelected) {
+            setData({
+                [stepKey]: current.filter(item => item.id !== id),
+            })
             return
         }
 
-        // Si hay menos de 5, lo agregamos
         if (current.length < 5) {
-            setData({ [stepKey]: [...current, value] })
+            const newItem = content.find(item => item.id === id)
+            if (newItem) {
+                setData({
+                    [stepKey]: [...current, newItem],
+                })
+            }
         }
     }
 
@@ -57,15 +63,18 @@ export default function Step({
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>
+            <header className={styles.header}>
                 <p className={styles.stepLabel}>Paso {step}</p>
                 <h2 className={styles.title}>{title}</h2>
                 <p className={styles.description}>{description}</p>
-            </div>
+            </header>
 
-            <div className={styles.searchContainer}>
+            <section className={styles.searchContainer}>
                 <div className={styles.searchBox}>
-                    <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className={styles.searchIcon}
+                    />
                     <input
                         type="text"
                         placeholder={inputDescription}
@@ -73,33 +82,36 @@ export default function Step({
                     />
                 </div>
                 <div className={styles.counter}>
-                    <span>{(selected as number[]).length}/5</span>
+                    <span>{(selected as unknown as number[]).length}/5</span>
                 </div>
-            </div>
+            </section>
 
-            <div className={styles.gridContainer}>
+            <section className={styles.gridContainer}>
                 {content.map(({ id, nombre }) => {
-                    const isSelected = (selected as number[]).includes(id)
+                    const isSelected = selected.some(item => item.id === id)
+
                     return (
                         <button
                             key={id}
                             onClick={() => handleSelect(id)}
-                            className={`${styles.gridItem} ${isSelected ? styles.selected : ''}`}
+                            className={`${styles.gridItem} ${
+                                isSelected ? styles.selected : ''
+                            }`}
                         >
                             {nombre}
                         </button>
                     )
                 })}
-            </div>
+            </section>
 
-            <div className={styles.actions}>
+            <nav className={styles.actions}>
                 <button onClick={handleBack} className={styles.backButton}>
                     VOLVER
                 </button>
                 <button onClick={handleNext} className={styles.skipButton}>
-                    SALTAR
+                    {selected.length === 0 ? 'SALTAR' : 'SIGUIENTE'}
                 </button>
-            </div>
+            </nav>
         </div>
     )
 }

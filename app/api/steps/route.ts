@@ -5,31 +5,28 @@ import { ResponseRegister } from '@/types'
 export async function POST(req: Request) {
     try {
         const body = await req.json()
-        const { nombre, apellido, email, firebaseToken } = body
 
-        if (!firebaseToken) {
-            return NextResponse.json(
-                { error: 'Token de Firebase faltante' },
-                { status: 400 }
-            )
+        // Alergias - Condiciones - Gustos
+        const { step1, step2, step3 } = body
+
+        // get token from cookies
+        const token = req.headers.get('token')?.split(' ')[1]
+        console.log({ token })
+
+        if (!token) {
+            return NextResponse.redirect('/auth/register/')
         }
 
-        // Validate token
-        //const decoded = await admin.auth().verifyIdToken(firebaseToken)
-        //console.log({ decoded })
-
         // Database
-        const res = await fetch(`${API_URL}/Usuario/registrar`, {
+        const res = await fetch(`${API_URL}/Usuario/gustos`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${firebaseToken}`,
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                nombre,
-                apellido,
-                email,
-                fotoPerfilUrl: '',
+                ids: [],
+                skip: false,
             }),
         })
 
@@ -48,7 +45,7 @@ export async function POST(req: Request) {
             success: true,
             user: data.user?.usuario,
         })
-        response.cookies.set('token', firebaseToken, {
+        response.cookies.set('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
@@ -58,7 +55,7 @@ export async function POST(req: Request) {
 
         return response
     } catch (error) {
-        console.error('Error en /api/register:', error)
+        console.error('Error en /api/steps: ', error)
         return NextResponse.json({ error: 'Error interno' }, { status: 500 })
     }
 }

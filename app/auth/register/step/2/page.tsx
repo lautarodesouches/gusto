@@ -6,7 +6,7 @@ const getData = async () => {
     let data: RegisterItem[] = []
 
     try {
-        const res = await fetch(`${API_URL}/Restriccion`)
+        const res = await fetch(`${API_URL}/CondicionMedica`)
 
         if (!res.ok) {
             throw new Error('Error en el fetch')
@@ -21,14 +21,14 @@ const getData = async () => {
     return data
 }
 
-export default async function Step() {
+export default async function StepThree() {
     const data = await getData()
 
     return (
         <AuthStep
-            title="Alguna alergia o intolerancia?"
-            description="Selecciona las que corresponden; son preferencias críticas"
-            inputDescription="Escribe tus alergias o intolerancias"
+            title="Condiciones médicas o dietas especiales"
+            description="Información que afecta a las recomendaciones (ej: diabetes)"
+            inputDescription="Escribe tus condiciones médicas o dietas"
             content={data}
         />
     )
