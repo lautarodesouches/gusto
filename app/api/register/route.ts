@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
-import { ResponseRegister } from '@/types'
 
 export async function POST(req: Request) {
     try {
@@ -29,7 +28,15 @@ export async function POST(req: Request) {
             }),
         })
 
-        const data: ResponseRegister = await res.json()
+        let data
+        try {
+            data = await res.json()
+        } catch {
+            return NextResponse.json(
+                { error: 'Respuesta no válida del backend' },
+                { status: 502 }
+            )
+        }
 
         if (!res.ok) {
             console.error('Error en registro externo:', data)
@@ -46,7 +53,6 @@ export async function POST(req: Request) {
         })
         response.cookies.set('token', firebaseToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             path: '/',
             maxAge: 60 * 60 * 24 * 7, // 7 días

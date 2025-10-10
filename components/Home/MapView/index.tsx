@@ -15,7 +15,7 @@ const defaultMapCenter = {
 }
 
 //Default zoom level, can be adjusted
-const defaultMapZoom = 18
+const defaultMapZoom = 15
 
 //Map options
 const defaultMapOptions = {
