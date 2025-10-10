@@ -30,4 +30,5 @@ export type ResponseRegister = {
             nombre: string
         }
     }
+    message?: string
 }

@@ -1,6 +1,5 @@
 'use client'
 import styles from './page.module.css'
-import { useRegister } from '@/context/RegisterContext'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 
@@ -9,7 +8,7 @@ export default function StepFour() {
     
     const handleFinish = () => {
         // La funcionalidad del backend ya está implementada
-        router.push(ROUTES.HOME)
+        router.push(ROUTES.MAP)
     }
 
     const handleBack = () => {

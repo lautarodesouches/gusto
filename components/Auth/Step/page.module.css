@@ -81,6 +81,17 @@
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 15px;
     margin-top: 10px;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.gridContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.gridContainer::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
 }
 
 .gridItem {
@@ -153,61 +164,61 @@
         text-align: center;
         gap: 15px;
     }
-    
+
     .stepLabel {
         font-size: 1rem;
     }
-    
+
     .title {
         font-size: 1.8rem;
     }
-    
+
     .description {
         font-size: 1rem;
         max-width: 100%;
     }
-    
+
     .searchContainer {
         flex-direction: column;
         gap: 15px;
         width: 100%;
     }
-    
+
     .searchBox {
         padding: 18px;
         width: 100%;
     }
-    
+
     .searchIcon {
         width: 22px;
         height: 22px;
     }
-    
+
     .input {
         font-size: 1.05rem;
         width: 100%;
     }
-    
+
     .counter {
         text-align: center;
         font-size: 1rem;
     }
-    
+
     .gridContainer {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-    
+
     .gridItem {
         padding: 25px 12px;
         font-size: 1rem;
     }
-    
+
     .actions {
         flex-direction: column-reverse;
         gap: 12px;
     }
-    
+
     .backButton,
     .skipButton {
         width: 100%;
@@ -215,4 +226,3 @@
         font-size: 1.1rem;
     }
 }
-
