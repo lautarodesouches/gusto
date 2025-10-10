@@ -7,15 +7,16 @@
     background: var(--black);
     border-radius: 10px;
     padding: 20px;
-    transform: translateY(150%); /* empieza oculto abajo */
+    transform: translateY(20%); /* empieza oculto abajo */
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
-    z-index: 100; /* encima del nav */
+     /* encima del nav */
 }
 
 .show {
     transform: translateY(0);
     opacity: 1;
+    z-index: 3;
 }
 
 .filter__header {

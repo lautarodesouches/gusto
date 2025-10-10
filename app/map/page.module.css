@@ -6,6 +6,7 @@
 }
 
 .nav {
+    z-index: 3;
     top: 20px;
     width: 90%;
     left: 5%;
@@ -35,6 +36,7 @@
 }
 
 .nav__input {
+    width: 100%;
     color: var(--grey);
     font-size: 1rem;
     padding: 0 5px;
@@ -70,11 +72,6 @@
     padding: 0;
 }
 
-.map {
-    width: 100dvw;
-    height: 100dvh;
-}
-
 .bottom {
     bottom: 20px;
     width: 90%;
@@ -89,6 +86,7 @@
 }
 
 .bottom__container {
+    z-index: 2;
     position: relative;
     padding: 10px 0;
     background: var(--black);
@@ -109,7 +107,7 @@
     background: none;
     color: var(--light);
     border: 1px solid var(--grey);
-    padding: 5px;
+    padding: 10px 5px;
     border-radius: 10px;
 }
 
