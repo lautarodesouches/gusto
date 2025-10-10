@@ -1,33 +1,37 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { ROUTES } from './routes'
+import jwt from 'jsonwebtoken'
+
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret'
 
 export function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl
 
-    // Permitir siempre las rutas de autenticación y recursos públicos
-    const publicPaths = ['/auth', '/_next', '/favicon.ico', '/api/public', '/images', '/fonts']
+    // Solo proteger la ruta /map
+    if (pathname === '/map') {
+        const token = req.cookies.get('token')?.value
 
-    // Si la ruta está en los paths públicos, no hacemos nada
-    if (publicPaths.some(path => pathname.startsWith(path))) {
-        return NextResponse.next()
+        if (!token) {
+            const url = req.nextUrl.clone()
+            url.pathname = '/auth'
+            return NextResponse.redirect(url)
+        }
+
+        try {
+            // Validar JWT
+            jwt.verify(token, JWT_SECRET)
+            return NextResponse.next()
+        } catch {
+            const url = req.nextUrl.clone()
+            url.pathname = '/auth'
+            return NextResponse.redirect(url)
+        }
     }
 
-    // Buscar token o sesión (por ejemplo, guardado en cookie)
-    const token = req.cookies.get('token')?.value
-
-    // Si no hay token, redirigir a /auth
-    if (!token) {
-        const url = req.nextUrl.clone()
-        url.pathname = ROUTES.LOGIN
-        return NextResponse.redirect(url)
-    }
-
-    // Si hay token, permitir acceso
+    // Todas las demás rutas son públicas
     return NextResponse.next()
 }
 
-// Indicar qué rutas usa el middleware
 export const config = {
-    matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'], // Aplica a todas menos assets estáticos
+    matcher: ['/map'], // Solo se ejecuta para /map
 }

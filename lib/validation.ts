@@ -1,6 +1,6 @@
 import { FormState } from '@/types'
 
-export const validateForm = (
+export const validateRegisterForm = (
     form: FormState,
     setForm: React.Dispatch<React.SetStateAction<FormState>>
 ): boolean => {

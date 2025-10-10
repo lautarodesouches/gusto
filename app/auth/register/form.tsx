@@ -2,8 +2,7 @@
 import { useState } from 'react'
 import styles from './page.module.css'
 import { AuthInput } from '@/components'
-import { validateForm } from '@/lib/validation'
-import { registerUser } from '@/lib/register'
+import { validateRegisterForm } from '@/lib/validation'
 import { FormState } from '@/types'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
@@ -11,12 +10,37 @@ import { auth } from '@/lib/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 const fields = [
-    { name: 'email', type: 'email', placeholder: 'ejemplo@gmail.com', isPassword: false },
-    { name: 'password', type: 'password', placeholder: 'Contraseña', isPassword: true },
-    { name: 'repeat', type: 'password', placeholder: 'Repetir', isPassword: true },
+    {
+        name: 'email',
+        type: 'email',
+        placeholder: 'ejemplo@gmail.com',
+        isPassword: false,
+    },
+    {
+        name: 'password',
+        type: 'password',
+        placeholder: 'Contraseña',
+        isPassword: true,
+    },
+    {
+        name: 'repeat',
+        type: 'password',
+        placeholder: 'Repetir',
+        isPassword: true,
+    },
     { name: 'name', type: 'text', placeholder: 'Nombre', isPassword: false },
-    { name: 'lastname', type: 'text', placeholder: 'Apellido', isPassword: false },
-    { name: 'username', type: 'text', placeholder: 'Usuario', isPassword: false },
+    {
+        name: 'lastname',
+        type: 'text',
+        placeholder: 'Apellido',
+        isPassword: false,
+    },
+    {
+        name: 'username',
+        type: 'text',
+        placeholder: 'Usuario',
+        isPassword: false,
+    },
 ]
 
 export default function Form() {
@@ -41,11 +65,18 @@ export default function Form() {
         }))
     }
 
+    const handleError = (field: keyof FormState, message: string) => {
+        setForm(prev => ({
+            ...prev,
+            [field]: { value: prev[field].value, error: message },
+        }))
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsButtonDisabled(true)
 
-        const isValid = validateForm(form, setForm)
+        const isValid = validateRegisterForm(form, setForm)
         if (!isValid) {
             setIsButtonDisabled(false)
             return
@@ -60,39 +91,52 @@ export default function Form() {
 
             const user = userCredential.user
 
-            // Obtener el idToken de Firebase
-            const token = await user.getIdToken()
+            const idToken = await user.getIdToken()
 
-            console.log({ token })
-
-            const data = await registerUser({
-                nombre: form.name.value,
-                apellido: form.lastname.value,
-                email: form.email.value,
-                fotoPerfilUrl: '',
-                idUsuario: 0,
-                token,
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: form.name.value,
+                    apellido: form.lastname.value,
+                    email: form.email.value,
+                    username: form.username.value,
+                    firebaseToken: idToken,
+                }),
+                redirect: 'manual',
             })
 
-            console.log('Usuario registrado con éxito ✅', data)
+            if (!res.ok) {
+                const errorData = await res.json()
+                throw new Error(errorData.error || 'Error en el registro')
+            }
 
             router.push(`${ROUTES.STEPS}/1/`)
-        } catch (error) {
-            // Improve error logging: include HTTP status and response body when available
-            const err = error as {
-                message: string
-                status?: number
-                body?: unknown
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                if ('code' in error) {
+                    const fbError = error as { code: string; message: string }
+                    switch (fbError.code) {
+                        case 'auth/email-already-in-use':
+                            handleError('email', 'El email ya está registrado.')
+                            break
+                        case 'auth/weak-password':
+                            handleError(
+                                'password',
+                                'La contraseña es muy débil.'
+                            )
+                            break
+                        case 'auth/invalid-email':
+                            handleError(
+                                'email',
+                                'El email ingresado no es válido.'
+                            )
+                            break
+                    }
+                }
             }
-            console.error('Registro fallo:', {
-                message: err?.message,
-                status: err?.status,
-                body: err?.body,
-                full: err,
-            })
-            // Optionally surface a user-friendly message
-            // You can replace this with UI error state instead of alert
-            if (err?.message) alert(`Error: ${err.message}`)
+
+            console.error('Registro falló:', error)
         } finally {
             setIsButtonDisabled(false)
         }
@@ -114,6 +158,7 @@ export default function Form() {
                     />
                 ))}
             </div>
+            <span className={styles.error}>{}</span>
             <div className={styles.container}>
                 <button className={styles.button} disabled={isButtonDisabled}>
                     Registrarme

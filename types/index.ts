@@ -16,3 +16,18 @@ export type FormState = {
     lastname: Field
     username: Field
 }
+
+export type ResponseRegister = {
+    success: boolean
+    user?: {
+        message: string
+        usuario: {
+            apellido: string
+            email: string
+            firebaseUid: string
+            fotoPerfilUrl: string
+            id: string
+            nombre: string
+        }
+    }
+}

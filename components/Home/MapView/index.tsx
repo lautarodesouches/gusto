@@ -1,7 +1,5 @@
 'use client'
 import styles from './page.module.css'
-
-//Map component Component from library
 import { GoogleMap } from '@react-google-maps/api'
 
 //Map's styling
