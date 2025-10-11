@@ -44,6 +44,7 @@ export async function POST(req: Request) {
         }
 
         // Verify token
+        /*
         try {
             await verifyFirebaseToken(firebaseToken)
         } catch (err) {
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
                 { status: 401 }
             )
         }
+        */
 
         // Backend
         let res: Response

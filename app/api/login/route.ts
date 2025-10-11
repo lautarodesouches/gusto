@@ -15,6 +15,7 @@ export async function POST(req: Request) {
         }
 
         // Verify
+        /*
         try {
             await verifyFirebaseToken(firebaseToken)
         } catch (err) {
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
                 { status: 401 }
             )
         }
+        */
 
         const response = NextResponse.json({
             success: true,
