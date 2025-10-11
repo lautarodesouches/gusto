@@ -34,6 +34,13 @@
     color: var(--beige);
 }
 
+.error {
+    display: block;
+    color: var(--primary);
+    font-weight: 400;
+    margin-top: 4px;
+}
+
 @media (min-width: 768px) {
     .form__grid {
         width: 100%;

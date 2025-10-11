@@ -95,7 +95,7 @@ export async function POST(req: Request) {
             sameSite: 'lax',
             path: '/',
             maxAge: 60 * 60 * 24 * 7, // 7 días
-            secure: process.env.NODE_ENV === 'production', // ✅ solo secure en prod
+            secure: process.env.NODE_ENV === 'production',
         })
 
         return response

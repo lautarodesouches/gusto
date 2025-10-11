@@ -119,6 +119,13 @@
     font-weight: 700;
 }
 
+.error {
+    display: block;
+    color: var(--primary);
+    font-weight: 400;
+    margin-top: 10px;
+}
+
 @media (min-width: 768px) {
     .form__grid {
         width: 100%;
