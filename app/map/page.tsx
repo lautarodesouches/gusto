@@ -11,6 +11,7 @@ import {
 import { HomeFilter, HomeSocial, MapView } from '@/components'
 import { useState } from 'react'
 import { MapProvider } from '@/components/Home/MapProvider'
+import Image from 'next/image'
 
 export default function Map() {
     const [isFiltersVisible, setIsFiltersVisible] = useState(false)
@@ -29,6 +30,16 @@ export default function Map() {
     return (
         <main className={styles.main}>
             <nav className={styles.nav}>
+                <div className={styles.nav__logo}>
+                    <Image
+                        src="/images/brand/gusto-center-negative.svg"
+                        alt="Logo Gusto!"
+                        className={styles.nav__img}
+                        width={0}
+                        height={0}
+                        priority
+                    />
+                </div>
                 <fieldset className={styles.nav__fieldset}>
                     <FontAwesomeIcon
                         icon={faSearch}
@@ -41,17 +52,19 @@ export default function Map() {
                         className={styles.nav__input}
                     />
                 </fieldset>
-                <div className={styles.nav__div}>
-                    <FontAwesomeIcon
-                        icon={faBell}
-                        className={styles.nav__icon}
-                    />
-                </div>
-                <div className={styles.nav__div}>
-                    <FontAwesomeIcon
-                        icon={faUser}
-                        className={styles.nav__icon}
-                    />
+                <div className={styles.nav__icons}>
+                    <div className={styles.nav__div}>
+                        <FontAwesomeIcon
+                            icon={faBell}
+                            className={styles.nav__icon}
+                        />
+                    </div>
+                    <div className={styles.nav__div}>
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            className={styles.nav__icon}
+                        />
+                    </div>
                 </div>
             </nav>
             <MapProvider>

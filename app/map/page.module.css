@@ -19,6 +19,10 @@
     justify-content: space-between;
 }
 
+.nav__logo {
+    display: none;
+}
+
 .nav__fieldset {
     width: 70%;
     background: var(--black);
@@ -44,6 +48,10 @@
     padding: 0 5px;
     background: var(--black);
     border: none;
+}
+
+.nav__icons {
+    display: flex;
 }
 
 .nav__div {
@@ -121,4 +129,38 @@
 
 .bottom__span {
     font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+    .main {
+        background: var(--black);
+    }
+
+    .nav {
+        padding: 20px 0;
+        position: unset;
+    }
+
+    .nav__logo {
+        display: block;
+    }
+
+    .nav__img {
+        width: 150px;
+        height: auto;
+    }
+
+    .nav__fieldset {
+        width: 40%;
+        background: var(--background);
+    }
+
+    .nav__input {
+        background: var(--background);
+    }
+
+    .nav__icons {
+        display: flex;
+        gap: 10px;
+    }
 }
