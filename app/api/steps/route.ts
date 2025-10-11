@@ -9,15 +9,14 @@ export async function POST(req: Request) {
         // Alergias - Condiciones - Gustos
         const { step1, step2, step3 } = body
 
-        // Obtener todas las cookies
+        // Token
         const cookieStore = await cookies()
 
-        // Buscar una cookie específica (por ejemplo, "token")
         const token = cookieStore.get('token')?.value
 
         if (!token) {
             return NextResponse.json(
-                { error: 'No token found' },
+                { error: 'Falta el token' },
                 { status: 401 }
             )
         }

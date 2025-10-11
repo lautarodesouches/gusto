@@ -1,9 +1,12 @@
+import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
     try {
+        // Get token
         const { firebaseToken } = await req.json()
 
+        // Validate
         if (!firebaseToken) {
             return NextResponse.json(
                 { error: 'Falta el token de Firebase' },
@@ -11,10 +14,22 @@ export async function POST(req: Request) {
             )
         }
 
+        // Verify
+        try {
+            await verifyFirebaseToken(firebaseToken)
+        } catch (err) {
+            console.error('Token inválido o expirado:', err)
+            return NextResponse.json(
+                { error: 'Token inválido o expirado' },
+                { status: 401 }
+            )
+        }
+
         const response = NextResponse.json({
-            success: true
+            success: true,
         })
 
+        // Set cookie
         response.cookies.set('token', firebaseToken, {
             httpOnly: true,
             sameSite: 'lax',

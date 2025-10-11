@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
+import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 
 interface RegisterRequest {
     nombre: string
     apellido: string
     email: string
+    username: string
     firebaseToken: string
 }
 
@@ -14,7 +16,7 @@ interface RegisterResponse {
 
 export async function POST(req: Request) {
     try {
-        // 1️⃣ Parseo seguro del body
+        // Get body
         let body: RegisterRequest
         try {
             body = await req.json()
@@ -25,9 +27,9 @@ export async function POST(req: Request) {
             )
         }
 
-        const { nombre, apellido, email, firebaseToken } = body
+        const { nombre, apellido, email, username, firebaseToken } = body
 
-        // 2️⃣ Validación de campos requeridos
+        // Validate
         if (!firebaseToken) {
             return NextResponse.json(
                 { error: 'Token de Firebase faltante' },
@@ -41,7 +43,18 @@ export async function POST(req: Request) {
             )
         }
 
-        // 3️⃣ Llamada al backend
+        // Verify token
+        try {
+            await verifyFirebaseToken(firebaseToken)
+        } catch (err) {
+            console.error('Token inválido o expirado:', err)
+            return NextResponse.json(
+                { error: 'Token inválido o expirado' },
+                { status: 401 }
+            )
+        }
+
+        // Backend
         let res: Response
         try {
             res = await fetch(`${API_URL}/Usuario/registrar`, {
@@ -55,6 +68,7 @@ export async function POST(req: Request) {
                     apellido,
                     email,
                     fotoPerfilUrl: '',
+                    usuario: username
                 }),
             })
         } catch (err) {
@@ -65,7 +79,7 @@ export async function POST(req: Request) {
             )
         }
 
-        // 4️⃣ Parsear respuesta del backend
+        // Response
         let data: RegisterResponse
         try {
             data = await res.json()
@@ -84,7 +98,7 @@ export async function POST(req: Request) {
             )
         }
 
-        // 5️⃣ Crear la respuesta con cookie
+        // Cookie
         const response = NextResponse.json({
             success: true,
             user: data.user?.usuario,
