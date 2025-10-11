@@ -6,7 +6,7 @@ interface RegisterRequest {
     nombre: string
     apellido: string
     email: string
-    username: string
+    username?: string
     firebaseToken: string
 }
 
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
                     apellido,
                     email,
                     fotoPerfilUrl: '',
-                    usuario: username
+                    username
                 }),
             })
         } catch (err) {
