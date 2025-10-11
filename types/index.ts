@@ -32,3 +32,12 @@ export type ResponseRegister = {
     }
     message?: string
 }
+
+export type Restaurant = {
+    id: number
+    name: string
+    lat: number
+    lng: number
+    rating: number
+    img: string
+}

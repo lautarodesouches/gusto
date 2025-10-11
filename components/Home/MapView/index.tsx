@@ -1,7 +1,12 @@
 'use client'
 import styles from './page.module.css'
-import { GoogleMap, Marker } from '@react-google-maps/api'
+import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
 import { useUserLocation } from '@/hooks/useUserLocation'
+import { useState } from 'react'
+import { Restaurant } from '@/types'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar } from '@fortawesome/free-solid-svg-icons'
+import Image from 'next/image'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
@@ -22,6 +27,7 @@ const defaultMapOptions = {
 
 export default function Map() {
     const { coords, error, loading } = useUserLocation()
+    const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
 
     if (error) {
         return (
@@ -40,12 +46,47 @@ export default function Map() {
         )
     }
 
-    const nearbyRestaurants = [
-        { id: 1, name: 'Parrilla Don Julio', lat: -34.649012, lng: -58.558421 },
-        { id: 2, name: 'La Farola', lat: -34.650105, lng: -58.563987 },
-        { id: 3, name: 'Sushi Go', lat: -34.647881, lng: -58.561202 },
-        { id: 4, name: 'Pizza Zeta', lat: -34.646711, lng: -58.559732 },
-        { id: 5, name: 'Café Central', lat: -34.649705, lng: -58.557381 },
+    const nearbyRestaurants: Restaurant[] = [
+        {
+            id: 1,
+            name: 'Parrilla Don Julio',
+            lat: -34.649012,
+            lng: -58.558421,
+            rating: 4.7,
+            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
+        },
+        {
+            id: 2,
+            name: 'La Farola',
+            lat: -34.650105,
+            lng: -58.563987,
+            rating: 4.9,
+            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
+        },
+        {
+            id: 3,
+            name: 'Sushi Go',
+            lat: -34.647881,
+            lng: -58.561202,
+            rating: 4.2,
+            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
+        },
+        {
+            id: 4,
+            name: 'Pizza Zeta',
+            lat: -34.646711,
+            lng: -58.559732,
+            rating: 3.6,
+            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
+        },
+        {
+            id: 5,
+            name: 'Café Central',
+            lat: -34.649705,
+            lng: -58.557381,
+            rating: 3.8,
+            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
+        },
     ]
 
     return (
@@ -67,7 +108,35 @@ export default function Map() {
                             anchor: new google.maps.Point(18, 45),
                         }}
                         animation={google.maps.Animation.DROP}
-                    />
+                        onMouseOver={() => setHoveredMarker(place.id)}
+                        onMouseOut={() => setHoveredMarker(null)}
+                    >
+                        {hoveredMarker === place.id && (
+                            <InfoWindow
+                                position={{ lat: place.lat, lng: place.lng }}
+                                options={{
+                                    disableAutoPan: true,
+                                }}
+                            >
+                                <article className={styles.info}>
+                                    <img src={place.img} alt={place.name} className={styles.inf__img} />
+                                    <h4 className={styles.info__title}>
+                                        {place.name}
+                                    </h4>
+                                    <p className={styles.info__rating}>
+                                        {place.rating}
+                                        <FontAwesomeIcon
+                                            icon={faStar}
+                                            className={styles.info__icon}
+                                        />
+                                    </p>
+                                    <button className={styles.info__button}>
+                                        Más información
+                                    </button>
+                                </article>
+                            </InfoWindow>
+                        )}
+                    </Marker>
                 ))}
             </GoogleMap>
         </section>
