@@ -6,7 +6,7 @@ interface RegisterRequest {
     nombre: string
     apellido: string
     email: string
-    username?: string
+    username: string
     firebaseToken: string
 }
 
