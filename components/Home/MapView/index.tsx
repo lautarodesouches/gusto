@@ -3,12 +3,6 @@ import styles from './page.module.css'
 import { GoogleMap, Marker } from '@react-google-maps/api'
 import { useUserLocation } from '@/hooks/useUserLocation'
 
-// Default map styling
-const defaultMapContainerStyle = {
-    width: '100%',
-    height: '100vh',
-}
-
 // Default coordinates (fallback)
 const defaultMapCenter = {
     lat: -34.649012,
@@ -55,9 +49,9 @@ export default function Map() {
     ]
 
     return (
-        <div className={styles.map}>
+        <section className={styles.map}>
             <GoogleMap
-                mapContainerStyle={defaultMapContainerStyle}
+                mapContainerClassName={styles.mapContainer}
                 center={coords || defaultMapCenter}
                 zoom={defaultMapZoom}
                 options={defaultMapOptions}
@@ -76,6 +70,6 @@ export default function Map() {
                     />
                 ))}
             </GoogleMap>
-        </div>
+        </section>
     )
 }

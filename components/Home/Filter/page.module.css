@@ -10,7 +10,7 @@
     transform: translateY(20%); /* empieza oculto abajo */
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
-     /* encima del nav */
+    /* encima del nav */
 }
 
 .show {
@@ -132,4 +132,70 @@
 .filter__span {
     color: var(--light);
     font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    .filter {
+        position: unset;
+        padding: 0;
+        transform: translateY(0);
+        width: 100%;
+        max-height: 100%;
+        overflow-y: auto;
+    }
+
+    /* Webkit browsers (Chrome, Edge, Safari) */
+    .filter::-webkit-scrollbar {
+        width: 10px; /* siempre visible */
+    }
+
+    .filter::-webkit-scrollbar-track {
+        background: var(--black); /* track negro */
+    }
+
+    .filter::-webkit-scrollbar-thumb {
+        background: var(--primary); /* thumb color primary */
+        border-radius: 5px;
+    }
+
+    .filter::-webkit-scrollbar-thumb:hover {
+        background: darken(var(--primary), 10%); /* opcional hover más oscuro */
+    }
+
+    /* Firefox */
+    .filter {
+        scrollbar-width: thin; /* thin para siempre visible */
+        scrollbar-color: var(--primary) var(--black); /* thumb color, track color */
+    }
+
+    .filter__header {
+        display: none;
+    }
+
+    .filter__div:nth-child(1) {
+        margin-top: 0;
+    }
+
+    .filter__content {
+        max-height: 100%;
+        overflow-y: auto;
+        flex-shrink: 0;
+        background: var(--background);
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .filter__category {
+        font-size: 0.9rem;
+        color: var(--white);
+    }
+
+    .filter__span {
+        font-size: 0.8rem;
+    }
+
+    .filter__item .checkmark {
+        width: 20px;
+        height: 20px;
+    }
 }

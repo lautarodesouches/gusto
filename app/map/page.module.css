@@ -52,6 +52,14 @@
 
 .nav__icons {
     display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav__icons div {
+    flex: 1;
 }
 
 .nav__div {
@@ -134,10 +142,11 @@
 @media (min-width: 768px) {
     .main {
         background: var(--black);
+        overflow: unset;
     }
 
     .nav {
-        padding: 20px 0;
+        padding-top: 20px;
         position: unset;
     }
 
@@ -162,5 +171,31 @@
     .nav__icons {
         display: flex;
         gap: 10px;
+    }
+
+    .nav:focus-within .nav__fieldset {
+        width: 40%;
+    }
+
+    .nav:focus-within .nav__div {
+        width: unset;
+        opacity: 1;
+        padding: 10px;
+    }
+
+    .middle {
+        overflow: hidden;
+        padding: 0 10px;
+        display: grid;
+        grid-template-columns: 1fr 5fr 1fr;
+        gap: 1rem;
+        justify-content: space-around;
+        transition: grid-template-columns 0.3s ease;
+        height: 100%;
+        padding: 1rem;
+    }
+
+    .bottom {
+        display: none;
     }
 }

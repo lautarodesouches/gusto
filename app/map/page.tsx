@@ -9,13 +9,22 @@ import {
     faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { HomeFilter, HomeSocial, MapView } from '@/components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MapProvider } from '@/components/Home/MapProvider'
 import Image from 'next/image'
 
 export default function Map() {
     const [isFiltersVisible, setIsFiltersVisible] = useState(false)
     const [isSocialVisible, setIsSocialVisible] = useState(false)
+
+    const [isDesktop, setIsDesktop] = useState(false)
+
+    useEffect(() => {
+        const checkWidth = () => setIsDesktop(window.innerWidth >= 768)
+        checkWidth() // chequear al montar
+        window.addEventListener('resize', checkWidth)
+        return () => window.removeEventListener('resize', checkWidth)
+    }, [])
 
     const handleClickFilters = () => {
         setIsFiltersVisible(prev => !prev) // alterna filtros
@@ -67,9 +76,12 @@ export default function Map() {
                     </div>
                 </div>
             </nav>
-            <MapProvider>
-                <MapView />
-            </MapProvider>
+            <section className={styles.middle}>
+                <HomeFilter isVisible={isDesktop} handleClose={() => {}} />
+                <MapProvider>
+                    <MapView />
+                </MapProvider>
+            </section>
             <section className={styles.bottom}>
                 <div className={styles.bottom__container}>
                     <button
