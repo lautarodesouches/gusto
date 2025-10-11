@@ -7,4 +7,8 @@ if (!admin.apps.length) {
     })
 }
 
+export const verifyFirebaseToken = async (token: string) => {
+    return admin.auth().verifyIdToken(token)
+}
+
 export default admin
