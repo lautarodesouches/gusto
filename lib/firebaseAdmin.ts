@@ -1,4 +1,4 @@
-/*import { firebaseAdminConfig } from '@/constants'
+import { firebaseAdminConfig } from '@/constants'
 import * as admin from 'firebase-admin'
 
 if (!admin.apps.length) {
@@ -12,4 +12,3 @@ export const verifyFirebaseToken = async (token: string) => {
 }
 
 export default admin
-*/
