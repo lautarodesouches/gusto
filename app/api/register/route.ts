@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
-import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
+//import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 
 interface RegisterRequest {
     nombre: string
