@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { ROUTES } from '@/routes'
-import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
+//import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 
 export default async function Home() {
     const cookieStore = await cookies()
