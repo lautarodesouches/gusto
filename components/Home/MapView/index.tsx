@@ -1,17 +1,19 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import styles from './page.module.css'
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
 import { useUserLocation } from '@/hooks/useUserLocation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Restaurant } from '@/types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
-import Image from 'next/image'
+import Error from '@/components/Error'
+import Loading from '@/components/Loading'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
-    lat: -34.649012,
-    lng: -58.558421,
+    lat: -34.6482,
+    lng: -58.5623,
 }
 
 // Default zoom level
@@ -28,66 +30,29 @@ const defaultMapOptions = {
 export default function Map() {
     const { coords, error, loading } = useUserLocation()
     const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
+    const [restaurants, setRestaurants] = useState<Restaurant[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
-    if (error) {
-        return (
-            <div className={styles.errorContainer}>
-                <p>{error}</p>
-            </div>
-        )
-    }
+    useEffect(() => {
+        const fetchRestaurants = async () => {
+            try {
+                const res = await fetch('/api/restaurants')
+                if (!res.ok) throw 'Error al cargar restaurantes'
+                const data = await res.json()
+                setRestaurants(data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setIsLoading(false)
+            }
+        }
 
-    if (loading) {
-        return (
-            <div className={styles.loadingContainer}>
-                <div className={styles.spinner}></div>
-                <p className={styles.loadingText}>Obteniendo ubicación...</p>
-            </div>
-        )
-    }
+        fetchRestaurants()
+    }, [])
 
-    const nearbyRestaurants: Restaurant[] = [
-        {
-            id: 1,
-            name: 'Parrilla Don Julio',
-            lat: -34.649012,
-            lng: -58.558421,
-            rating: 4.7,
-            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
-        },
-        {
-            id: 2,
-            name: 'La Farola',
-            lat: -34.650105,
-            lng: -58.563987,
-            rating: 4.9,
-            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
-        },
-        {
-            id: 3,
-            name: 'Sushi Go',
-            lat: -34.647881,
-            lng: -58.561202,
-            rating: 4.2,
-            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
-        },
-        {
-            id: 4,
-            name: 'Pizza Zeta',
-            lat: -34.646711,
-            lng: -58.559732,
-            rating: 3.6,
-            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
-        },
-        {
-            id: 5,
-            name: 'Café Central',
-            lat: -34.649705,
-            lng: -58.557381,
-            rating: 3.8,
-            img: 'https://brujulea.net/public/400/7sfepg5vqssr.jpg',
-        },
-    ]
+    if (error) return <Error message={error} />
+    if (loading || isLoading)
+        return <Loading message="Obteniendo ubicación y restaurantes..." />
 
     return (
         <section className={styles.map}>
@@ -97,34 +62,44 @@ export default function Map() {
                 zoom={defaultMapZoom}
                 options={defaultMapOptions}
             >
-                {nearbyRestaurants.map(place => (
+                {restaurants.map((place, index) => (
                     <Marker
-                        key={place.id}
-                        position={{ lat: place.lat, lng: place.lng }}
-                        title={place.name}
+                        key={index}
+                        position={{
+                            lat: place.latitud,
+                            lng: place.longitud,
+                        }}
+                        title={place.nombre}
                         icon={{
                             url: '/svg/marker.svg',
                             scaledSize: new google.maps.Size(36, 45),
                             anchor: new google.maps.Point(18, 45),
                         }}
                         animation={google.maps.Animation.DROP}
-                        onMouseOver={() => setHoveredMarker(place.id)}
+                        onMouseOver={() => setHoveredMarker(index)}
                         onMouseOut={() => setHoveredMarker(null)}
                     >
-                        {hoveredMarker === place.id && (
+                        {hoveredMarker === index && (
                             <InfoWindow
-                                position={{ lat: place.lat, lng: place.lng }}
+                                position={{
+                                    lat: place.latitud,
+                                    lng: place.longitud,
+                                }}
                                 options={{
                                     disableAutoPan: true,
                                 }}
                             >
                                 <article className={styles.info}>
-                                    <img src={place.img} alt={place.name} className={styles.inf__img} />
+                                    <img
+                                        src={place.imagenUrl}
+                                        alt={place.nombre}
+                                        className={styles.info__img}
+                                    />
                                     <h4 className={styles.info__title}>
-                                        {place.name}
+                                        {place.nombre}
                                     </h4>
                                     <p className={styles.info__rating}>
-                                        {place.rating}
+                                        {place.valoracion.toFixed(1)}
                                         <FontAwesomeIcon
                                             icon={faStar}
                                             className={styles.info__icon}

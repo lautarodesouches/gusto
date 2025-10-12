@@ -1,4 +1,4 @@
-import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
+//import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
