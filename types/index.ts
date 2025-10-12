@@ -35,9 +35,13 @@ export type ResponseRegister = {
 
 export type Restaurant = {
     id: number
-    name: string
-    lat: number
-    lng: number
-    rating: number
-    img: string
+    nombre: string
+    direccion: string
+    latitud: number
+    longitud: number
+    horarios: string
+    tipo: string
+    platos: string[]
+    imagenUrl: string
+    valoracion: number
 }
