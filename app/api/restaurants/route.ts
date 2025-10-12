@@ -9,16 +9,15 @@ export async function GET(req: Request) {
     // Obtener los parámetros de query
     const nearLat = searchParams.get('near.lat')
     const nearLng = searchParams.get('near.lng')
-    const radiusMeters = searchParams.get('radiusMeters')
     const tipo = searchParams.get('tipo')
     const plato = searchParams.get('plato')
 
     // Construir la URL de la API con query params
     const apiUrl = new URL(`${API_URL}/api/Restaurantes`)
 
+    apiUrl.searchParams.append('radiusMeters', '1000') // Fijo por ahora
     if (nearLat) apiUrl.searchParams.append('near.lat', nearLat)
     if (nearLng) apiUrl.searchParams.append('near.lng', nearLng)
-    if (radiusMeters) apiUrl.searchParams.append('radiusMeters', radiusMeters)
     if (tipo) apiUrl.searchParams.append('tipo', tipo)
     if (plato) apiUrl.searchParams.append('plato', plato)
 
