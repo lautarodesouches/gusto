@@ -9,6 +9,7 @@ import {
     faUsers,
 } from '@fortawesome/free-solid-svg-icons'
 import { HomeFilter, HomeSocial, MapView } from '@/components'
+import SocialSidebar from '@/components/Home/SocialSidebar'
 import { useEffect, useState } from 'react'
 import { MapProvider } from '@/components/Home/MapProvider'
 import Image from 'next/image'
@@ -81,6 +82,9 @@ export default function Map() {
                 <MapProvider>
                     <MapView />
                 </MapProvider>
+                <div>
+                    <SocialSidebar openFullSocial={() => { setIsSocialVisible(true); window.scrollTo({ top: 0 }); }} />
+                </div>
             </section>
             <section className={styles.bottom}>
                 <div className={styles.bottom__container}>
