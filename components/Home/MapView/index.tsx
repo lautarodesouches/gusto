@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client'
 import styles from './page.module.css'
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
@@ -45,7 +44,7 @@ export default function Map() {
     const fetchRestaurants = useCallback(async () => {
         try {
             const query = new URLSearchParams()
-            
+
             query.append('near.lat', String(center.lat))
             query.append('near.lng', String(center.lng))
 
@@ -56,7 +55,7 @@ export default function Map() {
 
             const res = await fetch(`/api/restaurants?${query.toString()}`)
             if (!res.ok) throw 'Error al cargar restaurantes'
-            
+
             const data = await res.json()
 
             setRestaurants(data)
@@ -118,8 +117,7 @@ export default function Map() {
                             anchor: new google.maps.Point(18, 45),
                         }}
                         animation={google.maps.Animation.DROP}
-                        onMouseOver={() => setHoveredMarker(index)}
-                        onMouseOut={() => setHoveredMarker(null)}
+                        onClick={() => setHoveredMarker(index)}
                     >
                         {hoveredMarker === index && (
                             <InfoWindow
@@ -130,23 +128,21 @@ export default function Map() {
                                 options={{
                                     disableAutoPan: true,
                                 }}
+                                onCloseClick={() => setHoveredMarker(null)}
                             >
                                 <article className={styles.info}>
-                                    <img
-                                        src={place.imagenUrl}
-                                        alt={place.nombre}
-                                        className={styles.info__img}
-                                    />
-                                    <h4 className={styles.info__title}>
-                                        {place.nombre}
-                                    </h4>
-                                    <p className={styles.info__rating}>
-                                        {place.valoracion.toFixed(1)}
-                                        <FontAwesomeIcon
-                                            icon={faStar}
-                                            className={styles.info__icon}
-                                        />
-                                    </p>
+                                    <div className={styles.info__div}>
+                                        <h4 className={styles.info__title}>
+                                            {place.nombre}
+                                        </h4>
+                                        <p className={styles.info__rating}>
+                                            {place.valoracion.toFixed(1)}
+                                            <FontAwesomeIcon
+                                                icon={faStar}
+                                                className={styles.info__icon}
+                                            />
+                                        </p>
+                                    </div>
                                     <button className={styles.info__button}>
                                         Más información
                                     </button>
