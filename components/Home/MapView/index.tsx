@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import Error from '@/components/Error'
 import Loading from '@/components/Loading'
+import { useSearchParams } from 'next/navigation'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
@@ -28,6 +29,7 @@ const defaultMapOptions = {
 }
 
 export default function Map() {
+    const searchParams = useSearchParams()
     const { coords, error, loading } = useUserLocation()
     const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
     const [restaurants, setRestaurants] = useState<Restaurant[]>([])
@@ -36,7 +38,22 @@ export default function Map() {
     useEffect(() => {
         const fetchRestaurants = async () => {
             try {
-                const res = await fetch('/api/restaurants')
+                // Obtener parámetros de la URL
+                const nearLat = searchParams.get('near.lat')
+                const nearLng = searchParams.get('near.lng')
+                const radiusMeters = searchParams.get('radiusMeters')
+                const tipo = searchParams.get('tipo')
+                const plato = searchParams.get('plato')
+
+                // Construir query params
+                const query = new URLSearchParams()
+                if (nearLat) query.append('near.lat', nearLat)
+                if (nearLng) query.append('near.lng', nearLng)
+                if (radiusMeters) query.append('radiusMeters', radiusMeters)
+                if (tipo) query.append('tipo', tipo)
+                if (plato) query.append('plato', plato)
+
+                const res = await fetch(`/api/restaurants?${query.toString()}`)
                 if (!res.ok) throw 'Error al cargar restaurantes'
                 const data = await res.json()
                 setRestaurants(data)
@@ -48,7 +65,7 @@ export default function Map() {
         }
 
         fetchRestaurants()
-    }, [])
+    }, [searchParams])
 
     if (error) return <Error message={error} />
     if (loading || isLoading)
