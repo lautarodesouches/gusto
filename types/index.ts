@@ -34,14 +34,22 @@ export type ResponseRegister = {
 }
 
 export type Restaurant = {
-    id: number
+    id: string
+    propietarioUid: string
+    horarios: unknown[]
+    creadoUtc: string
+    actualizadoUtc: string
     nombre: string
     direccion: string
-    latitud: number
-    longitud: number
-    horarios: string
+    lat: number
+    lng: number
+    rating: number
+    googlePlaceId: null
     tipo: string
-    platos: string[]
     imagenUrl: string
-    valoracion: number
+    valoracion: null
+    platos: unknown[]
+    gustosQueSirve: unknown[]
+    restriccionesQueRespeta: unknown[]
+    score: number
 }

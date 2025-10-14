@@ -36,7 +36,7 @@ export default function Filter({ isVisible, handleClose }: Props) {
     const searchParams = useSearchParams()
 
     const [categories, setCategories] = useState([
-        { name: 'Italiana', checked: true },
+        { name: 'Italiana', checked: false },
         { name: 'Japonesa', checked: false },
         { name: 'Parrilla', checked: false },
         { name: 'Mexicana', checked: false },
@@ -48,7 +48,7 @@ export default function Filter({ isVisible, handleClose }: Props) {
     ])
 
     const [dishes, setDishes] = useState([
-        { name: 'Pizza', checked: true },
+        { name: 'Pizza', checked: false },
         { name: 'Sushi', checked: false },
         { name: 'Hamburguesas', checked: false },
         { name: 'Pasta', checked: false },
@@ -58,7 +58,7 @@ export default function Filter({ isVisible, handleClose }: Props) {
 
     const [ratings, setRatings] = useState([
         { name: '4.0', checked: false },
-        { name: '4.5', checked: true },
+        { name: '4.5', checked: false },
         { name: '5.0', checked: false },
     ])
 
@@ -74,9 +74,9 @@ export default function Filter({ isVisible, handleClose }: Props) {
     useEffect(() => {
         const params = new URLSearchParams(searchParams.toString())
 
-        const tipo = searchParams.get('tipo') || 'Italiana'
-        const plato = searchParams.get('plato') || 'Pasta'
-        const rating = searchParams.get('rating') || '4.0'
+        const tipo = searchParams.get('tipo') || ''
+        const plato = searchParams.get('plato') || ''
+        const rating = searchParams.get('rating') || ''
 
         if (!searchParams.get('tipo')) params.set('tipo', tipo)
         if (!searchParams.get('plato')) params.set('plato', plato)

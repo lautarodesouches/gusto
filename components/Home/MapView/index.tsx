@@ -107,8 +107,8 @@ export default function Map() {
                     <Marker
                         key={index}
                         position={{
-                            lat: place.latitud,
-                            lng: place.longitud,
+                            lat: place.lat,
+                            lng: place.lng,
                         }}
                         title={place.nombre}
                         icon={{
@@ -122,8 +122,8 @@ export default function Map() {
                         {hoveredMarker === index && (
                             <InfoWindow
                                 position={{
-                                    lat: place.latitud,
-                                    lng: place.longitud,
+                                    lat: place.lat,
+                                    lng: place.lng,
                                 }}
                                 options={{
                                     disableAutoPan: true,
@@ -136,7 +136,7 @@ export default function Map() {
                                             {place.nombre}
                                         </h4>
                                         <p className={styles.info__rating}>
-                                            {place.valoracion.toFixed(1)}
+                                            {place.rating.toFixed(1)}
                                             <FontAwesomeIcon
                                                 icon={faStar}
                                                 className={styles.info__icon}
