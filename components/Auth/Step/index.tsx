@@ -6,6 +6,7 @@ import { useStep } from '@/hooks/useStep'
 import { useRegister } from '@/context/RegisterContext'
 import { useRouter } from 'next/navigation'
 import { RegisterItem } from '@/types'
+import { useState } from 'react'
 
 interface Props {
     title: string
@@ -21,14 +22,16 @@ export default function Step({
     content = [],
 }: Props) {
     const step = useStep()
-
+    const isLastStep = step === 3
     const { data, setData } = useRegister()
     const router = useRouter()
+    const [error, setError] = useState<string | null>(null)
 
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
 
     const handleSelect = (id: number) => {
+        setError(null)
         const current = selected as RegisterItem[]
         const alreadySelected = current.some(item => item.id === id)
 
@@ -50,15 +53,14 @@ export default function Step({
     }
 
     const handleNext = () => {
+        if (isLastStep && selected.length === 0)
+            return setError('Seleccioná al menos una opción antes de finalizar')
+
         router.push(`/auth/register/step/${step + 1}`)
     }
 
     const handleBack = () => {
-        if (step > 1) {
-            router.push(`/auth/register/step/${step - 1}`)
-        } else {
-            router.push('/auth/register')
-        }
+        router.push(`/auth/register/step/${step - 1}`)
     }
 
     return (
@@ -89,7 +91,6 @@ export default function Step({
             <section className={styles.gridContainer}>
                 {content.map(({ id, nombre }) => {
                     const isSelected = selected.some(item => item.id === id)
-
                     return (
                         <button
                             key={id}
@@ -104,12 +105,25 @@ export default function Step({
                 })}
             </section>
 
+            {error && <span className={styles.error}>{error}</span>}
+
             <nav className={styles.actions}>
-                <button onClick={handleBack} className={styles.backButton}>
-                    VOLVER
-                </button>
-                <button onClick={handleNext} className={styles.skipButton}>
-                    {selected.length === 0 ? 'SALTAR' : 'SIGUIENTE'}
+                {step !== 1 ? (
+                    <button onClick={handleBack} className={styles.backButton}>
+                        VOLVER
+                    </button>
+                ) : (
+                    <div></div>
+                )}
+                <button
+                    onClick={handleNext}
+                    className={styles.skipButton}
+                >
+                    {isLastStep
+                        ? 'FINALIZAR'
+                        : selected.length === 0
+                        ? 'SALTAR'
+                        : 'SIGUIENTE'}
                 </button>
             </nav>
         </div>
