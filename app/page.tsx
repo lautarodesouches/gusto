@@ -14,8 +14,7 @@ export default async function Home() {
     try {
         await verifyFirebaseToken(token)
         redirect(ROUTES.MAP)
-    } catch (error) {
-        console.error('Token inválido:', error)
+    } catch {
         redirect(ROUTES.LOGIN)
     }
 }
