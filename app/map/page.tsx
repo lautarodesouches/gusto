@@ -72,8 +72,9 @@ export default function Map() {
                     <div className={styles.middle__filter}>
                         <HomeFilter isVisible handleClose={() => {}} />
                     </div>
-                    <div></div>
-                    {/*<MapProvider><MapView /></MapProvider>*/}
+                    <MapProvider>
+                        <MapView />
+                    </MapProvider>
                     <div className={styles.middle__filter}>
                         <HomeSocial
                             isVisible

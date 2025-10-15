@@ -4,7 +4,11 @@ import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 
-export default function CreateGroup() {
+export default function GroupCreate({
+    handleCancel,
+}: {
+    handleCancel: () => void
+}) {
     const [nombre, setNombre] = useState('')
     const [descripcion, setDescripcion] = useState('')
     const [loading, setLoading] = useState(false)
@@ -66,6 +70,7 @@ export default function CreateGroup() {
                     onClick={() => {
                         setNombre('')
                         setDescripcion('')
+                        handleCancel()
                     }}
                     className={styles.create__cancel}
                 >

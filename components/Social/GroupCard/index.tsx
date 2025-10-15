@@ -3,7 +3,7 @@ import styles from './page.module.css'
 import { faInfo, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { Group } from '@/types'
 
-export default function FriendCard({ group }: { group: Group }) {
+export default function GroupCard({ group }: { group: Group }) {
     return (
         <li className={styles.group}>
             <div className={styles.group__img}>

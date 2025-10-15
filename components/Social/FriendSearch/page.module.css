@@ -9,6 +9,7 @@
     border-radius: 10px;
     padding: 10px;
     overflow-y: auto;
+    z-index: 11;
 }
 
 .search__header {
