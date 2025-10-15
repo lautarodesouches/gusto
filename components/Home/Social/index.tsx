@@ -5,7 +5,6 @@ import {
     faArrowRightToBracket,
     faClose,
     faPlus,
-    faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import { Friend, FriendInvitation, Group } from '@/types'
@@ -101,7 +100,7 @@ export default function Social({ isVisible, handleClose }: Props) {
                 </div>
             </header>
             {showSearchFriend && <FriendSearch />}
-            {showNewGroup && <GroupCreate />}
+            {showNewGroup && <GroupCreate handleCancel={() => {setShowNewGroup(false)}} />}
             <div className={styles.social__content}>
                 <div className={styles.social__buttons}>
                     <FriendButton
