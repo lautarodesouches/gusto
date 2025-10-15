@@ -52,23 +52,11 @@ export default function Step({
         }
     }
 
-    const handleNext = async () => {
-  try {
-    await fetch("/api/steps", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        step1: data.step1 ?? [],
-        step2: data.step2 ?? [],
-        step3: data.step3 ?? [],
-      }),
-    });
-
-    router.push(`/auth/register/step/${step + 1}`);
-  } catch (err) {
-    console.error("Error enviando pasos:", err);
-  }
-};
+    const handleNext = () => {
+        if (isLastStep && selected.length === 0)
+            return setError('Seleccioná al menos una opción antes de finalizar')
+        router.push(`/auth/register/step/${step + 1}`)
+    }
 
     const handleBack = () => {
         router.push(`/auth/register/step/${step - 1}`)
@@ -126,10 +114,7 @@ export default function Step({
                 ) : (
                     <div></div>
                 )}
-                <button
-                    onClick={handleNext}
-                    className={styles.skipButton}
-                >
+                <button onClick={handleNext} className={styles.skipButton}>
                     {isLastStep
                         ? 'FINALIZAR'
                         : selected.length === 0
