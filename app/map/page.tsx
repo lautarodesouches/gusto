@@ -28,7 +28,7 @@ export default function Map() {
     }
 
     return (
-        <Suspense fallback={<Loading message='Cargando mapa' />}>
+        <Suspense fallback={<Loading message="Cargando mapa" />}>
             <main className={styles.main}>
                 <nav className={styles.nav}>
                     <div className={styles.nav__logo}>
@@ -72,9 +72,16 @@ export default function Map() {
                     <div className={styles.middle__filter}>
                         <HomeFilter isVisible handleClose={() => {}} />
                     </div>
-                    <MapProvider>
-                        <MapView />
-                    </MapProvider>
+                    <div></div>
+                    {/*<MapProvider><MapView /></MapProvider>*/}
+                    <div className={styles.middle__filter}>
+                        <HomeSocial
+                            isVisible
+                            handleClose={() => {
+                                setIsSocialVisible(!isSocialVisible)
+                            }}
+                        />
+                    </div>
                 </section>
                 <section className={styles.bottom}>
                     <div className={styles.bottom__container}>
@@ -110,28 +117,6 @@ export default function Map() {
                         handleClose={() => {
                             setIsSocialVisible(!isSocialVisible)
                         }}
-                        friends={[
-                            {
-                                image: '',
-                                name: 'Lautaro Desoches',
-                                user: 'lauti',
-                            },
-                            {
-                                image: '',
-                                name: 'Agustin Cardeli',
-                                user: 'agus',
-                            },
-                        ]}
-                        groups={[
-                            {
-                                name: 'Trabajo',
-                                numberOfMembers: 7,
-                            },
-                            {
-                                name: 'Amigos',
-                                numberOfMembers: 5,
-                            },
-                        ]}
                     />
                 </section>
             </main>

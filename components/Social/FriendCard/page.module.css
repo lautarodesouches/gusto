@@ -1,0 +1,95 @@
+.user {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--background);
+    padding: 10px 5px;
+    border-radius: 10px;
+}
+
+.user--loading {
+    opacity: 0.6;
+    position: relative;
+}
+
+.user--loading::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 3px solid var(--light);
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    animation: user-pulse 1s linear infinite;
+    z-index: 2;
+}
+
+@keyframes user-pulse {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+}
+
+.user--disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.user__img {
+    background: var(--primary);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.user__img svg {
+    width: 35px;
+    height: 35px;
+    color: var(--white);
+}
+
+.user__data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.user__name {
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.user__user {
+    color: var(--light);
+    font-size: 0.95rem;
+}
+
+.user__info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.user__info svg {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.user__icon {
+    width: 15px;
+    height: 15px;
+    color: var(--light);
+    border-radius: 50%;
+    border: 1px solid var(--light);
+}
+
+@media (min-width: 768px) {
+    .user {
+        background: var(--dark);
+    }
+}

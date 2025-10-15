@@ -53,3 +53,20 @@ export type Restaurant = {
     restriccionesQueRespeta: unknown[]
     score: number
 }
+
+export type Friend = {
+    id: string
+    nombre: string
+    email: string
+    fotoPerfilUrl: string
+}
+
+export type FriendInvitation = {
+    id: string
+    remitente: Friend
+    destinatario: Friend
+    estado: 'Pendiente'
+    fechaEnvio: '2025-10-15T03:55:36.3645466'
+    fechaRespuesta: null
+    mensaje: null
+}
