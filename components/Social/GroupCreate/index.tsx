@@ -1,63 +1,77 @@
 'use client'
-import { useEffect, useState } from 'react'
-import FriendCard from '../FriendCard'
-import { Friend } from '@/types'
+import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faPen } from '@fortawesome/free-solid-svg-icons'
 
-export default function GroupCreate() {
-    const [query, setQuery] = useState('')
-    const [results, setResults] = useState<Array<Friend>>([])
-    const [error, setError] = useState('')
+export default function CreateGroup() {
+    const [nombre, setNombre] = useState('')
+    const [descripcion, setDescripcion] = useState('')
+    const [loading, setLoading] = useState(false)
 
-    const search = async () => {
+    const handleSubmit = async () => {
+        if (!nombre || !descripcion) return
+
+        setLoading(true)
         try {
-            const res = await fetch(
-                `/api/social?endpoint=Amistad/buscar-usuarios/?q=${query}`
-            )
+            const res = await fetch('/api/groups', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nombre, descripcion }),
+            })
 
-            if (!res.ok) throw new Error('Error al buscar amigos')
+            if (!res.ok) throw new Error('Error creando grupo')
 
-            const data = await res.json()
-
-            if (data.length === 0) setError('No encontramos resultados')
-
-            setResults(data)
+            setNombre('')
+            setDescripcion('')
+            alert('Grupo creado!')
         } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message)
-            }
             console.error(err)
+            alert('Hubo un error creando el grupo')
+        } finally {
+            setLoading(false)
         }
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value)
-    }
-
-    useEffect(() => {
-        if (query === '') setError('')
-        search()
-    }, [query])
-
     return (
         <aside className={styles.create}>
-            <fieldset className={styles.create__fieldset}>
-                <FontAwesomeIcon
-                    icon={faSearch}
-                    className={styles.create__icon}
-                />
-                <input
-                    type="text"
-                    onChange={handleChange}
-                    className={styles.create__input}
-                    placeholder=''
-                />
-            </fieldset>
-            {error && results.length === 0 && (
-                <span className={styles.create__error}>{error}</span>
-            )}
+            <div className={styles.create__container}>
+                <FontAwesomeIcon icon={faPen} className={styles.create__icon} />
+            </div>
+            <input
+                type="text"
+                placeholder="Ingrese Nombre del Grupo"
+                value={nombre}
+                onChange={e => setNombre(e.target.value)}
+                className={styles.create__input}
+            />
+            <input
+                type="text"
+                placeholder="Ingrese Descripcion del Grupo"
+                value={descripcion}
+                onChange={e => setDescripcion(e.target.value)}
+                className={styles.create__input}
+            />
+            <div className={styles.create__buttons}>
+                <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className={styles.create__button}
+                >
+                    Guardar y Crear
+                </button>
+                <button
+                    onClick={() => {
+                        setNombre('')
+                        setDescripcion('')
+                    }}
+                    className={styles.create__cancel}
+                >
+                    Cancelar
+                </button>
+            </div>
         </aside>
     )
 }

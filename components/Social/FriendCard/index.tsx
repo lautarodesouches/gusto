@@ -74,10 +74,7 @@ export default function FriendCard({
     }
 
     return (
-        <li
-            className={`${styles.user} ${loading ? styles.loading : ''}`}
-            key={friend.id}
-        >
+        <li className={`${styles.user} ${loading ? styles.loading : ''}`}>
             <div className={styles.user__img}>
                 <FontAwesomeIcon icon={faUser} />
             </div>

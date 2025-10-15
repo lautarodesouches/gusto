@@ -8,10 +8,11 @@ import {
     faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
-import { Friend, FriendInvitation } from '@/types'
+import { Friend, FriendInvitation, Group } from '@/types'
 import FriendCard from '@/components/Social/FriendCard'
 import FriendSearch from '@/components/Social/FriendSearch'
 import GroupCreate from '@/components/Social/GroupCreate'
+import { GroupCard } from '@/components'
 
 interface Props {
     isVisible: boolean
@@ -37,7 +38,7 @@ export default function Social({ isVisible, handleClose }: Props) {
     const [friendsInvitations, setFriendsInvitations] = useState<
         FriendInvitation[]
     >([])
-    const [groups, setGroups] = useState<Friend[]>([])
+    const [groups, setGroups] = useState<Group[]>([])
 
     const [showSearchFriend, setShowSearchFriend] = useState(false)
     const [showNewGroup, setShowNewGroup] = useState(false)
@@ -71,6 +72,8 @@ export default function Social({ isVisible, handleClose }: Props) {
             const res = await fetch(`/api/social?endpoint=Grupo/mis-grupos`)
             if (!res.ok) throw new Error('Error al cargar grupos')
             const data = await res.json()
+            console.log({ data })
+
             setGroups(data)
         } catch (err) {
             console.error(err)
@@ -145,20 +148,7 @@ export default function Social({ isVisible, handleClose }: Props) {
                     <h3 className={styles.social__description}>Grupos</h3>
                     <hr className={styles.social__line} />
                     <ul className={styles.social__list}>
-                        {groups.map(g => (
-                            <li className={styles.group} key={g.name}>
-                                <div className={styles.group__img}>
-                                    <FontAwesomeIcon icon={faUser} />
-                                </div>
-                                <div className={styles.group__data}>
-                                    <p className={styles.group__name}>
-                                        {g.name}
-                                    </p>
-                                    <p className={styles.group__number}>
-                                        {g.numberOfMembers}
-                                    </p>
-                                </div>
-                            </li>
+                        {groups.map(g => (<GroupCard key={g.id} group={g} />
                         ))}
                         <GroupButton
                             handleClick={() => setShowNewGroup(!showNewGroup)}

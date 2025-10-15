@@ -70,3 +70,18 @@ export type FriendInvitation = {
     fechaRespuesta: null
     mensaje: null
 }
+
+export type Group = {
+    activo: boolean
+    administradorFirebaseUid: string
+    administradorId: string
+    administradorNombre: string
+    cantidadMiembros: number
+    codigoInvitacion: string
+    descripcion: string
+    fechaCreacion: string
+    fechaExpiracionCodigo: string
+    id: string
+    miembros: Friend[]
+    nombre: string
+}

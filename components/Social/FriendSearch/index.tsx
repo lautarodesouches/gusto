@@ -52,6 +52,8 @@ export default function FriendSearch() {
                     type="text"
                     onChange={handleChange}
                     className={styles.search__input}
+                    placeholder='Buscar por email'
+                    value={query}
                 />
             </header>
             {results && (
