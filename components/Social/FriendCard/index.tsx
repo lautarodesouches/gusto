@@ -44,9 +44,10 @@ export default function FriendCard({
             }
 
             setIsInvitating(true)
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            setError(err.message || 'Error desconocido')
+            if (err instanceof Error)
+                setError(err.message || 'Error desconocido')
         } finally {
             setLoading(false)
         }
@@ -65,9 +66,12 @@ export default function FriendCard({
 
             const data = await res.json()
             if (!res.ok) throw new Error(data.error || 'Error desconocido')
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err)
-            setError(err.message || 'Error desconocido')
+            if (err instanceof Error) {
+                setError(err.message || 'Error desconocido')
+                alert(err.message)
+            }
         } finally {
             setLoading(false)
         }

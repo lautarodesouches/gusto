@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         revalidatePath(ROUTES.MAP)
 
         return NextResponse.json(data, { status: 200 })
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error(err)
         return NextResponse.json(
             { message: 'Error interno del servidor' },
