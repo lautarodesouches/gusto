@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { API_URL } from '@/constants'
 import { ROUTES } from '@/routes'
 
+// Aceptar rechazar invitacion
 export async function POST(req: Request) {
     try {
         // Leer token de cookies

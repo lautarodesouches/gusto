@@ -4,6 +4,7 @@ import { API_URL } from '@/constants'
 import { revalidatePath } from 'next/cache'
 import { ROUTES } from '@/routes'
 
+// Solicitud amistad
 export async function POST(req: Request) {
     try {
         // Leer el token de las cookies

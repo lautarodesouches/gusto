@@ -162,6 +162,17 @@
     background: #e64545;
 }
 
+.loading {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: var(--white);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
 @media (min-width: 768px) {
     .main {
         background: var(--black);
