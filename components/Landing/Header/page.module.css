@@ -1,0 +1,128 @@
+.header {
+    width: 90%;
+    margin: auto;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.header__div {
+    width: 50%;
+}
+
+.header__img {
+    width: auto;
+    height: 100%;
+}
+
+.header__container {
+    background: var(--dark);
+    border-radius: 5px;
+    padding: 15px 0;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.header__active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.header__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.header__link {
+    font-size: 1.3rem;
+    font-weight: 600;
+    font-family: var(--font-gliker);
+    color: var(--beige);
+}
+
+.header__bcontainer {
+    margin-top: 10px;
+}
+
+.header__button {
+    border-radius: 10px;
+    border: 2px solid var(--beige);
+    color: var(--beige);
+    font-size: 1rem;
+    font-weight: 600;
+    background: none;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.header__button:hover {
+    background: var(--beige);
+    color: var(--black);
+}
+
+.header__icon {
+    padding-right: 5px;
+    height: 30px;
+    width: 30px;
+}
+
+@media (min-width: 768px) {
+    .header {
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header__div {
+        width: 20%;
+    }
+
+    .header__img {
+        width: 100%;
+    }
+
+    .header__container {
+        opacity: 1;
+        position: unset;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        transform: unset;
+        margin: 0;
+        padding: 0;
+        padding-left: 100px;
+        background: unset;
+        pointer-events: all;
+    }
+
+    .header__nav {
+        flex-direction: row;
+        gap: 30px;
+    }
+
+    .header__icon {
+        display: none;
+    }
+
+    .header__bcontainer {
+        margin: 0;
+    }
+}
