@@ -8,9 +8,9 @@ import {
     faUser,
     faUsers,
 } from '@fortawesome/free-solid-svg-icons'
-import { HomeFilter, HomeSocial, Loading, MapView } from '@/components'
+import { MapFilter, MapSocial, Loading, MapView } from '@/components'
 import { Suspense, useState } from 'react'
-import { MapProvider } from '@/components/Home/MapProvider'
+import { MapProvider } from '@/components/Map/MapProvider'
 import Image from 'next/image'
 
 export default function Map() {
@@ -70,13 +70,13 @@ export default function Map() {
                 </nav>
                 <section className={styles.middle}>
                     <div className={styles.middle__filter}>
-                        <HomeFilter isVisible handleClose={() => {}} />
+                        <MapFilter isVisible handleClose={() => {}} />
                     </div>
                     <MapProvider>
                         <MapView />
                     </MapProvider>
                     <div className={styles.middle__filter}>
-                        <HomeSocial
+                        <MapSocial
                             isVisible
                             handleClose={() => {
                                 setIsSocialVisible(!isSocialVisible)
@@ -107,13 +107,13 @@ export default function Map() {
                             <span className={styles.bottom__span}>Social</span>
                         </button>
                     </div>
-                    <HomeFilter
+                    <MapFilter
                         isVisible={isFiltersVisible}
                         handleClose={() => {
                             setIsFiltersVisible(!isFiltersVisible)
                         }}
                     />
-                    <HomeSocial
+                    <MapSocial
                         isVisible={isSocialVisible}
                         handleClose={() => {
                             setIsSocialVisible(!isSocialVisible)
