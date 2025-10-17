@@ -10,7 +10,7 @@ export default function Login() {
                 title="BIENVENIDO DE NUEVO"
                 alt={{
                     text: 'No tienes cuenta?',
-                    link__url: ROUTES.REGISTRO,
+                    link__url: ROUTES.REGISTER,
                     link__text: 'REGISTRATE',
                 }}
             >
