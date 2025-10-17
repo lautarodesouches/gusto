@@ -71,6 +71,29 @@
     padding: 10px;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.header__button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--beige),
+        transparent
+    );
+    transition: left 0.5s;
+}
+
+.header__button:hover::before {
+    left: 100%;
 }
 
 .header__button:hover {

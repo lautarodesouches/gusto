@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 
 export default function FaqSection() {
@@ -182,7 +182,7 @@ export default function FaqSection() {
                         >
                             <h4>{faq.question}</h4>
                             <FontAwesomeIcon
-                                icon={faChevronUp}
+                                icon={faChevronDown}
                                 className={`${styles.faq__icon} ${
                                     openIndex === index
                                         ? styles.faq__icon__rotated
