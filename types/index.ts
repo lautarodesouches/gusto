@@ -33,25 +33,35 @@ export type ResponseRegister = {
     message?: string
 }
 
-export type Restaurant = {
+export interface Restaurant {
     id: string
     propietarioUid: string
-    horarios: unknown[]
-    creadoUtc: string
-    actualizadoUtc: string
+    horarios: Record<string, unknown> // como viene vacío o puede ser JSON dinámico
+    creadoUtc: string // ISO date string
+    actualizadoUtc: string // ISO date string
     nombre: string
     direccion: string
     lat: number
     lng: number
     rating: number
-    googlePlaceId: null
-    tipo: string
+    googlePlaceId: string | null
+    tipo: string // si luego querés, podés hacer enum
     imagenUrl: string
-    valoracion: null
-    platos: unknown[]
-    gustosQueSirve: unknown[]
-    restriccionesQueRespeta: unknown[]
+    valoracion: number | null
+    platos: string[]
+    gustosQueSirve: Gusto[]
+    restriccionesQueRespeta: Restriccion[]
     score: number
+}
+
+export interface Gusto {
+    id: string
+    nombre: string
+}
+
+export interface Restriccion {
+    id: string
+    nombre: string
 }
 
 export type Friend = {
@@ -82,6 +92,6 @@ export type Group = {
     fechaCreacion: string
     fechaExpiracionCodigo: string
     id: string
-    miembros: Friend[]
+    miembros: { usuarioEmail: string; usuarioNombre: string; id: string }[]
     nombre: string
 }

@@ -112,7 +112,14 @@ export default function Map() {
                         }}
                         title={place.nombre}
                         icon={{
-                            url: '/svg/marker.svg',
+                            url:
+                                index === 0
+                                    ? '/svg/markerOne.svg'
+                                    : index === 1
+                                    ? '/svg/markerTwo.svg'
+                                    : index === 2
+                                    ? '/svg/markerThree.svg'
+                                    : '/svg/marker.svg',
                             scaledSize: new google.maps.Size(36, 45),
                             anchor: new google.maps.Point(18, 45),
                         }}
@@ -136,7 +143,7 @@ export default function Map() {
                                             {place.nombre}
                                         </h4>
                                         <p className={styles.info__rating}>
-                                            {place.rating.toFixed(1)}
+                                            {place.score.toFixed(2)}
                                             <FontAwesomeIcon
                                                 icon={faStar}
                                                 className={styles.info__icon}

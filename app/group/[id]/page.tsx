@@ -8,6 +8,7 @@ import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
+import { FriendCard } from '@/components'
 
 export default function GroupDetail() {
     const { id } = useParams<{ id: string }>()
@@ -16,16 +17,19 @@ export default function GroupDetail() {
     const [mensaje, setMensaje] = useState('')
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
-        const fetchGroup = async () => {
-            try {
-                const res = await fetch(`/api/group/${id}`)
-                const data = await res.json()
-                setGroup(data)
-            } catch (err) {
-                console.error('Error fetching group detail:', err)
-            }
+    const fetchGroup = async () => {
+        try {
+            const res = await fetch(`/api/group/${id}`)
+            const data = await res.json()
+            console.log(data)
+
+            setGroup(data)
+        } catch (err) {
+            console.error('Error fetching group detail:', err)
         }
+    }
+
+    useEffect(() => {
         if (id) fetchGroup()
     }, [id])
 
@@ -160,6 +164,24 @@ export default function GroupDetail() {
                                 </button>
                             </div>
                         </form>
+
+                        <hr className={styles.divider} />
+
+                        {group.miembros.map(f => {
+                            console.log(f)
+
+                            return (
+                                <FriendCard
+                                    friend={{
+                                        email: f.usuarioEmail,
+                                        fotoPerfilUrl: '',
+                                        id: f.id,
+                                        nombre: f.usuarioNombre,
+                                    }}
+                                    key={f.id}
+                                />
+                            )
+                        })}
                     </div>
                 </div>
             ) : (

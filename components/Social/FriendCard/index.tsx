@@ -11,6 +11,7 @@ import {
     faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function FriendCard({
     friend,
@@ -21,6 +22,8 @@ export default function FriendCard({
     isSearching?: boolean
     invitationId?: string
 }) {
+    const router = useRouter()
+
     const [loading, setLoading] = useState(false)
     const [isInvitating, setIsInvitating] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -44,6 +47,7 @@ export default function FriendCard({
             }
 
             setIsInvitating(true)
+            alert('Invitacion enviada')
         } catch (err: unknown) {
             console.error(err)
             if (err instanceof Error)
@@ -66,6 +70,9 @@ export default function FriendCard({
 
             const data = await res.json()
             if (!res.ok) throw new Error(data.error || 'Error desconocido')
+
+            alert('Solicitud ' + action)
+            router.refresh()
         } catch (err: unknown) {
             console.error(err)
             if (err instanceof Error) {
@@ -111,9 +118,14 @@ export default function FriendCard({
                     />
                 </div>
             )}
-            <div className={styles.user__info}>
-                <FontAwesomeIcon icon={faInfo} className={styles.user__icon} />
-            </div>
+            {!invitationId && (
+                <div className={styles.user__info}>
+                    <FontAwesomeIcon
+                        icon={faInfo}
+                        className={styles.user__icon}
+                    />
+                </div>
+            )}
         </li>
     )
 }

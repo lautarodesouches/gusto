@@ -59,7 +59,6 @@ export default function Social({ isVisible, handleClose }: Props) {
             if (!res.ok)
                 throw new Error('Error al cargar invitaciones de amigos')
             const data = await res.json()
-            console.log(data)
             setFriendsInvitations(data)
         } catch (err) {
             console.error(err)
@@ -71,7 +70,6 @@ export default function Social({ isVisible, handleClose }: Props) {
             const res = await fetch(`/api/social?endpoint=Grupo/mis-grupos`)
             if (!res.ok) throw new Error('Error al cargar grupos')
             const data = await res.json()
-            console.log({ data })
 
             setGroups(data)
         } catch (err) {

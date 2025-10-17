@@ -84,8 +84,6 @@ export async function POST(
             )
         }
 
-        console.log({ token })
-
         // Buscar usuario
         const searchRes = await fetch(
             `${API_URL}/Amistad/buscar-usuarios/?q=${query}`,
@@ -102,8 +100,6 @@ export async function POST(
         }
 
         const users = await searchRes.json()
-
-        console.log({ users })
 
         if (!users || users.length === 0) {
             return NextResponse.json(

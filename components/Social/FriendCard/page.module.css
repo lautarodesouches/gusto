@@ -13,7 +13,7 @@
 }
 
 .user--loading::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 50%;
     top: 50%;
@@ -28,8 +28,12 @@
 }
 
 @keyframes user-pulse {
-    0% { transform: rotate(0deg);}
-    100% { transform: rotate(360deg);}
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .user--disabled {
@@ -68,7 +72,7 @@
     font-size: 0.95rem;
 }
 
-.user__info{
+.user__info {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -91,5 +95,13 @@
 @media (min-width: 768px) {
     .user {
         background: var(--dark);
+    }
+
+    .user__name {
+        font-size: 0.9rem;
+    }
+
+    .user__user{
+        font-size: 0.8rem;
     }
 }

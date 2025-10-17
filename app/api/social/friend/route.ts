@@ -21,8 +21,6 @@ export async function POST(req: Request) {
         // Leer el cuerpo del request
         const body = await req.json()
 
-        console.log({ body })
-
         // Validación básica
         if (!body.EmailDestino) {
             return NextResponse.json(

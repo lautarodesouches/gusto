@@ -3,12 +3,15 @@ import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { useRouter } from 'next/navigation'
 
 export default function GroupCreate({
     handleCancel,
 }: {
     handleCancel: () => void
 }) {
+    const router = useRouter()
+
     const [nombre, setNombre] = useState('')
     const [descripcion, setDescripcion] = useState('')
     const [loading, setLoading] = useState(false)
@@ -18,7 +21,7 @@ export default function GroupCreate({
 
         setLoading(true)
         try {
-            const res = await fetch('/api/groups', {
+            const res = await fetch('/api/group', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,6 +34,8 @@ export default function GroupCreate({
             setNombre('')
             setDescripcion('')
             alert('Grupo creado!')
+            handleCancel()
+            router.refresh()
         } catch (err) {
             console.error(err)
             alert('Hubo un error creando el grupo')
