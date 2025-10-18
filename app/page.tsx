@@ -2,7 +2,12 @@ import { ROUTES } from '@/routes'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './page.module.css'
-import { LandingFaq, LandingFooter, LandingHeader } from '@/components'
+import {
+    LandingCarousel,
+    LandingFaq,
+    LandingFooter,
+    LandingHeader,
+} from '@/components'
 
 export default function Landing() {
     return (
@@ -39,7 +44,7 @@ export default function Landing() {
                     />
                 </div>
             </section>
-            <section className={styles.carrusel} id="carrusel"></section>
+            <LandingCarousel />
             <section className={styles.benefits} id="beneficios">
                 <div className={styles.benefits__div}>
                     <h2 className={styles.benefits__title}>

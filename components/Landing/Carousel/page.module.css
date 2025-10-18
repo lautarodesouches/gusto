@@ -1,0 +1,32 @@
+.carrusel {
+    width: 100%;
+    overflow: hidden;
+    background: var(--beige);
+}
+
+.carousel__wrapper {
+    display: flex;
+    width: fit-content;
+    animation: scroll 30s linear infinite;
+}
+
+.carousel__track {
+    display: flex;
+}
+
+.carousel__img {
+    flex-shrink: 0;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.carousel__wrapper:hover {
+    animation-play-state: paused;
+}
