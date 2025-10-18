@@ -1,0 +1,200 @@
+.main {
+    flex: 1;
+    display: flex;
+    height: 100dvh;
+    background: var(--background);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.nav {
+    z-index: 3;
+    top: 20px;
+    width: 90%;
+    left: 5%;
+    margin: auto;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav__logo {
+    display: none;
+}
+
+.nav__icon {
+    width: 20px;
+    height: 20px;
+    color: var(--grey);
+}
+
+.nav__icons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav__icons div {
+    flex: 1;
+}
+
+.nav__div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10%;
+    opacity: 1;
+    transition: all 0.3s ease;
+    background: var(--black);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    max-width: 800px;
+    padding: 30px;
+    background: var(--dark);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    color: var(--white);
+}
+
+.active {
+    background: var(--primary);
+    color: var(--white);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.inactive {
+    background: var(--grey);
+    color: var(--light);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.description {
+    color: var(--light);
+    margin-bottom: 20px;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px 20px;
+    font-size: 0.95rem;
+    color: var(--white);
+}
+
+.divider {
+    margin: 25px 0;
+    border: none;
+    height: 1px;
+    background: var(--grey);
+}
+
+.inviteForm h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--white);
+}
+
+.inviteRow {
+    display: flex;
+    gap: 10px;
+}
+
+.input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    background: var(--black);
+    color: var(--white);
+}
+
+.input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(255, 80, 80, 0.3);
+}
+
+.button {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.button:hover {
+    background: #e64545;
+}
+
+.loading {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: var(--white);
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+@media (min-width: 768px) {
+    .main {
+        background: var(--black);
+        overflow: unset;
+    }
+
+    .nav {
+        padding-top: 20px;
+        position: unset;
+    }
+
+    .nav__logo {
+        display: block;
+    }
+
+    .nav__img {
+        width: 150px;
+        height: auto;
+    }
+
+    .nav__icons {
+        display: flex;
+        gap: 10px;
+    }
+}

@@ -1,0 +1,350 @@
+/* --- SCROLL BAR & CURSOR--- */
+.main {
+    overflow-y: scroll;
+    max-height: 100dvh;
+    cursor: url('/images/cursor/pointer-arrow-mini.png') 10 10, auto;
+}
+
+.main a,
+.main button,
+.main [role='button'],
+.main [onclick],
+.main summary {
+    cursor: url('/images/cursor/pointer-hand-mini.png') 10 10, pointer !important;
+}
+
+.main a:active,
+.main button:active,
+.main [role='button']:active,
+.main [onclick]:active,
+.main summary:active {
+    cursor: url('/images/cursor/pointer-active-mini.png') 10 10, pointer !important;
+}
+
+/* Webkit browsers (Chrome, Edge, Safari) */
+.main::-webkit-scrollbar {
+    width: 10px; /* siempre visible */
+}
+
+.main::-webkit-scrollbar-track {
+    background: var(--black); /* track negro */
+}
+
+.main::-webkit-scrollbar-thumb {
+    background: var(--primary); /* thumb color primary */
+    border-radius: 5px;
+}
+
+.main::-webkit-scrollbar-thumb:hover {
+    background: darken(var(--primary), 10%); /* opcional hover más oscuro */
+}
+
+/* Firefox */
+.main {
+    scrollbar-width: thin; /* thin para siempre visible */
+    scrollbar-color: var(--primary) var(--black); /* thumb color, track color */
+}
+
+/* --- START --- */
+.main {
+    background: var(--beige);
+    min-height: 100vh;
+    padding-top: 10px;
+}
+
+.start {
+    border-radius: 10px;
+    padding: 30px 10px;
+    width: 98%;
+    margin: 10px 1%;
+    background: var(--primary);
+}
+
+.start__div {
+    display: flex;
+    flex-direction: column;
+}
+
+.start__title {
+    font-family: var(--font-gliker);
+    font-size: 2rem;
+    color: var(--white);
+}
+
+.start__text {
+    margin-top: 1.5rem;
+    font-size: 1.3rem;
+    color: var(--beige);
+}
+
+.start__link {
+    display: block;
+    width: fit-content;
+    margin-top: 1.5rem;
+}
+
+.start__button {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    background: var(--beige);
+    color: var(--black);
+    font-size: 1.2rem;
+    font-weight: 800;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 25px;
+    transition: color 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.start__button span {
+    position: relative;
+    z-index: 2; /* Mantener el texto encima del slide */
+}
+
+.start__button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    right: 100%;
+    background: var(--black);
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.start__button:hover::after {
+    left: 0;
+    right: 0;
+}
+
+.start__button:hover span {
+    color: var(--beige);
+}
+
+.start__img {
+    margin: auto;
+    margin-top: 2rem;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.benefits {
+    background: var(--black);
+    padding: 30px 20px;
+}
+
+.benefits__div {
+    display: flex;
+    flex-direction: column;
+}
+
+.benefits__title {
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: var(--font-gliker);
+    color: var(--white);
+}
+
+.benefits__title span:nth-child(1) {
+    font-family: var(--font-gliker);
+    color: var(--primary);
+}
+
+.benefits__title span:nth-child(2) {
+    font-family: var(--font-gliker);
+    color: var(--beige);
+}
+
+.benefits__text {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--beige);
+}
+
+.benefits__link {
+    display: block;
+    width: fit-content;
+    margin-top: 2rem;
+}
+
+.benefits__button {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    background: var(--black);
+    border: 2px solid var(--beige);
+    border-radius: 10px;
+    padding: 20px 40px;
+    color: var(--beige);
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
+.benefits__button span {
+    position: relative;
+    z-index: 2;
+}
+
+.benefits__button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    right: 100%;
+    background: var(--primary);
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.benefits__button:hover::after {
+    left: 0;
+    right: 0;
+}
+
+.benefits__button:hover span {
+    color: var(--white);
+}
+
+.benefits__button:hover {
+    border-color: var(--primary);
+}
+
+.benefits__hr {
+    margin: 2rem 0;
+}
+
+.benefits__img {
+    width: 100%;
+    height: auto;
+    margin: auto;
+}
+
+.benefits__div:nth-child(2) {
+    margin-top: 1.5rem;
+    gap: 1.5rem;
+}
+
+.benefit {
+    display: flex;
+    flex-direction: column;
+}
+
+.benefit__container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.benefit__title {
+    color: var(--white);
+    font-size: 1.4rem;
+    font-family: var(--font-gliker);
+}
+
+.benefit__icon {
+    width: 50px;
+    height: 50px;
+}
+
+.benefit__title span {
+    font-family: var(--font-gliker);
+    color: var(--primary);
+}
+
+.benefit__list {
+    margin-top: 20px;
+    color: var(--beige);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.benefit__item {
+    font-size: 1rem;
+}
+
+.benefit__item::before {
+    content: '';
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    padding-right: 10px;
+    background-image: url('/images/all/asterisco.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    vertical-align: middle;
+}
+
+@media (min-width: 768px) {
+    .main {
+        padding-top: 20px;
+    }
+
+    .start {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: row;
+        padding: 30px;
+        align-items: center;
+        gap: 3rem;
+    }
+
+    .start__img {
+        margin-top: auto;
+        width: 80%;
+        margin-right: 0;
+    }
+
+    .start__div {
+        flex: 1;
+    }
+
+    .start__title {
+        font-size: 4rem;
+    }
+
+    .start__text {
+        margin-top: 1.4rem;
+        font-weight: 600;
+        font-size: 1.4rem;
+    }
+
+    .start__button {
+        font-size: 1.4rem;
+        padding: 20px 40px;
+    }
+
+    .benefits {
+        display: flex;
+        padding: 5% 2%;
+        flex-direction: row;
+        gap: 5%;
+    }
+
+    .benefits__div {
+        flex: 3;
+    }
+
+    .benefits__div:nth-child(2) {
+        flex: 2;
+    }
+
+    .benefits__title {
+        font-size: 5rem;
+    }
+
+    .benefits__text {
+        width: 70%;
+    }
+}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { API_URL } from '@/constants'
+import { API_URL, IS_PRODUCTION } from '@/constants'
 import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 
 interface RegisterRequest {
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
                 { status: 401 }
             )
         }
-
+        
         // Backend
         let res: Response
         try {
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
             sameSite: 'lax',
             path: '/',
             maxAge: 60 * 60 * 24 * 7, // 7 días
-            secure: process.env.NODE_ENV === 'production',
+            secure: IS_PRODUCTION,
         })
 
         return response

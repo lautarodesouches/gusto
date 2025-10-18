@@ -1,3 +1,4 @@
+import { IS_PRODUCTION } from '@/constants'
 import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 import { NextResponse } from 'next/server'
 
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
             sameSite: 'lax',
             path: '/',
             maxAge: 60 * 60 * 24 * 7, // 7 días
-            secure: process.env.NODE_ENV === 'production',
+            secure: IS_PRODUCTION,
         })
 
         return response

@@ -1,5 +1,4 @@
 'use client'
-import { Metadata } from 'next'
 import styles from './page.module.css'
 import { usePathname } from 'next/navigation'
 

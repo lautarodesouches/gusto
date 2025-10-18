@@ -33,11 +33,65 @@ export type ResponseRegister = {
     message?: string
 }
 
-export type Restaurant = {
-    id: number
-    name: string
+export interface Restaurant {
+    id: string
+    propietarioUid: string
+    horarios: Record<string, unknown> // como viene vacío o puede ser JSON dinámico
+    creadoUtc: string // ISO date string
+    actualizadoUtc: string // ISO date string
+    nombre: string
+    direccion: string
     lat: number
     lng: number
     rating: number
-    img: string
+    googlePlaceId: string | null
+    tipo: string // si luego querés, podés hacer enum
+    imagenUrl: string
+    valoracion: number | null
+    platos: string[]
+    gustosQueSirve: Gusto[]
+    restriccionesQueRespeta: Restriccion[]
+    score: number
+}
+
+export interface Gusto {
+    id: string
+    nombre: string
+}
+
+export interface Restriccion {
+    id: string
+    nombre: string
+}
+
+export type Friend = {
+    id: string
+    nombre: string
+    email: string
+    fotoPerfilUrl: string
+}
+
+export type FriendInvitation = {
+    id: string
+    remitente: Friend
+    destinatario: Friend
+    estado: 'Pendiente'
+    fechaEnvio: '2025-10-15T03:55:36.3645466'
+    fechaRespuesta: null
+    mensaje: null
+}
+
+export type Group = {
+    activo: boolean
+    administradorFirebaseUid: string
+    administradorId: string
+    administradorNombre: string
+    cantidadMiembros: number
+    codigoInvitacion: string
+    descripcion: string
+    fechaCreacion: string
+    fechaExpiracionCodigo: string
+    id: string
+    miembros: { usuarioEmail: string; usuarioNombre: string; id: string }[]
+    nombre: string
 }

@@ -21,57 +21,44 @@ export async function POST(req: Request) {
             )
         }
 
-        // Database
         // 1
-        try {
-            await fetch(`${API_URL}/Usuario/restricciones`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    ids: step1.map((item: { id: number }) => item.id),
-                    skip: step1.length === 0,
-                }),
-            })
-        } catch (error) {
-            console.error(error)
-        }
+        await fetch(`${API_URL}/Usuario/restricciones`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                ids: step1.map((item: { id: number }) => item.id),
+                skip: step1.length === 0,
+            }),
+        })
 
         // 2
-        try {
-            await fetch(`${API_URL}/Usuario/condiciones`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    ids: step2.map((item: { id: number }) => item.id),
-                    skip: step2.length === 0,
-                }),
-            })
-        } catch (error) {
-            console.error(error)
-        }
+        await fetch(`${API_URL}/Usuario/condiciones`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                ids: step2.map((item: { id: number }) => item.id),
+                skip: step2.length === 0,
+            }),
+        })
 
         // 3
-        try {
-            await fetch(`${API_URL}/Usuario/gustos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    ids: step3.map((item: { id: number }) => item.id),
-                    skip: step3.length === 0,
-                }),
-            })
-        } catch (error) {
-            console.error(error)
-        }
+        await fetch(`${API_URL}/Usuario/gustos`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                ids: step3.map((item: { id: number }) => item.id),
+                skip: step3.length === 0,
+            }),
+        })
 
         return NextResponse.json({
             success: true,
