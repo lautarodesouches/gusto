@@ -31,10 +31,10 @@ export default function Landing() {
                 <div className={styles.start__div}>
                     <Image
                         className={styles.start__img}
-                        src="/images/brand/gusto-center-negative.svg"
-                        alt="Logo Gusto!"
-                        width={0}
-                        height={0}
+                        src="/images/all/poster.jpg"
+                        alt="Grupo de personas comiendo"
+                        width={600}
+                        height={600}
                         priority
                     />
                 </div>
@@ -65,8 +65,8 @@ export default function Landing() {
                     <div className={styles.benefits__container}>
                         <Image
                             className={styles.benefits__img}
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
+                            src="/images/all/beneficios.svg"
+                            alt="Grupo de personas viendo celular"
                             width={0}
                             height={0}
                         />
@@ -77,7 +77,7 @@ export default function Landing() {
                         <div className={styles.benefit__container}>
                             <Image
                                 className={styles.benefit__icon}
-                                src="/images/cursor/pointer-active-mini.png"
+                                src="/images/all/bot.svg"
                                 alt=""
                                 width={0}
                                 height={0}
@@ -105,7 +105,7 @@ export default function Landing() {
                         <div className={styles.benefit__container}>
                             <Image
                                 className={styles.benefit__icon}
-                                src="/images/cursor/pointer-active-mini.png"
+                                src="/images/all/hamburguesa.svg"
                                 alt=""
                                 width={0}
                                 height={0}
@@ -133,7 +133,7 @@ export default function Landing() {
                         <div className={styles.benefit__container}>
                             <Image
                                 className={styles.benefit__icon}
-                                src="/images/cursor/pointer-active-mini.png"
+                                src="/images/all/cronometro.svg"
                                 alt=""
                                 width={0}
                                 height={0}
@@ -160,7 +160,7 @@ export default function Landing() {
                         <div className={styles.benefit__container}>
                             <Image
                                 className={styles.benefit__icon}
-                                src="/images/cursor/pointer-active-mini.png"
+                                src="/images/all/estrella.svg"
                                 alt=""
                                 width={0}
                                 height={0}

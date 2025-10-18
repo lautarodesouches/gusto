@@ -100,8 +100,12 @@
 }
 
 .start__img {
+    margin: auto;
+    max-width: 100%;
     width: 90%;
     height: auto;
+    border-radius: 10px;
+    object-fit: cover;
 }
 
 .benefits {
@@ -194,8 +198,8 @@
 }
 
 .benefit__icon {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
 }
 
 .benefit__title span {
@@ -218,11 +222,11 @@
 
 .benefit__item::before {
     content: '';
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     display: inline-block;
     padding-right: 10px;
-    background-image: url('/images/cursor/pointer-arrow-mini.png');
+    background-image: url('/images/all/asterisco.svg');
     background-repeat: no-repeat;
     background-size: contain;
     vertical-align: middle;

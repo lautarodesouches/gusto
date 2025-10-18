@@ -160,10 +160,10 @@ export default function FaqSection() {
                 </h2>
                 <Image
                     className={styles.faq__img}
-                    src="/images/brand/gusto-center.svg"
-                    alt=""
-                    width={0}
-                    height={0}
+                    src="/images/all/aplicacion-gusto.png"
+                    alt="Aplicacion Gusto!"
+                    width={300}
+                    height={300}
                 />
             </div>
             <div className={styles.faq__div}>

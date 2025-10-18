@@ -114,12 +114,12 @@ export default function Map() {
                         icon={{
                             url:
                                 index === 0
-                                    ? '/svg/markerOne.svg'
+                                    ? '/markers/markerOne.svg'
                                     : index === 1
-                                    ? '/svg/markerTwo.svg'
+                                    ? '/markers/markerTwo.svg'
                                     : index === 2
-                                    ? '/svg/markerThree.svg'
-                                    : '/svg/marker.svg',
+                                    ? '/markers/markerThree.svg'
+                                    : '/markers/marker.svg',
                             scaledSize: new google.maps.Size(36, 45),
                             anchor: new google.maps.Point(18, 45),
                         }}
