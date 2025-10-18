@@ -1,6 +1,6 @@
 'use client'
 import { ROUTES } from '@/routes'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faClose } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -29,22 +29,30 @@ export default function Header() {
                     menuOpen ? styles.header__active : ''
                 }`}
             >
+                <FontAwesomeIcon
+                    icon={faClose}
+                    className={styles.header__close}
+                    onClick={toggleMenu}
+                />
                 <nav className={styles.header__nav}>
                     <Link
                         className={styles.header__link}
                         href={`${ROUTES.HOME}/#`}
+                        onClick={() => setMenuOpen(false)}
                     >
                         Inicio
                     </Link>
                     <Link
                         className={styles.header__link}
                         href={`${ROUTES.HOME}/#beneficios`}
+                        onClick={() => setMenuOpen(false)}
                     >
                         Beneficios
                     </Link>
                     <Link
                         className={styles.header__link}
                         href={`${ROUTES.HOME}/#faq`}
+                        onClick={() => setMenuOpen(false)}
                     >
                         FAQ
                     </Link>

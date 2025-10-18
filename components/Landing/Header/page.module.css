@@ -7,7 +7,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
 }
 
 .header__div {
@@ -21,33 +20,43 @@
 
 .header__container {
     background: var(--dark);
-    border-radius: 5px;
     padding: 15px 0;
     position: absolute;
-    top: 60px;
-    right: 0;
-    flex-direction: column;
     gap: 5px;
-    width: 100%;
-    text-align: center;
-    display: flex;
-
     opacity: 0;
-    transform: translateY(-20px);
+    top: 0;
+    left: 0;
+    width: 100dvw;
+    height: 100dvh;
     pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    text-align: center;
 }
 
 .header__active {
     opacity: 1;
-    transform: translateY(0);
     pointer-events: auto;
+    position: absolute;
+    z-index: 99;
+}
+
+.header__close {
+    top: 40px;
+    right: 40px;
+    position: absolute;
+    color: var(--white);
+    width: 30px;
+    height: 30px;
 }
 
 .header__nav {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 .header__link {
@@ -58,7 +67,7 @@
 }
 
 .header__bcontainer {
-    margin-top: 10px;
+    margin-top: 40px;
 }
 
 .header__button {
@@ -122,8 +131,14 @@
         width: 100%;
     }
 
+    .header__close {
+        display: none;
+    }
+
     .header__container {
         opacity: 1;
+        width: 80%;
+        height: auto;
         position: unset;
         flex-direction: row;
         justify-content: space-between;
