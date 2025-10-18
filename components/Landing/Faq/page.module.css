@@ -98,7 +98,7 @@
     .faq {
         display: flex;
         flex-direction: row;
-        margin: 2.5% 5%;
+        margin: 2.5% 2%;
         gap: 5%;
     }
 

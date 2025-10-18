@@ -52,7 +52,7 @@ export default function Header() {
                 <div className={styles.header__bcontainer}>
                     <Link href={ROUTES.REGISTER}>
                         <button className={styles.header__button}>
-                            REGÍSTRATE GRATIS
+                            <span>REGÍSTRATE GRATIS</span>
                         </button>
                     </Link>
                 </div>

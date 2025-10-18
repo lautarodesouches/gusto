@@ -55,8 +55,8 @@
 .start {
     border-radius: 10px;
     padding: 30px 10px;
-    width: 90%;
-    margin: 10px 5%;
+    width: 98%;
+    margin: 10px 1%;
     background: var(--primary);
 }
 
@@ -79,10 +79,14 @@
 
 .start__link {
     display: block;
+    width: fit-content;
     margin-top: 1.5rem;
 }
 
 .start__button {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
     background: var(--beige);
     color: var(--black);
     font-size: 1.2rem;
@@ -90,19 +94,41 @@
     border: none;
     border-radius: 10px;
     padding: 15px 25px;
-    transition: all 0.3s ease-in-out;
+    transition: color 0.3s ease-in-out;
     cursor: pointer;
 }
 
-.start__button:hover {
+.start__button span {
+    position: relative;
+    z-index: 2; /* Mantener el texto encima del slide */
+}
+
+.start__button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    right: 100%;
     background: var(--black);
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.start__button:hover::after {
+    left: 0;
+    right: 0;
+}
+
+.start__button:hover span {
     color: var(--beige);
 }
 
 .start__img {
     margin: auto;
+    margin-top: 2rem;
     max-width: 100%;
-    width: 90%;
+    width: 100%;
     height: auto;
     border-radius: 10px;
     object-fit: cover;
@@ -144,10 +170,14 @@
 
 .benefits__link {
     display: block;
+    width: fit-content;
+    margin-top: 2rem;
 }
 
 .benefits__button {
-    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
     background: var(--black);
     border: 2px solid var(--beige);
     border-radius: 10px;
@@ -155,14 +185,38 @@
     color: var(--beige);
     font-size: 1.4rem;
     font-weight: 600;
-    transition: all 0.3s ease-in-out;
     cursor: pointer;
+    transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
+.benefits__button span {
+    position: relative;
+    z-index: 2;
+}
+
+.benefits__button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    right: 100%;
+    background: var(--primary);
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.benefits__button:hover::after {
+    left: 0;
+    right: 0;
+}
+
+.benefits__button:hover span {
+    color: var(--white);
 }
 
 .benefits__button:hover {
-    background: var(--primary);
-    color: var(--white);
-    border: 2px solid var(--primary);
+    border-color: var(--primary);
 }
 
 .benefits__hr {
@@ -243,6 +297,13 @@
         flex-direction: row;
         padding: 30px;
         align-items: center;
+        gap: 3rem;
+    }
+
+    .start__img {
+        margin-top: auto;
+        width: 80%;
+        margin-right: 0;
     }
 
     .start__div {
@@ -250,21 +311,23 @@
     }
 
     .start__title {
-        font-size: 3rem;
+        font-size: 4rem;
     }
 
     .start__text {
+        margin-top: 1.4rem;
         font-weight: 600;
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     .start__button {
+        font-size: 1.4rem;
         padding: 20px 40px;
     }
 
     .benefits {
         display: flex;
-        padding: 5%;
+        padding: 5% 2%;
         flex-direction: row;
         gap: 5%;
     }
@@ -283,9 +346,5 @@
 
     .benefits__text {
         width: 70%;
-    }
-
-    .benefits__img {
-        margin-top: 30px;
     }
 }

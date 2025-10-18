@@ -24,7 +24,7 @@ export default function Landing() {
                         href={`${ROUTES.HOME}/#beneficios`}
                     >
                         <button className={styles.start__button}>
-                            Ver Más
+                            <span>Ver Más</span>
                         </button>
                     </Link>
                 </div>
@@ -58,7 +58,7 @@ export default function Landing() {
                         href={ROUTES.REGISTER}
                     >
                         <button className={styles.benefits__button}>
-                            PROBAR
+                            <span>PROBAR</span>
                         </button>
                     </Link>
                     <hr className={styles.benefits__hr} />

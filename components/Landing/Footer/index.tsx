@@ -41,9 +41,9 @@ export default function Footer() {
                     <p className={styles.footer__text}>CONTACTO</p>
                     <Link
                         className={styles.footer__link}
-                        href="mailto:ejemplo@correo.com"
+                        href="mailto:gusto.info.app@gmail.com"
                     >
-                        ejemplo@correo.com
+                        gusto.info.app@gmail.com
                     </Link>
                 </div>
                 <div className={styles.footer__div}>
