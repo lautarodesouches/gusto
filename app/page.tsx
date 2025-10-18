@@ -6,9 +6,9 @@ import { LandingFaq, LandingFooter, LandingHeader } from '@/components'
 
 export default function Landing() {
     return (
-        <main className={styles.main}>
+        <main className={styles.main} id="inicio">
             <LandingHeader />
-            <section className={styles.start} id="inicio">
+            <section className={styles.start}>
                 <div className={styles.start__div}>
                     <h1 className={styles.start__title}>
                         DONDE LOS GUSTOS COINCIDEN
