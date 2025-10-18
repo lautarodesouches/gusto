@@ -16,7 +16,7 @@ export default function LandingCarousel() {
                             key={`set1-${index}`}
                             src={src}
                             alt="Carrusel SVG"
-                            width={800}
+                            width={2000}
                             height={100}
                             className={styles.carousel__img}
                         />

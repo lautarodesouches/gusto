@@ -19,10 +19,10 @@ export default function Landing() {
                         DONDE LOS GUSTOS COINCIDEN
                     </h1>
                     <p className={styles.start__text}>
-                        GUSTO! REÚNE LAS PREFERENCIAS DE TU GRUPO Y CON IA
-                        ENCUENTRA EL RESTAURANTE PERFECTO EN SEGUNDOS. VOTEN,
-                        ORGANICEN LA SALIDA Y DISFRUTEN SIN PERDER TIEMPO
-                        DISCUTIENDO.
+                        GUSTO! REÚNE LAS PREFERENCIAS DE TU GRUPO Y CON NUESTRO
+                        ALGORITMO DE REDES NEURONALES ENCUENTRA EL RESTAURANTE
+                        PERFECTO EN SEGUNDOS. VOTEN, ORGANICEN LA SALIDA Y
+                        DISFRUTEN SIN PERDER TIEMPO DISCUTIENDO.
                     </p>
                     <Link
                         className={styles.start__link}

@@ -14,8 +14,8 @@ export default function FaqSection() {
             question: '1. ¿Cómo funciona?',
             answer: (
                 <p>
-                    Es muy simple: Cada integrante completa el &quot;Step by
-                    Step&quot; con sus preferencias. <strong>GUSTO!</strong>{' '}
+                    Es muy simple: Cada integrante completa el &quot;paso a
+                    paso&quot; con sus preferencias. <strong>GUSTO!</strong>{' '}
                     analiza los datos y genera un match de lugares ideales. El
                     grupo elige el que más les guste. ¡Listo!{' '}
                     <strong>Sin vueltas, sin debates eternos.</strong>
@@ -28,7 +28,7 @@ export default function FaqSection() {
             answer: (
                 <p>
                     Sí, para aprovechar el{' '}
-                    <strong>CORE de Machine Learning (ML)</strong> y todas las
+                    <strong>CORE de Deep Learning (DL)</strong> y todas las
                     funciones sociales de <strong>GUSTO!</strong>, es necesario
                     crear una cuenta. Al registrarte, puedes guardar tus gustos,
                     restricciones alimentarias y, lo más importante, crear
@@ -44,7 +44,7 @@ export default function FaqSection() {
                 <>
                     <p>
                         <strong>GUSTO!</strong> utiliza un avanzado algoritmo de{' '}
-                        <strong>Machine Learning (ML):</strong>
+                        <strong>redes neuronales (DL)</strong>
                     </p>
                     <ul>
                         <li>
@@ -120,8 +120,9 @@ export default function FaqSection() {
                         <li>
                             <strong>Preferencias y Restricciones:</strong> Tus
                             datos de gustos y restricciones alimentarias (el
-                            input principal del ML) son tratados con la máxima
-                            confidencialidad. Se utilizan exclusivamente para{' '}
+                            input principal del algoritmo) son tratados con la
+                            máxima confidencialidad. Se utilizan exclusivamente
+                            para{' '}
                             <strong>
                                 mejorar la precisión de tus recomendaciones
                             </strong>{' '}
