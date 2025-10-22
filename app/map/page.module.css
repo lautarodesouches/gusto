@@ -197,12 +197,14 @@
         transition: grid-template-columns 0.3s ease;
         height: 100%;
         padding: 1rem;
+        position: relative;
     }
 
     .middle__filter {
         display: block;
         flex: 1;
         min-height: 0;
+        z-index: 3;
     }
 
     .bottom {

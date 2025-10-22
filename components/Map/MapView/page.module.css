@@ -8,38 +8,38 @@
     height: 100vh;
 }
 
-.info{
+.info {
     display: flex;
     flex: 1;
     flex-direction: column;
     gap: 5px;
 }
 
-.info__div{
+.info__div {
     display: flex;
     gap: 10px;
     align-items: flex-end;
 }
 
-.info__title{
-    font-size: .9rem;
+.info__title {
+    font-size: 0.9rem;
     color: var(--dark);
 }
 
-.info__rating{
+.info__rating {
     display: flex;
     gap: 5px;
     align-items: center;
     font-weight: 400;
 }
 
-.info__icon{
+.info__icon {
     color: var(--primary);
     width: 10px;
     height: 10px;
 }
 
-.info__button{
+.info__button {
     margin-top: 5px;
     border: none;
     border-radius: 5px;
@@ -49,14 +49,14 @@
     cursor: pointer;
 }
 
-
 @media (min-width: 768px) {
     .map {
         flex: 1;
         min-height: 0;
-        z-index: unset;
+        position: relative;
+        z-index: 1;
     }
-    
+
     .mapContainer {
         height: 100%;
     }
