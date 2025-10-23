@@ -28,6 +28,9 @@ const getData = async () => {
         data = []
     }
 
+    console.log(data.restricciones);
+    
+
     return data.restricciones
 }
 

@@ -2,17 +2,19 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { useStep } from '@/hooks/useStep'
 import { useRegister } from '@/context/RegisterContext'
-import { useRouter } from 'next/navigation'
 import { RegisterItem } from '@/types'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface Props {
     title: string
     description: string
     inputDescription: string
     content: RegisterItem[]
+    handleNext: () => void
+    handlePrev?: () => void
+    step: number
 }
 
 export default function Step({
@@ -20,15 +22,37 @@ export default function Step({
     description,
     inputDescription,
     content = [],
+    handleNext,
+    handlePrev,
+    step,
 }: Props) {
-    const step = useStep()
+    const router = useRouter()
     const isLastStep = step === 3
     const { data, setData } = useRegister()
-    const router = useRouter()
     const [error, setError] = useState<string | null>(null)
 
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
+
+    const handleNextStep = () => {
+        if (isLastStep) {
+            // Obtener los nombres de los elementos seleccionados
+            const selectedNames = (selected as RegisterItem[]).map(
+                item => item.nombre
+            )
+
+            // Construir el query param "plato" separado por comas
+            const query = selectedNames.length
+                ? `?plato=${selectedNames.join(',')}`
+                : ''
+
+            // Redirigir a /demo/map con los gustos en la URL
+            router.push(`/demo/map${query}`)
+            return
+        }
+
+        handleNext()
+    }
 
     const handleSelect = (id: number) => {
         setError(null)
@@ -52,32 +76,9 @@ export default function Step({
         }
     }
 
-    const handleNext = async () => {
-            router.push(`/auth/register/step/${step + 1}`)
-        /*try {
-            await fetch('/api/steps', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    step1: data.step1 ?? [],
-                    step2: data.step2 ?? [],
-                    step3: data.step3 ?? [],
-                }),
-            })
-
-            router.push(`/auth/register/step/${step + 1}`)
-        } catch (err) {
-            console.error('Error enviando pasos:', err)
-        }*/
-    }
-    const handleBack = () => {
-        router.push(`/auth/register/step/${step - 1}`)
-    }
-
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <p className={styles.stepLabel}>Paso {step}</p>
                 <h2 className={styles.title}>{title}</h2>
                 <p className={styles.description}>{description}</p>
             </header>
@@ -119,14 +120,17 @@ export default function Step({
             {error && <span className={styles.error}>{error}</span>}
 
             <nav className={styles.actions}>
-                {step !== 1 ? (
-                    <button onClick={handleBack} className={styles.backButton}>
+                {handlePrev ? (
+                    <button
+                        onClick={() => handlePrev()}
+                        className={styles.backButton}
+                    >
                         VOLVER
                     </button>
                 ) : (
                     <div></div>
                 )}
-                <button onClick={handleNext} className={styles.skipButton}>
+                <button onClick={handleNextStep} className={styles.skipButton}>
                     {isLastStep
                         ? 'FINALIZAR'
                         : selected.length === 0

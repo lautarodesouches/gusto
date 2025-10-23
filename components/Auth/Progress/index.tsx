@@ -1,28 +1,18 @@
 'use client'
-import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
-import { useStep } from '@/hooks/useStep'
-import { ROUTES } from '@/routes'
 
 interface Props {
-    steps?: number
+    aStep: number
+    handleClick: (number: number) => void
 }
 
-export default function Progress({ steps = 4 }: Props) {
-    const activeStep = useStep()
-
-    const router = useRouter()
-
-    const handleStepClick = (stepNumber: number) => {
-        router.push(`${ROUTES.STEPS}/${stepNumber}`)
-    }
-
+export default function Progress({ aStep, handleClick }: Props) {
     return (
         <div className={styles.timeline}>
-            {Array.from({ length: steps }, (_, i) => {
+            {Array.from({ length: 3 }, (_, i) => {
                 const step = i + 1
-                const isActive = step === activeStep
-                const isCompleted = step < activeStep
+                const isActive = step === aStep
+                const isCompleted = step < aStep
 
                 return (
                     <div key={step} className={styles.stepWrapper}>
@@ -35,13 +25,13 @@ export default function Progress({ steps = 4 }: Props) {
                                     ? styles.completed
                                     : ''
                             }`}
-                            onClick={() => handleStepClick(step)}
+                            onClick={() => handleClick(step)}
                         >
                             {step}
                         </span>
 
                         {/* Línea con animación */}
-                        {step < steps && (
+                        {step < 4 && (
                             <div className={styles.line}>
                                 <div
                                     className={`${styles.lineFill} ${

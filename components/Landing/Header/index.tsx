@@ -58,7 +58,7 @@ export default function Header() {
                     </Link>
                 </nav>
                 <div className={styles.header__bcontainer}>
-                    <Link href={ROUTES.REGISTER}>
+                    <Link href={`/demo`}>
                         <button className={styles.header__button}>
                             <span>REGÍSTRATE GRATIS</span>
                         </button>

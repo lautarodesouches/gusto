@@ -60,7 +60,7 @@ export default function Landing() {
                     </p>
                     <Link
                         className={styles.benefits__link}
-                        href={ROUTES.REGISTER}
+                        href={`/demo`}
                     >
                         <button className={styles.benefits__button}>
                             <span>PROBAR</span>

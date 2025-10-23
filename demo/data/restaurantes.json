@@ -1,0 +1,602 @@
+[
+    {
+        "id": "ChIJLdHV1vHHvJURqyLjibPGM_g",
+        "nombre": "Chicha bodegón - parrilla",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "empanadas"],
+        "rating": 4.4,
+        "lat": -34.6406084,
+        "lng": -58.5675501,
+        "direccion": "Leandro N. Alem 317, Ramos Mejía"
+    },
+    {
+        "id": "ChIJrfT2BO_HvJURjsJ_L9dLDw4",
+        "nombre": "Samurai Sushi",
+        "tipo": ["sushi"],
+        "platos": ["sushi"],
+        "rating": 4.5,
+        "lat": -34.64393099999999,
+        "lng": -58.5683143,
+        "direccion": "Ramos Mejia Buenos Aires AR, Avellaneda 289, BXE"
+    },
+    {
+        "id": "ChIJ7bYIsOu5vJUReoDOntilR90",
+        "nombre": "PIZZERIA y ROTISERIA NUEVO ESTILO",
+        "tipo": ["italiana", "rápida"],
+        "platos": ["pizza", "empanadas"],
+        "rating": 4.3,
+        "lat": -34.6099966,
+        "lng": -58.56800179999999,
+        "direccion": "Avenida Mitre 5008, B1678AVK"
+    },
+    {
+        "id": "ChIJYVj9ne_HvJURBguPIJ89T_g",
+        "nombre": "Lo de Carlitos",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "empanadas"],
+        "rating": 4.4,
+        "lat": -34.6429948,
+        "lng": -58.566803,
+        "direccion": "Necochea 212, Ramos Mejía"
+    },
+    {
+        "id": "ChIJOzxMz_rHvJURZNiixtGbM_s",
+        "nombre": "Carmen Restaurant",
+        "tipo": ["italiana"],
+        "platos": ["pasta", "pizza"],
+        "rating": 4.3,
+        "lat": -34.647451,
+        "lng": -58.565774,
+        "direccion": "Necochea 710, Ramos Mejía"
+    },
+    {
+        "id": "ChIJGXkIlCK4vJURe853T8f2eFg",
+        "nombre": "Pizza libre Caseros",
+        "tipo": ["italiana", "rápida"],
+        "platos": ["pizza", "empanadas"],
+        "rating": 4.2,
+        "lat": -34.6088615,
+        "lng": -58.56419930000001,
+        "direccion": "3 de Febrero 2893 A, Gran Buenos Aires"
+    },
+    {
+        "id": "ChIJg2SWrd7HvJURR0p3ZtgH7k8",
+        "nombre": "Lita empanadas",
+        "tipo": ["rápida"],
+        "platos": ["empanadas"],
+        "rating": 4.3,
+        "lat": -34.6532038,
+        "lng": -58.5595216,
+        "direccion": "Pringles 1397, Ramos Mejía"
+    },
+    {
+        "id": "ChIJoYcx1GvIvJURelmuyRr4BfU",
+        "nombre": "Mamma Mía",
+        "tipo": ["italiana"],
+        "platos": ["pizza", "pasta"],
+        "rating": 4.6,
+        "lat": -34.6461283,
+        "lng": -58.5347768,
+        "direccion": "Ingeniero Amoretti 3707, Ciudadela"
+    },
+    {
+        "id": "ChIJ0eji4IPHvJURikIppkNozDg",
+        "nombre": "Empanadas de 10",
+        "tipo": ["rápida"],
+        "platos": ["empanadas"],
+        "rating": 3.9,
+        "lat": -34.6435791,
+        "lng": -58.5905094,
+        "direccion": "Doctor Jerónimo Fasola 55, Haedo"
+    },
+    {
+        "id": "ChIJBf1O_5HHvJURkxp79eLKROk",
+        "nombre": "Hello Piedra Libre - Pizzas and Empanadas",
+        "tipo": ["italiana", "rápida"],
+        "platos": ["pizza", "empanadas"],
+        "rating": 4.4,
+        "lat": -34.645343,
+        "lng": -58.5830509,
+        "direccion": "Obispo Raspanti 301, Haedo"
+    },
+    {
+        "id": "ChIJZ5oCDObHvJUR-4fFtfHjy0U",
+        "nombre": "AREZZO",
+        "tipo": ["italiana"],
+        "platos": ["pizza", "pasta"],
+        "rating": 4,
+        "lat": -34.6452363,
+        "lng": -58.5645244,
+        "direccion": "Avenida de Mayo 492, Ramos Mejía"
+    },
+    {
+        "id": "ChIJm8lJkuXHvJUR7m7m9vhBo08",
+        "nombre": "La Fragata - Ramos Mejía",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "empanadas"],
+        "rating": 3.9,
+        "lat": -34.6436721,
+        "lng": -58.5648308,
+        "direccion": "Avenida de Mayo 302, Ramos Mejía"
+    },
+    {
+        "id": "ChIJ86pnOuTHvJURoei3pVWFA4U",
+        "nombre": "Pizzería Tiberio",
+        "tipo": ["italiana"],
+        "platos": ["pizza", "pasta"],
+        "rating": 4.6,
+        "lat": -34.6442105,
+        "lng": -58.56145979999999,
+        "direccion": "Avenida General San Martín 217, Ramos Mejía"
+    },
+    {
+        "id": "ChIJT39W7eXHvJUR0R3HxB4J7eA",
+        "nombre": "Rocky Point - Ramos Mejia",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "hamburguesa"],
+        "rating": 4.4,
+        "lat": -34.6438898,
+        "lng": -58.5652739,
+        "direccion": "Avenida de Mayo 323, Ramos Mejía"
+    },
+    {
+        "id": "ChIJkSATrOjHvJURAwGK3buPCwU",
+        "nombre": "MIHANA Sushi - Ramos Mejia (Solo Delivery)",
+        "tipo": ["sushi"],
+        "platos": ["sushi"],
+        "rating": 4.3,
+        "lat": -34.645371,
+        "lng": -58.564393,
+        "direccion": "Castelli 292, Ramos Mejía"
+    },
+    {
+        "id": "ChIJXRqYieXHvJUR8fmzEMNEvA8",
+        "nombre": "Órale Juanito",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.3,
+        "lat": -34.64345939999999,
+        "lng": -58.56574010000001,
+        "direccion": "Rosales 231, Ramos Mejía"
+    },
+    {
+        "id": "ChIJEShfE-bHvJURnsHN6RGoUQc",
+        "nombre": "Subway",
+        "tipo": ["rápida"],
+        "platos": ["ensalada cesar", "tostado"],
+        "rating": 4.1,
+        "lat": -34.6457811,
+        "lng": -58.564467,
+        "direccion": "Unidad Funcional, Avenida de Mayo 550 Numero 14, Ramos Mejía"
+    },
+    {
+        "id": "ChIJG7jmieXHvJURAlcmStHK1L4",
+        "nombre": "Club de la Milanesa - Ramos Mejia",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 3.9,
+        "lat": -34.64347,
+        "lng": -58.565869,
+        "direccion": "Rosales 239, Ramos Mejía"
+    },
+    {
+        "id": "ChIJkdVrFObHvJURPF5u9X13U7w",
+        "nombre": "La Farola Express",
+        "tipo": ["rápida"],
+        "platos": ["pizza", "empanadas"],
+        "rating": 3.8,
+        "lat": -34.6455902,
+        "lng": -58.5649403,
+        "direccion": "BUF Ramos Mejía Buenos Aires AR, Avenida de Mayo 533"
+    },
+    {
+        "id": "ChIJQwaNOObHvJURhbNoAuDgDZ0",
+        "nombre": "Paja rota parrilla al carbón",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "hamburguesa"],
+        "rating": 4.2,
+        "lat": -34.6466147,
+        "lng": -58.5642428,
+        "direccion": "Avenida de Mayo 638, Ramos Mejía"
+    },
+    {
+        "id": "ChIJh9imOc7KvJURPD3Z6Ij_JSg",
+        "nombre": "Mi Dulce Capricho",
+        "tipo": ["café"],
+        "platos": ["helado", "tostado"],
+        "rating": 4.8,
+        "lat": -34.6469868,
+        "lng": -58.5630377,
+        "direccion": "Suipacha 224, B1704FHD, Ramos Mejía"
+    },
+    {
+        "id": "ChIJaxFyjOTHvJURP_BfT6ftUnw",
+        "nombre": "Pepper",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.1,
+        "lat": -34.6411809,
+        "lng": -58.561275,
+        "direccion": "Bartolomé Mitre 210, Ramos Mejía"
+    },
+    {
+        "id": "ChIJ-3bhlu_HvJUR7ewqvimvgS8",
+        "nombre": "Café Martínez",
+        "tipo": ["café"],
+        "platos": ["tostado", "helado"],
+        "rating": 4.2,
+        "lat": -34.6423417,
+        "lng": -58.5669689,
+        "direccion": "Necochea 140, Ramos Mejía"
+    },
+    {
+        "id": "ChIJ5QRD3e_HvJURCUJiFFiVAvc",
+        "nombre": "Tinto y Carbón",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "hamburguesa"],
+        "rating": 4.2,
+        "lat": -34.6415011,
+        "lng": -58.5673401,
+        "direccion": "BRA, Necochea 23, Ramos Mejía"
+    },
+    {
+        "id": "ChIJASzfhOjHvJURXo6RWTAuOo0",
+        "nombre": "SHIPIBO Bistró Amazónico",
+        "tipo": ["rápida"],
+        "platos": ["ensalada cesar", "pollo frito"],
+        "rating": 4.8,
+        "lat": -34.6473284,
+        "lng": -58.5663113,
+        "direccion": "Suipacha 427, Ramos Mejía"
+    },
+    {
+        "id": "ChIJd1750_rHvJURAgDRacdiT9c",
+        "nombre": "Sandwicherías \"Lo de Mario\" Ramos",
+        "tipo": ["rápida"],
+        "platos": ["tostado", "hamburguesa"],
+        "rating": 4.3,
+        "lat": -34.63941509999999,
+        "lng": -58.5633056,
+        "direccion": "French 58, Buenos Aires"
+    },
+    {
+        "id": "ChIJe0oYJ_DHvJURHBvzQBFbpbc",
+        "nombre": "Pompeya Pizzeria Napoletana",
+        "tipo": ["italiana"],
+        "platos": ["pizza", "pasta"],
+        "rating": 4.4,
+        "lat": -34.6406721,
+        "lng": -58.5677791,
+        "direccion": "Leandro N. Alem 325, Ramos Mejía"
+    },
+    {
+        "id": "ChIJk6Ft--fHvJURh0T_CvFiPFw",
+        "nombre": "Container Bar",
+        "tipo": ["café", "rápida"],
+        "platos": ["tostado", "hamburguesa"],
+        "rating": 4.4,
+        "lat": -34.6495787,
+        "lng": -58.5655255,
+        "direccion": "B1704BRS, Necochea 955, Ramos Mejía"
+    },
+    {
+        "id": "ChIJdcbZg_rHvJURRaFXhd9tg-A",
+        "nombre": "La Fábrica",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "empanadas"],
+        "rating": 3.8,
+        "lat": -34.6381761,
+        "lng": -58.5656907,
+        "direccion": "Avenida Gaona 2608, Ramos Mejía"
+    },
+    {
+        "id": "ChIJPRf63PHHvJURYC90JUNc4mk",
+        "nombre": "Antoniette",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 3.9,
+        "lat": -34.641052,
+        "lng": -58.5700146,
+        "direccion": "Leandro N. Alem 475, Gran Buenos Aires"
+    },
+    {
+        "id": "ChIJM5hFavvHvJURMkt8Bas_cSE",
+        "nombre": "Parrilla Lo De Willy",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "hamburguesa"],
+        "rating": 4.3,
+        "lat": -34.6376491,
+        "lng": -58.561053,
+        "direccion": "Avenida Gaona 2168, Ramos Mejía"
+    },
+    {
+        "id": "ChIJYW1rMfrHvJUR3gLdMvoMb0E",
+        "nombre": "Fabrica De Cajas Para Sushi Y Wok",
+        "tipo": ["sushi"],
+        "platos": ["sushi"],
+        "rating": 4.4,
+        "lat": -34.6355719,
+        "lng": -58.5632884,
+        "direccion": "Yapeyú 468, Villa Sarmiento"
+    },
+    {
+        "id": "ChIJT4ZKsu3HvJURLiKTjtPUui4",
+        "nombre": "Sushi N' Roll Delivery Ramos Mejía",
+        "tipo": ["sushi"],
+        "platos": ["sushi"],
+        "rating": 4.3,
+        "lat": -34.6447853,
+        "lng": -58.5735027,
+        "direccion": "B1704EYO EYO Ramos Mejía Buenos Aires AR, Rosales 763"
+    },
+    {
+        "id": "ChIJb0WZW_HHvJUR430TLVDRiz8",
+        "nombre": "Juventud Unida. Mutual SMyC. Villa Sarmiento",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "empanadas"],
+        "rating": 4.6,
+        "lat": -34.6377899,
+        "lng": -58.5709463,
+        "direccion": "B1707CCA, Juan Chassaing 449, Villa Sarmiento"
+    },
+    {
+        "id": "ChIJCwtrxgnIvJURc24b55UKVXw",
+        "nombre": "Ristretto",
+        "tipo": ["café"],
+        "platos": ["tostado", "helado"],
+        "rating": 4.1,
+        "lat": -34.6401862,
+        "lng": -58.5531099,
+        "direccion": "Avenida Rivadavia 13230, Ramos Mejía"
+    },
+    {
+        "id": "ChIJd_LXdNvHvJURI21iuNPYuag",
+        "nombre": "La Barletta Pizzas Y Empanadas",
+        "tipo": ["italiana", "rápida"],
+        "platos": ["pizza", "empanadas"],
+        "rating": 3.7,
+        "lat": -34.6558238,
+        "lng": -58.5631042,
+        "direccion": "25 de Mayo 708, Ramos Mejía"
+    },
+    {
+        "id": "ChIJj0g1odvHvJURqvmGYgnlt48",
+        "nombre": "Kanu Sushi - Delivery Ramos Mejia - Sin gluten",
+        "tipo": ["sushi"],
+        "platos": ["sushi"],
+        "rating": 3.7,
+        "lat": -34.655873,
+        "lng": -58.5628901,
+        "direccion": "B1704BVP, Avenida de Mayo 1513, Ramos Mejía"
+    },
+    {
+        "id": "ChIJWyxkdtPHvJURUe0layfF4TU",
+        "nombre": "Fiestisima MARKET UP BURGER",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.5,
+        "lat": -34.6573871,
+        "lng": -58.5624055,
+        "direccion": "Avenida de Mayo 1638, Ramos Mejía"
+    },
+    {
+        "id": "ChIJOVN2fI3HvJURuqy6yF7Srw8",
+        "nombre": "Belgrano Padel",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "empanadas"],
+        "rating": 4.6,
+        "lat": -34.643731,
+        "lng": -58.5796709,
+        "direccion": "Belgrano 1063, Ramos Mejía"
+    },
+    {
+        "id": "ChIJZUmaWkfIvJURdPa-lqGGOLA",
+        "nombre": "La Esquina",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "empanadas"],
+        "rating": 3.9,
+        "lat": -34.63923279999999,
+        "lng": -58.52494219999999,
+        "direccion": "Carhue, Avenida Rivadavia &, Buenos Aires"
+    },
+    {
+        "id": "ChIJwZsBPnfIvJURlJRL5FZsmyA",
+        "nombre": "Empanadas de 10",
+        "tipo": ["rápida"],
+        "platos": ["empanadas"],
+        "rating": 3.9,
+        "lat": -34.6541733,
+        "lng": -58.54997539999999,
+        "direccion": "Avenida General San Martín 1420, Ramos Mejía"
+    },
+    {
+        "id": "ChIJRcGGYQa4vJURGBkQNkp-ISo",
+        "nombre": "Shell",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "tostado"],
+        "rating": 4.1,
+        "lat": -34.6257081,
+        "lng": -58.5630731,
+        "direccion": "Avenida Marcelo Torcuato de Alvear 4691, Caseros"
+    },
+    {
+        "id": "ChIJoYgvGRPIvJURT7rWHCeqbLk",
+        "nombre": "Celiacos Sanos y Riquisimos",
+        "tipo": ["rápida"],
+        "platos": ["ensalada cesar", "tostado"],
+        "rating": 3.6,
+        "lat": -34.64143550000001,
+        "lng": -58.5396969,
+        "direccion": "B1702DUD, Independencia 102-118, Ciudadela"
+    },
+    {
+        "id": "ChIJw9NvlEDIvJURO1WfvgHNW60",
+        "nombre": "Flambo",
+        "tipo": ["café"],
+        "platos": ["helado", "tostado"],
+        "rating": 4.4,
+        "lat": -34.6404263,
+        "lng": -58.52745410000001,
+        "direccion": "Coronel Ramón Lorenzo Falcón 7198"
+    },
+    {
+        "id": "ChIJHxptoCDGvJURCUxcNgL0gNI",
+        "nombre": "Pasta e Basta",
+        "tipo": ["italiana"],
+        "platos": ["pasta", "pizza"],
+        "rating": 4.7,
+        "lat": -34.6493468,
+        "lng": -58.53767250000001,
+        "direccion": "Paso 1512, Ramos Mejía"
+    },
+    {
+        "id": "ChIJdUFDbgW4vJURoRWgVKFld7U",
+        "nombre": "Cerveza Cygnus",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.6,
+        "lat": -34.6218876,
+        "lng": -58.5650219,
+        "direccion": "3 de Febrero 4155, Caseros"
+    },
+    {
+        "id": "ChIJqVDzYRrIvJURvFnosk9IbrM",
+        "nombre": "El Comienzo",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "empanadas"],
+        "rating": 4,
+        "lat": -34.632106,
+        "lng": -58.5401296,
+        "direccion": "Chacabuco 792, Ciudadela"
+    },
+    {
+        "id": "ChIJq9S253zIvJUR4sQYIpBie3s",
+        "nombre": "LALYS FAST FOOD",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.2,
+        "lat": -34.661142,
+        "lng": -58.54452999999999,
+        "direccion": "Tomás Justo Villegas 196, Buenos Aires"
+    },
+    {
+        "id": "ChIJ41W01prHvJURGW3W5fRbfsQ",
+        "nombre": "FRANGO & Co",
+        "tipo": ["rápida"],
+        "platos": ["pollo frito", "hamburguesa"],
+        "rating": 3.9,
+        "lat": -34.6479635,
+        "lng": -58.5911813,
+        "direccion": "B1706AJE, Gobernador Emilio Castro 289, Haedo"
+    },
+    {
+        "id": "ChIJ8a6352jIvJUR6rz5Ocdzlf4",
+        "nombre": "RESTOBAR La Previa",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.6,
+        "lat": -34.6496579,
+        "lng": -58.53557789999999,
+        "direccion": "Avenida Díaz Vélez 1002, Buenos Aires"
+    },
+    {
+        "id": "ChIJxQA8Rni4vJURLLtLgcPMOqc",
+        "nombre": "HAEDO PLAZA",
+        "tipo": ["café"],
+        "platos": ["tostado", "helado"],
+        "rating": 4.1,
+        "lat": -34.63566069999999,
+        "lng": -58.5905201,
+        "direccion": "Avenida Presidente Perón 1880 PB, Haedo"
+    },
+    {
+        "id": "ChIJO7RUi4THvJURO4o30jupvBY",
+        "nombre": "Vuelta de Haedo",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "empanadas"],
+        "rating": 4.4,
+        "lat": -34.64589,
+        "lng": -58.59295699999999,
+        "direccion": "Avenida Rivadavia 16285, Haedo"
+    },
+    {
+        "id": "ChIJZ2mZoCK4vJURALztdnlcFNw",
+        "nombre": "PANCHO DIFERENTE",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "empanadas"],
+        "rating": 4.6,
+        "lat": -34.6234625,
+        "lng": -58.54653329999999,
+        "direccion": "Avenida Militar 3620, Buenos Aires"
+    },
+    {
+        "id": "ChIJ157jksnHvJURYXYa4xKspP8",
+        "nombre": "Restaurante: \"MI MIA\".",
+        "tipo": ["italiana"],
+        "platos": ["pizza", "pasta"],
+        "rating": 4.4,
+        "lat": -34.6669873,
+        "lng": -58.57621959999999,
+        "direccion": "Doctor Ignacio Arieta 1705, Villa Luzuriaga"
+    },
+    {
+        "id": "ChIJo5pwfYPHvJURGT1_q18FKB8",
+        "nombre": "Paja Rota",
+        "tipo": ["Parrilla"],
+        "platos": ["asado", "hamburguesa"],
+        "rating": 4.3,
+        "lat": -34.6466713,
+        "lng": -58.59447479999999,
+        "direccion": "APD, José Manuel Estrada 134, Haedo"
+    },
+    {
+        "id": "ChIJFcvRij_IvJURIkAgwhe8k30",
+        "nombre": "Promo Fiesta",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "empanadas"],
+        "rating": 4.2,
+        "lat": -34.6399555,
+        "lng": -58.53009359999999,
+        "direccion": "Avenida General Paz 41, Ciudadela"
+    },
+    {
+        "id": "ChIJb16deLDHvJURAI4H3b3Gi7c",
+        "nombre": "Tijuana Pizza",
+        "tipo": ["italiana", "rápida"],
+        "platos": ["pizza", "empanadas"],
+        "rating": 3.6,
+        "lat": -34.666155,
+        "lng": -58.58629179999999,
+        "direccion": "Rivera Indarte 802, Villa Luzuriaga"
+    },
+    {
+        "id": "ChIJY4nS0Pe3vJURnVGW0COwHNI",
+        "nombre": "Juguetes Perdidos Cerveza",
+        "tipo": ["rápida"],
+        "platos": ["hamburguesa", "pollo frito"],
+        "rating": 4.8,
+        "lat": -34.6149937,
+        "lng": -58.5539887,
+        "direccion": "Bolivia 3342, Caseros"
+    },
+    {
+        "id": "ChIJVbEWICzGvJURe1TY-dcI36c",
+        "nombre": "MIHANA Sushi - San Justo",
+        "tipo": ["sushi"],
+        "platos": ["sushi"],
+        "rating": 4.1,
+        "lat": -34.67388520000001,
+        "lng": -58.5616824,
+        "direccion": "General Ocampo 2818, San Justo"
+    },
+    {
+        "id": "ChIJlR7TvkDIvJUR-zXXAjXT7ZQ",
+        "nombre": "Havanna",
+        "tipo": ["café"],
+        "platos": ["helado", "tostado"],
+        "rating": 4.2,
+        "lat": -34.639938,
+        "lng": -58.52707700000001,
+        "direccion": "Ramón L. Falcón 7146 Shopping Liniers, Local 221"
+    }
+]
