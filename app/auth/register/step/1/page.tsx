@@ -28,7 +28,7 @@ const getData = async () => {
         data = []
     }
 
-    return data
+    return data.restricciones
 }
 
 export default async function Step() {

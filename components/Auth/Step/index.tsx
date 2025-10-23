@@ -52,25 +52,24 @@ export default function Step({
         }
     }
 
-    
+    const handleNext = async () => {
+            router.push(`/auth/register/step/${step + 1}`)
+        /*try {
+            await fetch('/api/steps', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    step1: data.step1 ?? [],
+                    step2: data.step2 ?? [],
+                    step3: data.step3 ?? [],
+                }),
+            })
 
-        const handleNext = async () => {
-  try {
-    await fetch("/api/steps", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        step1: data.step1 ?? [],
-        step2: data.step2 ?? [],
-        step3: data.step3 ?? [],
-      }),
-    });
-
-    router.push(`/auth/register/step/${step + 1}`);
-  } catch (err) {
-    console.error("Error enviando pasos:", err);
-  }
-};
+            router.push(`/auth/register/step/${step + 1}`)
+        } catch (err) {
+            console.error('Error enviando pasos:', err)
+        }*/
+    }
     const handleBack = () => {
         router.push(`/auth/register/step/${step - 1}`)
     }
