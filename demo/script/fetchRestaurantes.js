@@ -5,8 +5,6 @@ import path from 'path'
 import dotenv from 'dotenv'
 dotenv.config({ path: '.env.local' }) // asegúrate que esté en la raíz del proyecto
 
-console.log(process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY)
-
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY // tu clave en .env.local o entorno
 const LAT = -34.6438883 // coordenadas base (ej: Buenos Aires)
 const LNG = -58.563229

@@ -26,8 +26,6 @@ const getData = async () => {
         console.error('Error cargando los datos:', error)
         data = []
     }
-    console.log(data);
-
 
     return data
 }

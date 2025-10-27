@@ -26,12 +26,9 @@ const getData = async () => {
     } catch (error) {
         console.error('Error cargando los datos:', error)
         data = []
-    }
+    }    
 
-    console.log(data.restricciones);
-    
-
-    return data.restricciones
+    return data
 }
 
 export default async function Step() {

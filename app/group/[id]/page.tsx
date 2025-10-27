@@ -21,7 +21,6 @@ export default function GroupDetail() {
         try {
             const res = await fetch(`/api/group/${id}`)
             const data = await res.json()
-            console.log(data)
 
             setGroup(data)
         } catch (err) {
@@ -168,8 +167,6 @@ export default function GroupDetail() {
                         <hr className={styles.divider} />
 
                         {group.miembros.map(f => {
-                            console.log(f)
-
                             return (
                                 <FriendCard
                                     friend={{
