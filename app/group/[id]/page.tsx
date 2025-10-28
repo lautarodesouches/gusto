@@ -9,184 +9,181 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
 import { FriendCard } from '@/components'
+import ChatGrupo from '@/components/Social/Chat/ChatGrupo'
 
 export default function GroupDetail() {
-    const { id } = useParams<{ id: string }>()
-    const [group, setGroup] = useState<Group | null>(null)
-    const [email, setEmail] = useState('')
-    const [mensaje, setMensaje] = useState('')
-    const [loading, setLoading] = useState(false)
+  const { id } = useParams<{ id: string }>()
+  const [group, setGroup] = useState<Group | null>(null)
+  const [email, setEmail] = useState('')
+  const [mensaje, setMensaje] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showChat, setShowChat] = useState(false) 
 
-    const fetchGroup = async () => {
-        try {
-            const res = await fetch(`/api/group/${id}`)
-            const data = await res.json()
-            console.log(data)
-
-            setGroup(data)
-        } catch (err) {
-            console.error('Error fetching group detail:', err)
-        }
+  const fetchGroup = async () => {
+    try {
+      const res = await fetch(`/api/group/${id}`)
+      const data = await res.json()
+      setGroup(data)
+    } catch (err) {
+      console.error('Error fetching group detail:', err)
     }
+  }
 
-    useEffect(() => {
-        if (id) fetchGroup()
-    }, [id])
+  useEffect(() => {
+    if (id) fetchGroup()
+  }, [id])
 
-    const handleInvite = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!id) return alert('ID de grupo no encontrado')
+  const handleInvite = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!id) return alert('ID de grupo no encontrado')
 
-        setLoading(true)
-        try {
-            const body = {
-                query: email,
-                mensajePersonalizado: mensaje,
-            }
+    setLoading(true)
+    try {
+      const body = { query: email, mensajePersonalizado: mensaje }
+      const res = await fetch(`/api/group/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
 
-            const res = await fetch(`/api/group/${id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Error al invitar')
 
-            const data = await res.json()
-
-            if (!res.ok) throw new Error(data.message || 'Error al invitar')
-
-            alert('Invitación enviada correctamente!')
-            setEmail('')
-            setMensaje('')
-        } catch (err: unknown) {
-            console.error(err)
-            alert('No se pudo enviar la invitación')
-        } finally {
-            setLoading(false)
-        }
+      alert('Invitación enviada correctamente!')
+      setEmail('')
+      setMensaje('')
+    } catch (err) {
+      console.error(err)
+      alert('No se pudo enviar la invitación')
+    } finally {
+      setLoading(false)
     }
-    return (
-        <main className={styles.main}>
-            <nav className={styles.nav}>
-                <div className={styles.nav__logo}>
-                    <Link href={ROUTES.MAP}>
-                        <Image
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
-                            className={styles.nav__img}
-                            width={0}
-                            height={0}
-                            priority
-                        />
-                    </Link>
-                </div>
-                <div className={styles.nav__icons}>
-                    <div className={styles.nav__div}>
-                        <FontAwesomeIcon
-                            icon={faBell}
-                            className={styles.nav__icon}
-                        />
-                    </div>
-                    <div className={styles.nav__div}>
-                        <FontAwesomeIcon
-                            icon={faUser}
-                            className={styles.nav__icon}
-                        />
-                    </div>
-                </div>
-            </nav>
-            {group ? (
-                <div className={styles.container}>
-                    <div className={styles.card}>
-                        <div className={styles.header}>
-                            <h1>{group.nombre}</h1>
-                            <span
-                                className={
-                                    group.activo
-                                        ? styles.active
-                                        : styles.inactive
-                                }
-                            >
-                                {group.activo ? 'Activo' : 'Inactivo'}
-                            </span>
-                        </div>
+  }
 
-                        <p className={styles.description}>
-                            {group.descripcion}
-                        </p>
+  return (
+    <main className={styles.main}>
+      <nav className={styles.nav}>
+        <div className={styles.nav__logo}>
+          <Link href={ROUTES.MAP}>
+            <Image
+              src="/images/brand/gusto-center-negative.svg"
+              alt="Logo Gusto!"
+              className={styles.nav__img}
+              width={0}
+              height={0}
+              priority
+            />
+          </Link>
+        </div>
+        <div className={styles.nav__icons}>
+          <div className={styles.nav__div}>
+            <FontAwesomeIcon icon={faBell} className={styles.nav__icon} />
+          </div>
+          <div className={styles.nav__div}>
+            <FontAwesomeIcon icon={faUser} className={styles.nav__icon} />
+          </div>
+        </div>
+      </nav>
 
-                        <div className={styles.infoGrid}>
-                            <div>
-                                <strong>Administrador:</strong>{' '}
-                                {group.administradorNombre}
-                            </div>
-                            <div>
-                                <strong>Miembros:</strong>{' '}
-                                {group.cantidadMiembros}
-                            </div>
-                            <div>
-                                <strong>Código de invitación:</strong>{' '}
-                                {group.codigoInvitacion}
-                            </div>
-                            <div>
-                                <strong>Creado:</strong> {group.fechaCreacion}
-                            </div>
-                        </div>
+      {group ? (
+        <div className={styles.container}>
+          <div className={styles.card}>
+            <div className={styles.header}>
+              <h1>{group.nombre}</h1>
+              <span
+                className={
+                  group.activo ? styles.active : styles.inactive
+                }
+              >
+                {group.activo ? 'Activo' : 'Inactivo'}
+              </span>
+            </div>
 
-                        <hr className={styles.divider} />
+            <p className={styles.description}>{group.descripcion}</p>
 
-                        <form
-                            className={styles.inviteForm}
-                            onSubmit={handleInvite}
-                        >
-                            <h2>Invitar amigos</h2>
-                            <div className={styles.inviteRow}>
-                                <input
-                                    type="email"
-                                    placeholder="Email del amigo"
-                                    value={email}
-                                    className={styles.input}
-                                    onChange={e => setEmail(e.target.value)}
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Mensaje personalizado"
-                                    value={mensaje}
-                                    className={styles.input}
-                                    onChange={e => setMensaje(e.target.value)}
-                                />
-                                <button
-                                    type="submit"
-                                    className={styles.button}
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Enviando...' : 'Invitar'}
-                                </button>
-                            </div>
-                        </form>
+            <div className={styles.infoGrid}>
+              <div>
+                <strong>Administrador:</strong> {group.administradorNombre}
+              </div>
+              <div>
+                <strong>Miembros:</strong> {group.cantidadMiembros}
+              </div>
+              <div>
+                <strong>Código de invitación:</strong>{' '}
+                {group.codigoInvitacion}
+              </div>
+              <div>
+                <strong>Creado:</strong> {group.fechaCreacion}
+              </div>
+            </div>
 
-                        <hr className={styles.divider} />
+            <hr className={styles.divider} />
 
-                        {group.miembros.map(f => {
-                            console.log(f)
+            {/* FORMULARIO INVITAR */}
+            <form className={styles.inviteForm} onSubmit={handleInvite}>
+              <h2>Invitar amigos</h2>
+              <div className={styles.inviteRow}>
+                <input
+                  type="email"
+                  placeholder="Email del amigo"
+                  value={email}
+                  className={styles.input}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Mensaje personalizado"
+                  value={mensaje}
+                  className={styles.input}
+                  onChange={(e) => setMensaje(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className={styles.button}
+                  disabled={loading}
+                >
+                  {loading ? 'Enviando...' : 'Invitar'}
+                </button>
+              </div>
+            </form>
 
-                            return (
-                                <FriendCard
-                                    friend={{
-                                        email: f.usuarioEmail,
-                                        fotoPerfilUrl: '',
-                                        id: f.id,
-                                        nombre: f.usuarioNombre,
-                                    }}
-                                    key={f.id}
-                                />
-                            )
-                        })}
-                    </div>
-                </div>
-            ) : (
-                <div className={styles.loading}>Cargando detalles...</div>
+            <hr className={styles.divider} />
+
+            {group.miembros.map((f) => (
+              <FriendCard
+                friend={{
+                  email: f.usuarioEmail,
+                  fotoPerfilUrl: '',
+                  id: f.id,
+                  nombre: f.usuarioNombre,
+                }}
+                key={f.id}
+              />
+            ))}
+
+            <hr className={styles.divider} />
+
+            {/* BOTÓN Y CHAT */}
+            <div style={{ textAlign: 'center', marginTop: 20 }}>
+              <button
+                onClick={() => setShowChat(!showChat)}
+                className={styles.button}
+              >
+                {showChat ? 'Cerrar Chat' : 'Abrir Chat'}
+              </button>
+            </div>
+
+            {showChat && (
+              <div style={{ marginTop: 30 }}>
+                <ChatGrupo grupoId={id!} />
+              </div>
             )}
-        </main>
-    )
+          </div>
+        </div>
+      ) : (
+        <div className={styles.loading}>Cargando detalles...</div>
+      )}
+    </main>
+  )
 }
