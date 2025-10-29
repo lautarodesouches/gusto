@@ -13,19 +13,25 @@ export default function ChatGrupo({ grupoId }: { grupoId: string }) {
   const [mensajes, setMensajes] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
 
-  // ✅ Conexión única, sin duplicar listeners
+
   useEffect(() => {
+    if (connection) return; 
     const conn = new HubConnectionBuilder()
       .withUrl('http://localhost:5174/chatHub')
       .withAutomaticReconnect()
       .build()
 
+      
     const handleReceiveMessage = (msg: ChatMessage) => {
       console.log('📩 Mensaje recibido:', msg)
       setMensajes(prev => [...prev, msg])
     }
 
     conn.on('ReceiveMessage', handleReceiveMessage)
+
+    conn.on('LoadChatHistory', (mensajes) => {
+     setMensajes(mensajes);
+});
 
     conn
       .start()
@@ -37,7 +43,7 @@ export default function ChatGrupo({ grupoId }: { grupoId: string }) {
 
     setConnection(conn)
 
-    // ✅ Limpieza: desconecta y elimina listener
+    
     return () => {
       console.log('🧹 Cerrando conexión SignalR...')
       conn.off('ReceiveMessage', handleReceiveMessage)
