@@ -9,6 +9,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 import Error from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { ROUTES } from '@/routes'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
@@ -54,6 +55,9 @@ export default function Map() {
             if (plato) query.append('plato', plato)
 
             const res = await fetch(`/api/restaurants?${query.toString()}`)
+
+            if (res.status === 401) router.push(ROUTES.LOGIN)
+
             if (!res.ok) throw 'Error al cargar restaurantes'
 
             const data = await res.json()
