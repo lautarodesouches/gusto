@@ -3,18 +3,12 @@ import type { NextRequest } from 'next/server'
 import { ROUTES } from './routes'
 
 export function middleware(req: NextRequest) {
-    const { pathname } = req.nextUrl
+    const token = req.cookies.get('token')?.value
 
-    // Solo proteger la ruta /map
-    if (pathname === '/map') {
-        const token = req.cookies.get('token')?.value
-
-        if (!token) {
-            const url = req.nextUrl.clone()
-            url.pathname = ROUTES.LOGIN
-            return NextResponse.redirect(url)
-        }
-
+    if (!token) {
+        const url = req.nextUrl.clone()
+        url.pathname = ROUTES.LOGIN
+        return NextResponse.redirect(url)
     }
 
     // Todas las demás rutas son públicas
@@ -22,5 +16,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/map'], // Solo se ejecuta para /map
+    matcher: ['/map', '/group/:path*'],
 }
