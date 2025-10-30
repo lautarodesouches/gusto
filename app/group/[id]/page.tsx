@@ -1,86 +1,127 @@
-import styles from './page.module.css'
-import { Group } from '@/types'
 import { notFound, redirect } from 'next/navigation'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
+import { cookies, headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
+import styles from './page.module.css'
+import { Group } from '@/types'
 import { ROUTES } from '@/routes'
-import { GroupsSocial } from '@/components'
 import { LOCAL_URL } from '@/constants'
-import { cookies, headers } from 'next/headers'
+import { GroupsSocial } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 
-const fetchGroup = async (id: string): Promise<Group> => {
-    const headersList = await headers()
-    const cookie = headersList.get('cookie') || ''
+interface Props {
+    params: Promise<{ id: string }>
+}
 
+// Obtiene los datos de un grupo desde la API
+async function fetchGroup({
+    id,
+    cookie,
+}: {
+    id: string
+    cookie: string
+}): Promise<Group> {
     try {
         const res = await fetch(`${LOCAL_URL}/api/group/${id}`, {
-            headers: {
-                cookie,
-            },
+            headers: { cookie },
             cache: 'no-store',
         })
 
-        if (!res.ok) throw new Error()
+        // Redirigir si no está autenticado
+        if (res.status === 401) redirect(ROUTES.LOGIN)
+
+        // Si no es exitoso, lanzar error para ir al 404
+        if (!res.ok) {
+            console.error(`Error fetching group ${id}: Status ${res.status}`)
+            notFound()
+        }
 
         const data: Group = await res.json()
-
         return data
-    } catch {
+    } catch (error) {
+        // Si es un error de redirect, propagarlo
+        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+            throw error
+        }
+
+        console.error(`Error fetching group ${id}:`, error)
         notFound()
     }
 }
 
-type Props = {
-    params: Promise<{ id: string }>
-}
-
-export default async function GroupDetail({ params }: Props) {
-    const { id } = await params
-
-    const group = await fetchGroup(id)
-
+// Verifica el token de autenticación y retorna el UID del usuario
+async function verifyAuthentication(): Promise<string> {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
 
-    if (!token) return redirect(ROUTES.LOGIN)
+    if (!token) {
+        redirect(ROUTES.LOGIN)
+    }
 
-    const decoded = await admin.auth().verifyIdToken(token)
+    try {
+        const decoded = await admin.auth().verifyIdToken(token)
+        return decoded.uid
+    } catch (error) {
+        console.error('Error verifying token:', error)
+        redirect(ROUTES.LOGIN)
+    }
+}
 
-    const userId = decoded.uid
+export default async function GroupDetail({ params }: Props) {
+    // 1. Obtener parámetros
+    const { id } = await params
 
+    // 2. Verificar autenticación (esto también redirige si falla)
+    const userId = await verifyAuthentication()
+
+    // 3. Obtener headers para fetch
+    const headersList = await headers()
+    const cookie = headersList.get('cookie') || ''
+
+    // 4. Obtener datos del grupo
+    const group = await fetchGroup({ id, cookie })
+
+    // 5. Verificar permisos de administrador
     const isAdmin = group.administradorFirebaseUid === userId
 
     return (
         <main className={styles.main}>
             <nav className={styles.nav}>
                 <div className={styles.nav__logo}>
-                    <Link href={ROUTES.MAP}>
+                    <Link href={ROUTES.MAP} aria-label="Ir al mapa">
                         <Image
                             src="/images/brand/gusto-center-negative.svg"
                             alt="Logo Gusto!"
                             className={styles.nav__img}
-                            width={0}
-                            height={0}
+                            width={120}
+                            height={40}
                             priority
                         />
                     </Link>
                 </div>
                 <div className={styles.nav__icons}>
-                    <div className={styles.nav__div}>
+                    <button
+                        className={styles.nav__div}
+                        aria-label="Notificaciones"
+                        type="button"
+                    >
                         <FontAwesomeIcon
                             icon={faBell}
                             className={styles.nav__icon}
                         />
-                    </div>
-                    <div className={styles.nav__div}>
+                    </button>
+                    <Link
+                        href={ROUTES.PROFILE}
+                        className={styles.nav__div}
+                        aria-label="Perfil de usuario"
+                    >
                         <FontAwesomeIcon
                             icon={faUser}
                             className={styles.nav__icon}
                         />
-                    </div>
+                    </Link>
                 </div>
             </nav>
             <GroupsSocial group={group} />

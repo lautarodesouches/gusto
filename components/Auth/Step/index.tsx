@@ -70,6 +70,7 @@ export default function Step({
             console.error('Error enviando pasos:', err)
         }
     }
+
     const handleBack = () => {
         router.push(`/auth/register/step/${step - 1}`)
     }
