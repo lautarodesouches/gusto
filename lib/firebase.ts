@@ -12,3 +12,8 @@ export const db = getFirestore(app)
 export const storage = getStorage(app)
 
 export default app
+
+if (typeof window !== 'undefined') {
+  // Expone el objeto auth en el navegador (solo dev)
+  ;(window as any).auth = auth
+}
