@@ -84,75 +84,94 @@ export default function Social({ isVisible, handleClose }: Props) {
     }, [])
 
     return (
-        <section className={`${styles.social} ${isVisible ? styles.show : ''}`}>
-            <header className={styles.social__header}>
-                <h2 className={styles.social__title}>Social</h2>
-                <FontAwesomeIcon
-                    icon={faClose}
-                    className={styles.social__close}
-                    onClick={handleClose}
-                />
-                <div className={styles.social__width}>
-                    <FontAwesomeIcon icon={faArrowRightToBracket} />
-                    <p>Contraer pestaña</p>
-                </div>
-            </header>
+        <>
             {showSearchFriend && <FriendSearch />}
-            {showNewGroup && <GroupCreate handleCancel={() => {setShowNewGroup(false)}} />}
-            <div className={styles.social__content}>
-                <div className={styles.social__buttons}>
-                    <FriendButton
-                        handleClick={() =>
-                            setShowSearchFriend(!showSearchFriend)
-                        }
+            {showNewGroup && (
+                <GroupCreate
+                    handleCancel={() => {
+                        setShowNewGroup(false)
+                    }}
+                />
+            )}
+            <section
+                className={`${styles.social} ${isVisible ? styles.show : ''}`}
+            >
+                <header className={styles.social__header}>
+                    <h2 className={styles.social__title}>Social</h2>
+                    <FontAwesomeIcon
+                        icon={faClose}
+                        className={styles.social__close}
+                        onClick={handleClose}
                     />
-                    <GroupButton
-                        handleClick={() => setShowNewGroup(!showNewGroup)}
-                    />
-                </div>
-                <div className={styles.social__div}>
-                    <h3 className={styles.social__description}>Amigos</h3>
-                    <hr className={styles.social__line} />
-                    <ul className={styles.social__list}>
-                        {friends.map(f => (
-                            <FriendCard friend={f} key={f.id} />
-                        ))}
-                    </ul>
-                    <FriendButton
-                        handleClick={() =>
-                            setShowSearchFriend(!showSearchFriend)
-                        }
-                    />
-                </div>
-                {friendsInvitations.length > 0 && (
+                    <div className={styles.social__width}>
+                        <FontAwesomeIcon icon={faArrowRightToBracket} />
+                        <p>Contraer pestaña</p>
+                    </div>
+                </header>
+                <div className={styles.social__content}>
+                    <div className={styles.social__buttons}>
+                        <FriendButton
+                            handleClick={() => {
+                                setShowSearchFriend(!showSearchFriend)
+                                setShowNewGroup(false)
+                            }}
+                        />
+                        <GroupButton
+                            handleClick={() => {
+                                setShowNewGroup(!showNewGroup)
+                                setShowSearchFriend(false)
+                            }}
+                        />
+                    </div>
                     <div className={styles.social__div}>
-                        <h3 className={styles.social__description}>
-                            Invitaciones
-                        </h3>
+                        <h3 className={styles.social__description}>Amigos</h3>
                         <hr className={styles.social__line} />
                         <ul className={styles.social__list}>
-                            {friendsInvitations.map(i => (
-                                <FriendCard
-                                    friend={i.remitente}
-                                    key={i.id}
-                                    invitationId={i.id}
-                                />
+                            {friends.map(f => (
+                                <FriendCard friend={f} key={f.id} />
                             ))}
                         </ul>
-                    </div>
-                )}
-                <div className={styles.social__div}>
-                    <h3 className={styles.social__description}>Grupos</h3>
-                    <hr className={styles.social__line} />
-                    <ul className={styles.social__list}>
-                        {groups.map(g => (<GroupCard key={g.id} group={g} />
-                        ))}
-                        <GroupButton
-                            handleClick={() => setShowNewGroup(!showNewGroup)}
+                        <FriendButton
+                            handleClick={() => {
+                                setShowSearchFriend(!showSearchFriend)
+                                setShowNewGroup(false)
+                            }}
                         />
-                    </ul>
+                    </div>
+                    {friendsInvitations.length > 0 && (
+                        <div className={styles.social__div}>
+                            <h3 className={styles.social__description}>
+                                Invitaciones
+                            </h3>
+                            <hr className={styles.social__line} />
+                            <ul className={styles.social__list}>
+                                {friendsInvitations.map(i => (
+                                    <FriendCard
+                                        friend={i.remitente}
+                                        key={i.id}
+                                        invitationId={i.id}
+                                    />
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <div className={styles.social__div}>
+                        <h3 className={styles.social__description}>Grupos</h3>
+                        <hr className={styles.social__line} />
+                        <ul className={styles.social__list}>
+                            {groups.map(g => (
+                                <GroupCard key={g.id} group={g} />
+                            ))}
+                            <GroupButton
+                                handleClick={() => {
+                                    setShowNewGroup(!showNewGroup)
+                                    setShowSearchFriend(false)
+                                }}
+                            />
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </>
     )
 }

@@ -1,7 +1,7 @@
 .search {
     background: var(--background);
     position: absolute;
-    top: 0;
+    top: 10px;
     left: -320px;
     width: 300px;
     min-height: 100px;
