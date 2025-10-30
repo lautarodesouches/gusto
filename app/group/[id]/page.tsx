@@ -1,69 +1,58 @@
-'use client'
-import { useEffect, useState } from 'react'
 import styles from './page.module.css'
 import { Group } from '@/types'
-import { useParams } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
-import { FriendCard } from '@/components'
+import { GroupsSocial } from '@/components'
+import { LOCAL_URL } from '@/constants'
+import { cookies, headers } from 'next/headers'
+import admin from '@/lib/firebaseAdmin'
 
-export default function GroupDetail() {
-    const { id } = useParams<{ id: string }>()
-    const [group, setGroup] = useState<Group | null>(null)
-    const [email, setEmail] = useState('')
-    const [mensaje, setMensaje] = useState('')
-    const [loading, setLoading] = useState(false)
+const fetchGroup = async (id: string): Promise<Group> => {
+    const headersList = await headers()
+    const cookie = headersList.get('cookie') || ''
 
-    const fetchGroup = async () => {
-        try {
-            const res = await fetch(`/api/group/${id}`)
-            const data = await res.json()
-            console.log(data)
+    try {
+        const res = await fetch(`${LOCAL_URL}/api/group/${id}`, {
+            headers: {
+                cookie,
+            },
+            cache: 'no-store',
+        })
 
-            setGroup(data)
-        } catch (err) {
-            console.error('Error fetching group detail:', err)
-        }
+        if (!res.ok) throw new Error()
+
+        const data: Group = await res.json()
+
+        return data
+    } catch {
+        notFound()
     }
+}
 
-    useEffect(() => {
-        if (id) fetchGroup()
-    }, [id])
+type Props = {
+    params: Promise<{ id: string }>
+}
 
-    const handleInvite = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!id) return alert('ID de grupo no encontrado')
+export default async function GroupDetail({ params }: Props) {
+    const { id } = await params
 
-        setLoading(true)
-        try {
-            const body = {
-                query: email,
-                mensajePersonalizado: mensaje,
-            }
+    const group = await fetchGroup(id)
 
-            const res = await fetch(`/api/group/${id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            })
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
 
-            const data = await res.json()
+    if (!token) return redirect(ROUTES.LOGIN)
 
-            if (!res.ok) throw new Error(data.message || 'Error al invitar')
+    const decoded = await admin.auth().verifyIdToken(token)
 
-            alert('Invitación enviada correctamente!')
-            setEmail('')
-            setMensaje('')
-        } catch (err: unknown) {
-            console.error(err)
-            alert('No se pudo enviar la invitación')
-        } finally {
-            setLoading(false)
-        }
-    }
+    const userId = decoded.uid
+
+    const isAdmin = group.administradorFirebaseUid === userId
+
     return (
         <main className={styles.main}>
             <nav className={styles.nav}>
@@ -94,99 +83,7 @@ export default function GroupDetail() {
                     </div>
                 </div>
             </nav>
-            {group ? (
-                <div className={styles.container}>
-                    <div className={styles.card}>
-                        <div className={styles.header}>
-                            <h1>{group.nombre}</h1>
-                            <span
-                                className={
-                                    group.activo
-                                        ? styles.active
-                                        : styles.inactive
-                                }
-                            >
-                                {group.activo ? 'Activo' : 'Inactivo'}
-                            </span>
-                        </div>
-
-                        <p className={styles.description}>
-                            {group.descripcion}
-                        </p>
-
-                        <div className={styles.infoGrid}>
-                            <div>
-                                <strong>Administrador:</strong>{' '}
-                                {group.administradorNombre}
-                            </div>
-                            <div>
-                                <strong>Miembros:</strong>{' '}
-                                {group.cantidadMiembros}
-                            </div>
-                            <div>
-                                <strong>Código de invitación:</strong>{' '}
-                                {group.codigoInvitacion}
-                            </div>
-                            <div>
-                                <strong>Creado:</strong> {group.fechaCreacion}
-                            </div>
-                        </div>
-
-                        <hr className={styles.divider} />
-
-                        <form
-                            className={styles.inviteForm}
-                            onSubmit={handleInvite}
-                        >
-                            <h2>Invitar amigos</h2>
-                            <div className={styles.inviteRow}>
-                                <input
-                                    type="email"
-                                    placeholder="Email del amigo"
-                                    value={email}
-                                    className={styles.input}
-                                    onChange={e => setEmail(e.target.value)}
-                                    required
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Mensaje personalizado"
-                                    value={mensaje}
-                                    className={styles.input}
-                                    onChange={e => setMensaje(e.target.value)}
-                                />
-                                <button
-                                    type="submit"
-                                    className={styles.button}
-                                    disabled={loading}
-                                >
-                                    {loading ? 'Enviando...' : 'Invitar'}
-                                </button>
-                            </div>
-                        </form>
-
-                        <hr className={styles.divider} />
-
-                        {group.miembros.map(f => {
-                            console.log(f)
-
-                            return (
-                                <FriendCard
-                                    friend={{
-                                        email: f.usuarioEmail,
-                                        fotoPerfilUrl: '',
-                                        id: f.id,
-                                        nombre: f.usuarioNombre,
-                                    }}
-                                    key={f.id}
-                                />
-                            )
-                        })}
-                    </div>
-                </div>
-            ) : (
-                <div className={styles.loading}>Cargando detalles...</div>
-            )}
+            <GroupsSocial group={group} />
         </main>
     )
 }

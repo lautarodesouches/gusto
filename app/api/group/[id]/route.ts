@@ -112,22 +112,19 @@ export async function POST(
         const user = users[0]
 
         // enviar invitación al backend real
-        const resInvite = await fetch(
-            `${API_URL}/Grupo/${id}/invitar`,
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    emailUsuario: user.email,
-                    usuarioId: user.id,
-                    usuarioUsername: user.username,
-                    mensajePersonalizado: mensajePersonalizado || '',
-                }),
-            }
-        )
+        const resInvite = await fetch(`${API_URL}/Grupo/${id}/invitar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                emailUsuario: user.email,
+                usuarioId: user.id,
+                usuarioUsername: user.username,
+                mensajePersonalizado: mensajePersonalizado || '',
+            }),
+        })
 
         const data = await resInvite.json()
 

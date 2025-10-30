@@ -92,6 +92,12 @@ export type Group = {
     fechaCreacion: string
     fechaExpiracionCodigo: string
     id: string
-    miembros: { usuarioEmail: string; usuarioNombre: string; id: string }[]
+    miembros: GroupMember[]
     nombre: string
+}
+
+export type GroupMember = {
+    usuarioEmail: string
+    usuarioNombre: string
+    id: string
 }
