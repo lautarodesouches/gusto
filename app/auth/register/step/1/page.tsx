@@ -32,22 +32,7 @@ const getData = async () => {
 
 export default async function Step() {
     const data = await getData()
-
-    if (!data || data.length === 0) {
-        return (
-            <div
-                style={{
-                    color: 'var(--white)',
-                    textAlign: 'center',
-                    padding: '2rem',
-                }}
-            >
-                No se pudieron cargar las opciones. Intenta recargar la
-                página.
-            </div>
-        )
-    }
-
+    
     return (
         <AuthStep
             title="Alguna alergia o intolerancia?"

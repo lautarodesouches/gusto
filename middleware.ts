@@ -16,5 +16,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/map', '/group/:path*'],
+    matcher: ['/map', '/group/:path*', '/auth/register/step/:path*'],
 }
