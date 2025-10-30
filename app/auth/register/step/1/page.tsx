@@ -7,7 +7,7 @@ const getData = async () => {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
 
-    let data: RegisterItem[] = []
+    let data: { restricciones: RegisterItem[] } = { restricciones: [] }
 
     try {
         const res = await fetch(`${API_URL}/Restriccion`, {
@@ -21,11 +21,10 @@ const getData = async () => {
             throw new Error('Error en el fetch')
         }
 
-       data = await res.json()
-       
+        data = await res.json()
     } catch (error) {
         console.error('Error cargando los datos:', error)
-        data = []
+        data.restricciones = []
     }
 
     return data.restricciones
@@ -33,6 +32,21 @@ const getData = async () => {
 
 export default async function Step() {
     const data = await getData()
+
+    if (!data || data.length === 0) {
+        return (
+            <div
+                style={{
+                    color: 'var(--white)',
+                    textAlign: 'center',
+                    padding: '2rem',
+                }}
+            >
+                No se pudieron cargar las opciones. Intenta recargar la
+                página.
+            </div>
+        )
+    }
 
     return (
         <AuthStep

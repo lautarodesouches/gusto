@@ -33,7 +33,21 @@ const getData = async () => {
 }
 
 export default async function Step() {
-    const content = await getData()
+    const data = await getData()
+
+    if (!data || data.length === 0) {
+        return (
+            <div
+                style={{
+                    color: 'var(--white)',
+                    textAlign: 'center',
+                    padding: '2rem',
+                }}
+            >
+                No se pudieron cargar las opciones. Intenta recargar la página.
+            </div>
+        )
+    }
 
     return (
         <AuthStep
@@ -41,7 +55,7 @@ export default async function Step() {
             description="Seleccioná hasta 5 tipos de cocina o platos que
                 prefieras (podés agregar otros)"
             inputDescription="Escribe una comida"
-            content={content}
+            content={data}
         />
     )
 }
