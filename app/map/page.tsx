@@ -12,6 +12,7 @@ import { MapFilter, MapSocial, Loading, MapView } from '@/components'
 import { Suspense, useState } from 'react'
 import { MapProvider } from '@/components/Map/MapProvider'
 import Image from 'next/image'
+import NotificationBell from '@/components/Social/NotificationBell/Notificacion'
 
 export default function Map() {
     const [isFiltersVisible, setIsFiltersVisible] = useState(false)
@@ -55,10 +56,7 @@ export default function Map() {
                     </fieldset>
                     <div className={styles.nav__icons}>
                         <div className={styles.nav__div}>
-                            <FontAwesomeIcon
-                                icon={faBell}
-                                className={styles.nav__icon}
-                            />
+                              <NotificationBell />
                         </div>
                         <div className={styles.nav__div}>
                             <FontAwesomeIcon
