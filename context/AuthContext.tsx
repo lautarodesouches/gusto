@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
 
-    // 🔹 Maneja cambios de autenticación (login/logout)
+    //  Maneja cambios de autenticación (login/logout)
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
             if (firebaseUser) {
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return () => unsubscribe()
     }, [])
 
-    // 🔄 Refresca token automáticamente cada vez que Firebase lo renueva
+    //  Refresca token automáticamente cada vez que Firebase lo renueva
     useEffect(() => {
         const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
