@@ -53,19 +53,22 @@
         justify-content: center;
         width: 50%;
         max-width: 50%;
-        background: var(--background);
+        background-image: url('/images/all/aplicacion-gusto.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 70%;
         border-radius: 5px;
         color: var(--grey);
         font-size: 3rem;
         font-family: var(--font-gliker);
         font-weight: 700;
     }
-    
+
     /* En rutas de step, siempre ocupar todo el ancho */
     .main.stepRoute {
         flex-direction: column;
     }
-    
+
     .main.stepRoute .main__div {
         width: 100%;
         max-width: 100%;

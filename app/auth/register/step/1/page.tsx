@@ -1,12 +1,21 @@
 import { AuthStep } from '@/components'
 import { API_URL } from '@/constants'
 import { RegisterItem } from '@/types'
+import { cookies } from 'next/headers'
 
 const getData = async () => {
-    let data: RegisterItem[] = []
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
+
+    let data: { restricciones: RegisterItem[] } = { restricciones: [] }
 
     try {
-        const res = await fetch(`${API_URL}/Restriccion`)
+        const res = await fetch(`${API_URL}/Restriccion`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        })
 
         if (!res.ok) {
             throw new Error('Error en el fetch')
@@ -15,15 +24,15 @@ const getData = async () => {
         data = await res.json()
     } catch (error) {
         console.error('Error cargando los datos:', error)
-        data = []
+        data.restricciones = []
     }
 
-    return data
+    return data.restricciones
 }
 
 export default async function Step() {
     const data = await getData()
-
+    
     return (
         <AuthStep
             title="Alguna alergia o intolerancia?"

@@ -1,7 +1,8 @@
 export const ROUTES = {
-    INICIO: '/',
-    REGISTRO: '/auth/register/',
+    HOME: '/',
+    REGISTER: '/auth/register/',
     STEPS: '/auth/register/step',
     LOGIN: '/auth/login/',
     MAP: '/map/',
+    PROFILE: '/perfil/'
 }

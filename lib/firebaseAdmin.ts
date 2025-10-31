@@ -1,9 +1,9 @@
-/*import { firebaseAdminConfig } from '@/constants'
+import { FIREBASE_ADMIN_CONFIG } from '@/constants'
 import * as admin from 'firebase-admin'
 
 if (!admin.apps.length) {
     admin.initializeApp({
-        credential: admin.credential.cert(firebaseAdminConfig),
+        credential: admin.credential.cert(FIREBASE_ADMIN_CONFIG),
     })
 }
 
@@ -12,4 +12,3 @@ export const verifyFirebaseToken = async (token: string) => {
 }
 
 export default admin
-*/

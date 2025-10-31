@@ -1,57 +1,60 @@
+// app/api/restaurants/route.ts
 import { NextResponse } from 'next/server'
+import { API_URL } from '@/constants'
+import { cookies } from 'next/headers'
 
-// Coordenadas base (Ramos Mejía)
-const BASE_LAT = -34.6482
-const BASE_LNG = -58.5623
+export async function GET(req: Request) {
+    try {
+        // Leer el token de las cookies
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
 
-// Función auxiliar para generar un número aleatorio dentro de un rango
-const randomOffset = (min: number, max: number) =>
-    Math.random() * (max - min) + min
-
-// Datos simulados
-const restaurantTypes = [
-    'Parrilla',
-    'Pizzería',
-    'Café',
-    'Restaurante italiano',
-    'Restaurante japonés',
-    'Hamburguesería',
-    'Heladería',
-    'Comida mexicana',
-]
-
-const sampleDishes: Record<string, string[]> = {
-    Parrilla: ['Asado', 'Choripán', 'Provoleta'],
-    Pizzería: ['Pizza muzzarella', 'Fugazzeta', 'Calzone'],
-    Café: ['Café con leche', 'Medialunas', 'Tostado'],
-    'Restaurante italiano': ['Pasta', 'Lasagna', 'Risotto'],
-    'Restaurante japonés': ['Sushi', 'Ramen', 'Tempura'],
-    Hamburguesería: ['Hamburguesa clásica', 'Cheeseburger', 'Papas fritas'],
-    Heladería: ['Dulce de leche', 'Chocolate', 'Frutilla'],
-    'Comida mexicana': ['Tacos', 'Burritos', 'Nachos'],
-}
-
-export async function GET() {
-    const restaurants = Array.from({ length: 30 }).map((_, i) => {
-        const tipo =
-            restaurantTypes[Math.floor(Math.random() * restaurantTypes.length)]
-
-        return {
-            nombre: `${tipo} ${i + 1}`,
-            direccion: `Calle Falsa ${100 + i}, Ramos Mejía`,
-            latitud: BASE_LAT + randomOffset(-0.005, 0.005),
-            longitud: BASE_LNG + randomOffset(-0.005, 0.005),
-            horarios: 'Lunes a Domingo: 10:00 - 23:00',
-            tipo,
-            platos: sampleDishes[tipo] || ['Comida variada'],
-            imagenUrl: `https://source.unsplash.com/400x300/?${encodeURIComponent(
-                tipo
-            )}`,
-            valoracion: parseFloat(
-                (Math.random() * (5 - 3.5) + 3.5).toFixed(1)
-            ),
+        if (!token) {
+            return NextResponse.json(
+                { error: 'No autorizado: falta token' },
+                { status: 401 }
+            )
         }
-    })
 
-    return NextResponse.json(restaurants)
+        const { searchParams } = new URL(req.url)
+
+        // Obtener los parámetros de query
+        const nearLat = searchParams.get('near.lat')
+        const nearLng = searchParams.get('near.lng')
+        const tipo = searchParams.get('tipo')
+        const plato = searchParams.get('plato')
+
+        // Construir la URL de la API con query params
+        const apiUrl = new URL(`${API_URL}/api/Restaurantes`)
+
+        apiUrl.searchParams.append('radiusMeters', '2000') // Fijo por ahora
+        apiUrl.searchParams.append('top', '20')
+        if (nearLat) apiUrl.searchParams.append('near.lat', nearLat)
+        if (nearLng) apiUrl.searchParams.append('near.lng', nearLng)
+
+        if (tipo) apiUrl.searchParams.append('tipo', tipo)
+        if (plato) apiUrl.searchParams.append('plato', plato)
+
+        // Llamada a la API externa
+        const res = await fetch(apiUrl.toString(), {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        if (!res.ok) {
+            console.error('Error al traer restaurantes:', await res.text())
+            return NextResponse.json(
+                { error: 'No se pudieron obtener los restaurantes' },
+                { status: res.status }
+            )
+        }
+
+        const data = await res.json()
+
+        return NextResponse.json(data)
+    } catch (error) {
+        console.error('Error en /api/restaurants:', error)
+        return NextResponse.json({ error: 'Error interno' }, { status: 500 })
+    }
 }
