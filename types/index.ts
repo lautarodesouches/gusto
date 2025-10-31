@@ -76,7 +76,7 @@ export type FriendInvitation = {
     remitente: Friend
     destinatario: Friend
     estado: 'Pendiente'
-    fechaEnvio: '2025-10-15T03:55:36.3645466'
+    fechaEnvio: string
     fechaRespuesta: null
     mensaje: null
 }
@@ -100,4 +100,21 @@ export type GroupMember = {
     usuarioEmail: string
     usuarioNombre: string
     id: string
+}
+
+export type User = {
+    nombre: string
+    fotoPerfilUrl: string
+    apellido: string
+    username: string
+    gustos: {
+        id: string
+        nombre: string
+    }[]
+    visitados: {
+        id: number
+        nombre: string
+        lat: number
+        lng: number
+    }[]
 }

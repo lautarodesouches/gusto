@@ -1,0 +1,250 @@
+.profile {
+    width: 100%;
+    min-height: 100dvh;
+    position: relative;
+}
+
+.header {
+    width: 100%;
+    height: 200px;
+}
+
+.header__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+}
+
+.info__div {
+    flex: 1;
+}
+
+.info__container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    width: 150px;
+    height: 150px;
+    background: var(--background);
+    position: absolute;
+    bottom: 0;
+    left: 5%;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.info__img {
+    width: 100%;
+    height: 100%;
+    color: var(--light);
+}
+
+.info__title {
+    color: var(--white);
+    font-size: 1.4rem;
+}
+
+.info__subtitle {
+    color: var(--light);
+    font-size: 1rem;
+}
+
+.container {
+    padding: 20px;
+    border-radius: 30px;
+    border: 1px solid var(--dark);
+    margin: 20px;
+}
+
+.container__line {
+    margin: 15px 0;
+    width: 50%;
+    border: none;
+    height: 1px;
+    background-color: var(--dark);
+}
+
+.tastes {
+    margin-top: 10px;
+}
+
+.tastes__title {
+    font-size: 1.4rem;
+    color: var(--white);
+}
+
+.tastes__span {
+    font-size: 1.4rem;
+    color: var(--grey);
+}
+
+.tastes__list {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tastes__item {
+    padding: 5px;
+    background: var(--grey);
+    border-radius: 5px;
+    width: fit-content;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+
+.tastes__edit {
+    padding: 5px;
+    background: var(--grey);
+    border-radius: 5px;
+    height: 1rem;
+    color: var(--white);
+    width: fit-content;
+    height: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.tastes__edit:hover {
+    background: var(--dark);
+    color: var(--light);
+}
+
+.visited {
+    margin-top: 20px;
+}
+
+.visited__title {
+    font-size: 1.4rem;
+    color: var(--white);
+}
+
+.visited__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.visited__item {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.visited__text {
+    font-size: 1rem;
+    color: var(--grey);
+}
+
+.visited__icon {
+    width: 15px;
+    height: 15px;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.footer {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.footer button {
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    display: flex;
+    gap: 10px;
+    margin: auto;
+}
+
+.footer__icon {
+    width: 20px;
+    height: 20px;
+    fill: var(--dark);
+}
+
+.footer__delete {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+.footer__add {
+    background: var(--white);
+    color: var(--dark);
+}
+
+.aside {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.aside__button {
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    background: var(--black);
+    border: none;
+    border-radius: 5px;
+}
+
+.aside__icon {
+    height: 20px;
+    width: 20px;
+    color: var(--light);
+}
+
+@media (min-width: 768px) {
+    .header {
+        height: 150px;
+    }
+
+    .info {
+        width: 50%;
+        margin: 20px;
+    }
+
+    .info__title {
+        font-size: 2rem;
+    }
+
+    .info__subtitle {
+        font-size: 1.6rem;
+    }
+
+    .container {
+        flex: 1;
+        border: none;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .container section {
+        flex: 1;
+        padding: 0 30px;
+        margin: 0;
+    }
+
+    .footer{
+        margin-top: 60px;
+    }
+}
