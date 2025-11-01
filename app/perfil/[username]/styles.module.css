@@ -1,0 +1,66 @@
+.main {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    background: var(--black);
+}
+
+.not {
+    background: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    gap: 30px;
+    width: 100%;
+    min-height: 100dvh;
+}
+
+.not__title {
+    color: var(--white);
+    font-size: 1.8rem;
+}
+
+.not__text {
+    color: var(--white);
+    font-size: 1.4rem;
+}
+
+.not__suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.not__subtitle {
+    color: var(--white);
+    font-size: 1.2rem;
+}
+
+.not__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.not__item {
+    color: var(--white);
+    font-size: 1rem;
+}
+
+.not__button {
+    border: none;
+    border-radius: 5px;
+    background: var(--primary);
+    color: var(--white);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+.not__button:hover {
+    background: var(--grey);
+}

@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/routes'
 
 export default function FriendCard({
     friend,
@@ -27,6 +28,10 @@ export default function FriendCard({
     const [loading, setLoading] = useState(false)
     const [isInvitating, setIsInvitating] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
+    const handleGoProfile = (username: string) => {
+        router.push(`${ROUTES.PROFILE}${username}`)
+    }
 
     const handleAddFriend = async () => {
         setLoading(true)
@@ -123,6 +128,7 @@ export default function FriendCard({
                     <FontAwesomeIcon
                         icon={faInfo}
                         className={styles.user__icon}
+                        onClick={() => handleGoProfile('joseperez')}
                     />
                 </div>
             )}

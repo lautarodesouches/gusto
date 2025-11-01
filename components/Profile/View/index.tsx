@@ -95,7 +95,7 @@ export function ProfileView({
                                 {taste.nombre}
                             </li>
                         ))}
-                        {true && (
+                        {isOwnProfile && (
                             <FontAwesomeIcon
                                 className={styles.tastes__edit}
                                 icon={faPlus}
