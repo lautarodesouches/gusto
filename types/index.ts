@@ -69,6 +69,7 @@ export type Friend = {
     nombre: string
     email: string
     fotoPerfilUrl: string
+    username: string
 }
 
 export type FriendInvitation = {
