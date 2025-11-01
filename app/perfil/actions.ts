@@ -1,15 +1,9 @@
 'use server'
 import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
-import { User } from '@/types'
+import { ApiResponse, User } from '@/types'
 import admin from '@/lib/firebaseAdmin'
 import { revalidatePath } from 'next/cache'
-
-interface ApiResponse<T> {
-    success: boolean
-    data?: T
-    error?: string
-}
 
 async function getAuthHeaders(): Promise<HeadersInit> {
     const cookieStore = await cookies()

@@ -120,3 +120,22 @@ export type User = {
         lng: number
     }[]
 }
+
+export type ApiResponse<T> = {
+    success: boolean
+    data?: T
+    error?: string
+}
+
+export interface Review {
+    id: string
+    userId: string
+    userName: string
+    userAvatar?: string
+    rating: number
+    title: string
+    content: string
+    images?: string[]
+    date: string
+    isVerified: boolean
+}

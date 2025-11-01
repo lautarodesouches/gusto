@@ -5,5 +5,6 @@ export const ROUTES = {
     LOGIN: '/auth/login/',
     MAP: '/map/',
     PROFILE: '/perfil/',
-    GROUPS: '/grupos/'
+    GROUPS: '/grupos/',
+    RESTAURANT: '/restaurante/'
 }

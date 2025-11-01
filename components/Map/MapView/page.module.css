@@ -15,12 +15,6 @@
     gap: 5px;
 }
 
-.info__div {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-}
-
 .info__title {
     font-size: 0.9rem;
     color: var(--dark);

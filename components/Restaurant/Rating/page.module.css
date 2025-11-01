@@ -1,0 +1,142 @@
+/* Bloque principal */
+.rating-distribution {
+    display: flex;
+    gap: 2.5rem;
+    padding: 2rem;
+    background: #2b2b2b;
+    border-radius: 0.5rem;
+    color: white;
+    align-items: center;
+}
+
+/* Elemento: Summary */
+.rating-distribution__summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+}
+
+.rating-distribution__score {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.rating-distribution__label {
+    font-size: 0.95rem;
+    color: #d0d0d0;
+    white-space: nowrap;
+}
+
+/* Elemento: Bars */
+.rating-distribution__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    flex: 1;
+}
+
+/* Elemento: Row */
+.rating-distribution__row {
+    display: grid;
+    grid-template-columns: 90px 1fr 70px;
+    align-items: center;
+    gap: 1rem;
+}
+
+.rating-distribution__row-label {
+    font-size: 0.875rem;
+    color: #e0e0e0;
+}
+
+/* Elemento: Bar */
+.rating-distribution__bar {
+    position: relative;
+    height: 10px;
+    background: #4a4a4a;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Elemento: Bar Fill */
+.rating-distribution__bar-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modificadores de color */
+.rating-distribution__bar-fill--excelente {
+    background: var(--primary);
+}
+
+.rating-distribution__bar-fill--bueno {
+    background: var(--primary);
+    opacity: 0.65;
+}
+
+.rating-distribution__bar-fill--promedio {
+    background: var(--primary);
+    opacity: 0.35;
+}
+
+.rating-distribution__bar-fill--malo {
+    background: var(--primary);
+    opacity: 0.2;
+}
+
+.rating-distribution__bar-fill--horrible {
+    background: var(--primary);
+    opacity: 0.15;
+}
+
+/* Elemento: Row Value */
+.rating-distribution__row-value {
+    font-size: 0.875rem;
+    color: #b0b0b0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .rating-distribution {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .rating-distribution__summary {
+        width: 100%;
+    }
+
+    .rating-distribution__row {
+        grid-template-columns: 75px 1fr 55px;
+        gap: 0.75rem;
+    }
+
+    .rating-distribution__score {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .rating-distribution {
+        padding: 1rem;
+    }
+
+    .rating-distribution__row {
+        grid-template-columns: 65px 1fr 45px;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .rating-distribution__score {
+        font-size: 2.5rem;
+    }
+}
