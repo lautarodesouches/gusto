@@ -9,7 +9,7 @@ interface Props {
 export default async function Restaurant({ params }: Props) {
     const { id } = await params
 
-    const result = await getRestaurant(id)
+    const result = await getRestaurant(id)    
 
     if (!result.success || !result.data) notFound()
 

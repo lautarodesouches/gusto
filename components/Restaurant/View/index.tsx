@@ -4,22 +4,20 @@ import styles from './page.module.css'
 import { Restaurant, Review } from '@/types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faStarHalfAlt,
-    faStar,
     faBookmark,
     faImage,
     faGlobe,
     faBuilding,
     faPen,
+    faBell,
+    faUser,
 } from '@fortawesome/free-solid-svg-icons'
-import {
-    faStar as faStarEmpty,
-    faBookmark as faBookmarkEmpty,
-} from '@fortawesome/free-regular-svg-icons'
+import { faBookmark as faBookmarkEmpty } from '@fortawesome/free-regular-svg-icons'
 import Link from 'next/link'
 import { formatPhoneAR } from '@/utils'
 import RatingDistribution from '../Rating'
 import ReviewList from '../Reviews'
+import { ROUTES } from '@/routes'
 
 interface Props {
     restaurant: Restaurant
@@ -49,25 +47,31 @@ export default function RestaurantView({
     for (let i = 1; i <= 5; i++) {
         if (restaurant.rating >= i) {
             stars.push(
-                <FontAwesomeIcon
-                    key={i}
-                    icon={faStar}
+                <Image
+                    src="/images/all/star.svg"
+                    alt=""
+                    width={30}
+                    height={30}
                     className={styles.top__star}
                 />
             )
         } else if (restaurant.rating >= i - 0.5) {
             stars.push(
-                <FontAwesomeIcon
-                    key={i}
-                    icon={faStarHalfAlt}
+                <Image
+                    src="/images/all/star-half.svg"
+                    alt=""
+                    width={30}
+                    height={30}
                     className={styles.top__star}
                 />
             )
         } else {
             stars.push(
-                <FontAwesomeIcon
-                    key={i}
-                    icon={faStarEmpty}
+                <Image
+                    src="/images/all/star-empty.svg"
+                    alt=""
+                    width={30}
+                    height={30}
                     className={styles.top__star}
                 />
             )
@@ -82,7 +86,30 @@ export default function RestaurantView({
 
     return (
         <main className={styles.main}>
-            <nav></nav>
+            <header className={styles.header}>
+                <div className={styles.header__div}>
+                    <Link className={styles.header__link} href={ROUTES.MAP}>
+                        <Image
+                            className={styles.header__brand}
+                            src="/images/brand/gusto-center-negative.svg"
+                            alt="Logo Gusto!"
+                            width={300}
+                            height={200}
+                            priority
+                        />
+                    </Link>
+                </div>
+                <div className={styles.header__div}>
+                    <FontAwesomeIcon
+                        className={styles.header__icon}
+                        icon={faBell}
+                    />
+                    <FontAwesomeIcon
+                        className={styles.header__icon}
+                        icon={faUser}
+                    />
+                </div>
+            </header>
             <section className={styles.top}>
                 <header className={styles.top__header}>
                     <div className={styles.top__thumnailcontainer}>
@@ -106,8 +133,12 @@ export default function RestaurantView({
                         </div>
                     </div>
                     <div className={styles.top__aside}>
-                        <button onClick={onFavourite}>
+                        <button
+                            className={styles.top__button}
+                            onClick={onFavourite}
+                        >
                             <FontAwesomeIcon
+                                className={styles.top__icon}
                                 icon={
                                     isFavourite ? faBookmark : faBookmarkEmpty
                                 }
@@ -118,7 +149,7 @@ export default function RestaurantView({
                 </header>
                 <div className={styles.gallery}>
                     {/* Imagen principal */}
-                    <div className={styles.galerry__main}>
+                    <div className={styles.gallery__main}>
                         <Image
                             src={`/images/all/poster.jpg`}
                             className={styles.gallery__mainimage}
@@ -142,13 +173,14 @@ export default function RestaurantView({
                                 key={item.title}
                                 className={styles['gallery__side-item']}
                             >
+                                <Image
+                                    className={styles['gallery__side-image']}
+                                    src={`/images/all/poster.jpg`}
+                                    alt={item.title}
+                                    width={200}
+                                    height={200}
+                                />
                                 <div className={styles['gallery__side-info']}>
-                                    <Image
-                                        src={`/images/all/poster.jpg`}
-                                        alt={item.title}
-                                        width={200}
-                                        height={200}
-                                    />
                                     <span
                                         className={
                                             styles['gallery__side-title']
@@ -156,10 +188,14 @@ export default function RestaurantView({
                                     >
                                         {item.title}
                                     </span>
+                                    <span
+                                        className={
+                                            styles['gallery__side-count']
+                                        }
+                                    >
+                                        {item.count}
+                                    </span>
                                 </div>
-                                <span className={styles['gallery__side-count']}>
-                                    {item.count}
-                                </span>
                             </div>
                         ))}
                     </div>
@@ -168,14 +204,14 @@ export default function RestaurantView({
             <nav className={styles.navbar}>
                 <ul className={styles.navbar__ul}>
                     <li className={styles.navbar__li}>
-                        <Link className={styles.navbar__link} href={`/#`}>
+                        <Link className={styles.navbar__link} href={`#`}>
                             Descripcion General
                         </Link>
                     </li>
                     <li className={styles.navbar__li}>
                         <Link
                             className={styles.navbar__link}
-                            href={`/#horarios`}
+                            href={`#horarios`}
                         >
                             Horarios
                         </Link>
@@ -183,7 +219,7 @@ export default function RestaurantView({
                     <li className={styles.navbar__li}>
                         <Link
                             className={styles.navbar__link}
-                            href={`/#ubicacion`}
+                            href={`#ubicacion`}
                         >
                             Ubicación
                         </Link>
@@ -191,7 +227,7 @@ export default function RestaurantView({
                     <li className={styles.navbar__li}>
                         <Link
                             className={styles.navbar__link}
-                            href={`/#opiniones`}
+                            href={`#opiniones`}
                         >
                             Opiniones
                         </Link>
@@ -270,7 +306,7 @@ export default function RestaurantView({
                         />
                         {isFavourite ? 'Eliminar de guardados' : 'Guardar'}
                     </button>
-                    <div className={styles.hours__div}>
+                    <div className={styles.hours__div} id='horarios'>
                         <h4 className={styles.hours__subtile}>Horas</h4>
                         <p className={styles.hours__text}>
                             Abierto hasta las 01:00
@@ -293,7 +329,7 @@ export default function RestaurantView({
                     </div>
                 </div>
             </section>
-            <section className={styles.location}>
+            <section className={styles.location} id='ubicacion'>
                 <header className={styles.location__header}>
                     <div className={styles.location__div}>
                         <h3 className={styles.location__tile}>Ubicación</h3>
@@ -308,7 +344,7 @@ export default function RestaurantView({
                 </header>
                 <div className={styles.location__map}></div>
             </section>
-            <section className={styles.rating}>
+            <section className={styles.rating} id='opiniones'>
                 <RatingDistribution
                     data={{
                         excelente: 10,
