@@ -23,6 +23,16 @@ export async function GET(req: Request) {
             },
         })
 
+        if (!res.ok) {
+            return NextResponse.json(
+                {
+                    error: `Error al obtener datos del endpoint`,
+                    status: res.status,
+                },
+                { status: res.status }
+            )
+        }
+
         const data = await res.json()
 
         return NextResponse.json(data)

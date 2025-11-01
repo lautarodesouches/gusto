@@ -56,7 +56,7 @@ export default function Map() {
 
             const res = await fetch(`/api/restaurants?${query.toString()}`)
 
-            if (res.status === 401) router.push(ROUTES.LOGIN)
+            if (res.status === 401) return router.push(ROUTES.LOGIN)
 
             if (!res.ok) throw 'Error al cargar restaurantes'
 
