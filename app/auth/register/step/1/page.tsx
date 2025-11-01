@@ -7,7 +7,7 @@ const getData = async () => {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
 
-    let data: { restricciones: RegisterItem[] } = { restricciones: [] }
+    let data: RegisterItem[] = []
 
     try {
         const res = await fetch(`${API_URL}/Restriccion`, {
@@ -24,15 +24,15 @@ const getData = async () => {
         data = await res.json()
     } catch (error) {
         console.error('Error cargando los datos:', error)
-        data.restricciones = []
+        data = []
     }
 
-    return data.restricciones
+    return data
 }
 
 export default async function Step() {
     const data = await getData()
-    
+
     return (
         <AuthStep
             title="Alguna alergia o intolerancia?"
