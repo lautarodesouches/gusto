@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faArrowLeft,
     faLocationDot,
+    faLock,
     faPlus,
     faUser,
     faUserMinus,
@@ -75,49 +76,74 @@ export function ProfileView({
                 </div>
             </section>
             <div className={styles.container}>
-                <section className={styles.tastes}>
-                    <h3 className={styles.tastes__title}>
-                        Gustos{' '}
-                        <span className={styles.tastes__span}>
-                            - {profile.gustos.length}
-                        </span>
-                    </h3>
-                    <hr className={styles.container__line} />
-                    <ul className={styles.tastes__list}>
-                        {profile.gustos.map(taste => (
-                            <li className={styles.tastes__item} key={taste.id}>
-                                {taste.nombre}
-                            </li>
-                        ))}
-                        {isOwnProfile && (
-                            <FontAwesomeIcon
-                                className={styles.tastes__edit}
-                                icon={faPlus}
-                                onClick={onEditTastes}
-                            />
-                        )}
-                    </ul>
-                </section>
-                <section className={styles.visited}>
-                    <h3 className={styles.visited__title}>Lugares visitados</h3>
-                    <hr className={styles.container__line} />
-                    <ul className={styles.visited__list}>
-                        {profile.visitados.map(place => (
-                            <li className={styles.visited__item} key={place.id}>
-                                <p className={styles.visited__text}>
-                                    {place.nombre}
-                                </p>
-                                <FontAwesomeIcon
-                                    className={styles.visited__icon}
-                                    icon={faLocationDot}
-                                    onClick={() =>
-                                        onGoPlace(place.lat, place.lng)
-                                    }
-                                />
-                            </li>
-                        ))}
-                    </ul>
-                </section>
+                {profile.esPrivado ? (
+                    <section className={styles.private}>
+                        <FontAwesomeIcon
+                            icon={faLock}
+                            className={styles.private__icon}
+                        />
+                        <h2 className={styles.private__title}>
+                            Perfil Privado
+                        </h2>
+                        <p className={styles.private__text}>
+                            Este perfil se encuentra en privado
+                        </p>
+                    </section>
+                ) : (
+                    <>
+                        <section className={styles.tastes}>
+                            <h3 className={styles.tastes__title}>
+                                Gustos{' '}
+                                <span className={styles.tastes__span}>
+                                    - {profile.gustos.length}
+                                </span>
+                            </h3>
+                            <hr className={styles.container__line} />
+                            <ul className={styles.tastes__list}>
+                                {profile.gustos.map(taste => (
+                                    <li
+                                        className={styles.tastes__item}
+                                        key={taste.id}
+                                    >
+                                        {taste.nombre}
+                                    </li>
+                                ))}
+                                {isOwnProfile && (
+                                    <FontAwesomeIcon
+                                        className={styles.tastes__edit}
+                                        icon={faPlus}
+                                        onClick={onEditTastes}
+                                    />
+                                )}
+                            </ul>
+                        </section>
+                        <section className={styles.visited}>
+                            <h3 className={styles.visited__title}>
+                                Lugares visitados
+                            </h3>
+                            <hr className={styles.container__line} />
+                            <ul className={styles.visited__list}>
+                                {profile.visitados.map(place => (
+                                    <li
+                                        className={styles.visited__item}
+                                        key={place.id}
+                                    >
+                                        <p className={styles.visited__text}>
+                                            {place.nombre}
+                                        </p>
+                                        <FontAwesomeIcon
+                                            className={styles.visited__icon}
+                                            icon={faLocationDot}
+                                            onClick={() =>
+                                                onGoPlace(place.lat, place.lng)
+                                            }
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    </>
+                )}
             </div>
             <footer className={styles.footer}>
                 {!isOwnProfile && (

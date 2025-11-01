@@ -105,9 +105,10 @@ export type GroupMember = {
 
 export type User = {
     nombre: string
-    fotoPerfilUrl: string
     apellido: string
     username: string
+    fotoPerfilUrl: string
+    esPrivado: boolean
     gustos: {
         id: string
         nombre: string
