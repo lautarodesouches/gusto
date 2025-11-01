@@ -38,7 +38,7 @@ export default function FriendCard({
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ EmailDestino: friend.email }),
+                body: JSON.stringify({ UsernameDestino: friend.username }),
             })
 
             if (!res.ok) {

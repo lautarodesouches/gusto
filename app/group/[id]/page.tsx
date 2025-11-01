@@ -153,10 +153,11 @@ export default function GroupDetail() {
             {group.miembros.map((f) => (
               <FriendCard
                 friend={{
-                  email: f.usuarioEmail,
-                  fotoPerfilUrl: '',
                   id: f.id,
-                  nombre: f.usuarioNombre,
+                nombre: f.usuarioNombre,
+              email: f.usuarioEmail,
+            username: f.usuarioUsername, 
+            fotoPerfilUrl: '',
                 }}
                 key={f.id}
               />

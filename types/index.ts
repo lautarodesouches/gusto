@@ -68,6 +68,7 @@ export type Friend = {
     id: string
     nombre: string
     email: string
+    username: string
     fotoPerfilUrl: string
 }
 
@@ -92,6 +93,11 @@ export type Group = {
     fechaCreacion: string
     fechaExpiracionCodigo: string
     id: string
-    miembros: { usuarioEmail: string; usuarioNombre: string; id: string }[]
-    nombre: string
+     miembros: {
+    usuarioUsername: string;
+    usuarioEmail: string;
+    usuarioNombre: string;
+    id: string;
+  }[];
+  nombre: string;
 }
