@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
 import { User } from '@/types'
 import admin from '@/lib/firebaseAdmin'
+import { revalidatePath } from 'next/cache'
 
 interface ApiResponse<T> {
     success: boolean
@@ -83,7 +84,7 @@ export async function updateProfile(
 
 export async function addFriend(
     email: string,
-    message: string
+    username: string
 ): Promise<ApiResponse<User>> {
     try {
         const res = await fetch(`${API_URL}/Amistad/enviar`, {
@@ -91,7 +92,7 @@ export async function addFriend(
             headers: await getAuthHeaders(),
             body: JSON.stringify({
                 emailDestino: email,
-                mensaje: message,
+                mensaje: `${username} quiere ser tu amigo.`,
             }),
         })
 
@@ -103,12 +104,44 @@ export async function addFriend(
             }
         }
 
+        revalidatePath(`/perfil/${username}`)
+
         return { success: true }
     } catch (error) {
         console.error('Error sending friend request:', error)
         return {
             success: false,
             error: 'Error al enviar solicitud de amistad',
+        }
+    }
+}
+
+export async function deleteFriend(
+    friendId: string,
+    username: string
+): Promise<ApiResponse<User>> {
+    try {
+        const res = await fetch(`${API_URL}/Amistad/${friendId}`, {
+            method: 'DELETE',
+            headers: await getAuthHeaders(),
+        })
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                success: false,
+                error: errorData?.error || 'Error al eliminar',
+            }
+        }
+
+        revalidatePath(`/perfil/${username}`)
+
+        return { success: true }
+    } catch (error) {
+        console.error('Error deleting friend:', error)
+        return {
+            success: false,
+            error: 'Error al eliminar amigo',
         }
     }
 }

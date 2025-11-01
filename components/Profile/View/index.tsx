@@ -11,36 +11,30 @@ import {
 import styles from './page.module.css'
 import { User } from '@/types'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { ROUTES } from '@/routes'
 
 interface ProfileViewProps {
     profile: User
     isOwnProfile: boolean
     isFriend: boolean
-    onEdit: () => void
+    onAddFriend?: () => void
+    onDeleteFriend?: () => void
+    isPending?: boolean
+    onEditTastes: () => void
+    onGoPlace: (lat: number, lng: number) => void
+    onGoBack: () => void
 }
 
 export function ProfileView({
     profile,
     isOwnProfile,
     isFriend,
-    onEdit,
+    onDeleteFriend,
+    onAddFriend,
+    isPending,
+    onEditTastes,
+    onGoPlace,
+    onGoBack,
 }: ProfileViewProps) {
-    const router = useRouter()
-
-    const handleEditTastes = () => {
-        router.push(`${ROUTES.STEPS}/3`)
-    }
-
-    const handleGoPlace = (lat: number, lng: number) => {
-        router.push(`${ROUTES.MAP}?near.lat=${lat}&near.lng=${lng}`)
-    }
-
-    const handleGoBack = () => {
-        router.back()
-    }
-
     return (
         <article className={styles.profile}>
             <header className={styles.header}>
@@ -99,7 +93,7 @@ export function ProfileView({
                             <FontAwesomeIcon
                                 className={styles.tastes__edit}
                                 icon={faPlus}
-                                onClick={handleEditTastes}
+                                onClick={onEditTastes}
                             />
                         )}
                     </ul>
@@ -117,7 +111,7 @@ export function ProfileView({
                                     className={styles.visited__icon}
                                     icon={faLocationDot}
                                     onClick={() =>
-                                        handleGoPlace(place.lat, place.lng)
+                                        onGoPlace(place.lat, place.lng)
                                     }
                                 />
                             </li>
@@ -129,7 +123,11 @@ export function ProfileView({
                 {!isOwnProfile && (
                     <>
                         {isFriend ? (
-                            <button className={styles.footer__delete}>
+                            <button
+                                className={styles.footer__delete}
+                                onClick={onDeleteFriend}
+                                disabled={isPending}
+                            >
                                 <FontAwesomeIcon
                                     className={styles.footer__icon}
                                     icon={faUserMinus}
@@ -137,12 +135,16 @@ export function ProfileView({
                                 Eliminar de amigos
                             </button>
                         ) : (
-                            <button className={styles.footer__add}>
+                            <button
+                                className={styles.footer__add}
+                                onClick={onAddFriend}
+                                disabled={isPending}
+                            >
                                 <FontAwesomeIcon
                                     className={styles.footer__icon}
                                     icon={faUserPlus}
                                 />{' '}
-                                Agregar a amigos
+                                {isPending ? 'Enviando...' : 'Agregar amigo'}
                             </button>
                         )}
                     </>
@@ -153,7 +155,7 @@ export function ProfileView({
                     <FontAwesomeIcon
                         className={styles.aside__icon}
                         icon={faArrowLeft}
-                        onClick={handleGoBack}
+                        onClick={onGoBack}
                     />
                 </button>
             </aside>

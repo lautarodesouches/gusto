@@ -1,44 +1,69 @@
 'use client'
-import { useState } from 'react'
+import { useTransition } from 'react'
 import { User } from '@/types'
 import { ProfileView } from '../View'
+import { addFriend, deleteFriend } from '@/app/perfil/actions'
+import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/routes'
 
 interface ProfileClientProps {
     profile: User
     isOwnProfile?: boolean
-    isFriend?:boolean
+    isFriend?: boolean
 }
 
 export default function ProfileClient({
     profile,
     isOwnProfile = false,
-    isFriend = false,
+    isFriend = true,
 }: ProfileClientProps) {
-    const [isEditing, setIsEditing] = useState(false)
-    const [currentProfile, setCurrentProfile] = useState(profile)
+    const router = useRouter()
 
-    const handleProfileUpdated = (updatedProfile: User) => {
-        setCurrentProfile(updatedProfile)
-        setIsEditing(false)
+    const handleEditTastes = () => {
+        router.push(`${ROUTES.STEPS}/3`)
     }
 
-    if (isEditing && isOwnProfile) {
-        return (
-            <></>
-            /*<ProfileEdit
-                profile={currentProfile}
-                onCancel={() => setIsEditing(false)}
-                onSuccess={handleProfileUpdated}
-            />*/
-        )
+    const handleGoPlace = (lat: number, lng: number) => {
+        router.push(`${ROUTES.MAP}?near.lat=${lat}&near.lng=${lng}`)
+    }
+
+    const handleGoBack = () => {
+        router.back()
+    }
+
+    const [isPending, startTransition] = useTransition()
+
+    const handleAddFriend = async () => {
+        startTransition(async () => {
+            try {
+                await addFriend('patricia@gmail.com', profile.username)
+            } catch (err: unknown) {
+                alert(err instanceof Error ? err.message : 'An error occurred')
+            }
+        })
+    }
+
+    const handleDeleteFriend = async () => {
+        startTransition(async () => {
+            try {
+                await deleteFriend('50000000-0000-0000-0000-000000000222', profile.username)
+            } catch (err: unknown) {
+                alert(err instanceof Error ? err.message : 'An error occurred')
+            }
+        })
     }
 
     return (
         <ProfileView
-            profile={currentProfile}
+            profile={profile}
             isOwnProfile={isOwnProfile}
             isFriend={isFriend}
-            onEdit={() => setIsEditing(true)}
+            onDeleteFriend={handleDeleteFriend}
+            onAddFriend={handleAddFriend}
+            isPending={isPending}
+            onEditTastes={handleEditTastes}
+            onGoPlace={handleGoPlace}
+            onGoBack={handleGoBack}
         />
     )
 }
