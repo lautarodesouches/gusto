@@ -20,6 +20,8 @@ import { formatPhoneAR } from '@/utils'
 import RatingDistribution from '../Rating'
 import ReviewList from '../Reviews'
 import { ROUTES } from '@/routes'
+import RestaurantMap from '../Map'
+import { MapProvider } from '@/components/Map/MapProvider'
 
 interface Props {
     restaurant: Restaurant
@@ -347,7 +349,16 @@ export default function RestaurantView({
                         <span className={styles.location__span}>Localidad</span>
                     </div>
                 </header>
-                <div className={styles.location__map}></div>
+                <div className={styles.location__map}>
+                    <MapProvider>
+                        <RestaurantMap
+                            lat={restaurant.lat}
+                            lng={restaurant.lng}
+                            name={restaurant.nombre}
+                            address={restaurant.direccion}
+                        />
+                    </MapProvider>
+                </div>
             </section>
             <section className={styles.rating} id="opiniones">
                 <RatingDistribution

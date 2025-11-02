@@ -440,6 +440,11 @@
     margin-top: 20px;
 }
 
+.location__map div {
+    height: 300px;
+    border-radius: 10px;
+}
+
 .rating {
     padding: 20px 0;
 }
