@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
@@ -5,6 +6,7 @@ import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 interface Props {
     isVisible: boolean
@@ -71,27 +73,48 @@ export default function Filter({ isVisible, handleClose }: Props) {
     const handleRatingClick = (name: string) =>
         handleSingleSelect(name, setRatings, 'rating', updateUrlParam)
 
-    useEffect(() => {
+    function syncFiltersWithParams({
+        searchParams,
+        router,
+        setCategories,
+        setDishes,
+        setRatings,
+    }: {
+        searchParams: URLSearchParams
+        router: AppRouterInstance
+        setCategories: React.Dispatch<React.SetStateAction<any[]>>
+        setDishes: React.Dispatch<React.SetStateAction<any[]>>
+        setRatings: React.Dispatch<React.SetStateAction<any[]>>
+    }) {
         const params = new URLSearchParams(searchParams.toString())
 
-        const tipo = searchParams.get('tipo') || ''
-        const plato = searchParams.get('plato') || ''
+        const category = searchParams.get('tipo') || ''
+        const dish = searchParams.get('plato') || ''
         const rating = searchParams.get('rating') || ''
 
-        if (!searchParams.get('tipo')) params.set('tipo', tipo)
-        if (!searchParams.get('plato')) params.set('plato', plato)
+        if (!searchParams.get('tipo')) params.set('tipo', category)
+        if (!searchParams.get('plato')) params.set('plato', dish)
         if (!searchParams.get('rating')) params.set('rating', rating)
 
         router.replace(`?${params.toString()}`, { scroll: false })
 
-        // marcar los seleccionados
         setCategories(prev =>
-            prev.map(c => ({ ...c, checked: c.name === tipo }))
+            prev.map(c => ({ ...c, checked: c.name === category }))
         )
-        setDishes(prev => prev.map(d => ({ ...d, checked: d.name === plato })))
+        setDishes(prev => prev.map(d => ({ ...d, checked: d.name === dish })))
         setRatings(prev =>
             prev.map(r => ({ ...r, checked: r.name === rating }))
         )
+    }
+
+    useEffect(() => {
+        syncFiltersWithParams({
+            searchParams,
+            router,
+            setCategories,
+            setDishes,
+            setRatings,
+        })
     }, [])
 
     return (
