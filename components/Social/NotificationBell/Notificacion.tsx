@@ -22,7 +22,7 @@ export default function NotificationBell() {
   const [showPanel, setShowPanel] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
 
-  // 🔹 Conexión con el Hub de SignalR
+  // Conexión con el Hub de SignalR
   useEffect(() => {
     const connect = async () => {
       try {
@@ -33,13 +33,13 @@ export default function NotificationBell() {
           .withAutomaticReconnect()
           .build()
 
-        // 🔸 Cargar notificaciones iniciales al conectar
+        //  Cargar notificaciones iniciales al conectar
         conn.on('CargarNotificaciones', (data: Notificacion[]) => {
           console.log('🔁 Notificaciones iniciales:', data)
           setNotificaciones(data)
         })
 
-        // 🔸 Nueva notificación recibida en tiempo real
+        //  Nueva notificación recibida en tiempo real
          conn.on('RecibirNotificacion', (notif: Notificacion) => {
          setNotificaciones(prev => {
           const exists = prev.some(n => n.id === notif.id)
@@ -47,7 +47,7 @@ export default function NotificationBell() {
   })
 })
 
-        // 🔸 Eliminar notificación si el servidor lo indica
+        //  Eliminar notificación si el servidor lo indica
         conn.on('NotificacionEliminada', (id: string) => {
           console.log('🗑️ Notificación eliminada:', id)
           setNotificaciones(prev => prev.filter(n => n.id !== id))
@@ -71,7 +71,7 @@ export default function NotificationBell() {
     }
   }, [])
 
-  // 🔹 Cerrar panel si se hace click fuera de él
+  //  Cerrar panel si se hace click fuera de él
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
@@ -82,7 +82,7 @@ export default function NotificationBell() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // 🔹 Acciones disponibles
+  //  Acciones disponibles
   const aceptarInvitacion = async (id: string) => {
     try {
       await connection?.invoke('AceptarInvitacion', id)
@@ -124,7 +124,7 @@ export default function NotificationBell() {
             <h4>Notificaciones</h4>
             {notificaciones.length === 0 && <p>Sin notificaciones</p>}
 
-            {/* ✅ Mapeo corregido con return explícito y key única */}
+            {}
             {notificaciones.map(n => {
               return (
                 <div
@@ -147,7 +147,7 @@ export default function NotificationBell() {
                   </small>
 
 
-                  {/* 🔹 Botones solo para invitaciones de grupo */}
+                  {/* Botones solo para invitaciones de grupo */}
                   {n.tipo === 'InvitacionGrupo' && (
                     <div className={styles.actions}>
                       <button

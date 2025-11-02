@@ -71,7 +71,7 @@ export default function Social({ isVisible, handleClose }: Props) {
             if (!res.ok) throw new Error('Error al cargar grupos')
             const data = await res.json()
 
-            setGroups(data)
+      setGroups(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err)
         }
@@ -145,7 +145,8 @@ export default function Social({ isVisible, handleClose }: Props) {
                     <h3 className={styles.social__description}>Grupos</h3>
                     <hr className={styles.social__line} />
                     <ul className={styles.social__list}>
-                        {groups.map(g => (<GroupCard key={g.id} group={g} />
+                       {Array.isArray(groups) && groups.map(g => (
+                         <GroupCard key={g.id} group={g} />
                         ))}
                         <GroupButton
                             handleClick={() => setShowNewGroup(!showNewGroup)}

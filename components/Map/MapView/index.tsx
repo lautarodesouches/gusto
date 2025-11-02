@@ -58,7 +58,8 @@ export default function Map() {
 
             const data = await res.json()
 
-            setRestaurants(data)
+                setRestaurants(Array.isArray(data.recomendaciones) ? data.recomendaciones : []);
+
         } catch (err) {
             console.error(err)
         } finally {
@@ -103,13 +104,13 @@ export default function Map() {
                 onLoad={map => setMapInstance(map)}
                 onIdle={handleIdle}
             >
-                {restaurants.map((place, index) => (
-                    <Marker
-                        key={index}
-                        position={{
-                            lat: place.lat,
-                            lng: place.lng,
-                        }}
+               {restaurants.map((place, index) => (
+                   <Marker
+                       key={index}
+                       position={{
+                           lat: place.lat,
+                           lng: place.lng,
+                           }}
                         title={place.nombre}
                         icon={{
                             url:
