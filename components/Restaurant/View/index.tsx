@@ -11,6 +11,8 @@ import {
     faPen,
     faBell,
     faUser,
+    faPhone,
+    faEnvelope,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkEmpty } from '@fortawesome/free-regular-svg-icons'
 import Link from 'next/link'
@@ -53,6 +55,7 @@ export default function RestaurantView({
                     width={30}
                     height={30}
                     className={styles.top__star}
+                    key={i}
                 />
             )
         } else if (restaurant.rating >= i - 0.5) {
@@ -63,6 +66,7 @@ export default function RestaurantView({
                     width={30}
                     height={30}
                     className={styles.top__star}
+                    key={i}
                 />
             )
         } else {
@@ -73,6 +77,7 @@ export default function RestaurantView({
                     width={30}
                     height={30}
                     className={styles.top__star}
+                    key={i}
                 />
             )
         }
@@ -253,7 +258,7 @@ export default function RestaurantView({
                         <li className={styles.data__item}>
                             <FontAwesomeIcon
                                 className={styles.data__icon}
-                                icon={faGlobe}
+                                icon={faPhone}
                             />
                             <Link
                                 className={styles.data__link}
@@ -265,13 +270,13 @@ export default function RestaurantView({
                         <li className={styles.data__item}>
                             <FontAwesomeIcon
                                 className={styles.data__icon}
-                                icon={faGlobe}
+                                icon={faEnvelope}
                             />
                             <Link
                                 className={styles.data__link}
                                 href={`mailto:contacto@empresa.com`}
                             >
-                                Pagina web
+                                contacto@empresa.com
                             </Link>
                         </li>
                     </ul>
@@ -306,7 +311,7 @@ export default function RestaurantView({
                         />
                         {isFavourite ? 'Eliminar de guardados' : 'Guardar'}
                     </button>
-                    <div className={styles.hours__div} id='horarios'>
+                    <div className={styles.hours__div} id="horarios">
                         <h4 className={styles.hours__subtile}>Horas</h4>
                         <p className={styles.hours__text}>
                             Abierto hasta las 01:00
@@ -329,10 +334,10 @@ export default function RestaurantView({
                     </div>
                 </div>
             </section>
-            <section className={styles.location} id='ubicacion'>
+            <section className={styles.location} id="ubicacion">
                 <header className={styles.location__header}>
                     <div className={styles.location__div}>
-                        <h3 className={styles.location__tile}>Ubicación</h3>
+                        <h3 className={styles.location__title}>Ubicación</h3>
                     </div>
                     <div className={styles.location__div}>
                         <FontAwesomeIcon
@@ -344,7 +349,7 @@ export default function RestaurantView({
                 </header>
                 <div className={styles.location__map}></div>
             </section>
-            <section className={styles.rating} id='opiniones'>
+            <section className={styles.rating} id="opiniones">
                 <RatingDistribution
                     data={{
                         excelente: 10,

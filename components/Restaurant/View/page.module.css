@@ -284,14 +284,16 @@
 
 .data__open {
     margin-top: 20px;
-    color: #118802;
+    color: #23d00c;
     font-weight: 600;
 }
 
 .data__list {
-    margin-top: 20px;
+    margin-top: 40px;
     list-style: none;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
     gap: 20px;
 }
@@ -314,40 +316,120 @@
 }
 
 .data__subtitle {
+    margin-top: 40px;
+    font-size: 1.8rem;
+    color: var(--white);
 }
 
 .data__info {
+    margin-top: 20px;
+    color: var(--light);
 }
 
 .hours {
+    border: 1px solid var(--white);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
 }
 
 .hours__title {
+    text-align: center;
+    color: var(--white);
+    font-size: 1.4rem;
 }
 
 .hours__button {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--background);
 }
 
 .hours__icon {
+    color: var(--background);
 }
 
 .hours__div {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--white);
 }
 
 .hours__subtile {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--white);
 }
 
 .hours__text {
+    margin-top: 10px;
+    color: #23d00c;
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .hours__ul {
+    margin-top: 20px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .schedule__item {
+    color: var(--light);
+    display: flex;
+    justify-content: space-between;
 }
 
 .schedule__day {
+    font-size: 1rem;
 }
 
 .schedule__hours {
+    font-size: 1rem;
+}
+
+.location {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.location__header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.location__title {
+    color: var(--white);
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.location__icon {
+    color: var(--white);
+    width: 20px;
+    height: 20px;
+}
+
+.location__span {
+    color: var(--white);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.location__map {
+    margin-top: 20px;
 }

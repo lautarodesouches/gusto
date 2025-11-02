@@ -111,6 +111,11 @@
         padding: 1.5rem;
     }
 
+    .rating-distribution__bars {
+        width: 80%;
+        margin: auto;
+    }
+
     .rating-distribution__summary {
         width: 100%;
     }
