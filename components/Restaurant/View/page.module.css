@@ -248,6 +248,7 @@
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid var(--light);
+    z-index: 999;
 }
 
 .navbar__ul {
