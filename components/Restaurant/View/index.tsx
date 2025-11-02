@@ -242,7 +242,7 @@ export default function RestaurantView({
             <section className={styles.info}>
                 <div className={styles.data}>
                     <h3 className={styles.data__title}>
-                        Un vistozo al restuarante
+                        Un vistazo al restuarante
                     </h3>
                     <p className={styles.data__open}>Abierto hasta las 01:00</p>
                     <ul className={styles.data__list}>

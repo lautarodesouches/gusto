@@ -1,3 +1,10 @@
+.review-list{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 /* Bloque principal */
 .review-card {
     background: #2b2b2b;
