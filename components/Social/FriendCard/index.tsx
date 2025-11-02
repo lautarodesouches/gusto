@@ -12,6 +12,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/routes'
+import Link from 'next/link'
 
 export default function FriendCard({
     friend,
@@ -120,10 +122,12 @@ export default function FriendCard({
             )}
             {!invitationId && (
                 <div className={styles.user__info}>
-                    <FontAwesomeIcon
-                        icon={faInfo}
-                        className={styles.user__icon}
-                    />
+                    <Link href={`${ROUTES.PROFILE}${friend.username}`}>
+                        <FontAwesomeIcon
+                            icon={faInfo}
+                            className={styles.user__icon}
+                        />
+                    </Link>
                 </div>
             )}
         </li>

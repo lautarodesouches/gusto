@@ -4,5 +4,7 @@ export const ROUTES = {
     STEPS: '/auth/register/step',
     LOGIN: '/auth/login/',
     MAP: '/map/',
-    PROFILE: '/perfil/'
+    PROFILE: '/perfil/',
+    GROUPS: '/grupos/',
+    RESTAURANT: '/restaurante/'
 }

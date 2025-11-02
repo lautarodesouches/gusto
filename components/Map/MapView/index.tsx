@@ -10,6 +10,7 @@ import Error from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ROUTES } from '@/routes'
+import Link from 'next/link'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
@@ -56,7 +57,7 @@ export default function Map() {
 
             const res = await fetch(`/api/restaurants?${query.toString()}`)
 
-            if (res.status === 401) router.push(ROUTES.LOGIN)
+            if (res.status === 401) return router.push(ROUTES.LOGIN)
 
             if (!res.ok) throw 'Error al cargar restaurantes'
 
@@ -138,26 +139,26 @@ export default function Map() {
                                 }}
                                 options={{
                                     disableAutoPan: true,
+                                    headerContent: place.nombre,
                                 }}
                                 onCloseClick={() => setHoveredMarker(null)}
                             >
-                                <article className={styles.info}>
-                                    <div className={styles.info__div}>
-                                        <h4 className={styles.info__title}>
-                                            {place.nombre}
-                                        </h4>
-                                        <p className={styles.info__rating}>
-                                            {place.score.toFixed(2)}
-                                            <FontAwesomeIcon
-                                                icon={faStar}
-                                                className={styles.info__icon}
-                                            />
-                                        </p>
-                                    </div>
-                                    <button className={styles.info__button}>
-                                        Más información
-                                    </button>
-                                </article>
+                                <div className={styles.info}>
+                                    <p className={styles.info__rating}>
+                                        {place.rating.toFixed(2)}
+                                        <FontAwesomeIcon
+                                            icon={faStar}
+                                            className={styles.info__icon}
+                                        />
+                                    </p>
+                                    <Link
+                                        href={`${ROUTES.RESTAURANT}${place.id}`}
+                                    >
+                                        <button className={styles.info__button}>
+                                            Más información
+                                        </button>
+                                    </Link>
+                                </div>
                             </InfoWindow>
                         )}
                     </Marker>

@@ -44,39 +44,59 @@ export default function Social({ isVisible, handleClose }: Props) {
 
     const getFriends = async () => {
         try {
-            const res = await fetch(`/api/social?endpoint=Amistad/amigos`)
-            if (!res.ok) throw new Error('Error al cargar amigos')
-            const data = await res.json()
+            const res = await fetch('/api/social?endpoint=Amistad/amigos')
+
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: ${res.statusText}`)
+            }
+
+            const data: Friend[] = await res.json()
+
             setFriends(data)
         } catch (err) {
-            console.error(err)
+            const errorMessage =
+                err instanceof Error ? err.message : 'Error desconocido'
+            console.error('Error al cargar amigos:', errorMessage)
+            setFriends([])
         }
     }
 
     const getFriendRequests = async () => {
         try {
-            const res = await fetch(`/api/social?endpoint=Amistad/solicitudes`)
-            if (!res.ok)
-                throw new Error('Error al cargar invitaciones de amigos')
-            const data = await res.json()
+            const res = await fetch('/api/social?endpoint=Amistad/solicitudes')
+
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: ${res.statusText}`)
+            }
+
+            const data: FriendInvitation[] = await res.json()
             setFriendsInvitations(data)
         } catch (err) {
-            console.error(err)
+            const errorMessage =
+                err instanceof Error ? err.message : 'Error desconocido'
+            console.error('Error al cargar solicitudes:', errorMessage)
+            setFriendsInvitations([])
         }
     }
 
     const getGroups = async () => {
         try {
-            const res = await fetch(`/api/social?endpoint=Grupo/mis-grupos`)
-            if (!res.ok) throw new Error('Error al cargar grupos')
-            const data = await res.json()
+            const res = await fetch('/api/social?endpoint=Grupo/mis-grupos')
+
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: ${res.statusText}`)
+            }
+
+            const data: Group[] = await res.json()
 
             setGroups(data)
         } catch (err) {
-            console.error(err)
+            const errorMessage =
+                err instanceof Error ? err.message : 'Error desconocido'
+            console.error('Error al cargar grupos:', errorMessage)
+            setGroups([])
         }
     }
-
     useEffect(() => {
         getFriends()
         getFriendRequests()

@@ -69,6 +69,7 @@ export type Friend = {
     nombre: string
     email: string
     fotoPerfilUrl: string
+    username: string
 }
 
 export type FriendInvitation = {
@@ -76,7 +77,7 @@ export type FriendInvitation = {
     remitente: Friend
     destinatario: Friend
     estado: 'Pendiente'
-    fechaEnvio: '2025-10-15T03:55:36.3645466'
+    fechaEnvio: string
     fechaRespuesta: null
     mensaje: null
 }
@@ -100,4 +101,41 @@ export type GroupMember = {
     usuarioEmail: string
     usuarioNombre: string
     id: string
+}
+
+export type User = {
+    nombre: string
+    apellido: string
+    username: string
+    fotoPerfilUrl: string
+    esPrivado: boolean
+    gustos: {
+        id: string
+        nombre: string
+    }[]
+    visitados: {
+        id: number
+        nombre: string
+        lat: number
+        lng: number
+    }[]
+}
+
+export type ApiResponse<T> = {
+    success: boolean
+    data?: T
+    error?: string
+}
+
+export interface Review {
+    id: string
+    userId: string
+    userName: string
+    userAvatar?: string
+    rating: number
+    title: string
+    content: string
+    images?: string[]
+    date: string
+    isVerified: boolean
 }
