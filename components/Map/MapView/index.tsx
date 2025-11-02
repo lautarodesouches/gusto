@@ -125,8 +125,14 @@ export default function Map() {
                                     : index === 2
                                     ? '/markers/markerThree.svg'
                                     : '/markers/marker.svg',
-                            scaledSize: new google.maps.Size(36, 45),
-                            anchor: new google.maps.Point(18, 45),
+                            scaledSize:
+                                index > 2
+                                    ? new google.maps.Size(30, 38)
+                                    : new google.maps.Size(48, 60),
+                            anchor:
+                                index > 2
+                                    ? new google.maps.Point(15, 38)
+                                    : new google.maps.Point(24, 60),
                         }}
                         animation={google.maps.Animation.DROP}
                         onClick={() => setHoveredMarker(index)}
