@@ -28,6 +28,8 @@ export async function getProfile(username: string): Promise<ApiResponse<User>> {
                 error: 'Usuario no encontrado',
             }
         }
+        // Delay artificial de 2 segundos
+        await new Promise(resolve => setTimeout(resolve, 12000))
 
         const user = await res.json()
         return { success: true, data: user }
