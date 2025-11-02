@@ -1,16 +1,11 @@
-'use client'
-import styles from './page.module.css'
+import styles from './styles.module.css'
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
-import { useUserLocation } from '@/hooks/useUserLocation'
-import { useCallback, useEffect, useState } from 'react'
-import { Restaurant } from '@/types'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
-import Error from '@/components/Error'
-import Loading from '@/components/Loading'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
+import { Coordinates, Restaurant } from '@/types'
+import { Dispatch, SetStateAction } from 'react'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
@@ -29,75 +24,23 @@ const defaultMapOptions = {
     mapTypeId: 'roadmap',
 }
 
-export default function Map() {
-    const { coords, error, loading } = useUserLocation()
-    const router = useRouter()
-    const searchParams = useSearchParams()
+interface Props {
+    coords: Coordinates | null
+    setMapInstance: Dispatch<SetStateAction<google.maps.Map | null>>
+    onIdle: () => void
+    restaurants: Restaurant[]
+    hoveredMarker: number | null
+    setHoveredMarker: Dispatch<SetStateAction<number | null>>
+}
 
-    const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
-    const [restaurants, setRestaurants] = useState<Restaurant[]>([])
-    const [isLoading, setIsLoading] = useState(true)
-    const [center, setCenter] = useState({
-        lat: coords?.lat || defaultMapCenter.lat,
-        lng: coords?.lng || defaultMapCenter.lng,
-    })
-    const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
-
-    const fetchRestaurants = useCallback(async () => {
-        try {
-            const query = new URLSearchParams()
-
-            query.append('near.lat', String(center.lat))
-            query.append('near.lng', String(center.lng))
-
-            const tipo = searchParams.get('tipo')
-            if (tipo) query.append('tipo', tipo)
-            const plato = searchParams.get('plato')
-            if (plato) query.append('plato', plato)
-
-            const res = await fetch(`/api/restaurants?${query.toString()}`)
-
-            if (res.status === 401) return router.push(ROUTES.LOGIN)
-
-            if (!res.ok) throw 'Error al cargar restaurantes'
-
-            const data = await res.json()
-
-            setRestaurants(data)
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setIsLoading(false)
-        }
-    }, [searchParams, center])
-
-    useEffect(() => {
-        fetchRestaurants()
-    }, [fetchRestaurants])
-
-    const handleIdle = () => {
-        if (!mapInstance) return
-        const newCenter = mapInstance.getCenter()
-        if (!newCenter) return
-
-        const lat = newCenter.lat()
-        const lng = newCenter.lng()
-
-        // Solo actualizamos si cambió realmente
-        if (lat !== center.lat || lng !== center.lng) {
-            setCenter({ lat, lng })
-
-            // Actualizamos la URL incluyendo pathname actual
-            const query = new URLSearchParams(searchParams.toString())
-            query.set('near.lat', String(lat))
-            query.set('near.lng', String(lng))
-            router.replace(`${window.location.pathname}?${query.toString()}`)
-        }
-    }
-    if (error) return <Error message={error} />
-    if (loading || isLoading)
-        return <Loading message="Obteniendo ubicación y restaurantes..." />
-
+export default function MapView({
+    coords,
+    setMapInstance,
+    onIdle,
+    restaurants,
+    setHoveredMarker,
+    hoveredMarker,
+}: Props) {
     return (
         <section className={styles.map}>
             <GoogleMap
@@ -106,7 +49,7 @@ export default function Map() {
                 zoom={defaultMapZoom}
                 options={defaultMapOptions}
                 onLoad={map => setMapInstance(map)}
-                onIdle={handleIdle}
+                onIdle={onIdle}
             >
                 {restaurants.map((place, index) => (
                     <Marker

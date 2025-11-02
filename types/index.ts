@@ -139,3 +139,21 @@ export interface Review {
     date: string
     isVerified: boolean
 }
+
+export interface SocialData {
+    friends: Friend[]
+    friendsRequests: Friend[]
+    groups: Group[]
+    groupsRequests: Group[]
+}
+
+export interface Filters {
+    dishes: { id: number; name: string }[]
+    categories: { id: number; name: string }[]
+    ratings: { id: number; name: string }[]
+}
+
+export interface Coordinates {
+    lat: number
+    lng: number
+}

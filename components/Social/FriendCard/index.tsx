@@ -14,6 +14,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
+import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
 
 export default function FriendCard({
     friend,
@@ -35,52 +36,30 @@ export default function FriendCard({
         setError(null)
 
         try {
-            const res = await fetch('/api/social/friend', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ EmailDestino: friend.email }),
-            })
-
-            if (!res.ok) {
-                const data = await res.json()
-                throw new Error(data?.error || 'Error al enviar solicitud')
-            }
-
+            await addFriend(friend.email, friend.username)
             setIsInvitating(true)
-            alert('Invitacion enviada')
+            alert('Invitación enviada')
         } catch (err: unknown) {
-            console.error(err)
-            if (err instanceof Error)
-                setError(err.message || 'Error desconocido')
+            if (err instanceof Error) setError(err.message)
+            alert(err instanceof Error ? err.message : 'Error desconocido')
         } finally {
             setLoading(false)
         }
     }
 
     const handleAction = async (action: 'aceptar' | 'rechazar') => {
+        if (!invitationId) return
+
         setLoading(true)
         setError(null)
 
         try {
-            const res = await fetch('/api/social/friend-invitation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ solicitudId: invitationId, action }),
-            })
-
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Error desconocido')
-
+            await respondToFriendInvitation(invitationId, action)
             alert('Solicitud ' + action)
             router.refresh()
         } catch (err: unknown) {
-            console.error(err)
-            if (err instanceof Error) {
-                setError(err.message || 'Error desconocido')
-                alert(err.message)
-            }
+            if (err instanceof Error) setError(err.message)
+            alert(err instanceof Error ? err.message : 'Error desconocido')
         } finally {
             setLoading(false)
         }

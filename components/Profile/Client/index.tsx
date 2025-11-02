@@ -2,9 +2,9 @@
 import { useTransition } from 'react'
 import { User } from '@/types'
 import { ProfileView } from '../View'
-import { addFriend, deleteFriend } from '@/app/perfil/actions'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
+import { addFriend, deleteFriend } from '@/app/actions/friends'
 
 interface ProfileClientProps {
     profile: User
@@ -46,7 +46,10 @@ export default function ProfileClient({
     const handleDeleteFriend = async () => {
         startTransition(async () => {
             try {
-                await deleteFriend('50000000-0000-0000-0000-000000000222', profile.username)
+                await deleteFriend(
+                    '50000000-0000-0000-0000-000000000222',
+                    profile.username
+                )
             } catch (err: unknown) {
                 alert(err instanceof Error ? err.message : 'An error occurred')
             }

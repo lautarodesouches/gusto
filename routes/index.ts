@@ -3,7 +3,7 @@ export const ROUTES = {
     REGISTER: '/auth/register',
     STEPS: '/auth/register/step',
     LOGIN: '/auth/login',
-    MAP: '/map/',
+    MAP: '/mapa/',
     PROFILE: '/perfil/',
     GROUPS: '/grupos/',
     RESTAURANT: '/restaurante/'

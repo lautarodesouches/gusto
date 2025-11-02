@@ -5,40 +5,41 @@ import { Friend } from '@/types'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { searchFriends } from '@/app/actions/friends'
 
 export default function FriendSearch() {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<Array<Friend>>([])
     const [error, setError] = useState('')
 
-    const search = async () => {
-        try {
-            const res = await fetch(
-                `/api/social?endpoint=Amistad/buscar-usuarios/?q=${query}`
-            )
-
-            if (!res.ok) throw new Error('Error al buscar amigos')
-
-            const data = await res.json()
-
-            if (data.length === 0) setError('No encontramos resultados')
-
-            setResults(data)
-        } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message)
-            }
-            console.error(err)
-        }
-    }
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value)
     }
 
     useEffect(() => {
-        if (query === '') setError('')
-        search()
+        const handler = setTimeout(() => {
+            if (query.trim() === '') {
+                setResults([])
+                setError('')
+                return
+            }
+
+            searchFriends(query).then(res => {
+                if (res.success) {
+                    setResults(res.data || [])
+                    setError(
+                        res.data?.length === 0
+                            ? 'No encontramos resultados'
+                            : ''
+                    )
+                } else {
+                    setResults([])
+                    setError(res.error || 'Error al buscar amigos')
+                }
+            })
+        }, 500)
+
+        return () => clearTimeout(handler)
     }, [query])
 
     return (
@@ -52,7 +53,7 @@ export default function FriendSearch() {
                     type="text"
                     onChange={handleChange}
                     className={styles.search__input}
-                    placeholder='Buscar por email'
+                    placeholder="Buscar por email"
                     value={query}
                 />
             </header>

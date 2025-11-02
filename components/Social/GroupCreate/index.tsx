@@ -4,6 +4,7 @@ import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/navigation'
+import { createGroup } from '@/app/actions/groups'
 
 export default function GroupCreate({
     handleCancel,
@@ -12,27 +13,23 @@ export default function GroupCreate({
 }) {
     const router = useRouter()
 
-    const [nombre, setNombre] = useState('')
-    const [descripcion, setDescripcion] = useState('')
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
-        if (!nombre || !descripcion) return
+        if (!name || !description) return
 
         setLoading(true)
         try {
-            const res = await fetch('/api/group', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nombre, descripcion }),
-            })
+            const result = await createGroup({ name, description })
+            if (!result.success) {
+                alert(result.error)
+                return
+            }
 
-            if (!res.ok) throw new Error('Error creando grupo')
-
-            setNombre('')
-            setDescripcion('')
+            setName('')
+            setDescription('')
             alert('Grupo creado!')
             handleCancel()
             router.refresh()
@@ -52,15 +49,15 @@ export default function GroupCreate({
             <input
                 type="text"
                 placeholder="Ingrese Nombre del Grupo"
-                value={nombre}
-                onChange={e => setNombre(e.target.value)}
+                value={name}
+                onChange={e => setName(e.target.value)}
                 className={styles.create__input}
             />
             <input
                 type="text"
                 placeholder="Ingrese Descripcion del Grupo"
-                value={descripcion}
-                onChange={e => setDescripcion(e.target.value)}
+                value={description}
+                onChange={e => setDescription(e.target.value)}
                 className={styles.create__input}
             />
             <div className={styles.create__buttons}>
@@ -73,8 +70,8 @@ export default function GroupCreate({
                 </button>
                 <button
                     onClick={() => {
-                        setNombre('')
-                        setDescripcion('')
+                        setName('')
+                        setDescription('')
                         handleCancel()
                     }}
                     className={styles.create__cancel}
