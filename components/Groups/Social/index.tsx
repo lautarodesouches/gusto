@@ -8,11 +8,14 @@ import {
     faUser,
     faUserPlus,
     faUserXmark,
+    faComments 
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
 import { API_URL } from '@/constants'
 import { ChangeEvent, useEffect, useState } from 'react'
+import ChatGrupo from '@/components/Groups/Chat/ChatGrupo' 
+
 
 interface Props {
     group: Group
@@ -20,6 +23,7 @@ interface Props {
 
 export default function GroupsSocial({ group }: Props) {
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
+     const [showChat, setShowChat] = useState(false)
 
     useEffect(() => {
         setFilteredMembers(group.miembros)
@@ -168,6 +172,25 @@ export default function GroupsSocial({ group }: Props) {
                             <button>Agregar</button>
                         </div>
                     </form>
+
+                        <div style={{ textAlign: 'center', marginTop: 20 }}>
+                        <button
+                            onClick={() => setShowChat(!showChat)}
+                            className={styles.chatButton}
+                        >
+                            <FontAwesomeIcon icon={faComments} />{' '}
+                            {showChat ? 'Cerrar Chat' : 'Abrir Chat'}
+                        </button>
+                    </div>
+
+                    {showChat && (
+                        <div style={{ marginTop: 20 }}>
+                            <ChatGrupo grupoId={group.id} />
+                        </div>
+                    )}
+
+
+
                     <footer className={styles.footer}>
                         <button>Inicio</button>
                         <button>Grupo</button>

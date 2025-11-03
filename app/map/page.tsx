@@ -11,6 +11,7 @@ import {
 import { MapFilter, MapSocial, Loading, MapView } from '@/components'
 import { Suspense, useState } from 'react'
 import { MapProvider } from '@/components/Map/MapProvider'
+import NotificationBell from '@/components/NotificationBell/Notificacion'
 import Image from 'next/image'
 
 export default function Map() {
@@ -52,13 +53,11 @@ export default function Map() {
                         className={styles.nav__input}
                     />
                 </fieldset>
+          
                 <div className={styles.nav__icons}>
-                    <div className={styles.nav__div}>
-                        <FontAwesomeIcon
-                            icon={faBell}
-                            className={styles.nav__icon}
-                        />
-                    </div>
+        <div className={styles.nav__div}>
+    <NotificationBell />
+  </div>
                     <div className={styles.nav__div}>
                         <FontAwesomeIcon
                             icon={faUser}
