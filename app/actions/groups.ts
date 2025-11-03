@@ -10,9 +10,9 @@ export async function getGroups(): Promise<ApiResponse<Group[]>> {
             method: 'GET',
             headers: await getAuthHeaders(),
             cache: 'no-store',
-            next: { 
-                tags: ['groups']
-            }
+            next: {
+                tags: ['groups'],
+            },
         })
 
         if (!res.ok) {
@@ -122,5 +122,63 @@ export async function createGroup(payload: {
             success: false,
             error: 'Error al crear el grupo',
         }
+    }
+}
+
+export async function inviteUserToGroup(
+    groupId: string,
+    email: string,
+    message: string
+): Promise<ApiResponse<null>> {
+    try {
+        const res = await fetch(`${API_URL}/Grupo/${groupId}/invitar`, {
+            method: 'POST',
+            headers: await getAuthHeaders(),
+            body: JSON.stringify({
+                query: email,
+                mensajePersonalizado: message,
+            }),
+        })
+
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+            return {
+                success: false,
+                error: data?.message || 'Error al invitar',
+            }
+        }
+
+        return { success: true, data: null }
+    } catch (err) {
+        console.error('Error inviting user to group:', err)
+        return { success: false, error: 'Error al invitar usuario' }
+    }
+}
+
+export async function removeGroupMember(
+    groupId: string,
+    memberId: string
+): Promise<ApiResponse<null>> {
+    try {
+        const res = await fetch(
+            `${API_URL}/Grupo/${groupId}/miembros/${memberId}`,
+            {
+                method: 'DELETE',
+                headers: await getAuthHeaders(),
+            }
+        )
+
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+            return {
+                success: false,
+                error: data?.message || 'Error al eliminar miembro',
+            }
+        }
+
+        return { success: true, data: null }
+    } catch (err) {
+        console.error('Error removing group member:', err)
+        return { success: false, error: 'Error al eliminar miembro' }
     }
 }

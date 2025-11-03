@@ -11,14 +11,17 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
-import { API_URL } from '@/constants'
 import { ChangeEvent, useEffect, useState } from 'react'
+import { useToast } from '@/context/ToastContext'
+import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
 
 interface Props {
     group: Group
 }
 
 export default function GroupsSocial({ group }: Props) {
+    const toast = useToast()
+
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
 
     useEffect(() => {
@@ -43,51 +46,32 @@ export default function GroupsSocial({ group }: Props) {
         e.preventDefault()
 
         const formData = new FormData(e.currentTarget)
+
         const email = formData.get('email') as string
 
-        try {
-            const body = {
-                query: email,
-                mensajePersonalizado: `Te invito a formar parte de ${group?.nombre}`,
-            }
+        if (!email) return toast.error('Ingrese un email')
 
-            const res = await fetch(`/api/group/${group.id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            })
+        const message = `Te invito a formar parte de ${group.nombre}`
 
-            const data = await res.json()
+        const result = await inviteUserToGroup(group.id, email, message)
 
-            if (!res.ok) throw new Error(data.message || 'Error al invitar')
+        if (!result.success)
+            return toast.error(result.error || 'Error al invitar al grupo')
 
-            alert('Invitación enviada correctamente!')
-        } catch (err: unknown) {
-            console.error(err)
-            alert('No se pudo enviar la invitación')
-        }
+        toast.success('Invitación enviada')
+
+        setFilteredMembers(prev => [...prev])
     }
 
     const handleKick = async (memberId: string) => {
-        try {
-            const res = await fetch(
-                `${API_URL}/Grupo/${group?.id}}/miembros/${memberId}`,
-                {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                }
-            )
+        const result = await removeGroupMember(group.id, memberId)
 
-            const data = await res.json()
+        if (!result.success)
+            return toast.error(result.error || 'Error al remover del grupo')
 
-            if (!res.ok)
-                throw new Error(data.message || 'Error al eliminar del grupo')
+        toast.success('Usuario eliminado del grupo')
 
-            alert('Usuario eliminado del grupo')
-        } catch (err: unknown) {
-            console.error(err)
-            alert('No se pudo eliminar del grupo')
-        }
+        setFilteredMembers(prev => prev.filter(m => m.id !== memberId))
     }
 
     return (

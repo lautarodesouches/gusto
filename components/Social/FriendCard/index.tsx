@@ -44,8 +44,6 @@ export default function FriendCard({
             setIsInvitating(true)
 
             toast.success(`Solicitud de amistad enviada`)
-
-            alert('Invitación enviada')
         } catch (err: unknown) {
             toast.error(`No se pudo enviar solicitud`)
             console.error(err)
@@ -67,9 +65,7 @@ export default function FriendCard({
                     result.error || `No se pudo enviar ${action} invitacion`
                 )
 
-            toast.success(`Solicitud de amistad enviada`)
-
-            alert('Solicitud ' + action)
+            toast.success(`Solicitud de amistad ${action}`)
         } catch (err: unknown) {
             toast.error(`No se pudo enviar ${action} invitacion`)
             console.error(err)
