@@ -28,7 +28,8 @@ export async function GET(req: Request) {
         const apiUrl = new URL(`${API_URL}/api/Restaurantes`)
 
         apiUrl.searchParams.append('radiusMeters', '2000') // Fijo por ahora
-        apiUrl.searchParams.append('top', '20')
+        apiUrl.searchParams.append('top', '30')
+
         if (nearLat) apiUrl.searchParams.append('near.lat', nearLat)
         if (nearLng) apiUrl.searchParams.append('near.lng', nearLng)
 
@@ -42,6 +43,7 @@ export async function GET(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
         })
+
         if (!res.ok) {
             console.error('Error al traer restaurantes:', await res.text())
             return NextResponse.json(

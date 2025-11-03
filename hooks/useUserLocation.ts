@@ -1,10 +1,6 @@
 'use client'
+import { Coordinates } from '@/types'
 import { useEffect, useState } from 'react'
-
-interface Coordinates {
-    lat: number
-    lng: number
-}
 
 export function useUserLocation() {
     const [coords, setCoords] = useState<Coordinates | null>(null)

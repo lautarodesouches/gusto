@@ -11,9 +11,10 @@ import {
     faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
+import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
+import { useToast } from '@/context/ToastContext'
 
 export default function FriendCard({
     friend,
@@ -24,63 +25,50 @@ export default function FriendCard({
     isSearching?: boolean
     invitationId?: string
 }) {
-    const router = useRouter()
+    const toast = useToast()
 
     const [loading, setLoading] = useState(false)
     const [isInvitating, setIsInvitating] = useState(false)
-    const [error, setError] = useState<string | null>(null)
 
     const handleAddFriend = async () => {
         setLoading(true)
-        setError(null)
 
         try {
-            const res = await fetch('/api/social/friend', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ UsernameDestino: friend.username }),
-            })
+            const result = await addFriend(friend.username)
 
-            if (!res.ok) {
-                const data = await res.json()
-                throw new Error(data?.error || 'Error al enviar solicitud')
-            }
+            if (!result.success)
+                return toast.error(
+                    result.error || `No se pudo enviar solicitud`
+                )
 
             setIsInvitating(true)
-            alert('Invitacion enviada')
+
+            toast.success(`Solicitud de amistad enviada`)
         } catch (err: unknown) {
+            toast.error(`No se pudo enviar solicitud`)
             console.error(err)
-            if (err instanceof Error)
-                setError(err.message || 'Error desconocido')
         } finally {
             setLoading(false)
         }
     }
 
     const handleAction = async (action: 'aceptar' | 'rechazar') => {
+        if (!invitationId) return
+
         setLoading(true)
-        setError(null)
 
         try {
-            const res = await fetch('/api/social/friend-invitation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ solicitudId: invitationId, action }),
-            })
+            const result = await respondToFriendInvitation(invitationId, action)
 
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Error desconocido')
+            if (!result.success)
+                return toast.error(
+                    result.error || `No se pudo enviar ${action} invitacion`
+                )
 
-            alert('Solicitud ' + action)
-            router.refresh()
+            toast.success(`Solicitud de amistad ${action}`)
         } catch (err: unknown) {
+            toast.error(`No se pudo enviar ${action} invitacion`)
             console.error(err)
-            if (err instanceof Error) {
-                setError(err.message || 'Error desconocido')
-                alert(err.message)
-            }
         } finally {
             setLoading(false)
         }

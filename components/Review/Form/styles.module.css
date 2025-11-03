@@ -1,0 +1,380 @@
+/* Contenedor principal */
+.reviewForm {
+    min-height: 100vh;
+    background: var(--background);
+    color: white;
+    padding: 2rem;
+}
+
+.reviewForm__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 4rem;
+}
+
+/* Columna izquierda */
+.reviewForm__aside {
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+}
+
+.reviewForm__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 3rem;
+}
+
+.reviewForm__card {
+    background: #2b2b2b;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid #3a3a3a;
+}
+
+.reviewForm__cardImage {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background: #3a3a3a;
+}
+
+.reviewForm__cardPlaceholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #3a3a3a 0%, #2b2b2b 100%);
+}
+
+.reviewForm__cardInfo {
+    padding: 1.5rem;
+}
+
+.reviewForm__cardTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.reviewForm__cardLocation {
+    font-size: 0.95rem;
+    color: #d0d0d0;
+    margin: 0 0 0.25rem 0;
+}
+
+.reviewForm__cardRegion {
+    font-size: 0.875rem;
+    color: #999;
+    margin: 0;
+}
+
+/* Formulario */
+.reviewForm__form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.reviewForm__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.reviewForm__label {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.reviewForm__labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reviewForm__optional {
+    font-size: 0.875rem;
+    color: #999;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Rating Stars */
+.reviewForm__stars {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.reviewForm__star {
+    background: none;
+    border: 2px solid #ff5757;
+    color: #ff5757;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reviewForm__star:hover {
+    transform: scale(1.1);
+}
+
+.reviewForm__star--active {
+    background: #ff5757;
+    color: white;
+}
+
+/* Select */
+.reviewForm__select {
+    padding: 1rem;
+    background: #2b2b2b;
+    border: 1px solid #3a3a3a;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.reviewForm__select:focus {
+    outline: none;
+    border-color: #ff5757;
+}
+
+/* Botones de tipo de visita */
+.reviewForm__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.reviewForm__button {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 1px solid #3a3a3a;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reviewForm__button:hover {
+    border-color: #ff5757;
+}
+
+.reviewForm__button--active {
+    background: #ff5757;
+    border-color: #ff5757;
+}
+
+/* Textarea */
+.reviewForm__textarea {
+    padding: 1rem;
+    background: #2b2b2b;
+    border: 1px solid #3a3a3a;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.reviewForm__textarea:focus {
+    outline: none;
+    border-color: #ff5757;
+}
+
+/* Input */
+.reviewForm__input {
+    padding: 1rem;
+    background: #2b2b2b;
+    border: 1px solid #3a3a3a;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1rem;
+}
+
+.reviewForm__input:focus {
+    outline: none;
+    border-color: #ff5757;
+}
+
+.reviewForm__counter {
+    font-size: 0.875rem;
+    color: #999;
+    text-align: right;
+}
+
+/* Upload */
+.reviewForm__upload {
+    position: relative;
+}
+
+.reviewForm__fileInput {
+    display: none;
+}
+
+.reviewForm__uploadLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background: #2b2b2b;
+    border: 2px dashed #3a3a3a;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reviewForm__uploadLabel:hover {
+    border-color: #ff5757;
+    background: #333;
+}
+
+.reviewForm__uploadIcon {
+    font-size: 3rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.reviewForm__uploadHint {
+    font-size: 0.875rem;
+    color: #999;
+    margin-top: 0.5rem;
+}
+
+/* Previews */
+.reviewForm__previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.reviewForm__preview {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.reviewForm__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.reviewForm__removeImage {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.reviewForm__removeImage:hover {
+    background: #ff5757;
+}
+
+/* Checkbox */
+.reviewForm__checkbox {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.reviewForm__checkboxInput {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+    cursor: pointer;
+}
+
+.reviewForm__checkboxLabel {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #d0d0d0;
+    cursor: pointer;
+}
+
+/* Submit */
+.reviewForm__submit {
+    padding: 1.25rem 3rem;
+    background: #ff5757;
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reviewForm__submit:hover:not(:disabled) {
+    background: #ff4444;
+    transform: translateY(-2px);
+}
+
+.reviewForm__submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .reviewForm__container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .reviewForm__aside {
+        position: static;
+    }
+
+    .reviewForm__title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .reviewForm {
+        padding: 1rem;
+    }
+
+    .reviewForm__title {
+        font-size: 1.75rem;
+    }
+
+    .reviewForm__stars {
+        justify-content: center;
+    }
+
+    .reviewForm__star {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+
+    .reviewForm__buttons {
+        justify-content: center;
+    }
+}

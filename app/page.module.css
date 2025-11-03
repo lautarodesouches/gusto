@@ -388,52 +388,82 @@
     stroke-linejoin: round;
 }
 
-/* Path primario (rojo) */
+/* Path primario (rojo) - Loop infinito */
 .loading__path--primary {
     stroke: var(--primary);
     stroke-dasharray: 3000;
     stroke-dashoffset: 3000;
-    animation: drawStroke 2s ease-in-out forwards,
-        fillShape 0.6s ease-in-out 2s forwards;
+    animation: drawAndFillPrimary 3s ease-in-out infinite;
 }
 
-/* Path secundario (crema) */
+/* Path secundario (crema) - Loop infinito */
 .loading__path--secondary {
     stroke: #ffeecf;
     stroke-dasharray: 1500;
     stroke-dashoffset: 1500;
-    animation: drawStroke 2s ease-in-out 0.3s forwards,
-        fillShape 0.6s ease-in-out 2.3s forwards;
+    animation: drawAndFillSecondary 3s ease-in-out infinite;
 }
 
-/* Mensaje de carga */
-.loading__message {
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: #333;
-    margin: 0;
-    text-align: center;
-    animation: fadeInMessage 0.5s ease-in-out 2.6s forwards;
-    opacity: 0;
-}
-
-/* Animaciones */
-@keyframes drawStroke {
-    to {
-        stroke-dashoffset: 0;
+/* Animación completa para path primario */
+@keyframes drawAndFillPrimary {
+    0% {
+        stroke-dashoffset: 3000;
+        fill: transparent;
+        stroke-width: 4;
     }
-}
-
-@keyframes fillShape {
-    to {
-        fill: currentColor;
+    33% {
+        stroke-dashoffset: 0;
+        fill: transparent;
+        stroke-width: 4;
+    }
+    50% {
+        stroke-dashoffset: 0;
+        fill: var(--primary);
         stroke-width: 0;
     }
+    83% {
+        stroke-dashoffset: 0;
+        fill: var(--primary);
+        stroke-width: 0;
+    }
+    100% {
+        stroke-dashoffset: 3000;
+        fill: transparent;
+        stroke-width: 4;
+    }
 }
 
-@keyframes fadeInMessage {
-    to {
-        opacity: 1;
+/* Animación completa para path secundario */
+@keyframes drawAndFillSecondary {
+    0% {
+        stroke-dashoffset: 1500;
+        fill: transparent;
+        stroke-width: 4;
+    }
+    10% {
+        stroke-dashoffset: 1500;
+        fill: transparent;
+        stroke-width: 4;
+    }
+    43% {
+        stroke-dashoffset: 0;
+        fill: transparent;
+        stroke-width: 4;
+    }
+    60% {
+        stroke-dashoffset: 0;
+        fill: var(--beige);
+        stroke-width: 0;
+    }
+    93% {
+        stroke-dashoffset: 0;
+        fill: var(--beige);
+        stroke-width: 0;
+    }
+    100% {
+        stroke-dashoffset: 1500;
+        fill: transparent;
+        stroke-width: 4;
     }
 }
 
@@ -451,18 +481,10 @@
     .loading__wrapper {
         width: 300px;
     }
-
-    .loading__message {
-        font-size: 1rem;
-    }
 }
 
 @media (max-width: 400px) {
     .loading__wrapper {
         width: 250px;
-    }
-
-    .loading__message {
-        font-size: 0.9rem;
     }
 }
