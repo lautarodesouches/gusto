@@ -1,3 +1,4 @@
+'use client'
 import styles from './styles.module.css'
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

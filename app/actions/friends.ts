@@ -208,7 +208,7 @@ export async function searchFriends(
 
     try {
         const res = await fetch(
-            `${API_URL}/Amistad/buscar-usuarios/?q=${encodeURIComponent(
+            `${API_URL}/Amistad/buscar-usuarios/?username=${encodeURIComponent(
                 query
             )}`,
             {
@@ -227,6 +227,9 @@ export async function searchFriends(
         }
 
         const data: Friend[] = await res.json()
+
+        console.log({ data })
+
         return { success: true, data }
     } catch (error) {
         console.error('Error searching friends:', error)

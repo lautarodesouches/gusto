@@ -3,15 +3,15 @@ import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
-import { useRouter } from 'next/navigation'
 import { createGroup } from '@/app/actions/groups'
+import { useToast } from '@/context/ToastContext'
 
 export default function GroupCreate({
     handleCancel,
 }: {
     handleCancel: () => void
 }) {
-    const router = useRouter()
+    const toast = useToast()
 
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
@@ -21,21 +21,21 @@ export default function GroupCreate({
         if (!name || !description) return
 
         setLoading(true)
+
         try {
             const result = await createGroup({ name, description })
-            if (!result.success) {
-                alert(result.error)
-                return
-            }
+
+            if (!result.success)
+                return toast.error(result.error || `No se pudo crear grupo`)
+
+            toast.success(`Grupo "${name}" creado exitosamente`)
 
             setName('')
             setDescription('')
-            alert('Grupo creado!')
             handleCancel()
-            router.refresh()
         } catch (err) {
+            toast.error(`No se pudo crear grupo`)
             console.error(err)
-            alert('Hubo un error creando el grupo')
         } finally {
             setLoading(false)
         }

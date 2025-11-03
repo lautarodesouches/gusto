@@ -109,7 +109,7 @@ export async function createGroup(payload: {
             const errorData = await res.json().catch(() => ({}))
             return {
                 success: false,
-                error: errorData?.error || 'Error creando grupo',
+                error: errorData?.mensaje || 'Error creando grupo',
             }
         }
 
