@@ -113,8 +113,8 @@ export default function Map() {
                    <Marker
                        key={index}
                        position={{
-                           lat: place.lat,
-                           lng: place.lng,
+                           lat: place.latitud,
+                           lng: place.longitud,
                            }}
                         title={place.nombre}
                         icon={{
@@ -135,8 +135,8 @@ export default function Map() {
                         {hoveredMarker === index && (
                             <InfoWindow
                                 position={{
-                                    lat: place.lat,
-                                    lng: place.lng,
+                                    lat: place.latitud,
+                                    lng: place.longitud,
                                 }}
                                 options={{
                                     disableAutoPan: true,
