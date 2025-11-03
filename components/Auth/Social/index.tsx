@@ -6,6 +6,7 @@ import {
     faGoogle,
 } from '@fortawesome/free-brands-svg-icons'
 
+
 interface Props {
     link: string
 }

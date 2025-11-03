@@ -34,7 +34,7 @@ export default function FriendCard({
         setLoading(true)
 
         try {
-            const result = await addFriend(friend.email, friend.username)
+            const result = await addFriend(friend.username)
 
             if (!result.success)
                 return toast.error(

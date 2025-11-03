@@ -68,8 +68,8 @@ export type Friend = {
     id: string
     nombre: string
     email: string
-    fotoPerfilUrl: string
     username: string
+    fotoPerfilUrl: string
 }
 
 export type FriendInvitation = {
@@ -98,9 +98,10 @@ export type Group = {
 }
 
 export type GroupMember = {
-    usuarioEmail: string
-    usuarioNombre: string
-    id: string
+    usuarioUsername: string;
+    usuarioEmail: string;
+    usuarioNombre: string;
+    id: string;
 }
 
 export type User = {

@@ -8,12 +8,15 @@ import {
     faUser,
     faUserPlus,
     faUserXmark,
+    faComments 
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useToast } from '@/context/ToastContext'
 import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
+import ChatGrupo from '@/components/Groups/Chat/ChatGrupo' 
+
 
 interface Props {
     group: Group
@@ -23,6 +26,7 @@ export default function GroupsSocial({ group }: Props) {
     const toast = useToast()
 
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
+     const [showChat, setShowChat] = useState(false)
 
     useEffect(() => {
         setFilteredMembers(group.miembros)
@@ -144,14 +148,35 @@ export default function GroupsSocial({ group }: Props) {
                                 className={styles.invite__icon}
                             />
                             <input
-                                type="text"
-                                placeholder="Email del usuario"
+                              type="text"
+                             name="email"              
+                             placeholder="Email del usuario"
+                            required
                             />
                         </div>
                         <div>
                             <button>Agregar</button>
                         </div>
                     </form>
+
+                        <div style={{ textAlign: 'center', marginTop: 20 }}>
+                        <button
+                            onClick={() => setShowChat(!showChat)}
+                            className={styles.chatButton}
+                        >
+                            <FontAwesomeIcon icon={faComments} />{' '}
+                            {showChat ? 'Cerrar Chat' : 'Abrir Chat'}
+                        </button>
+                    </div>
+
+                    {showChat && (
+                        <div style={{ marginTop: 20 }}>
+                            <ChatGrupo grupoId={group.id} />
+                        </div>
+                    )}
+
+
+
                     <footer className={styles.footer}>
                         <button>Inicio</button>
                         <button>Grupo</button>

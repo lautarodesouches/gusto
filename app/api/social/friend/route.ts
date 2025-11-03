@@ -22,9 +22,9 @@ export async function POST(req: Request) {
         const body = await req.json()
 
         // Validación básica
-        if (!body.EmailDestino) {
+        if (!body.UsernameDestino) {
             return NextResponse.json(
-                { error: 'Falta el email' },
+                { error: 'Falta el username' },
                 { status: 400 }
             )
         }

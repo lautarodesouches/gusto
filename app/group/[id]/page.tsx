@@ -1,3 +1,4 @@
+// ✅ Este archivo es un Server Component — NO lleva 'use client'
 import { notFound, redirect } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
 import Image from 'next/image'
@@ -15,7 +16,7 @@ interface Props {
     params: Promise<{ id: string }>
 }
 
-// Obtiene los datos de un grupo desde la API
+// 🔹 1. Función para obtener datos del grupo (desde el servidor)
 async function fetchGroup({
     id,
     cookie,
@@ -29,36 +30,25 @@ async function fetchGroup({
             cache: 'no-store',
         })
 
-        // Redirigir si no está autenticado
         if (res.status === 401) redirect(ROUTES.LOGIN)
-
-        // Si no es exitoso, lanzar error para ir al 404
         if (!res.ok) {
             console.error(`Error fetching group ${id}: Status ${res.status}`)
             notFound()
         }
 
-        const data: Group = await res.json()
-        return data
+        return await res.json()
     } catch (error) {
-        // Si es un error de redirect, propagarlo
-        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-            throw error
-        }
-
         console.error(`Error fetching group ${id}:`, error)
         notFound()
     }
 }
 
-// Verifica el token de autenticación y retorna el UID del usuario
+// 🔹 2. Función para verificar autenticación (usa Firebase Admin)
 async function verifyAuthentication(): Promise<string> {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
 
-    if (!token) {
-        redirect(ROUTES.LOGIN)
-    }
+    if (!token) redirect(ROUTES.LOGIN)
 
     try {
         const decoded = await admin.auth().verifyIdToken(token)
@@ -69,23 +59,24 @@ async function verifyAuthentication(): Promise<string> {
     }
 }
 
+// 🔹 3. Componente principal del servidor
 export default async function GroupDetail({ params }: Props) {
-    // 1. Obtener parámetros
     const { id } = await params
 
-    // 2. Verificar autenticación (esto también redirige si falla)
+    // Verificar autenticación
     const userId = await verifyAuthentication()
 
-    // 3. Obtener headers para fetch
+    // Obtener cookies/headers para fetch
     const headersList = await headers()
     const cookie = headersList.get('cookie') || ''
 
-    // 4. Obtener datos del grupo
+    // Obtener datos del grupo
     const group = await fetchGroup({ id, cookie })
 
-    // 5. Verificar permisos de administrador
+    // Verificar si es administrador (opcional)
     const isAdmin = group.administradorFirebaseUid === userId
 
+    // 🔹 Render
     return (
         <main className={styles.main}>
             <nav className={styles.nav}>
@@ -101,6 +92,7 @@ export default async function GroupDetail({ params }: Props) {
                         />
                     </Link>
                 </div>
+
                 <div className={styles.nav__icons}>
                     <button
                         className={styles.nav__div}
@@ -124,6 +116,8 @@ export default async function GroupDetail({ params }: Props) {
                     </Link>
                 </div>
             </nav>
+
+            {/* Componente CLIENTE: contiene hooks, chat e interacción */}
             <GroupsSocial group={group} />
         </main>
     )

@@ -1,0 +1,75 @@
+.container {
+  position: relative;
+  display: inline-block;
+}
+
+.icon {
+  font-size: 22px;
+  color: #333;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icon:hover {
+  color: #ff5858;
+}
+
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 2px 6px;
+}
+
+.panel {
+  position: fixed; 
+  right: 80px; 
+  top: 60px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 9999; 
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+
+.notification {
+  border-bottom: 1px solid #eee;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.notification.read {
+  opacity: 0.6;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.accept,
+.reject {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.accept {
+  background-color: #4caf50;
+  color: white;
+}
+
+.reject {
+  background-color: #f44336;
+  color: white;
+}
