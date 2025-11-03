@@ -352,8 +352,8 @@ export default function RestaurantView({
                 <div className={styles.location__map}>
                     <MapProvider>
                         <RestaurantMap
-                            lat={restaurant.lat}
-                            lng={restaurant.lng}
+                            lat={restaurant.latitud}
+                            lng={restaurant.longitud}
                             name={restaurant.nombre}
                             address={restaurant.direccion}
                         />

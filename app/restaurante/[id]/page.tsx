@@ -1,5 +1,5 @@
 import { RestaurantClient } from '@/components'
-import { getReviewsByRestaurantId, getRestaurant } from '../actions'
+import {  getRestaurant } from '../actions'
 import { notFound } from 'next/navigation'
 
 interface Props {
@@ -13,7 +13,13 @@ export default async function Restaurant({ params }: Props) {
 
     if (!result.success || !result.data) notFound()
 
-    const { data: reviews } = await getReviewsByRestaurantId(result.data.id)
+    const restaurant = result.data
+  const reviews = restaurant.reviews || []
 
-    return <RestaurantClient restaurant={result.data} reviews={reviews || []} />
+  return (
+    <RestaurantClient
+      restaurant={restaurant}
+      reviews={reviews}
+    />
+  )
 }
