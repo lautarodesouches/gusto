@@ -11,10 +11,10 @@ import {
     faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
 import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
+import { useToast } from '@/context/ToastContext'
 
 export default function FriendCard({
     friend,
@@ -25,23 +25,30 @@ export default function FriendCard({
     isSearching?: boolean
     invitationId?: string
 }) {
-    const router = useRouter()
+    const toast = useToast()
 
     const [loading, setLoading] = useState(false)
     const [isInvitating, setIsInvitating] = useState(false)
-    const [error, setError] = useState<string | null>(null)
 
     const handleAddFriend = async () => {
         setLoading(true)
-        setError(null)
 
         try {
-            await addFriend(friend.email, friend.username)
+            const result = await addFriend(friend.email, friend.username)
+
+            if (!result.success)
+                return toast.error(
+                    result.error || `No se pudo enviar solicitud`
+                )
+
             setIsInvitating(true)
+
+            toast.success(`Solicitud de amistad enviada`)
+
             alert('Invitación enviada')
         } catch (err: unknown) {
-            if (err instanceof Error) setError(err.message)
-            alert(err instanceof Error ? err.message : 'Error desconocido')
+            toast.error(`No se pudo enviar solicitud`)
+            console.error(err)
         } finally {
             setLoading(false)
         }
@@ -51,15 +58,21 @@ export default function FriendCard({
         if (!invitationId) return
 
         setLoading(true)
-        setError(null)
 
         try {
-            await respondToFriendInvitation(invitationId, action)
+            const result = await respondToFriendInvitation(invitationId, action)
+
+            if (!result.success)
+                return toast.error(
+                    result.error || `No se pudo enviar ${action} invitacion`
+                )
+
+            toast.success(`Solicitud de amistad enviada`)
+
             alert('Solicitud ' + action)
-            router.refresh()
         } catch (err: unknown) {
-            if (err instanceof Error) setError(err.message)
-            alert(err instanceof Error ? err.message : 'Error desconocido')
+            toast.error(`No se pudo enviar ${action} invitacion`)
+            console.error(err)
         } finally {
             setLoading(false)
         }
