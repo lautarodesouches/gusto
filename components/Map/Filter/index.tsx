@@ -92,7 +92,6 @@ export default function Filter({ isVisible, handleClose }: Props) {
         setRatings(prev =>
             prev.map(r => ({ ...r, checked: r.name === rating }))
         )
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

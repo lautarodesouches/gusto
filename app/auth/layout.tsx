@@ -15,7 +15,7 @@ export default function Layout({
             <div className={styles.main__div}>{children}</div>
             {!isStepRoute && (
                 <aside className={styles.main__aside}>
-                    <span>IMG/ VIDEO</span>
+                    
                 </aside>
             )}
         </main>

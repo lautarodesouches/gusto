@@ -1,4 +1,5 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL
+export const LOCAL_URL = process.env.NEXT_PUBLIC_LOCAL_URL!
+export const API_URL = process.env.NEXT_PUBLIC_API_URL!
 
 export const FIREBASE_CONFIG = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,

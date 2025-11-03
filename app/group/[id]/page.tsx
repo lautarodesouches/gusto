@@ -1,190 +1,132 @@
 'use client'
 import { useEffect, useState } from 'react'
-import styles from './page.module.css'
-import { Group } from '@/types'
-import { useParams } from 'next/navigation'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
+import { cookies, headers } from 'next/headers' // para autenticación
+import { notFound, redirect } from 'next/navigation' // para manejo de errores
 import Image from 'next/image'
 import Link from 'next/link'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
+import styles from './page.module.css'
+import { Group } from '@/types'
 import { ROUTES } from '@/routes'
-import { FriendCard } from '@/components'
-import ChatGrupo from '@/components/Social/Chat/ChatGrupo'
+import { LOCAL_URL } from '@/constants'
+import { GroupsSocial } from '@/components'
+import admin from '@/lib/firebaseAdmin'
 
-export default function GroupDetail() {
-  const { id } = useParams<{ id: string }>()
-  const [group, setGroup] = useState<Group | null>(null)
-  const [email, setEmail] = useState('')
-  const [mensaje, setMensaje] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showChat, setShowChat] = useState(false) 
+interface Props {
+    params: Promise<{ id: string }>
+}
 
-  const fetchGroup = async () => {
+// Obtiene los datos de un grupo desde la API
+async function fetchGroup({
+    id,
+    cookie,
+}: {
+    id: string
+    cookie: string
+}): Promise<Group> {
     try {
-      const res = await fetch(`/api/group/${id}`)
-      const data = await res.json()
-      setGroup(data)
-    } catch (err) {
-      console.error('Error fetching group detail:', err)
+        const res = await fetch(`${LOCAL_URL}/api/group/${id}`, {
+            headers: { cookie },
+            cache: 'no-store',
+        })
+
+        // Redirigir si no está autenticado
+        if (res.status === 401) redirect(ROUTES.LOGIN)
+
+        // Si no es exitoso, lanzar error para ir al 404
+        if (!res.ok) {
+            console.error(`Error fetching group ${id}: Status ${res.status}`)
+            notFound()
+        }
+
+        const data: Group = await res.json()
+        return data
+    } catch (error) {
+        // Si es un error de redirect, propagarlo
+        if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+            throw error
+        }
+
+        console.error(`Error fetching group ${id}:`, error)
+        notFound()
     }
-  }
+}
 
-  useEffect(() => {
-    if (id) fetchGroup()
-  }, [id])
+// Verifica el token de autenticación y retorna el UID del usuario
+async function verifyAuthentication(): Promise<string> {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
 
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!id) return alert('ID de grupo no encontrado')
+    if (!token) {
+        redirect(ROUTES.LOGIN)
+    }
 
-    setLoading(true)
     try {
-      const body = { query: email, mensajePersonalizado: mensaje }
-      const res = await fetch(`/api/group/${id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Error al invitar')
-
-      alert('Invitación enviada correctamente!')
-      setEmail('')
-      setMensaje('')
-    } catch (err) {
-      console.error(err)
-      alert('No se pudo enviar la invitación')
-    } finally {
-      setLoading(false)
+        const decoded = await admin.auth().verifyIdToken(token)
+        return decoded.uid
+    } catch (error) {
+        console.error('Error verifying token:', error)
+        redirect(ROUTES.LOGIN)
     }
-  }
+}
 
-  return (
-    <main className={styles.main}>
-      <nav className={styles.nav}>
-        <div className={styles.nav__logo}>
-          <Link href={ROUTES.MAP}>
-            <Image
-              src="/images/brand/gusto-center-negative.svg"
-              alt="Logo Gusto!"
-              className={styles.nav__img}
-              width={0}
-              height={0}
-              priority
-            />
-          </Link>
-        </div>
-        <div className={styles.nav__icons}>
-          <div className={styles.nav__div}>
-            <FontAwesomeIcon icon={faBell} className={styles.nav__icon} />
-          </div>
-          <div className={styles.nav__div}>
-            <FontAwesomeIcon icon={faUser} className={styles.nav__icon} />
-          </div>
-        </div>
-      </nav>
+export default async function GroupDetail({ params }: Props) {
+    // 1. Obtener parámetros
+    const { id } = await params
 
-      {group ? (
-        <div className={styles.container}>
-          <div className={styles.card}>
-            <div className={styles.header}>
-              <h1>{group.nombre}</h1>
-              <span
-                className={
-                  group.activo ? styles.active : styles.inactive
-                }
-              >
-                {group.activo ? 'Activo' : 'Inactivo'}
-              </span>
-            </div>
+    // 2. Verificar autenticación (esto también redirige si falla)
+    const userId = await verifyAuthentication()
 
-            <p className={styles.description}>{group.descripcion}</p>
+    // 3. Obtener headers para fetch
+    const headersList = await headers()
+    const cookie = headersList.get('cookie') || ''
 
-            <div className={styles.infoGrid}>
-              <div>
-                <strong>Administrador:</strong> {group.administradorNombre}
-              </div>
-              <div>
-                <strong>Miembros:</strong> {group.cantidadMiembros}
-              </div>
-              <div>
-                <strong>Código de invitación:</strong>{' '}
-                {group.codigoInvitacion}
-              </div>
-              <div>
-                <strong>Creado:</strong> {group.fechaCreacion}
-              </div>
-            </div>
+    // 4. Obtener datos del grupo
+    const group = await fetchGroup({ id, cookie })
 
-            <hr className={styles.divider} />
+    // 5. Verificar permisos de administrador
+    const isAdmin = group.administradorFirebaseUid === userId
 
-            {/* FORMULARIO INVITAR */}
-            <form className={styles.inviteForm} onSubmit={handleInvite}>
-              <h2>Invitar amigos</h2>
-              <div className={styles.inviteRow}>
-                <input
-                  type="email"
-                  placeholder="Email del amigo"
-                  value={email}
-                  className={styles.input}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Mensaje personalizado"
-                  value={mensaje}
-                  className={styles.input}
-                  onChange={(e) => setMensaje(e.target.value)}
-                />
-                <button
-                  type="submit"
-                  className={styles.button}
-                  disabled={loading}
-                >
-                  {loading ? 'Enviando...' : 'Invitar'}
-                </button>
-              </div>
-            </form>
-
-            <hr className={styles.divider} />
-
-            {group.miembros.map((f) => (
-              <FriendCard
-                friend={{
-                  id: f.id,
-                nombre: f.usuarioNombre,
-              email: f.usuarioEmail,
-            username: f.usuarioUsername, 
-            fotoPerfilUrl: '',
-                }}
-                key={f.id}
-              />
-            ))}
-
-            <hr className={styles.divider} />
-
-            {/* BOTÓN Y CHAT */}
-            <div style={{ textAlign: 'center', marginTop: 20 }}>
-              <button
-                onClick={() => setShowChat(!showChat)}
-                className={styles.button}
-              >
-                {showChat ? 'Cerrar Chat' : 'Abrir Chat'}
-              </button>
-            </div>
-
-            {showChat && (
-              <div style={{ marginTop: 30 }}>
-                <ChatGrupo grupoId={id!} />
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className={styles.loading}>Cargando detalles...</div>
-      )}
-    </main>
-  )
+    return (
+        <main className={styles.main}>
+            <nav className={styles.nav}>
+                <div className={styles.nav__logo}>
+                    <Link href={ROUTES.MAP} aria-label="Ir al mapa">
+                        <Image
+                            src="/images/brand/gusto-center-negative.svg"
+                            alt="Logo Gusto!"
+                            className={styles.nav__img}
+                            width={120}
+                            height={40}
+                            priority
+                        />
+                    </Link>
+                </div>
+                <div className={styles.nav__icons}>
+                    <button
+                        className={styles.nav__div}
+                        aria-label="Notificaciones"
+                        type="button"
+                    >
+                        <FontAwesomeIcon
+                            icon={faBell}
+                            className={styles.nav__icon}
+                        />
+                    </button>
+                    <Link
+                        href={ROUTES.PROFILE}
+                        className={styles.nav__div}
+                        aria-label="Perfil de usuario"
+                    >
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            className={styles.nav__icon}
+                        />
+                    </Link>
+                </div>
+            </nav>
+            <GroupsSocial group={group} />
+        </main>
+    )
 }

@@ -21,8 +21,7 @@ const getData = async () => {
             throw new Error('Error en el fetch')
         }
 
-       data = await res.json()
-       
+        data = await res.json()
     } catch (error) {
         console.error('Error cargando los datos:', error)
         data = []

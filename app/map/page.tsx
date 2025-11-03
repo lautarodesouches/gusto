@@ -12,7 +12,6 @@ import { MapFilter, MapSocial, Loading, MapView } from '@/components'
 import { Suspense, useState } from 'react'
 import { MapProvider } from '@/components/Map/MapProvider'
 import Image from 'next/image'
-import NotificationBell from '@/components/Social/NotificationBell/Notificacion'
 
 export default function Map() {
     const [isFiltersVisible, setIsFiltersVisible] = useState(false)
@@ -29,96 +28,99 @@ export default function Map() {
     }
 
     return (
-        <Suspense fallback={<Loading message="Cargando mapa" />}>
-            <main className={styles.main}>
-                <nav className={styles.nav}>
-                    <div className={styles.nav__logo}>
-                        <Image
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
-                            className={styles.nav__img}
-                            width={0}
-                            height={0}
-                            priority
-                        />
-                    </div>
-                    <fieldset className={styles.nav__fieldset}>
+        <main className={styles.main}>
+            <nav className={styles.nav}>
+                <div className={styles.nav__logo}>
+                    <Image
+                        src="/images/brand/gusto-center-negative.svg"
+                        alt="Logo Gusto!"
+                        className={styles.nav__img}
+                        width={0}
+                        height={0}
+                        priority
+                    />
+                </div>
+                <fieldset className={styles.nav__fieldset}>
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className={styles.nav__icon}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Escribe un lugar"
+                        name="search"
+                        className={styles.nav__input}
+                    />
+                </fieldset>
+                <div className={styles.nav__icons}>
+                    <div className={styles.nav__div}>
                         <FontAwesomeIcon
-                            icon={faSearch}
+                            icon={faBell}
                             className={styles.nav__icon}
                         />
-                        <input
-                            type="text"
-                            placeholder="Escribe un lugar"
-                            name="search"
-                            className={styles.nav__input}
+                    </div>
+                    <div className={styles.nav__div}>
+                        <FontAwesomeIcon
+                            icon={faUser}
+                            className={styles.nav__icon}
                         />
-                    </fieldset>
-                    <div className={styles.nav__icons}>
-                        <div className={styles.nav__div}>
-                              <NotificationBell />
-                        </div>
-                        <div className={styles.nav__div}>
-                            <FontAwesomeIcon
-                                icon={faUser}
-                                className={styles.nav__icon}
-                            />
-                        </div>
                     </div>
-                </nav>
-                <section className={styles.middle}>
-                    <div className={styles.middle__filter}>
-                        <MapFilter isVisible handleClose={() => {}} />
-                    </div>
+                </div>
+            </nav>
+            <section className={styles.middle}>
+                <div className={styles.middle__filter}>
+                    <MapFilter isVisible handleClose={() => {}} />
+                </div>
+                <Suspense fallback={<Loading message="Cargando mapa" />}>
                     <MapProvider>
                         <MapView />
                     </MapProvider>
-                    <div className={styles.middle__filter}>
-                        <MapSocial
-                            isVisible
-                            handleClose={() => {
-                                setIsSocialVisible(!isSocialVisible)
-                            }}
-                        />
-                    </div>
-                </section>
-                <section className={styles.bottom}>
-                    <div className={styles.bottom__container}>
-                        <button
-                            className={styles.bottom__button}
-                            onClick={handleClickFilters}
-                        >
-                            <FontAwesomeIcon
-                                icon={faFilter}
-                                className={styles.bottom__icon}
-                            />
-                            <span className={styles.bottom__span}>Filtros</span>
-                        </button>
-                        <button
-                            className={styles.bottom__button}
-                            onClick={handleClickSocial}
-                        >
-                            <FontAwesomeIcon
-                                icon={faUsers}
-                                className={styles.bottom__icon}
-                            />
-                            <span className={styles.bottom__span}>Social</span>
-                        </button>
-                    </div>
-                    <MapFilter
-                        isVisible={isFiltersVisible}
-                        handleClose={() => {
-                            setIsFiltersVisible(!isFiltersVisible)
-                        }}
-                    />
+                </Suspense>
+                <div className={styles.middle__filter}>
                     <MapSocial
-                        isVisible={isSocialVisible}
+                        isVisible
                         handleClose={() => {
                             setIsSocialVisible(!isSocialVisible)
                         }}
                     />
-                </section>
-            </main>
-        </Suspense>
+                </div>
+            </section>
+            <section className={styles.bottom}>
+                <div className={styles.bottom__container}>
+                    <button
+                        className={styles.bottom__button}
+                        onClick={handleClickFilters}
+                    >
+                        <FontAwesomeIcon
+                            icon={faFilter}
+                            className={styles.bottom__icon}
+                        />
+                        <span className={styles.bottom__span}>Filtros</span>
+                    </button>
+                    <button
+                        className={styles.bottom__button}
+                        onClick={handleClickSocial}
+                    >
+                        <FontAwesomeIcon
+                            icon={faUsers}
+                            className={styles.bottom__icon}
+                        />
+                        <span className={styles.bottom__span}>Social</span>
+                    </button>
+                </div>
+                <MapFilter
+                    isVisible={isFiltersVisible}
+                    handleClose={() => {
+                        setIsFiltersVisible(!isFiltersVisible)
+                    }}
+                />
+                <MapSocial
+                    isVisible={isSocialVisible}
+                    handleClose={() => {
+                        setIsSocialVisible(!isSocialVisible)
+                    }}
+                />
+            </section>
+        </main>
     )
 }
