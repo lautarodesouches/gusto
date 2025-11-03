@@ -53,13 +53,13 @@ export default function MapView({
                 onLoad={map => setMapInstance(map)}
                 onIdle={onIdle}
             >
-                {restaurants.map((place, index) => (
-                    <Marker
-                        key={index}
-                        position={{
-                            lat: place.lat,
-                            lng: place.lng,
-                        }}
+               {restaurants.map((place, index) => (
+                   <Marker         
+                       key={index}
+                       position={{
+                           lat: place.latitud,
+                           lng: place.longitud,
+                           }}
                         title={place.nombre}
                         icon={{
                             url:
@@ -85,8 +85,8 @@ export default function MapView({
                         {hoveredMarker === index && (
                             <InfoWindow
                                 position={{
-                                    lat: place.lat,
-                                    lng: place.lng,
+                                    lat: place.latitud,
+                                    lng: place.longitud,
                                 }}
                                 options={{
                                     disableAutoPan: true,

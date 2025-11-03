@@ -34,6 +34,7 @@ export type ResponseRegister = {
 }
 
 export interface Restaurant {
+    
     id: string
     propietarioUid: string
     horarios: Record<string, unknown> // como viene vacío o puede ser JSON dinámico
@@ -41,8 +42,8 @@ export interface Restaurant {
     actualizadoUtc: string // ISO date string
     nombre: string
     direccion: string
-    lat: number
-    lng: number
+    latitud: number
+    longitud: number
     rating: number
     googlePlaceId: string | null
     tipo: string // si luego querés, podés hacer enum
@@ -52,6 +53,26 @@ export interface Restaurant {
     gustosQueSirve: Gusto[]
     restriccionesQueRespeta: Restriccion[]
     score: number
+    reviews: Review[]
+}
+
+export interface Review {
+  id: string
+  autor: string
+  rating: number
+  texto: string
+  fecha: string
+  foto?: string
+  restauranteId?: string
+
+  // campos opcionales antiguos (para compatibilidad)
+  userId?: string
+  userName?: string
+  userAvatar?: string
+  title?: string
+  content?: string
+  images?: string[]
+  isVerified?: boolean
 }
 
 export interface Gusto {
@@ -128,18 +149,7 @@ export type ApiResponse<T> = {
     error?: string
 }
 
-export interface Review {
-    id: string
-    userId: string
-    userName: string
-    userAvatar?: string
-    rating: number
-    title: string
-    content: string
-    images?: string[]
-    date: string
-    isVerified: boolean
-}
+
 
 export interface SocialData {
     friends: Friend[]
