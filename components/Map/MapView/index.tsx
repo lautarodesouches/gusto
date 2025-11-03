@@ -53,23 +53,13 @@ export default function MapView({
                 onLoad={map => setMapInstance(map)}
                 onIdle={onIdle}
             >
-<<<<<<< HEAD
                {restaurants.map((place, index) => (
-                   <Marker
+                   <Marker         
                        key={index}
                        position={{
                            lat: place.latitud,
                            lng: place.longitud,
                            }}
-=======
-                {restaurants.map((place, index) => (
-                    <Marker
-                        key={index}
-                        position={{
-                            lat: place.lat,
-                            lng: place.lng,
-                        }}
->>>>>>> develop
                         title={place.nombre}
                         icon={{
                             url:
