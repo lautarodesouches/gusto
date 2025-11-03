@@ -1,15 +1,10 @@
-// ✅ Este archivo es un Server Component — NO lleva 'use client'
 import { notFound, redirect } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
-import Image from 'next/image'
-import Link from 'next/link'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { LOCAL_URL } from '@/constants'
-import { GroupsSocial } from '@/components'
+import { GroupClient } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 
 interface Props {
@@ -76,49 +71,9 @@ export default async function GroupDetail({ params }: Props) {
     // Verificar si es administrador (opcional)
     const isAdmin = group.administradorFirebaseUid === userId
 
-    // 🔹 Render
     return (
         <main className={styles.main}>
-            <nav className={styles.nav}>
-                <div className={styles.nav__logo}>
-                    <Link href={ROUTES.MAP} aria-label="Ir al mapa">
-                        <Image
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
-                            className={styles.nav__img}
-                            width={120}
-                            height={40}
-                            priority
-                        />
-                    </Link>
-                </div>
-
-                <div className={styles.nav__icons}>
-                    <button
-                        className={styles.nav__div}
-                        aria-label="Notificaciones"
-                        type="button"
-                    >
-                        <FontAwesomeIcon
-                            icon={faBell}
-                            className={styles.nav__icon}
-                        />
-                    </button>
-                    <Link
-                        href={ROUTES.PROFILE}
-                        className={styles.nav__div}
-                        aria-label="Perfil de usuario"
-                    >
-                        <FontAwesomeIcon
-                            icon={faUser}
-                            className={styles.nav__icon}
-                        />
-                    </Link>
-                </div>
-            </nav>
-
-            {/* Componente CLIENTE: contiene hooks, chat e interacción */}
-            <GroupsSocial group={group} />
+            <GroupClient group={group} />
         </main>
     )
 }
