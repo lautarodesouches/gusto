@@ -168,3 +168,20 @@ export interface Coordinates {
     lat: number
     lng: number
 }
+export interface UsuarioSimpleResponse {
+    id: string
+    nombre: string
+    username: string
+    email: string
+    fotoPerfilUrl: string
+}
+
+export interface SolicitudAmistadResponse {
+    id: string
+    remitente: UsuarioSimpleResponse
+    destinatario: UsuarioSimpleResponse
+    estado: string
+    fechaEnvio: string
+    fechaRespuesta?: string
+    mensaje?: string
+}
