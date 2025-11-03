@@ -7,8 +7,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useState } from 'react'
 import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
+import { useToast } from '@/context/ToastContext'
 
 export default function MapClient() {
+    const toast = useToast()
+
     const { coords, error, loading } = useUserLocation()
 
     const router = useRouter()
@@ -48,9 +51,13 @@ export default function MapClient() {
 
             const data = await res.json()
 
-            setRestaurants(data)
+            setRestaurants(data.recomendaciones)
         } catch (err) {
             console.error(err)
+
+            toast.error('Error al cargar restaurantes')
+
+            setRestaurants([])
         } finally {
             setIsLoading(false)
         }
