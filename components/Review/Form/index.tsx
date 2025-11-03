@@ -1,12 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
-
 import { useState, useTransition, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar, faImage } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
-import styles from './ReviewForm.module.css'
+import styles from './styles.module.css'
 import { Restaurant } from '@/types'
 import { useToast } from '@/context/ToastContext'
 import { submitReview } from '@/app/actions/review'

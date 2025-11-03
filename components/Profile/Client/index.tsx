@@ -39,10 +39,7 @@ export default function ProfileClient({
     const handleAddFriend = async () => {
         startTransition(async () => {
             try {
-                const result = await addFriend(
-                    'patricia@gmail.com',
-                    profile.username
-                )
+                const result = await addFriend(profile.username)
 
                 if (!result.success)
                     return toast.error(

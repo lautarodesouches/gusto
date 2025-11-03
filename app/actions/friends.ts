@@ -107,7 +107,6 @@ export async function getFriendsData(): Promise<
 }
 
 export async function addFriend(
-    email: string,
     username: string
 ): Promise<ApiResponse<User>> {
     try {
@@ -115,7 +114,7 @@ export async function addFriend(
             method: 'POST',
             headers: await getAuthHeaders(),
             body: JSON.stringify({
-                emailDestino: email,
+                usernameDestino: username,
                 mensaje: `${username} quiere ser tu amigo.`,
             }),
         })
