@@ -44,12 +44,10 @@ export default function ProfileClient({
                     profile.username
                 )
 
-                if (!result.success) {
-                    toast.error(
+                if (!result.success)
+                    return toast.error(
                         result.error || 'No se pudo enviar la solicitud'
                     )
-                    return
-                }
 
                 toast.success('Solicitud de amistad enviada')
             } catch (err: unknown) {
@@ -69,10 +67,10 @@ export default function ProfileClient({
                     profile.username
                 )
 
-                if (!result.success) {
-                    toast.error(result.error || 'No se pudo eliminar al amigo')
-                    return
-                }
+                if (!result.success)
+                    return toast.error(
+                        result.error || 'No se pudo eliminar al amigo'
+                    )
 
                 toast.success('Amigo eliminado correctamente')
             } catch (err: unknown) {
