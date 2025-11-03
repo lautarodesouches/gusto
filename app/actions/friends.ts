@@ -228,8 +228,6 @@ export async function searchFriends(
 
         const data: Friend[] = await res.json()
 
-        console.log({ data })
-
         return { success: true, data }
     } catch (error) {
         console.error('Error searching friends:', error)

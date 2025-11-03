@@ -27,20 +27,21 @@ const defaultMapOptions = {
 
 interface Props {
     coords: Coordinates | null
-    setMapInstance: Dispatch<SetStateAction<google.maps.Map | null>>
-    onIdle: () => void
     restaurants: Restaurant[]
     hoveredMarker: number | null
-    setHoveredMarker: Dispatch<SetStateAction<number | null>>
+    isLoading: boolean
+    setMapInstance: Dispatch<SetStateAction<google.maps.Map | null>>
+    onIdle: () => void
+    setHoveredMarker: (markerId: number | null) => void
 }
 
 export default function MapView({
     coords,
+    restaurants,
+    hoveredMarker,
     setMapInstance,
     onIdle,
-    restaurants,
     setHoveredMarker,
-    hoveredMarker,
 }: Props) {
     return (
         <section className={styles.map}>
@@ -52,13 +53,13 @@ export default function MapView({
                 onLoad={map => setMapInstance(map)}
                 onIdle={onIdle}
             >
-               {restaurants.map((place, index) => (
-                   <Marker
-                       key={index}
-                       position={{
-                           lat: place.lat,
-                           lng: place.lng,
-                           }}
+                {restaurants.map((place, index) => (
+                    <Marker
+                        key={index}
+                        position={{
+                            lat: place.lat,
+                            lng: place.lng,
+                        }}
                         title={place.nombre}
                         icon={{
                             url:

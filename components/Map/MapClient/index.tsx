@@ -1,105 +1,197 @@
 'use client'
-import { Error, Loading } from '@/components'
-import { useUserLocation } from '@/hooks/useUserLocation'
-import { ROUTES } from '@/routes'
-import { Restaurant } from '@/types'
+import { Suspense, useCallback, useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { Error as ErrorComponent, Loading } from '@/components'
+import { useUserLocation } from '@/hooks/useUserLocation'
+import { useToast } from '@/context/ToastContext'
+import { ROUTES } from '@/routes'
+import { Restaurant, Coordinates } from '@/types'
 import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
-import { useToast } from '@/context/ToastContext'
+
+interface MapState {
+    restaurants: Restaurant[]
+    hoveredMarker: number | null
+    center: Coordinates | null
+    isLoading: boolean
+}
+
+const INITIAL_STATE: MapState = {
+    restaurants: [],
+    hoveredMarker: null,
+    center: null,
+    isLoading: true,
+}
+
+function buildRestaurantQuery(
+    center: Coordinates,
+    searchParams: URLSearchParams
+): URLSearchParams {
+    const query = new URLSearchParams()
+
+    query.append('near.lat', String(center.lat))
+    query.append('near.lng', String(center.lng))
+
+    const tipo = searchParams.get('tipo')
+    if (tipo) query.append('tipo', tipo)
+
+    const plato = searchParams.get('plato')
+    if (plato) query.append('plato', plato)
+
+    return query
+}
+
+function coordinatesChanged(
+    prev: Coordinates | null,
+    current: Coordinates
+): boolean {
+    if (!prev) return true
+    return prev.lat !== current.lat || prev.lng !== current.lng
+}
 
 export default function MapClient() {
     const toast = useToast()
-
-    const { coords, error, loading } = useUserLocation()
-
     const router = useRouter()
-
     const searchParams = useSearchParams()
 
-    const [hoveredMarker, setHoveredMarker] = useState<number | null>(null)
+    const {
+        coords,
+        error: locationError,
+        loading: locationLoading,
+    } = useUserLocation()
 
-    const [restaurants, setRestaurants] = useState<Restaurant[]>([])
-
-    const [isLoading, setIsLoading] = useState(true)
-
-    const [center, setCenter] = useState({
-        lat: coords?.lat,
-        lng: coords?.lng,
-    })
-
+    const [state, setState] = useState<MapState>(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
 
-    const fetchRestaurants = useCallback(async () => {
-        try {
-            const query = new URLSearchParams()
+    // Ref prevent duplicate fetch
+    const isFetchingRef = useRef(false)
 
-            query.append('near.lat', String(center.lat))
-            query.append('near.lng', String(center.lng))
+    const updateCenter = useCallback((newCenter: Coordinates) => {
+        setState(prev => ({
+            ...prev,
+            center: newCenter,
+        }))
+    }, [])
 
-            const tipo = searchParams.get('tipo')
-            if (tipo) query.append('tipo', tipo)
-            const plato = searchParams.get('plato')
-            if (plato) query.append('plato', plato)
+    const setHoveredMarker = useCallback((markerId: number | null) => {
+        setState(prev => ({
+            ...prev,
+            hoveredMarker: markerId,
+        }))
+    }, [])
 
-            const res = await fetch(`/api/restaurants?${query.toString()}`)
+    const fetchRestaurants = useCallback(
+        async (center: Coordinates) => {
+            // Evitar fetches duplicados
+            if (isFetchingRef.current) return
 
-            if (res.status === 401) return router.push(ROUTES.LOGIN)
+            isFetchingRef.current = true
+            setState(prev => ({ ...prev, isLoading: true }))
 
-            if (!res.ok) throw 'Error al cargar restaurantes'
+            try {
+                const query = buildRestaurantQuery(center, searchParams)
+                const res = await fetch(`/api/restaurants?${query.toString()}`)
 
-            const data = await res.json()
+                if (res.status === 401) {
+                    router.push(ROUTES.LOGIN)
+                    return
+                }
 
-            setRestaurants(data.recomendaciones)
-        } catch (err) {
-            console.error(err)
+                if (!res.ok) {
+                    throw new Error('Error al cargar restaurantes')
+                }
 
-            toast.error('Error al cargar restaurantes')
+                const data = await res.json()
 
-            setRestaurants([])
-        } finally {
-            setIsLoading(false)
-        }
-    }, [searchParams, center])
+                setState(prev => ({
+                    ...prev,
+                    restaurants: data.recomendaciones || [],
+                    isLoading: false,
+                }))
+            } catch (err) {
+                console.error('Error fetching restaurants:', err)
 
-    useEffect(() => {
-        fetchRestaurants()
-    }, [fetchRestaurants])
+                const errorMessage =
+                    err instanceof Error
+                        ? err.message
+                        : 'Error al cargar restaurantes'
 
-    const handleIdle = () => {
+                toast.error(errorMessage)
+
+                setState(prev => ({
+                    ...prev,
+                    restaurants: [],
+                    isLoading: false,
+                }))
+            } finally {
+                isFetchingRef.current = false
+            }
+        },
+        [searchParams, router, toast]
+    )
+
+    const handleMapIdle = useCallback(() => {
         if (!mapInstance) return
-        const newCenter = mapInstance.getCenter()
-        if (!newCenter) return
 
-        const lat = newCenter.lat()
-        const lng = newCenter.lng()
+        const mapCenter = mapInstance.getCenter()
+        if (!mapCenter) return
 
-        // Solo actualizamos si cambió realmente
-        if (lat !== center.lat || lng !== center.lng) {
-            setCenter({ lat, lng })
-
-            // Actualizamos la URL incluyendo pathname actual
-            const query = new URLSearchParams(searchParams.toString())
-            query.set('near.lat', String(lat))
-            query.set('near.lng', String(lng))
-            router.replace(`${window.location.pathname}?${query.toString()}`)
+        const newCenter: Coordinates = {
+            lat: mapCenter.lat(),
+            lng: mapCenter.lng(),
         }
+
+        if (!coordinatesChanged(state.center, newCenter)) return
+
+        updateCenter(newCenter)
+
+        const query = new URLSearchParams(searchParams.toString())
+        query.set('near.lat', String(newCenter.lat))
+        query.set('near.lng', String(newCenter.lng))
+
+        const newUrl = `${window.location.pathname}?${query.toString()}`
+        router.replace(newUrl, { scroll: false })
+    }, [mapInstance, state.center, searchParams, router, updateCenter])
+
+    // Update center when coords are available
+    useEffect(() => {
+        if (!coords) return
+        if (state.center) return
+
+        updateCenter(coords)
+    }, [coords, state.center, updateCenter])
+
+    // Fetch restaurants when center or filters change
+    useEffect(() => {
+        if (!state.center) return
+
+        fetchRestaurants(state.center)
+    }, [state.center, searchParams, fetchRestaurants])
+
+    if (locationError) {
+        return (
+            <ErrorComponent
+                message={locationError}
+                onRetry={() => window.location.reload()}
+            />
+        )
     }
-    if (error) return <Error message={error} />
-    if (loading || isLoading)
-        return <Loading message="Obteniendo ubicación y restaurantes..." />
+
+    if (locationLoading || !coords || !state.center) {
+        return <Loading message="Obteniendo ubicación..." />
+    }
 
     return (
-        <Suspense fallback={<Loading message="Cargando mapa" />}>
+        <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
                 <MapView
-                    coords={coords}
+                    coords={state.center}
+                    restaurants={state.restaurants}
+                    hoveredMarker={state.hoveredMarker}
+                    isLoading={state.isLoading}
                     setMapInstance={setMapInstance}
-                    onIdle={handleIdle}
-                    restaurants={restaurants}
-                    hoveredMarker={hoveredMarker}
                     setHoveredMarker={setHoveredMarker}
+                    onIdle={handleMapIdle}
                 />
             </MapProvider>
         </Suspense>
