@@ -164,8 +164,10 @@ export default function GroupsSocial({ group }: Props) {
                                 className={styles.invite__icon}
                             />
                             <input
-                                type="text"
-                                placeholder="Email del usuario"
+                              type="text"
+                             name="email"              
+                             placeholder="Email del usuario"
+                            required
                             />
                         </div>
                         <div>
