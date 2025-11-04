@@ -5,9 +5,10 @@ import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
 import { ROUTES } from '@/routes'
+import { ActiveView } from '../Client'
 
 interface Props {
-    activeView: 'inicio' | 'grupo'
+    activeView: ActiveView
 }
 
 export default function Nav({ activeView }: Props) {
@@ -25,7 +26,6 @@ export default function Nav({ activeView }: Props) {
                     />
                 </Link>
             </div>
-
             <div className={styles.nav__icons}>
                 <button
                     className={styles.nav__div}

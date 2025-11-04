@@ -1,5 +1,129 @@
+'use client'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
+import { useEffect, useState } from 'react'
+import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
+import { API_URL } from '@/constants'
+import { useToast } from '@/context/ToastContext'
+import { formatChatDate } from '../../../utils/index'
 
-export default function GroupsChat() {
-    return <></>
+interface Props {
+    groupId: string
+}
+
+interface ChatMessage {
+    usuario: string
+    mensaje: string
+    fecha: string
+}
+
+export default function GroupsChat({ groupId }: Props) {
+    const toast = useToast()
+
+    const [connection, setConnection] = useState<HubConnection | null>(null)
+    const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [input, setInput] = useState('')
+
+    useEffect(() => {
+        console.log({ messages })
+    }, [messages])
+
+    useEffect(() => {
+        if (connection) return
+        const conn = new HubConnectionBuilder()
+            .withUrl(`${API_URL}/chatHub`)
+            .withAutomaticReconnect()
+            .build()
+
+        const handleReceiveMessage = (msg: ChatMessage) => {
+            console.log('📩 Mensaje recibido:', msg)
+            setMessages(prev => [...prev, msg])
+        }
+
+        conn.on('ReceiveMessage', handleReceiveMessage)
+
+        conn.on('LoadChatHistory', mensajes => {
+            setMessages(mensajes)
+        })
+
+        conn.start()
+            .then(() => {
+                console.log('🟢 Conectado a SignalR')
+                conn.invoke('JoinGroup', groupId)
+            })
+            .catch(err => console.error('Error al conectar:', err))
+
+        setConnection(conn)
+
+        return () => {
+            console.log('🧹 Cerrando conexión SignalR...')
+            conn.off('ReceiveMessage', handleReceiveMessage)
+            conn.stop()
+        }
+    }, [groupId])
+
+    const handleSend = async () => {
+        if (!input.trim() || !connection) return
+
+        try {
+            await connection.invoke('SendMessageToGroup', groupId, input)
+            setInput('')
+        } catch (err) {
+            toast.error(`Hubo un error al enviar el mensaje`)
+            console.error(err)
+        }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            handleSend()
+        }
+    }
+
+    return (
+        <section className={styles.container}>
+            <div className={styles.chat}>
+                {messages.map((msg, i) => (
+                    <article
+                        key={i}
+                        className={`${styles.chat__message} ${
+                            msg.usuario === 'Tú'
+                                ? styles['chat__message--mine']
+                                : ''
+                        }`}
+                    >
+                        <div className={styles.chat__top}>
+                            <p className={styles.chat__sender}>{msg.usuario}</p>
+                            <p className={styles.chat__time}>
+                                {formatChatDate(msg.fecha)}
+                            </p>
+                        </div>
+                        <p className={styles.chat__text}>{msg.mensaje}</p>
+                    </article>
+                ))}
+            </div>
+            <fieldset className={styles.fieldset}>
+                <input
+                    className={styles.fieldset__input}
+                    type="text"
+                    name="message"
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    placeholder="Escribe un mensaje"
+                    onKeyDown={handleKeyDown}
+                />
+                <button
+                    className={styles.fieldset__button}
+                    onClick={handleSend}
+                >
+                    <FontAwesomeIcon
+                        className={styles.fieldset__icon}
+                        icon={faPaperPlane}
+                    />
+                </button>
+            </fieldset>
+        </section>
+    )
 }

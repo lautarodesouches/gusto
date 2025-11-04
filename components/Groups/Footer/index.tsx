@@ -5,10 +5,11 @@ import {
     faMapLocationDot,
     faUserGroup,
 } from '@fortawesome/free-solid-svg-icons'
+import { ActiveView } from '../Client'
 
 interface Props {
-    activeView: 'inicio' | 'grupo'
-    onClick: (view: 'inicio' | 'grupo') => void
+    activeView: ActiveView
+    onClick: (view: ActiveView) => void
 }
 
 export default function Footer({ activeView, onClick }: Props) {
@@ -18,11 +19,11 @@ export default function Footer({ activeView, onClick }: Props) {
                 className={
                     styles[
                         `footer__button${
-                            activeView === 'inicio' ? '--active' : ''
+                            activeView === 'home' ? '--active' : ''
                         }`
                     ]
                 }
-                onClick={() => onClick('inicio')}
+                onClick={() => onClick('home')}
             >
                 <FontAwesomeIcon
                     className={styles.footer__icon}
@@ -34,11 +35,11 @@ export default function Footer({ activeView, onClick }: Props) {
                 className={
                     styles[
                         `footer__button${
-                            activeView === 'grupo' ? '--active' : ''
+                            activeView === 'chat' ? '--active' : ''
                         }`
                     ]
                 }
-                onClick={() => onClick('grupo')}
+                onClick={() => onClick('chat')}
             >
                 <FontAwesomeIcon
                     className={styles.footer__icon}
