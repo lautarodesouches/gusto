@@ -26,10 +26,6 @@ export default function GroupsChat({ groupId }: Props) {
     const [input, setInput] = useState('')
 
     useEffect(() => {
-        console.log({ messages })
-    }, [messages])
-
-    useEffect(() => {
         if (connection) return
         const conn = new HubConnectionBuilder()
             .withUrl(`${API_URL}/chatHub`)
@@ -83,7 +79,7 @@ export default function GroupsChat({ groupId }: Props) {
     }
 
     return (
-        <section className={styles.container}>
+        <div className={styles.container}>
             <div className={styles.chat}>
                 {messages.map((msg, i) => (
                     <article
@@ -124,6 +120,6 @@ export default function GroupsChat({ groupId }: Props) {
                     />
                 </button>
             </fieldset>
-        </section>
+        </div>
     )
 }

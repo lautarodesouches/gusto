@@ -5,7 +5,7 @@
     justify-content: center;
     padding: 3rem 1rem;
     text-align: center;
-    height: 100dvh;
+    height: 100%;
     background: var(--light);
 }
 
@@ -25,8 +25,8 @@
     font-weight: 500;
 }
 
-@media(min-width: 768px){
-    .loadingContainer{
+@media (min-width: 768px) {
+    .loadingContainer {
         height: 100%;
     }
 }

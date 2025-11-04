@@ -49,7 +49,11 @@ function coordinatesChanged(
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-export default function MapClient() {
+export default function MapClient({
+    containerStyle,
+}: {
+    containerStyle: string
+}) {
     const toast = useToast()
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -185,6 +189,7 @@ export default function MapClient() {
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
                 <MapView
+                    containerStyle={containerStyle}
                     coords={state.center}
                     restaurants={state.restaurants}
                     hoveredMarker={state.hoveredMarker}

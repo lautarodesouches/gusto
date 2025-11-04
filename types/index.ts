@@ -34,7 +34,6 @@ export type ResponseRegister = {
 }
 
 export interface Restaurant {
-    
     id: string
     propietarioUid: string
     horarios: Record<string, unknown> // como viene vacío o puede ser JSON dinámico
@@ -57,22 +56,22 @@ export interface Restaurant {
 }
 
 export interface Review {
-  id: string
-  autor: string
-  rating: number
-  texto: string
-  fecha: string
-  foto?: string
-  restauranteId?: string
+    id: string
+    autor: string
+    rating: number
+    texto: string
+    fecha: string
+    foto?: string
+    restauranteId?: string
 
-  // campos opcionales antiguos (para compatibilidad)
-  userId?: string
-  userName?: string
-  userAvatar?: string
-  title?: string
-  content?: string
-  images?: string[]
-  isVerified?: boolean
+    // campos opcionales antiguos (para compatibilidad)
+    userId?: string
+    userName?: string
+    userAvatar?: string
+    title?: string
+    content?: string
+    images?: string[]
+    isVerified?: boolean
 }
 
 export interface Gusto {
@@ -119,10 +118,10 @@ export type Group = {
 }
 
 export type GroupMember = {
-    usuarioUsername: string;
-    usuarioEmail: string;
-    usuarioNombre: string;
-    id: string;
+    usuarioUsername: string
+    usuarioEmail: string
+    usuarioNombre: string
+    id: string
 }
 
 export type User = {
@@ -152,8 +151,6 @@ export type ApiResponse<T> = {
     data?: T
     error?: string
 }
-
-
 
 export interface SocialData {
     friends: Friend[]
@@ -197,10 +194,16 @@ export interface PagoError {
     details?: string
 }
 
+export interface Filter {
+    id: string
+    name: string
+    value: string
+}
+
 export interface Filters {
-    dishes: { id: number; name: string }[]
-    categories: { id: number; name: string }[]
-    ratings: { id: number; name: string }[]
+    dishes: Filter[]
+    categories: Filter[]
+    ratings: Filter[]
 }
 
 export interface Coordinates {

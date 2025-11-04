@@ -1,4 +1,3 @@
-
 import { notFound, redirect } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
 import Image from 'next/image'
@@ -160,33 +159,31 @@ function GroupErrorView({ error }: { error: GroupError }) {
     )
 }
 
-//  3. Componente principal del servidor
+
 export default async function GroupDetail({ params }: Props) {
     const { id } = await params
 
-    // Verificar autenticación
+  
     const userId = await verifyAuthentication()
 
-    // Obtener cookies/headers para fetch
     const headersList = await headers()
     const cookie = headersList.get('cookie') || ''
 
-    // Obtener datos del grupo
+   
     const result = await fetchGroup({ id, cookie })
 
-    // Si es un error, mostrar vista de error
+   
     if ('status' in result && 'message' in result) {
         return <GroupErrorView error={result} />
     }
 
-    // Si es un grupo válido, continuar
+   
     const group = result as Group
 
-    // Verificar si es administrador (opcional)
+  
     const isAdmin = group.administradorFirebaseUid === userId
 
-    //  Render
-    // GroupClient ya incluye su propio Nav, no necesitamos duplicarlo aquí
+   
     return (
         <main className={styles.main}>
             <GroupClient group={group} />

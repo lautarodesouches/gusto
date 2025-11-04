@@ -4,18 +4,26 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+
 import { ROUTES } from '@/routes'
 import { ActiveView } from '../Client'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
+import Switch from '../Switch'
 
 interface Props {
     activeView: ActiveView
+    mobileView: 'social' | 'group'
+    onClick: (view: ActiveView) => void
 }
 
-export default function Nav({ activeView }: Props) {
+export default function Nav({ activeView, mobileView, onClick }: Props) {
     return (
         <nav className={styles.nav}>
-            <div className={styles.nav__logo}>
+            <div
+                className={`${styles.nav__logo} ${
+                    mobileView === 'social' ? styles.show : ''
+                }`}
+            >
                 <Link href={ROUTES.MAP} aria-label="Ir al mapa">
                     <Image
                         src="/images/brand/gusto-center-negative.svg"
@@ -27,8 +35,16 @@ export default function Nav({ activeView }: Props) {
                     />
                 </Link>
             </div>
+            <div
+                className={`${styles.nav__switch} ${
+                    mobileView === 'group' ? styles.show : ''
+                }`}
+            >
+                <Switch activeView={activeView} onClick={onClick} />
+            </div>
             <div className={styles.nav__icons}>
                 <NotificationBell />
+                
                 <Link
                     href={ROUTES.PROFILE}
                     className={styles.nav__div}

@@ -17,15 +17,38 @@ const defaultMapCenter = {
 // Default zoom level
 const defaultMapZoom = 15
 
+const cleanMapStyle: google.maps.MapTypeStyle[] = [
+    // 🔹 Oculta todos los puntos de interés (restaurantes, hospitales, etc.)
+    { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+    // 🔹 Opcional: simplifica caminos
+    {
+        featureType: 'road',
+        elementType: 'labels.icon',
+        stylers: [{ visibility: 'off' }],
+    },
+    // 🔹 Opcional: oculta nombres de barrios
+    {
+        featureType: 'administrative.neighborhood',
+        stylers: [{ visibility: 'off' }],
+    },
+]
+
 // Map options
 const defaultMapOptions = {
     zoomControl: true,
     tilt: 0,
     gestureHandling: 'auto',
     mapTypeId: 'roadmap',
+    mapTypeControl: false, // Switch map-satellite
+    streetViewControl: false,
+    fullscreenControl: false,
+    clickableIcons: false, // Public places pins
+    disableDefaultUI: true,
+    styles: cleanMapStyle,
 }
 
 interface Props {
+    containerStyle: string
     coords: Coordinates | null
     restaurants: Restaurant[]
     hoveredMarker: number | null
@@ -36,6 +59,7 @@ interface Props {
 }
 
 export default function MapView({
+    containerStyle,
     coords,
     restaurants,
     hoveredMarker,
@@ -44,77 +68,73 @@ export default function MapView({
     setHoveredMarker,
 }: Props) {
     return (
-        <section className={styles.map}>
-            <GoogleMap
-                mapContainerClassName={styles.mapContainer}
-                center={coords || defaultMapCenter}
-                zoom={defaultMapZoom}
-                options={defaultMapOptions}
-                onLoad={map => setMapInstance(map)}
-                onIdle={onIdle}
-            >
-               {restaurants.map((place, index) => (
-                   <Marker         
-                       key={index}
-                       position={{
-                           lat: place.latitud,
-                           lng: place.longitud,
-                           }}
-                        title={place.nombre}
-                        icon={{
-                            url:
-                                index === 0
-                                    ? '/markers/markerOne.svg'
-                                    : index === 1
-                                    ? '/markers/markerTwo.svg'
-                                    : index === 2
-                                    ? '/markers/markerThree.svg'
-                                    : '/markers/marker.svg',
-                            scaledSize:
-                                index > 2
-                                    ? new google.maps.Size(30, 38)
-                                    : new google.maps.Size(48, 60),
-                            anchor:
-                                index > 2
-                                    ? new google.maps.Point(15, 38)
-                                    : new google.maps.Point(24, 60),
-                        }}
-                        animation={google.maps.Animation.DROP}
-                        onClick={() => setHoveredMarker(index)}
-                    >
-                        {hoveredMarker === index && (
-                            <InfoWindow
-                                position={{
-                                    lat: place.latitud,
-                                    lng: place.longitud,
-                                }}
-                                options={{
-                                    disableAutoPan: true,
-                                    headerContent: place.nombre,
-                                }}
-                                onCloseClick={() => setHoveredMarker(null)}
-                            >
-                                <div className={styles.info}>
-                                    <p className={styles.info__rating}>
-                                        {place.rating.toFixed(2)}
-                                        <FontAwesomeIcon
-                                            icon={faStar}
-                                            className={styles.info__icon}
-                                        />
-                                    </p>
-                                    <Link
-                                        href={`${ROUTES.RESTAURANT}${place.id}`}
-                                    >
-                                        <button className={styles.info__button}>
-                                            Más información
-                                        </button>
-                                    </Link>
-                                </div>
-                            </InfoWindow>
-                        )}
-                    </Marker>
-                ))}
-            </GoogleMap>
-        </section>
+        <GoogleMap
+            mapContainerClassName={containerStyle}
+            center={coords || defaultMapCenter}
+            zoom={defaultMapZoom}
+            options={defaultMapOptions}
+            onLoad={map => setMapInstance(map)}
+            onIdle={onIdle}
+        >
+            {restaurants.map((place, index) => (
+                <Marker
+                    key={index}
+                    position={{
+                        lat: place.latitud,
+                        lng: place.longitud,
+                    }}
+                    title={place.nombre}
+                    icon={{
+                        url:
+                            index === 0
+                                ? '/markers/markerOne.svg'
+                                : index === 1
+                                ? '/markers/markerTwo.svg'
+                                : index === 2
+                                ? '/markers/markerThree.svg'
+                                : '/markers/marker.svg',
+                        scaledSize:
+                            index > 2
+                                ? new google.maps.Size(30, 38)
+                                : new google.maps.Size(48, 60),
+                        anchor:
+                            index > 2
+                                ? new google.maps.Point(15, 38)
+                                : new google.maps.Point(24, 60),
+                    }}
+                    animation={google.maps.Animation.DROP}
+                    onClick={() => setHoveredMarker(index)}
+                >
+                    {hoveredMarker === index && (
+                        <InfoWindow
+                            position={{
+                                lat: place.latitud,
+                                lng: place.longitud,
+                            }}
+                            options={{
+                                disableAutoPan: true,
+                                headerContent: place.nombre,
+                            }}
+                            onCloseClick={() => setHoveredMarker(null)}
+                        >
+                            <div className={styles.info}>
+                                <p className={styles.info__rating}>
+                                    {place.rating.toFixed(2)}
+                                    <FontAwesomeIcon
+                                        icon={faStar}
+                                        className={styles.info__icon}
+                                    />
+                                </p>
+                                <Link href={`${ROUTES.RESTAURANT}${place.id}`}>
+                                    <button className={styles.info__button}>
+                                        Más información
+                                    </button>
+                                </Link>
+                            </div>
+                        </InfoWindow>
+                    )}
+                </Marker>
+            ))}
+        </GoogleMap>
     )
 }

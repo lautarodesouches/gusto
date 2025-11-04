@@ -2,12 +2,7 @@
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClose } from '@fortawesome/free-solid-svg-icons'
-
-interface FilterItem {
-    id: number
-    name: string
-    checked: boolean
-}
+import { FilterItem } from '../FiltersClient'
 
 interface FiltersProps {
     categories: FilterItem[]
@@ -24,10 +19,43 @@ interface Props {
     onRatingClick: (name: string) => void
 }
 
+const FilterSection = ({
+    title,
+    filters,
+    onItemClick,
+}: {
+    title: string
+    filters: FilterItem[]
+    onItemClick: (value: string) => void
+}) => (
+    <div className={styles.filter__div}>
+        <h3 className={styles.filter__category}>{title}</h3>
+        <hr className={styles.filter__line} />
+        <ul className={styles.filter__list}>
+            {filters.map(item => (
+                <li
+                    className={styles.filter__item}
+                    key={item.id}
+                    onClick={() => onItemClick(item.value)}
+                >
+                    <input
+                        type="checkbox"
+                        checked={item.checked}
+                        readOnly
+                        className={styles.filter__input}
+                    />
+                    <span className={styles.checkmark}></span>
+                    <span className={styles.filter__span}>{item.name}</span>
+                </li>
+            ))}
+        </ul>
+    </div>
+)
+
 export default function FiltersView({
     isVisible,
-    onClose,
     filters,
+    onClose,
     onCategoryClick,
     onDishClick,
     onRatingClick,
@@ -43,78 +71,21 @@ export default function FiltersView({
                 />
             </header>
             <div className={styles.filter__content}>
-                <div className={styles.filter__div}>
-                    <h3 className={styles.filter__category}>Tipo</h3>
-                    <hr className={styles.filter__line} />
-                    <ul className={styles.filter__list}>
-                        {filters.categories.map(item => (
-                            <li
-                                className={styles.filter__item}
-                                key={item.id}
-                                onClick={() => onCategoryClick(item.name)}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={item.checked}
-                                    readOnly
-                                    className={styles.filter__input}
-                                />
-                                <span className={styles.checkmark}></span>
-                                <span className={styles.filter__span}>
-                                    {item.name}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className={styles.filter__div}>
-                    <h3 className={styles.filter__category}>Platos</h3>
-                    <hr className={styles.filter__line} />
-                    <ul className={styles.filter__list}>
-                        {filters.dishes.map(item => (
-                            <li
-                                className={styles.filter__item}
-                                key={item.id}
-                                onClick={() => onDishClick(item.name)}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={item.checked}
-                                    readOnly
-                                    className={styles.filter__input}
-                                />
-                                <span className={styles.checkmark}></span>
-                                <span className={styles.filter__span}>
-                                    {item.name}
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className={styles.filter__div}>
-                    <h3 className={styles.filter__category}>Valoración</h3>
-                    <hr className={styles.filter__line} />
-                    <ul className={styles.filter__list}>
-                        {filters.ratings.map(item => (
-                            <li
-                                className={styles.filter__item}
-                                key={item.id}
-                                onClick={() => onRatingClick(item.name)}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={item.checked}
-                                    readOnly
-                                    className={styles.filter__input}
-                                />
-                                <span className={styles.checkmark}></span>
-                                <span className={styles.filter__span}>
-                                    {item.name}+
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                <FilterSection
+                    title="Tipo"
+                    filters={filters.categories}
+                    onItemClick={onCategoryClick}
+                />
+                <FilterSection
+                    title="Platos"
+                    filters={filters.dishes}
+                    onItemClick={onDishClick}
+                />
+                <FilterSection
+                    title="Valoración"
+                    filters={filters.ratings}
+                    onItemClick={onRatingClick}
+                />
             </div>
         </section>
     )
