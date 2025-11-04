@@ -5,13 +5,13 @@
 
 .icon {
   font-size: 22px;
-  color: #333;
+  color: var(--grey);
   cursor: pointer;
   transition: 0.2s;
 }
 
 .icon:hover {
-  color: #ff5858;
+  color: var(--primary);
 }
 
 .badge {
