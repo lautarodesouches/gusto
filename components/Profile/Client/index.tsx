@@ -9,14 +9,10 @@ import { useToast } from '@/context/ToastContext'
 
 interface ProfileClientProps {
     profile: User
-    isOwnProfile?: boolean
-    isFriend?: boolean
 }
 
 export default function ProfileClient({
     profile,
-    isOwnProfile = false,
-    isFriend = true,
 }: ProfileClientProps) {
     const toast = useToast()
 
@@ -81,8 +77,6 @@ export default function ProfileClient({
     return (
         <ProfileView
             profile={profile}
-            isOwnProfile={isOwnProfile}
-            isFriend={isFriend}
             onDeleteFriend={handleDeleteFriend}
             onAddFriend={handleAddFriend}
             isPending={isPending}
