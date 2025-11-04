@@ -373,6 +373,7 @@ export default function RestaurantView({
                 />
                 <div className={styles.rating__div}>
                     <h4 className={styles.rating__title}>Opinión</h4>
+                    <Link href={`${ROUTES.RESTAURANT}/${restaurant.id}/opinion`}>
                     <button className={styles.rating__button}>
                         <FontAwesomeIcon
                             className={styles.rating__icon}
@@ -380,6 +381,7 @@ export default function RestaurantView({
                         />
                         Escribir una opinión
                     </button>
+                    </Link>
                 </div>
             </section>
             <section className={styles.images}>

@@ -1,0 +1,61 @@
+.footer {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    background: var(--dark);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.footer__button {
+    flex: 1;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 0;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    background: var(--dark);
+    border: 1px solid var(--grey);
+    color: var(--white);
+    transition: all .3s ease-in-out;
+}
+
+.footer__button--active {
+    flex: 1;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 0;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    border: 1px solid var(--white);
+    color: var(--dark);
+    transition: all .3s ease-in-out;
+}
+
+.footer__button--active .footer__icon{
+    color: var(--dark);
+}
+
+.footer__icon {
+    width: 20px;
+    height: 20px;
+    color: var(--grey);
+}
+
+.footer__span {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.footer__button-active {
+    border: 1px solid var(--grey);
+    color: var(--grey);
+}

@@ -475,6 +475,7 @@
     font-size: 1.2rem;
     font-weight: 600;
     padding: 10px;
+    cursor: pointer;
 }
 
 .rating__icon {

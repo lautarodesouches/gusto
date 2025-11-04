@@ -9,7 +9,7 @@ import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { LOCAL_URL } from '@/constants'
-import { GroupsSocial } from '@/components'
+import { GroupClient, GroupsSocial } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 
@@ -113,7 +113,8 @@ export default async function GroupDetail({ params }: Props) {
             </nav>
 
             {/* Componente CLIENTE: contiene hooks, chat e interacción */}
-            <GroupsSocial group={group} />
+            
+            <GroupClient group={group} />
         </main>
     )
 }
