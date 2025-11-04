@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
 import styles from './NotificationBell.module.css'
 import { API_URL } from '@/constants'
+import { useToast } from '@/context/ToastContext'
 
 interface Notificacion {
     id: string
@@ -21,6 +22,7 @@ export default function NotificationBell() {
     const [notificaciones, setNotificaciones] = useState<Notificacion[]>([])
     const [showPanel, setShowPanel] = useState(false)
     const panelRef = useRef<HTMLDivElement | null>(null)
+    const toast = useToast()
 
     // Conexión con el Hub de SignalR
     useEffect(() => {
@@ -90,16 +92,27 @@ export default function NotificationBell() {
     const aceptarInvitacion = async (id: string) => {
         try {
             await connection?.invoke('AceptarInvitacion', id)
+            toast.success('Invitación al grupo aceptada')
+            setNotificaciones(prev => prev.filter(n => n.id !== id))
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('groups:refresh'))
+            }
+            setShowPanel(false)
         } catch (err) {
             console.error('❌ Error aceptando invitación:', err)
+            toast.error('No se pudo aceptar la invitación')
         }
     }
 
     const rechazarInvitacion = async (id: string) => {
         try {
             await connection?.invoke('RechazarInvitacion', id)
+            toast.info('Invitación al grupo rechazada')
+            setNotificaciones(prev => prev.filter(n => n.id !== id))
+            setShowPanel(false)
         } catch (err) {
             console.error('❌ Error rechazando invitación:', err)
+            toast.error('No se pudo rechazar la invitación')
         }
     }
 
@@ -170,7 +183,7 @@ export default function NotificationBell() {
                                                 }}
                                                 className={styles.accept}
                                             >
-                                                ✅ Aceptar
+                                                 Aceptar
                                             </button>
                                             <button
                                                 onClick={e => {
@@ -179,7 +192,7 @@ export default function NotificationBell() {
                                                 }}
                                                 className={styles.reject}
                                             >
-                                                ❌ Rechazar
+                                                 Rechazar
                                             </button>
                                         </div>
                                     )}
