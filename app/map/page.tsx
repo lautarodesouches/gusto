@@ -8,15 +8,18 @@ import {
     faUser,
     faUsers,
 } from '@fortawesome/free-solid-svg-icons'
-import { MapFilter, MapSocial, Loading, MapView } from '@/components'
+import { MapFilter, MapSocial, Loading, MapView, PremiumLimitFloatingCard } from '@/components'
 import { Suspense, useState } from 'react'
 import { MapProvider } from '@/components/Map/MapProvider'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import Image from 'next/image'
+import { useAuth } from '@/context/AuthContext'
 
 export default function Map() {
+    const { isPremium } = useAuth()
     const [isFiltersVisible, setIsFiltersVisible] = useState(false)
     const [isSocialVisible, setIsSocialVisible] = useState(false)
+    const [showPremiumModal, setShowPremiumModal] = useState(false)
 
     const handleClickFilters = () => {
         setIsFiltersVisible(prev => !prev) // alterna filtros
@@ -55,6 +58,39 @@ export default function Map() {
                 </fieldset>
           
                 <div className={styles.nav__icons}>
+                    {/* Botón Premium - Solo mostrar si NO es premium */}
+                    {!isPremium && (
+                        <button 
+                            onClick={() => setShowPremiumModal(true)}
+                            style={{
+                                background: 'linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%)',
+                                border: 'none',
+                                borderRadius: '12px',
+                                padding: '8px 16px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 15px rgba(255, 80, 80, 0.3)',
+                                transition: 'all 0.3s ease',
+                                fontFamily: 'var(--font-plus)',
+                                fontWeight: '600',
+                                fontSize: '14px',
+                                color: '#fff'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-2px)'
+                                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 80, 80, 0.4)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)'
+                                e.currentTarget.style.boxShadow = '0 4px 15px rgba(255, 80, 80, 0.3)'
+                            }}
+                        >
+                            <span style={{ fontSize: '16px' }}>✨</span>
+                            <span>Premium</span>
+                        </button>
+                    )}
         <div className={styles.nav__div}>
     <NotificationBell />
   </div>
@@ -120,6 +156,12 @@ export default function Map() {
                     }}
                 />
             </section>
+            
+            {/* Modal Premium */}
+            <PremiumLimitFloatingCard
+                isOpen={showPremiumModal}
+                onClose={() => setShowPremiumModal(false)}
+            />
         </main>
     )
 }
