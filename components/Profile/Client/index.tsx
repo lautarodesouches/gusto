@@ -59,10 +59,7 @@ export default function ProfileClient({
     const handleDeleteFriend = async () => {
         startTransition(async () => {
             try {
-                const result = await deleteFriend(
-                    '50000000-0000-0000-0000-000000000222',
-                    profile.username
-                )
+                const result = await deleteFriend(profile.username)
 
                 if (!result.success)
                     return toast.error(

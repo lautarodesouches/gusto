@@ -1,3 +1,4 @@
+import { checkIsFriend } from '@/app/actions/friends'
 import styles from './styles.module.css'
 import { getProfile } from '@/app/perfil/actions'
 import { ProfileClient } from '@/components'
@@ -12,11 +13,14 @@ export default async function Profile({ params }: Props) {
 
     const result = await getProfile(username)
 
+    const { data: dataFriend } = await checkIsFriend(username)
+    const isFriend = dataFriend?.isFriend ?? false
+
     if (!result.success || !result.data) notFound()
 
     return (
         <main className={styles.main}>
-            <ProfileClient profile={result.data} />
+            <ProfileClient profile={result.data} isFriend={isFriend} />
         </main>
     )
 }

@@ -17,9 +17,9 @@ interface ProfileViewProps {
     profile: User
     isOwnProfile: boolean
     isFriend: boolean
+    isPending?: boolean
     onAddFriend?: () => void
     onDeleteFriend?: () => void
-    isPending?: boolean
     onEditTastes: () => void
     onGoPlace: (lat: number, lng: number) => void
     onGoBack: () => void
@@ -29,9 +29,9 @@ export function ProfileView({
     profile,
     isOwnProfile,
     isFriend,
+    isPending,
     onDeleteFriend,
     onAddFriend,
-    isPending,
     onEditTastes,
     onGoPlace,
     onGoBack,
