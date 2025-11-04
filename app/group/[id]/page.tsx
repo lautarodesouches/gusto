@@ -1,4 +1,3 @@
-
 import { notFound, redirect } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
 import Image from 'next/image'
@@ -80,40 +79,6 @@ export default async function GroupDetail({ params }: Props) {
     //  Render
     return (
         <main className={styles.main}>
-            <nav className={styles.nav}>
-                <div className={styles.nav__logo}>
-                    <Link href={ROUTES.MAP} aria-label="Ir al mapa">
-                        <Image
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
-                            className={styles.nav__img}
-                            width={120}
-                            height={40}
-                            priority
-                        />
-                    </Link>
-                </div>
-
-                <div className={styles.nav__icons}>
-
-                        <NotificationBell />
-
-                      
-                    <Link
-                        href={ROUTES.PROFILE}
-                        className={styles.nav__div}
-                        aria-label="Perfil de usuario"
-                    >
-                        <FontAwesomeIcon
-                            icon={faUser}
-                            className={styles.nav__icon}
-                        />
-                    </Link>
-                </div>
-            </nav>
-
-            {/* Componente CLIENTE: contiene hooks, chat e interacción */}
-            
             <GroupClient group={group} />
         </main>
     )

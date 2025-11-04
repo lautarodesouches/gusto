@@ -1,0 +1,60 @@
+.content {
+    display: flex;
+    gap: 1rem;
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+}
+
+.content__social {
+    border-radius: 10px;
+    padding: 10px;
+    flex: 1;
+    background: var(--background);
+}
+
+.content__group {
+    position: relative;
+    flex: 2;
+    height: 100%;
+    overflow: hidden;
+}
+
+.content__group nav {
+    display: none;
+}
+
+/* Mobile: solo mostrar el componente activo */
+@media (max-width: 768px) {
+    .content {
+        position: relative;
+    }
+
+    .content__social,
+    .content__group {
+        display: none;
+    }
+
+    .content__social.active,
+    .content__group.active {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Desktop: mostrar ambos siempre */
+@media (min-width: 769px) {
+    .content {
+        flex: 1;
+    }
+
+    .content__social,
+    .content__group {
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    .content__group nav {
+        display: block;
+    }
+}

@@ -7,7 +7,6 @@ import {
     faSearch,
     faUser,
     faUserPlus,
-    faUserXmark,
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
@@ -72,100 +71,97 @@ export default function GroupSocial({ group }: Props) {
             return toast.error(result.error || 'Error al remover del grupo')
 
         toast.success('Usuario eliminado del grupo')
-
-        setFilteredMembers(prev => prev.filter(m => m.id !== memberId))
     }
 
     return (
         <>
-            <section className={styles.social}>
-                <nav className={styles.social__nav}>
-                    <div className={styles.social__div}>
-                        <h2 className={styles.social__title}>{group.nombre}</h2>
-                    </div>
-                    <div className={styles.social__div}>
-                        <FontAwesomeIcon
-                            icon={faGear}
-                            className={styles.social__icon}
-                        />
-                    </div>
-                </nav>
-                <fieldset className={styles.search}>
+            <nav className={styles.social__nav}>
+                <div className={styles.social__div}>
+                    <h2 className={styles.social__title}>{group.nombre}</h2>
+                </div>
+                <div className={styles.social__div}>
                     <FontAwesomeIcon
-                        icon={faSearch}
-                        className={styles.search__icon}
+                        icon={faGear}
+                        className={styles.social__icon}
+                    />
+                </div>
+            </nav>
+            <fieldset className={styles.search}>
+                <FontAwesomeIcon
+                    icon={faSearch}
+                    className={styles.search__icon}
+                />
+                <input
+                    className={styles.search__input}
+                    type="text"
+                    placeholder="Buscar integrante"
+                    onChange={handleSearchMembers}
+                />
+            </fieldset>
+            <div className={styles.members}>
+                {filteredMembers.length === 0 && (
+                    <p className={styles.members__error}>
+                        No se encontraron miembros
+                    </p>
+                )}
+                {filteredMembers.map(m => (
+                    <article className={styles.member} key={m.id}>
+                        <div className={styles.member__div}>
+                            <FontAwesomeIcon
+                                icon={faUser}
+                                className={styles.member__img}
+                            />
+                        </div>
+                        <div className={styles.member__div}>
+                            <h3 className={styles.member__name}>
+                                {m.usuarioNombre}
+                            </h3>
+                            {m.id === group.administradorId && (
+                                <FontAwesomeIcon
+                                    icon={faCrown}
+                                    className={styles.member__crown}
+                                />
+                            )}
+                        </div>
+                        <div className={styles.member__div}>
+                            <Link
+                                href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faInfo}
+                                    className={styles.members__icon}
+                                />
+                            </Link>
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    readOnly
+                                    className={styles.filter__input}
+                                />
+                                <span className={styles.checkmark}></span>
+                            </div>
+                        </div>
+                    </article>
+                ))}
+            </div>
+            <form className={styles.invite} onSubmit={handleInvite}>
+                <fieldset className={styles.invite__fieldset}>
+                    <FontAwesomeIcon
+                        className={styles.invite__icon}
+                        icon={faUserPlus}
                     />
                     <input
-                        className={styles.search__input}
+                        className={styles.invite__input}
                         type="text"
-                        placeholder="Buscar integrante"
-                        onChange={handleSearchMembers}
+                        name="email"
+                        placeholder="Email del usuario"
+                        required
                     />
                 </fieldset>
-                <div className={styles.members}>
-                    {filteredMembers.length === 0 && (
-                        <p className={styles.members__error}>
-                            No se encontraron miembros
-                        </p>
-                    )}
-                    {filteredMembers.map(m => (
-                        <article className={styles.member} key={m.id}>
-                            <div className={styles.member__div}>
-                                <FontAwesomeIcon
-                                    icon={faUser}
-                                    className={styles.member__img}
-                                />
-                            </div>
-                            <div className={styles.member__div}>
-                                <h3 className={styles.member__name}>
-                                    {m.usuarioNombre}
-                                </h3>
-                                {m.id === group.administradorId && (
-                                    <FontAwesomeIcon
-                                        icon={faCrown}
-                                        className={styles.member__crown}
-                                    />
-                                )}
-                            </div>
-                            <div className={styles.member__div}>
-                                <Link
-                                    href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={faInfo}
-                                        className={styles.members__icon}
-                                    />
-                                </Link>
-                                <FontAwesomeIcon
-                                    icon={faUserXmark}
-                                    className={styles.members__delete}
-                                    onClick={() => handleKick(m.id)}
-                                />
-                            </div>
-                        </article>
-                    ))}
+                <div className={styles.invite__div}>
+                    <button className={styles.invite__button}>Agregar</button>
                 </div>
-                <form className={styles.invite} onSubmit={handleInvite}>
-                    <fieldset className={styles.invite__fieldset}>
-                        <FontAwesomeIcon
-                            className={styles.invite__icon}
-                            icon={faUserPlus}
-                        />
-                        <input
-                            className={styles.invite__input}
-                            type="text"
-                            name="email"
-                            placeholder="Email del usuario"
-                            required
-                        />
-                    </fieldset>
-                    <div className={styles.invite__div}>
-                        <button className={styles.invite__button}>
-                            Agregar
-                        </button>
-                    </div>
-                </form>
-            </section>
+            </form>
         </>
     )
 }

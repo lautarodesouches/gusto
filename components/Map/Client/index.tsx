@@ -30,7 +30,9 @@ export default function Client({ socialData, filters }: Props) {
                 <div className={styles.middle__filter}>
                     <FiltersClient filters={filters} />
                 </div>
-                <MapClient />
+                <div className={styles.middle__map}>
+                    <MapClient containerStyle={styles.map} />
+                </div>
                 <div className={styles.middle__filter}>
                     <SocialClient socialData={socialData} />
                 </div>

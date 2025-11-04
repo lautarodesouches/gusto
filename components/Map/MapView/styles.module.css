@@ -1,13 +1,3 @@
-.map {
-    width: 100%;
-    z-index: 2;
-}
-
-.mapContainer {
-    width: 100%;
-    height: 100vh;
-}
-
 .info {
     display: flex;
     flex: 1;

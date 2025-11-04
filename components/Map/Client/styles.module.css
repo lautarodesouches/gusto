@@ -56,6 +56,10 @@
     font-size: 1.1rem;
 }
 
+.map {
+    height: 100vh;
+}
+
 .middle__filter {
     display: none;
 }

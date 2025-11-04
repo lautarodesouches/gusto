@@ -1,11 +1,3 @@
-.social {
-    margin-top: 40px;
-    flex: 1;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
 .social__nav {
     display: flex;
     justify-content: space-between;
@@ -31,7 +23,7 @@
     display: flex;
     border: none;
     border-radius: 10px;
-    background: var(--dark);
+    background: var(--black);
     padding: 15px;
     gap: 10px;
 }
@@ -43,7 +35,7 @@
 }
 
 .search__input {
-    background: var(--dark);
+    background: none;
     flex: 1;
     border: none;
     color: var(--light);
@@ -138,9 +130,10 @@
     justify-content: center;
     align-items: center;
     flex: 2;
-    border-radius: 10px;
     border: none;
-    background: var(--dark);
+    border-radius: 10px;
+    background: var(--black);
+    padding: 0 10px;
 }
 
 .invite__icon {
@@ -150,9 +143,10 @@
 }
 
 .invite__input {
+    width: 100%;
     border: none;
     border-radius: 10px;
-    background: var(--dark);
+    background: none;
 }
 
 .invite__div {
@@ -170,4 +164,20 @@
     color: var(--beige);
     font-size: 1rem;
     font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .search {
+        border: 1px solid var(--light);
+    }
+
+    .member {
+        padding: 10px;
+        border-radius: 10px;
+        background: var(--black);
+    }
+
+    .invite__fieldset {
+        border: 1px solid var(--light);
+    }
 }
