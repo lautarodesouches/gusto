@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
@@ -20,10 +20,20 @@ interface ChatMessage {
 
 export default function GroupsChat({ groupId }: Props) {
     const toast = useToast()
+    const messagesEndRef = useRef<HTMLDivElement>(null)
+    const chatContainerRef = useRef<HTMLDivElement>(null)
 
     const [connection, setConnection] = useState<HubConnection | null>(null)
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [input, setInput] = useState('')
+
+    const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+        messagesEndRef.current?.scrollIntoView({ behavior })
+    }
+
+    useEffect(() => {
+        scrollToBottom()
+    }, [messages])
 
     useEffect(() => {
         if (connection) return
@@ -41,6 +51,8 @@ export default function GroupsChat({ groupId }: Props) {
 
         conn.on('LoadChatHistory', mensajes => {
             setMessages(mensajes)
+            // Scroll
+            setTimeout(() => scrollToBottom('auto'), 100)
         })
 
         conn.start()
@@ -80,7 +92,7 @@ export default function GroupsChat({ groupId }: Props) {
 
     return (
         <div className={styles.container}>
-            <div className={styles.chat}>
+            <div className={styles.chat} ref={chatContainerRef}>
                 {messages.map((msg, i) => (
                     <article
                         key={i}
@@ -99,6 +111,8 @@ export default function GroupsChat({ groupId }: Props) {
                         <p className={styles.chat__text}>{msg.mensaje}</p>
                     </article>
                 ))}
+                {/* Scroll item */}
+                <div ref={messagesEndRef} />
             </div>
             <fieldset className={styles.fieldset}>
                 <input
@@ -113,6 +127,8 @@ export default function GroupsChat({ groupId }: Props) {
                 <button
                     className={styles.fieldset__button}
                     onClick={handleSend}
+                    type="button"
+                    aria-label="Enviar mensaje"
                 >
                     <FontAwesomeIcon
                         className={styles.fieldset__icon}

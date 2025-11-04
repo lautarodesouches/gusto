@@ -143,10 +143,15 @@
 }
 
 .invite__input {
+    color: var(--white);
     width: 100%;
     border: none;
     border-radius: 10px;
     background: none;
+}
+
+.invite__input:focus-visible {
+    outline: none;
 }
 
 .invite__div {
