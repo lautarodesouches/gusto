@@ -58,6 +58,11 @@ export default function Header() {
                     </Link>
                 </nav>
                 <div className={styles.header__bcontainer}>
+                    <Link href={ROUTES.REGISTER__RESTAURANT}>
+                        <button className={styles.header__buttonRes}>
+                            <span>REGISTRÁ TU LOCAL</span>
+                        </button>
+                    </Link>
                     <Link href={ROUTES.REGISTER}>
                         <button className={styles.header__button}>
                             <span>REGÍSTRATE GRATIS</span>
