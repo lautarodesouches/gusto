@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext'
 
 export default function Nav() {
     const [showPremiumCard, setShowPremiumCard] = useState(false)
-    const { user, isPremium } = useAuth()
+    const { isPremium } = useAuth()
 
     return (
         <>

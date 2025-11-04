@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen } from '@fortawesome/free-solid-svg-icons'
-import { useRouter } from 'next/navigation'
 import { PremiumLimitFloatingCard } from '@/components'
-import { useAuth } from '@/context/AuthContext'
 import { createGroup } from '@/app/actions/groups'
 import { useToast } from '@/context/ToastContext'
 
@@ -14,8 +13,6 @@ export default function GroupCreate({
 }: {
     handleCancel: () => void
 }) {
-    const router = useRouter()
-    const { user } = useAuth()
     const toast = useToast()
 
     const [name, setName] = useState('')
@@ -38,21 +35,28 @@ export default function GroupCreate({
             if (!result.success) {
                 // Verificar si es error de límite de grupos
                 const errorData = result as any // Castear para acceder a campos adicionales
-                if (errorData.error === 'LIMITE_GRUPOS_ALCANZADO' || 
-                    errorData.needsPremium || 
-                    (errorData.error && (errorData.error.includes('Límite de grupos alcanzado') || errorData.error.includes('límite')))
+                if (
+                    errorData.error === 'LIMITE_GRUPOS_ALCANZADO' ||
+                    errorData.needsPremium ||
+                    (errorData.error &&
+                        (errorData.error.includes(
+                            'Límite de grupos alcanzado'
+                        ) ||
+                            errorData.error.includes('límite')))
                 ) {
-                    console.log('Detectando límite de grupos, mostrando cartel flotante')
+                    console.log(
+                        'Detectando límite de grupos, mostrando cartel flotante'
+                    )
                     setLimitInfo({
                         tipoPlan: errorData.tipoPlan,
                         limiteActual: errorData.limiteActual,
                         gruposActuales: errorData.gruposActuales,
-                        beneficiosPremium: errorData.beneficiosPremium
+                        beneficiosPremium: errorData.beneficiosPremium,
                     })
                     setShowLimitCard(true)
                     return
                 }
-                
+
                 toast.error(result.error || 'Error creando grupo')
                 return
             }
@@ -77,7 +81,10 @@ export default function GroupCreate({
         <>
             <aside className={styles.create}>
                 <div className={styles.create__container}>
-                    <FontAwesomeIcon icon={faPen} className={styles.create__icon} />
+                    <FontAwesomeIcon
+                        icon={faPen}
+                        className={styles.create__icon}
+                    />
                 </div>
                 <input
                     type="text"

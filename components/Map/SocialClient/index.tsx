@@ -12,10 +12,7 @@ interface Props {
 
 type ActivePanel = 'searchFriend' | 'newGroup' | null
 
-export default function SocialClient({
-    isVisible = true,
-    socialData,
-}: Props) {
+export default function SocialClient({ isVisible = true, socialData }: Props) {
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [data, setData] = useState<SocialData>(socialData)
 
@@ -25,11 +22,11 @@ export default function SocialClient({
 
     const refreshGroups = useCallback(async () => {
         const res = await getGroupsData()
-        if (res.success && res.data) {
+        if (res.success) {
             setData(prev => ({
                 ...prev,
-                groups: res.data.groups,
-                groupsRequests: res.data.groupsRequests,
+                groups: res.data?.groups ?? prev.groups,
+                groupsRequests: res.data?.groupsRequests ?? prev.groupsRequests,
             }))
         }
     }, [])
