@@ -11,6 +11,7 @@ import { ROUTES } from '@/routes'
 import { LOCAL_URL } from '@/constants'
 import { GroupsSocial } from '@/components'
 import admin from '@/lib/firebaseAdmin'
+import NotificationBell from '@/components/NotificationBell/Notificacion'
 
 interface Props {
     params: Promise<{ id: string }>
@@ -94,16 +95,10 @@ export default async function GroupDetail({ params }: Props) {
                 </div>
 
                 <div className={styles.nav__icons}>
-                    <button
-                        className={styles.nav__div}
-                        aria-label="Notificaciones"
-                        type="button"
-                    >
-                        <FontAwesomeIcon
-                            icon={faBell}
-                            className={styles.nav__icon}
-                        />
-                    </button>
+
+  <NotificationBell />
+
+                      
                     <Link
                         href={ROUTES.PROFILE}
                         className={styles.nav__div}
