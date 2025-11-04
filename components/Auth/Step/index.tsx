@@ -53,22 +53,9 @@ export default function Step({
     }
 
     const handleNext = async () => {
+        // Solo navegar al siguiente paso, NO enviar datos todavía
+        console.log('Navegando al siguiente paso...')
         router.push(`/auth/register/step/${step + 1}`)
-        try {
-            await fetch('/api/steps', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    step1: data.step1 ?? [],
-                    step2: data.step2 ?? [],
-                    step3: data.step3 ?? [],
-                }),
-            })
-
-            router.push(`/auth/register/step/${step + 1}`)
-        } catch (err) {
-            console.error('Error enviando pasos:', err)
-        }
     }
 
     const handleBack = () => {

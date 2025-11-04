@@ -131,6 +131,8 @@ export type User = {
     username: string
     fotoPerfilUrl: string
     esPrivado: boolean
+    plan: 'Free' | 'Plus'
+    esPremium: boolean
     esMiPerfil : boolean
     esAmigo : boolean
     gustos: {
@@ -158,6 +160,41 @@ export interface SocialData {
     friendsRequests: Friend[]
     groups: Group[]
     groupsRequests: Group[]
+}
+
+// Tipos para funcionalidad Premium y Pagos
+export type PlanUsuario = 'Free' | 'Plus'
+
+export interface BeneficiosPremium {
+    beneficios: string[]
+    precio: number
+    moneda: string
+}
+
+export interface LimiteGruposResponse {
+    mensaje: string
+    tipoPlan: string
+    limiteActual: number
+    gruposActuales: number
+    beneficiosPremium: BeneficiosPremium
+    urlPago: string
+}
+
+export interface CrearPagoRequest {
+    email: string
+    nombreCompleto: string
+}
+
+export interface CrearPagoResponse {
+    id: string
+    initPoint: string
+    sandboxInitPoint: string
+    status: string
+}
+
+export interface PagoError {
+    message: string
+    details?: string
 }
 
 export interface Filters {

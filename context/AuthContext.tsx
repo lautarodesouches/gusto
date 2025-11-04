@@ -14,6 +14,8 @@ type AuthContextType = {
     token: string | null
     loading: boolean
     logout: () => Promise<void>
+    isPremium: boolean
+    refreshPremiumStatus: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -22,6 +24,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [token, setToken] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
+    const [isPremium, setIsPremium] = useState(false)
+
+    // Función para verificar el estado Premium
+    const refreshPremiumStatus = async () => {
+        if (!token) {
+            setIsPremium(false)
+            return
+        }
+
+        try {
+            const response = await fetch('/api/payment/upgrade', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+
+            if (response.ok) {
+                const data = await response.json()
+                setIsPremium(data.isPremium || false)
+            } else {
+                setIsPremium(false)
+            }
+        } catch (error) {
+            console.error('Error al verificar estado premium:', error)
+            setIsPremium(false)
+        }
+    }
 
     //  Maneja cambios de autenticación (login/logout)
     useEffect(() => {
@@ -33,12 +63,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else {
                 setUser(null)
                 setToken(null)
+                setIsPremium(false)
             }
             setLoading(false)
         })
 
         return () => unsubscribe()
     }, [])
+
+    // Verificar estado Premium cuando cambie el token
+    useEffect(() => {
+        if (token && !loading) {
+            refreshPremiumStatus()
+        }
+    }, [token, loading])
 
     //  Refresca token automáticamente cada vez que Firebase lo renueva
     useEffect(() => {
@@ -68,10 +106,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await signOut(auth)
         setUser(null)
         setToken(null)
+        setIsPremium(false)
     }
 
     return (
-        <AuthContext.Provider value={{ user, token, loading, logout }}>
+        <AuthContext.Provider value={{ user, token, loading, logout, isPremium, refreshPremiumStatus }}>
             {children}
         </AuthContext.Provider>
     )
