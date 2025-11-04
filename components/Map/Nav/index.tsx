@@ -26,7 +26,10 @@ export default function Nav() {
                     />
                 </div>
                 <fieldset className={styles.nav__fieldset}>
-                    <FontAwesomeIcon icon={faSearch} className={styles.nav__icon} />
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className={styles.nav__icon}
+                    />
                     <input
                         type="text"
                         placeholder="Escribe un lugar"
@@ -36,7 +39,7 @@ export default function Nav() {
                 </fieldset>
                 <div className={styles.nav__icons}>
                     {!isPremium && (
-                        <div 
+                        <div
                             className={styles.nav__div}
                             onClick={() => setShowPremiumCard(true)}
                             style={{ cursor: 'pointer' }}
@@ -60,14 +63,14 @@ export default function Nav() {
                     </div>
                 </div>
             </nav>
-            
-            <PremiumLimitFloatingCard 
+
+            <PremiumLimitFloatingCard
                 isOpen={showPremiumCard}
                 onClose={() => setShowPremiumCard(false)}
                 limitInfo={{
                     tipoPlan: isPremium ? 'Premium' : 'Free',
                     limiteActual: 3,
-                    gruposActuales: 0
+                    gruposActuales: 0,
                 }}
             />
         </>

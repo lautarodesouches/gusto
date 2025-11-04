@@ -83,6 +83,12 @@
         position: relative;
     }
 
+    .middle__map{
+        border-radius: 5px;
+        height: 100%;
+        overflow: hidden;
+    }
+
     .middle__filter {
         display: block;
         flex: 1;
