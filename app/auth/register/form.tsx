@@ -102,9 +102,15 @@ export default function Form() {
 
             if (!res.ok) {
                 const data = await res.json()
-                throw new Error(data.error || 'Error en el registro')
+                console.error('Error en el registro externo:', {
+                    status: res.status,
+                    statusText: res.statusText,
+                    errorData: data
+                })
+                throw new Error(data.error || data.message || 'Error en el registro')
             }
 
+            console.log('Registro exitoso, redirigiendo a steps...')
             router.push(`${ROUTES.STEPS}/1/`)
         } catch (error: unknown) {
             type FirebaseErrorLike = { code?: string; message: string }

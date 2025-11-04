@@ -51,16 +51,12 @@ export default function RootLayout({
             <body
                 className={`${plusJakartaSans.className} ${gliker.className}`}
             >
-
-                <AuthProvider>
-                    <PaymentVerification />
-                    {children}
-                </AuthProvider>
-
                 <ToastProvider>
-                    <AuthProvider>{children}</AuthProvider>
+                    <AuthProvider>
+                        <PaymentVerification />
+                        {children}
+                    </AuthProvider>
                 </ToastProvider>
-
             </body>
         </html>
     )

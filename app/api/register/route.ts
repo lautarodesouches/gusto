@@ -90,12 +90,23 @@ async function registerUserInBackend(
 // Maneja el registro de usuario
 export async function POST(req: Request): Promise<NextResponse> {
     try {
+        console.log('=== Iniciando proceso de registro ===')
+        
         // 1. Parsear el body
         const body = await parseRequestBody(req)
         
         if (body === null) {
+            console.error('Body JSON inválido')
             return createErrorResponse(ERROR_MESSAGES.INVALID_JSON, 400)
         }
+
+        console.log('Body parseado correctamente:', {
+            hasToken: body && typeof body === 'object' && 'firebaseToken' in body,
+            hasNombre: body && typeof body === 'object' && 'nombre' in body,
+            hasApellido: body && typeof body === 'object' && 'apellido' in body,
+            hasEmail: body && typeof body === 'object' && 'email' in body,
+            hasUsername: body && typeof body === 'object' && 'username' in body,
+        })
 
         // 2. Validar campos requeridos
         if (!validateRequestBody(body)) {
@@ -105,6 +116,7 @@ export async function POST(req: Request): Promise<NextResponse> {
                             'firebaseToken' in body && 
                             Boolean((body as Partial<RegisterRequest>).firebaseToken)
             
+            console.error('Validación fallida, hasToken:', hasToken)
             return createErrorResponse(
                 hasToken 
                     ? ERROR_MESSAGES.MISSING_FIELDS 
@@ -116,9 +128,13 @@ export async function POST(req: Request): Promise<NextResponse> {
         // Ahora TypeScript sabe que body es RegisterRequest
         const { nombre, apellido, email, username, firebaseToken } = body
 
+        console.log('Datos validados:', { nombre, apellido, email, username })
+
         // 3. Verificar token de Firebase
         try {
+            console.log('Verificando token de Firebase...')
             await verifyFirebaseToken(firebaseToken)
+            console.log('Token de Firebase verificado correctamente')
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error'
             console.error('Error al verificar token de Firebase:', errorMessage)
@@ -128,11 +144,17 @@ export async function POST(req: Request): Promise<NextResponse> {
         // 4. Registrar en el backend
         let backendResponse: Response
         try {
+            console.log('Llamando al backend para registrar usuario...')
             backendResponse = await registerUserInBackend(firebaseToken, {
                 nombre,
                 apellido,
                 email,
                 username,
+            })
+            console.log('Respuesta del backend recibida:', {
+                status: backendResponse.status,
+                statusText: backendResponse.statusText,
+                ok: backendResponse.ok
             })
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error'
@@ -144,6 +166,7 @@ export async function POST(req: Request): Promise<NextResponse> {
         let data: RegisterResponse
         try {
             data = await backendResponse.json()
+            console.log('Data del backend parseada:', data)
         } catch {
             console.error('Respuesta no válida del backend')
             return createErrorResponse(ERROR_MESSAGES.INVALID_BACKEND_RESPONSE, 502)
@@ -161,6 +184,8 @@ export async function POST(req: Request): Promise<NextResponse> {
             )
         }
 
+        console.log('Registro exitoso, creando cookie...')
+        
         // 7. Crear respuesta con cookie
         const response = NextResponse.json({
             success: true,
@@ -175,6 +200,7 @@ export async function POST(req: Request): Promise<NextResponse> {
             secure: IS_PRODUCTION,
         })
 
+        console.log('=== Registro completado exitosamente ===')
         return response
 
     } catch (error) {

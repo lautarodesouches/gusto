@@ -9,17 +9,39 @@ export default function StepFour() {
     const { data } = useRegister()
 
     const handleFinish = async () => {
-        const response = await fetch('/api/steps', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
+        try {
+            // Validar que haya al menos 3 gustos
+            const gustos = data.step3 || []
+            if (gustos.length < 3) {
+                alert('Debes seleccionar al menos 3 gustos para continuar. Por favor vuelve al paso 3.')
+                return
+            }
+            
+            console.log('Finalizando registro, enviando steps...', data)
+            
+            const response = await fetch('/api/steps', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
 
-        await response.json()
+            if (!response.ok) {
+                const errorData = await response.json()
+                console.error('Error al finalizar registro:', errorData)
+                alert(`Error al guardar tus preferencias: ${errorData.details || errorData.error || 'Error desconocido'}`)
+                return
+            }
 
-        router.push(ROUTES.MAP)
+            const result = await response.json()
+            console.log('Steps guardados correctamente:', result)
+            
+            router.push(ROUTES.MAP)
+        } catch (error) {
+            console.error('Error en handleFinish:', error)
+            alert('Error al finalizar el registro. Por favor intenta de nuevo.')
+        }
     }
 
     const handleBack = () => {
