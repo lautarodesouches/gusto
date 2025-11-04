@@ -131,6 +131,8 @@ export type User = {
     username: string
     fotoPerfilUrl: string
     esPrivado: boolean
+    esMiPerfil : boolean
+    esAmigo : boolean
     gustos: {
         id: string
         nombre: string

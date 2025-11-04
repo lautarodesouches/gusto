@@ -151,7 +151,7 @@ export async function deleteFriend(
     username: string
 ): Promise<ApiResponse<User>> {
     try {
-        const res = await fetch(`${API_URL}/Amistad/${friendId}`, {
+        const res = await fetch(`${API_URL}/Amistad/${username}`, {
             method: 'DELETE',
             headers: await getAuthHeaders(),
         })
