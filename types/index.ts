@@ -132,6 +132,8 @@ export type User = {
     esPrivado: boolean
     plan: 'Free' | 'Plus'
     esPremium: boolean
+    esMiPerfil : boolean
+    esAmigo : boolean
     gustos: {
         id: string
         nombre: string

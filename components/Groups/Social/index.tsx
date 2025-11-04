@@ -63,15 +63,16 @@ export default function GroupSocial({ group }: Props) {
 
         setFilteredMembers(prev => [...prev])
     }
+const handleKick = async (member: GroupMember) => {
+    const result = await removeGroupMember(group.id, member.usuarioUsername)
 
-    const handleKick = async (memberId: string) => {
-        const result = await removeGroupMember(group.id, memberId)
+    if (!result.success)
+        return toast.error(result.error || 'Error al remover del grupo')
 
-        if (!result.success)
-            return toast.error(result.error || 'Error al remover del grupo')
+    toast.success(`${member.usuarioNombre} fue eliminado del grupo`)
 
-        toast.success('Usuario eliminado del grupo')
-    }
+    setFilteredMembers(prev => prev.filter(m => m.id !== member.id))
+}
 
     return (
         <>

@@ -58,6 +58,9 @@ export default function GroupCreate({
             }
 
             toast.success(`Grupo "${name}" creado exitosamente`)
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('groups:refresh'))
+            }
 
             setName('')
             setDescription('')

@@ -47,6 +47,7 @@ export default function ProfileClient({
                     )
 
                 toast.success('Solicitud de amistad enviada')
+                router.refresh()
             } catch (err: unknown) {
                 console.error(err)
                 toast.error(
@@ -70,6 +71,7 @@ export default function ProfileClient({
                     )
 
                 toast.success('Amigo eliminado correctamente')
+                router.refresh()
             } catch (err: unknown) {
                 console.error(err)
                 toast.error(

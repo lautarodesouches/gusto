@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+
 import { ROUTES } from '@/routes'
 import { ActiveView } from '../Client'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
@@ -43,6 +44,7 @@ export default function Nav({ activeView, mobileView, onClick }: Props) {
             </div>
             <div className={styles.nav__icons}>
                 <NotificationBell />
+                
                 <Link
                     href={ROUTES.PROFILE}
                     className={styles.nav__div}
