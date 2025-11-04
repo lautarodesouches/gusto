@@ -10,13 +10,14 @@ interface Props {
 
 export default async function Profile({ params }: Props) {
     const { username } = await params
-
     const result = await getProfile(username)
 
     const { data: dataFriend } = await checkIsFriend(username)
     const isFriend = dataFriend?.isFriend ?? false
 
     if (!result.success || !result.data) notFound()
+
+    const { esMiPerfil, esAmigo } = result.data
 
     return (
         <main className={styles.main}>

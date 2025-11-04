@@ -104,6 +104,7 @@ export default function Map() {
             </nav>
             <section className={styles.middle}>
                 <div className={styles.middle__filter}>
+                    
                     <MapFilter isVisible handleClose={() => {}} />
                 </div>
                 <Suspense fallback={<Loading message="Cargando mapa" />}>
