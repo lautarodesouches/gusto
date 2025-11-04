@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import FiltersView from '../FiltersView'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
-import { Filters } from '@/types'
+import { Filter, Filters } from '@/types'
 
-interface FilterItem {
-    id: number
-    name: string
+export type FilterType = 'tipo' | 'plato' | 'rating'
+
+export interface FilterItem extends Filter {
     checked: boolean
 }
 
@@ -25,7 +25,6 @@ export default function FiltersClient({
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
 
-    // Inicializamos el estado agregando `checked: false`
     const [categories, setCategories] = useState<FilterItem[]>(
         filters.categories.map(f => ({ ...f, checked: false }))
     )
@@ -42,10 +41,10 @@ export default function FiltersClient({
         const plato = searchParams.get('plato') || ''
         const rating = searchParams.get('rating') || ''
 
-        const markSelected = (items: FilterItem[], selectedName: string) =>
+        const markSelected = (items: FilterItem[], selectedValue: string) =>
             items.map(item => ({
                 ...item,
-                checked: item.name === selectedName,
+                checked: item.value === selectedValue,
             }))
 
         setCategories(prev => markSelected(prev, tipo))
@@ -55,15 +54,15 @@ export default function FiltersClient({
 
     // Función genérica para seleccionar un solo item y actualizar URL
     const handleSingleSelect = (
-        name: string,
+        value: string,
         setItems: React.Dispatch<React.SetStateAction<FilterItem[]>>,
         paramKey: string
     ) => {
         setItems(prev => {
             let selected = ''
             const newState = prev.map(item => {
-                const isSelected = item.name === name ? !item.checked : false
-                if (isSelected) selected = item.name
+                const isSelected = item.value === value ? !item.checked : false
+                if (isSelected) selected = item.value
                 return { ...item, checked: isSelected }
             })
             updateUrlParam(paramKey, selected || null)
@@ -71,12 +70,12 @@ export default function FiltersClient({
         })
     }
 
-    const handleCategoryClick = (name: string) =>
-        handleSingleSelect(name, setCategories, 'tipo')
-    const handleDishClick = (name: string) =>
-        handleSingleSelect(name, setDishes, 'plato')
-    const handleRatingClick = (name: string) =>
-        handleSingleSelect(name, setRatings, 'rating')
+    const handleCategoryClick = (value: string) =>
+        handleSingleSelect(value, setCategories, 'tipo')
+    const handleDishClick = (value: string) =>
+        handleSingleSelect(value, setDishes, 'plato')
+    const handleRatingClick = (value: string) =>
+        handleSingleSelect(value, setRatings, 'rating')
 
     return (
         <FiltersView
