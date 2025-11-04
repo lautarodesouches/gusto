@@ -2,6 +2,7 @@ import Image from 'next/image'
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faSearch, faUser } from '@fortawesome/free-solid-svg-icons'
+import NotificationBell from '@/components/NotificationBell/Notificacion'
 
 export default function Nav() {
     return (
@@ -30,10 +31,8 @@ export default function Nav() {
                 </fieldset>
                 <div className={styles.nav__icons}>
                     <div className={styles.nav__div}>
-                        <FontAwesomeIcon
-                            icon={faBell}
-                            className={styles.nav__icon}
-                        />
+                        <NotificationBell />
+                      
                     </div>
                     <div className={styles.nav__div}>
                         <FontAwesomeIcon

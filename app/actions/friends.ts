@@ -1,8 +1,9 @@
 'use server'
 import { API_URL } from '@/constants'
-import { ApiResponse, Friend, User } from '@/types'
+import { ApiResponse, Friend, SolicitudAmistadResponse, User } from '@/types'
 import { getAuthHeaders } from './common'
 import { revalidatePath, revalidateTag } from 'next/cache'
+
 
 export async function getFriends(): Promise<ApiResponse<Friend[]>> {
     try {
@@ -41,30 +42,36 @@ export async function getFriendRequests(): Promise<ApiResponse<Friend[]>> {
             method: 'GET',
             headers: await getAuthHeaders(),
             cache: 'no-store',
-            next: {
-                tags: ['friends'],
-            },
         })
 
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}))
             return {
                 success: false,
-                error: errorData?.error || 'Error al enviar solicitud',
+                error: errorData?.error || 'Error al obtener solicitudes',
             }
         }
 
-        const data = await res.json()
+        const data: SolicitudAmistadResponse[] = await res.json()
 
-        return { success: true, data }
+        const requests: Friend[] = data.map((solicitud) => ({
+            id: solicitud.id,
+            nombre: solicitud.remitente.nombre,
+            username: solicitud.remitente.username,
+            email: solicitud.remitente.email,
+            fotoPerfilUrl: solicitud.remitente.fotoPerfilUrl,
+        }))
+
+        return { success: true, data: requests }
     } catch (error) {
-        console.error('Error getting friends requests:', error)
+        console.error('Error getting friend requests:', error)
         return {
             success: false,
             error: 'Error al obtener solicitudes de amistad',
         }
     }
 }
+
 
 export async function getFriendsData(): Promise<
     ApiResponse<{ friends: Friend[]; friendsRequests: Friend[] }>

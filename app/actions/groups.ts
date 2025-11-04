@@ -135,7 +135,7 @@ export async function inviteUserToGroup(
             method: 'POST',
             headers: await getAuthHeaders(),
             body: JSON.stringify({
-                query: email,
+                emailUsuario: email,
                 mensajePersonalizado: message,
             }),
         })
