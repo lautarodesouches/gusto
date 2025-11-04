@@ -8,3 +8,132 @@
     flex-direction: column;
     padding: 20px;
 }
+
+.nav {
+    z-index: 3;
+    top: 20px;
+    width: 90%;
+    left: 5%;
+    margin: auto;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav__logo {
+    display: none;
+}
+
+.nav__img {
+    width: 120px;
+    height: auto;
+}
+
+.nav__icons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav__div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10%;
+    opacity: 1;
+    transition: all 0.3s ease;
+    background: var(--black);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.nav__icon {
+    width: 20px;
+    height: 20px;
+    color: var(--grey);
+}
+
+@media (min-width: 768px) {
+    .nav {
+        padding-top: 20px;
+        position: unset;
+    }
+
+    .nav__logo {
+        display: block;
+    }
+
+    .nav__img {
+        width: 150px;
+    }
+
+    .nav__icons {
+        display: flex;
+        gap: 10px;
+    }
+}
+
+/* Error view styles */
+.errorContainer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 2rem;
+}
+
+.errorContent {
+    text-align: center;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.errorIcon {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.errorTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0;
+}
+
+.errorMessage {
+    font-size: 1rem;
+    color: var(--light);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.errorButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.errorButton:hover {
+    background: #ff4444;
+    transform: translateY(-2px);
+}

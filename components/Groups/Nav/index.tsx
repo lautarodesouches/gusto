@@ -3,9 +3,10 @@ import styles from './styles.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { ROUTES } from '@/routes'
 import { ActiveView } from '../Client'
+import NotificationBell from '@/components/NotificationBell/Notificacion'
 
 interface Props {
     activeView: ActiveView
@@ -27,16 +28,7 @@ export default function Nav({ activeView }: Props) {
                 </Link>
             </div>
             <div className={styles.nav__icons}>
-                <button
-                    className={styles.nav__div}
-                    aria-label="Notificaciones"
-                    type="button"
-                >
-                    <FontAwesomeIcon
-                        icon={faBell}
-                        className={styles.nav__icon}
-                    />
-                </button>
+                <NotificationBell />
                 <Link
                     href={ROUTES.PROFILE}
                     className={styles.nav__div}
