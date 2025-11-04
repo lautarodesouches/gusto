@@ -157,11 +157,11 @@ export async function inviteUserToGroup(
 
 export async function removeGroupMember(
     groupId: string,
-    memberId: string
+    username: string
 ): Promise<ApiResponse<null>> {
     try {
         const res = await fetch(
-            `${API_URL}/Grupo/${groupId}/miembros/${memberId}`,
+            `${API_URL}/Grupo/${groupId}/miembros/${username}`,
             {
                 method: 'DELETE',
                 headers: await getAuthHeaders(),
