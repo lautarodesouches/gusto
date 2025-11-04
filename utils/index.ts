@@ -25,3 +25,54 @@ export function formatPhoneAR(phone: string): string {
     // Fallback si no se reconoce
     return phone
 }
+
+export function formatChatDate(dateString: string): string {
+    const date = new Date(dateString)
+    const now = new Date()
+
+    const diffTime = now.getTime() - date.getTime()
+    const diffDays = diffTime / (1000 * 60 * 60 * 24)
+
+    const sameDay =
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+
+    const yesterday =
+        date.getDate() === now.getDate() - 1 &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+
+    if (sameDay) {
+        // Ej: "10:09 p. m."
+        return new Intl.DateTimeFormat('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        }).format(date)
+    }
+
+    if (yesterday) return 'ayer'
+
+    if (diffDays < 7) {
+        // Ej: "domingo"
+        return new Intl.DateTimeFormat('es-AR', { weekday: 'long' }).format(
+            date
+        )
+    }
+
+    if (date.getFullYear() === now.getFullYear()) {
+        // Ej: "3 nov."
+        return new Intl.DateTimeFormat('es-AR', {
+            day: 'numeric',
+            month: 'short',
+        }).format(date)
+    }
+
+    // Ej: "3 nov. 2024"
+    return new Intl.DateTimeFormat('es-AR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(date)
+}

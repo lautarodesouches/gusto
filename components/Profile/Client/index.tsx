@@ -2,9 +2,10 @@
 import { useTransition } from 'react'
 import { User } from '@/types'
 import { ProfileView } from '../View'
-import { addFriend, deleteFriend } from '@/app/perfil/actions'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
+import { addFriend, deleteFriend } from '@/app/actions/friends'
+import { useToast } from '@/context/ToastContext'
 
 interface ProfileClientProps {
     profile: User
@@ -17,6 +18,8 @@ export default function ProfileClient({
     isOwnProfile = false,
     isFriend = true,
 }: ProfileClientProps) {
+    const toast = useToast()
+
     const router = useRouter()
 
     const handleEditTastes = () => {
@@ -36,9 +39,19 @@ export default function ProfileClient({
     const handleAddFriend = async () => {
         startTransition(async () => {
             try {
-                await addFriend('patricia@gmail.com', profile.username)
+                const result = await addFriend(profile.username)
+
+                if (!result.success)
+                    return toast.error(
+                        result.error || 'No se pudo enviar la solicitud'
+                    )
+
+                toast.success('Solicitud de amistad enviada')
             } catch (err: unknown) {
-                alert(err instanceof Error ? err.message : 'An error occurred')
+                console.error(err)
+                toast.error(
+                    err instanceof Error ? err.message : 'Ocurrió un error'
+                )
             }
         })
     }
@@ -46,9 +59,22 @@ export default function ProfileClient({
     const handleDeleteFriend = async () => {
         startTransition(async () => {
             try {
-                await deleteFriend('50000000-0000-0000-0000-000000000222', profile.username)
+                const result = await deleteFriend(
+                    '50000000-0000-0000-0000-000000000222',
+                    profile.username
+                )
+
+                if (!result.success)
+                    return toast.error(
+                        result.error || 'No se pudo eliminar al amigo'
+                    )
+
+                toast.success('Amigo eliminado correctamente')
             } catch (err: unknown) {
-                alert(err instanceof Error ? err.message : 'An error occurred')
+                console.error(err)
+                toast.error(
+                    err instanceof Error ? err.message : 'Ocurrió un error'
+                )
             }
         })
     }

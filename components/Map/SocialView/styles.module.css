@@ -181,6 +181,7 @@
 
     .social__header {
         padding: 10px;
+        display: none;
     }
 
     .social__width {
@@ -213,6 +214,7 @@
         padding: 0 10px 10px 10px;
         overflow-y: auto;
         max-height: unset;
+        margin-top: 0;
     }
 
     .social__div button {

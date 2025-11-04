@@ -1,4 +1,4 @@
-// ✅ Este archivo es un Server Component — NO lleva 'use client'
+
 import { notFound, redirect } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
 import Image from 'next/image'
@@ -9,14 +9,15 @@ import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { LOCAL_URL } from '@/constants'
-import { GroupsSocial } from '@/components'
+import { GroupClient, GroupsSocial } from '@/components'
 import admin from '@/lib/firebaseAdmin'
+import NotificationBell from '@/components/NotificationBell/Notificacion'
 
 interface Props {
     params: Promise<{ id: string }>
 }
 
-// 🔹 1. Función para obtener datos del grupo (desde el servidor)
+//  1. Función para obtener datos del grupo (desde el servidor)
 async function fetchGroup({
     id,
     cookie,
@@ -43,7 +44,7 @@ async function fetchGroup({
     }
 }
 
-// 🔹 2. Función para verificar autenticación (usa Firebase Admin)
+//  2. Función para verificar autenticación (usa Firebase Admin)
 async function verifyAuthentication(): Promise<string> {
     const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
@@ -59,7 +60,7 @@ async function verifyAuthentication(): Promise<string> {
     }
 }
 
-// 🔹 3. Componente principal del servidor
+//  3. Componente principal del servidor
 export default async function GroupDetail({ params }: Props) {
     const { id } = await params
 
@@ -76,7 +77,7 @@ export default async function GroupDetail({ params }: Props) {
     // Verificar si es administrador (opcional)
     const isAdmin = group.administradorFirebaseUid === userId
 
-    // 🔹 Render
+    //  Render
     return (
         <main className={styles.main}>
             <nav className={styles.nav}>
@@ -94,16 +95,10 @@ export default async function GroupDetail({ params }: Props) {
                 </div>
 
                 <div className={styles.nav__icons}>
-                    <button
-                        className={styles.nav__div}
-                        aria-label="Notificaciones"
-                        type="button"
-                    >
-                        <FontAwesomeIcon
-                            icon={faBell}
-                            className={styles.nav__icon}
-                        />
-                    </button>
+
+                        <NotificationBell />
+
+                      
                     <Link
                         href={ROUTES.PROFILE}
                         className={styles.nav__div}
@@ -118,7 +113,8 @@ export default async function GroupDetail({ params }: Props) {
             </nav>
 
             {/* Componente CLIENTE: contiene hooks, chat e interacción */}
-            <GroupsSocial group={group} />
+            
+            <GroupClient group={group} />
         </main>
     )
 }

@@ -3,15 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
 import { faInfo, faUsers } from '@fortawesome/free-solid-svg-icons'
 import { Group } from '@/types'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function GroupCard({ group }: { group: Group }) {
-    const router = useRouter()
-
-    const handleGoDetail = () => {
-        return router.push(`/group/${group.id}/`)
-    }
-
     return (
         <li className={styles.group}>
             <div className={styles.group__img}>
@@ -22,11 +16,12 @@ export default function GroupCard({ group }: { group: Group }) {
                 <p className={styles.group__user}>{group.cantidadMiembros}</p>
             </div>
             <div className={styles.group__info}>
-                <FontAwesomeIcon
-                    icon={faInfo}
-                    className={styles.group__icon}
-                    onClick={handleGoDetail}
-                />
+                <Link href={`/group/${group.id}/`}>
+                    <FontAwesomeIcon
+                        icon={faInfo}
+                        className={styles.group__icon}
+                    />
+                </Link>
             </div>
         </li>
     )

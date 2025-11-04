@@ -10,7 +10,7 @@ interface Props {
 export default async function Profile({ params }: Props) {
     const { username } = await params
 
-    const result = await getProfile(username)    
+    const result = await getProfile(username)
 
     if (!result.success || !result.data) notFound()
 

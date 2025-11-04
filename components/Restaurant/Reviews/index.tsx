@@ -5,132 +5,115 @@ import styles from './page.module.css'
 import { Review } from '@/types'
 
 interface ReviewCardProps {
-    review: Review
-    showImages?: boolean
+  review: Review
+  showImages?: boolean
 }
 
 function ReviewCard({ review, showImages = true }: ReviewCardProps) {
-    const formatDate = (dateString: string): string => {
-        const date = new Date(dateString)
-        const months = [
-            'enero',
-            'febrero',
-            'marzo',
-            'abril',
-            'mayo',
-            'junio',
-            'julio',
-            'agosto',
-            'septiembre',
-            'octubre',
-            'noviembre',
-            'diciembre',
-        ]
-        return `Escrita el ${date.getDate()} de ${
-            months[date.getMonth()]
-        } ${date.getFullYear()}`
-    }
+  const getDisplayName = () =>
+    review.autor || review.userName || 'Anónimo'
 
-    return (
-        <article className={styles['review-card']}>
-            {/* Header */}
-            <header className={styles['review-card__header']}>
-                <div className={styles['review-card__user']}>
-                    <div className={styles['review-card__avatar']}>
-                        {review.userAvatar ? (
-                            <img
-                                src={review.userAvatar}
-                                alt={review.userName}
-                            />
-                        ) : (
-                            <span>
-                                {review.userName.charAt(0).toUpperCase()}
-                            </span>
-                        )}
-                    </div>
-                    <span className={styles['review-card__username']}>
-                        {review.userName}
-                    </span>
-                </div>
+  const getAvatar = () =>
+    review.foto || review.userAvatar || ''
 
-                <div className={styles['review-card__rating']}>
-                    {[...Array(5)].map((_, index) => (
-                        <FontAwesomeIcon
-                            key={index}
-                            icon={faStar}
-                            className={`${styles['review-card__star']} ${
-                                index < review.rating
-                                    ? styles['review-card__star--filled']
-                                    : ''
-                            }`}
-                        />
-                    ))}
-                </div>
-            </header>
+  const getText = () =>
+    review.texto || review.content || ''
 
-            {/* Content */}
-            <div className={styles['review-card__content']}>
-                <h3 className={styles['review-card__title']}>{review.title}</h3>
-                <p className={styles['review-card__text']}>{review.content}</p>
-            </div>
+ const getDate = () => {
+  // Si ya viene en español tipo "hace 3 semanas", la mostramos tal cual
+  if (review.fecha && /hace|ayer|semana|mes|día/.test(review.fecha)) {
+    return `${review.fecha}`
+  }
 
-            {/* Images */}
-            {showImages && review.images && review.images.length > 0 && (
-                <div className={styles['review-card__images']}>
-                    {review.images.map((image, index) => (
-                        <div
-                            key={index}
-                            className={styles['review-card__image']}
-                        >
-                            <img src={image} alt={`Foto ${index + 1}`} />
-                        </div>
-                    ))}
-                </div>
+  // Si tiene formato ISO válido (por ejemplo "2025-10-15T02:56:50.0034944Z")
+  const date = new Date(review.fecha || review.fecha || '')
+  if (isNaN(date.getTime())) return 'Fecha no disponible'
+
+  const months = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+  ]
+
+  return `Escrita el ${date.getDate()} de ${months[date.getMonth()]} ${date.getFullYear()}`
+}
+
+
+  return (
+    <article className={styles['review-card']}>
+      {/* Header */}
+      <header className={styles['review-card__header']}>
+        <div className={styles['review-card__user']}>
+          <div className={styles['review-card__avatar']}>
+            {getAvatar() ? (
+              <img src={getAvatar()} alt={getDisplayName()} />
+            ) : (
+              <span>{getDisplayName().charAt(0).toUpperCase()}</span>
             )}
+          </div>
+          <span className={styles['review-card__username']}>
+            {getDisplayName()}
+          </span>
+        </div>
 
-            {/* Footer */}
-            <footer className={styles['review-card__footer']}>
-                <time className={styles['review-card__date']}>
-                    {formatDate(review.date)}
-                </time>
-                {review.isVerified && (
-                    <div className={styles['review-card__verified']}>
-                        Esta opinión es la opinión subjetiva de un miembro de
-                        Gusto! no de Gusto! app. Gusto! les hace controles a
-                        todas las opiniones.
-                    </div>
-                )}
-            </footer>
-        </article>
-    )
+        <div className={styles['review-card__rating']}>
+          {[...Array(5)].map((_, index) => (
+            <FontAwesomeIcon
+              key={index}
+              icon={faStar}
+              className={`${styles['review-card__star']} ${
+                index < review.rating ? styles['review-card__star--filled'] : ''
+              }`}
+            />
+          ))}
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className={styles['review-card__content']}>
+        <p className={styles['review-card__text']}>{getText()}</p>
+      </div>
+
+      {/* Images (para compatibilidad futura) */}
+      {showImages && review.images && review.images.length > 0 && (
+        <div className={styles['review-card__images']}>
+          {review.images.map((image, index) => (
+            <div key={index} className={styles['review-card__image']}>
+              <img src={image} alt={`Foto ${index + 1}`} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className={styles['review-card__footer']}>
+        <time className={styles['review-card__date']}>{getDate()}</time>
+      </footer>
+    </article>
+  )
 }
 
 interface ReviewListProps {
-    reviews: Review[]
-    showImages?: boolean
+  reviews: Review[]
+  showImages?: boolean
 }
 
 export default function ReviewList({
-    reviews,
-    showImages = true,
+  reviews,
+  showImages = true,
 }: ReviewListProps) {
-    if (reviews.length === 0) {
-        return (
-            <div className={styles['review-list__empty']}>
-                <p>No hay opiniones disponibles</p>
-            </div>
-        )
-    }
-
+  if (!reviews || reviews.length === 0) {
     return (
-        <div className={styles['review-list']}>
-            {reviews.map(review => (
-                <ReviewCard
-                    key={review.id}
-                    review={review}
-                    showImages={showImages}
-                />
-            ))}
-        </div>
+      <div className={styles['review-list__empty']}>
+        <p>No hay opiniones disponibles</p>
+      </div>
     )
+  }
+
+  return (
+    <div className={styles['review-list']}>
+      {reviews.map((r) => (
+        <ReviewCard key={r.id} review={r} showImages={showImages} />
+      ))}
+    </div>
+  )
 }

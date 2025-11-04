@@ -1,7 +1,12 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import { User, onAuthStateChanged, onIdTokenChanged, signOut } from 'firebase/auth'
+import {
+    User,
+    onAuthStateChanged,
+    onIdTokenChanged,
+    signOut,
+} from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 
 type AuthContextType = {
@@ -75,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     //  Refresca token automáticamente cada vez que Firebase lo renueva
     useEffect(() => {
-        const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
+        const unsubscribe = onIdTokenChanged(auth, async firebaseUser => {
             if (firebaseUser) {
                 const newToken = await firebaseUser.getIdToken()
                 setToken(newToken)
@@ -85,10 +90,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     await fetch('/api/refresh-token', {
                         method: 'POST',
                         headers: {
-                            'Authorization': `Bearer ${newToken}`,
+                            Authorization: `Bearer ${newToken}`,
                         },
                     })
-                    console.log('🔄 Token Firebase actualizado en cookie')
                 } catch (error) {
                     console.error('Error al refrescar token:', error)
                 }

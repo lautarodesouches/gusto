@@ -8,22 +8,23 @@ import {
     faUser,
     faUserPlus,
     faUserXmark,
-    faComments 
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
-import { API_URL } from '@/constants'
 import { ChangeEvent, useEffect, useState } from 'react'
-import ChatGrupo from '@/components/Groups/Chat/ChatGrupo' 
-
+import { useToast } from '@/context/ToastContext'
+import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
+import Link from 'next/link'
+import { ROUTES } from '@/routes'
 
 interface Props {
     group: Group
 }
 
-export default function GroupsSocial({ group }: Props) {
+export default function GroupSocial({ group }: Props) {
+    const toast = useToast()
+
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
-     const [showChat, setShowChat] = useState(false)
 
     useEffect(() => {
         setFilteredMembers(group.miembros)
@@ -47,158 +48,124 @@ export default function GroupsSocial({ group }: Props) {
         e.preventDefault()
 
         const formData = new FormData(e.currentTarget)
+
         const email = formData.get('email') as string
 
-        try {
-            const body = {
-                query: email,
-                mensajePersonalizado: `Te invito a formar parte de ${group?.nombre}`,
-            }
+        if (!email) return toast.error('Ingrese un email')
 
-            const res = await fetch(`/api/group/${group.id}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            })
+        const message = `Te invito a formar parte de ${group.nombre}`
 
-            const data = await res.json()
+        const result = await inviteUserToGroup(group.id, email, message)
 
-            if (!res.ok) throw new Error(data.message || 'Error al invitar')
+        if (!result.success)
+            return toast.error(result.error || 'Error al invitar al grupo')
 
-            alert('Invitación enviada correctamente!')
-        } catch (err: unknown) {
-            console.error(err)
-            alert('No se pudo enviar la invitación')
-        }
+        toast.success('Invitación enviada')
+
+        setFilteredMembers(prev => [...prev])
     }
 
     const handleKick = async (memberId: string) => {
-        try {
-            const res = await fetch(
-                `${API_URL}/Grupo/${group?.id}}/miembros/${memberId}`,
-                {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                }
-            )
+        const result = await removeGroupMember(group.id, memberId)
 
-            const data = await res.json()
+        if (!result.success)
+            return toast.error(result.error || 'Error al remover del grupo')
 
-            if (!res.ok)
-                throw new Error(data.message || 'Error al eliminar del grupo')
+        toast.success('Usuario eliminado del grupo')
 
-            alert('Usuario eliminado del grupo')
-        } catch (err: unknown) {
-            console.error(err)
-            alert('No se pudo eliminar del grupo')
-        }
+        setFilteredMembers(prev => prev.filter(m => m.id !== memberId))
     }
 
     return (
         <>
-            <div className={styles.container}>
-                <section className={styles.social}>
-                    <nav className={styles.social__nav}>
-                        <div className={styles.social__div}>
-                            <h2 className={styles.social__title}>
-                                {group.nombre}
-                            </h2>
-                        </div>
-                        <div className={styles.social__div}>
-                            <FontAwesomeIcon
-                                icon={faGear}
-                                className={styles.social__icon}
-                            />
-                        </div>
-                    </nav>
-                    <div className={styles.search}>
-                        <FontAwesomeIcon
-                            icon={faSearch}
-                            className={styles.search__icon}
-                        />
-                        <input type="text" onChange={handleSearchMembers} />
+            <section className={styles.social}>
+                <nav className={styles.social__nav}>
+                    <div className={styles.social__div}>
+                        <h2 className={styles.social__title}>{group.nombre}</h2>
                     </div>
-                    <div className={styles.members}>
-                        {filteredMembers.length === 0 && (
-                            <p className={styles.members__error}>
-                                No se encontraron miembros
-                            </p>
-                        )}
-                        {filteredMembers.map(m => (
-                            <article className={styles.member} key={m.id}>
-                                <div className={styles.member__div}>
+                    <div className={styles.social__div}>
+                        <FontAwesomeIcon
+                            icon={faGear}
+                            className={styles.social__icon}
+                        />
+                    </div>
+                </nav>
+                <fieldset className={styles.search}>
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        className={styles.search__icon}
+                    />
+                    <input
+                        className={styles.search__input}
+                        type="text"
+                        placeholder="Buscar integrante"
+                        onChange={handleSearchMembers}
+                    />
+                </fieldset>
+                <div className={styles.members}>
+                    {filteredMembers.length === 0 && (
+                        <p className={styles.members__error}>
+                            No se encontraron miembros
+                        </p>
+                    )}
+                    {filteredMembers.map(m => (
+                        <article className={styles.member} key={m.id}>
+                            <div className={styles.member__div}>
+                                <FontAwesomeIcon
+                                    icon={faUser}
+                                    className={styles.member__img}
+                                />
+                            </div>
+                            <div className={styles.member__div}>
+                                <h3 className={styles.member__name}>
+                                    {m.usuarioNombre}
+                                </h3>
+                                {m.id === group.administradorId && (
                                     <FontAwesomeIcon
-                                        icon={faUser}
-                                        className={styles.member__img}
+                                        icon={faCrown}
+                                        className={styles.member__crown}
                                     />
-                                </div>
-                                <div className={styles.member__div}>
-                                    <h3 className={styles.member__name}>
-                                        {m.usuarioNombre}
-                                    </h3>
-                                    {m.id === group.administradorId && (
-                                        <FontAwesomeIcon
-                                            icon={faCrown}
-                                            className={styles.member__crown}
-                                        />
-                                    )}
-                                </div>
-                                <div className={styles.member__div}>
+                                )}
+                            </div>
+                            <div className={styles.member__div}>
+                                <Link
+                                    href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
+                                >
                                     <FontAwesomeIcon
                                         icon={faInfo}
                                         className={styles.members__icon}
                                     />
-                                    <FontAwesomeIcon
-                                        icon={faUserXmark}
-                                        className={styles.members__icon}
-                                        onClick={() => handleKick(m.id)}
-                                    />
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-                    <form className={styles.invite} onSubmit={handleInvite}>
-                        <div>
-                            <FontAwesomeIcon
-                                icon={faUserPlus}
-                                className={styles.invite__icon}
-                            />
-                            <input
-                              type="text"
-                             name="email"              
-                             placeholder="Email del usuario"
+                                </Link>
+                                <FontAwesomeIcon
+                                    icon={faUserXmark}
+                                    className={styles.members__delete}
+                                    onClick={() => handleKick(m.id)}
+                                />
+                            </div>
+                        </article>
+                    ))}
+                </div>
+                <form className={styles.invite} onSubmit={handleInvite}>
+                    <fieldset className={styles.invite__fieldset}>
+                        <FontAwesomeIcon
+                            className={styles.invite__icon}
+                            icon={faUserPlus}
+                        />
+                        <input
+                            className={styles.invite__input}
+                            type="text"
+                            name="email"
+                            placeholder="Email del usuario"
                             required
-                            />
-                        </div>
-                        <div>
-                            <button>Agregar</button>
-                        </div>
-                    </form>
-
-                        <div style={{ textAlign: 'center', marginTop: 20 }}>
-                        <button
-                            onClick={() => setShowChat(!showChat)}
-                            className={styles.chatButton}
-                        >
-                            <FontAwesomeIcon icon={faComments} />{' '}
-                            {showChat ? 'Cerrar Chat' : 'Abrir Chat'}
+                        />
+                    </fieldset>
+                    <div className={styles.invite__div}>
+                        <button className={styles.invite__button}>
+                            Agregar
                         </button>
                     </div>
-
-                    {showChat && (
-                        <div style={{ marginTop: 20 }}>
-                            <ChatGrupo grupoId={group.id} />
-                        </div>
-                    )}
-
-
-
-                    <footer className={styles.footer}>
-                        <button>Inicio</button>
-                        <button>Grupo</button>
-                    </footer>
-                </section>
-            </div>
+                </form>
+            </section>
         </>
     )
 }

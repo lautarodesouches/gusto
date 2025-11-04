@@ -6,6 +6,8 @@ import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { useRouter } from 'next/navigation'
 import { PremiumLimitFloatingCard } from '@/components'
 import { useAuth } from '@/context/AuthContext'
+import { createGroup } from '@/app/actions/groups'
+import { useToast } from '@/context/ToastContext'
 
 export default function GroupCreate({
     handleCancel,
@@ -14,62 +16,55 @@ export default function GroupCreate({
 }) {
     const router = useRouter()
     const { user } = useAuth()
+    const toast = useToast()
 
-    const [nombre, setNombre] = useState('')
-    const [descripcion, setDescripcion] = useState('')
+    const [name, setName] = useState('')
+    const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
     const [showLimitCard, setShowLimitCard] = useState(false)
     const [limitInfo, setLimitInfo] = useState<any>(null)
 
     const handleSubmit = async () => {
-        if (!nombre || !descripcion) return
+        if (!name || !description) return
 
         setLoading(true)
+
         try {
-            const res = await fetch('/api/group', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nombre, descripcion }),
-            })
+            const result = await createGroup({ name, description })
 
-            const data = await res.json()
-            
             // Debug: Log para ver qué está devolviendo el backend
-            console.log('Response status:', res.status)
-            console.log('Response data:', data)
+            console.log('Result:', result)
 
-            if (!res.ok) {
-                // Verificar si es error de límite de grupos (status 402 Payment Required o 400)
-                if ((res.status === 402 || res.status === 400) && (
-                    data.error === 'LIMITE_GRUPOS_ALCANZADO' || 
-                    data.needsPremium || 
-                    data.tipoPlan === 'Free' ||
-                    (data.message && (data.message.includes('Límite de grupos alcanzado') || data.message.includes('límite'))) ||
-                    (data.mensaje && (data.mensaje.includes('límite') || data.mensaje.includes('Límite')))
-                )) {
+            if (!result.success) {
+                // Verificar si es error de límite de grupos
+                const errorData = result as any // Castear para acceder a campos adicionales
+                if (errorData.error === 'LIMITE_GRUPOS_ALCANZADO' || 
+                    errorData.needsPremium || 
+                    (errorData.error && (errorData.error.includes('Límite de grupos alcanzado') || errorData.error.includes('límite')))
+                ) {
                     console.log('Detectando límite de grupos, mostrando cartel flotante')
                     setLimitInfo({
-                        tipoPlan: data.tipoPlan,
-                        limiteActual: data.limiteActual,
-                        gruposActuales: data.gruposActuales,
-                        beneficiosPremium: data.beneficiosPremium
+                        tipoPlan: errorData.tipoPlan,
+                        limiteActual: errorData.limiteActual,
+                        gruposActuales: errorData.gruposActuales,
+                        beneficiosPremium: errorData.beneficiosPremium
                     })
                     setShowLimitCard(true)
                     return
                 }
-                throw new Error(data.message || data.mensaje || 'Error creando grupo')
+                
+                toast.error(result.error || 'Error creando grupo')
+                return
             }
 
-            setNombre('')
-            setDescripcion('')
-            alert('Grupo creado!')
+            toast.success(`Grupo "${name}" creado exitosamente`)
+
+            setName('')
+            setDescription('')
             handleCancel()
-            router.refresh()
         } catch (err) {
             console.error('Error en handleSubmit:', err)
-            alert('Hubo un error creando el grupo')
+            toast.error('No se pudo crear grupo')
         } finally {
             setLoading(false)
         }
@@ -84,15 +79,15 @@ export default function GroupCreate({
                 <input
                     type="text"
                     placeholder="Ingrese Nombre del Grupo"
-                    value={nombre}
-                    onChange={e => setNombre(e.target.value)}
+                    value={name}
+                    onChange={e => setName(e.target.value)}
                     className={styles.create__input}
                 />
                 <input
                     type="text"
                     placeholder="Ingrese Descripcion del Grupo"
-                    value={descripcion}
-                    onChange={e => setDescripcion(e.target.value)}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
                     className={styles.create__input}
                 />
                 <div className={styles.create__buttons}>
@@ -105,8 +100,8 @@ export default function GroupCreate({
                     </button>
                     <button
                         onClick={() => {
-                            setNombre('')
-                            setDescripcion('')
+                            setName('')
+                            setDescription('')
                             handleCancel()
                         }}
                         className={styles.create__cancel}

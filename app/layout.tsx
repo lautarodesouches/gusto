@@ -3,7 +3,11 @@ import localFont from 'next/font/local'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
+
 import PaymentVerification from '@/components/PaymentVerification'
+
+import { ToastProvider } from '@/context/ToastContext'
+
 
 const plusJakartaSans = Plus_Jakarta_Sans({
     subsets: ['latin'],
@@ -47,10 +51,16 @@ export default function RootLayout({
             <body
                 className={`${plusJakartaSans.className} ${gliker.className}`}
             >
+
                 <AuthProvider>
                     <PaymentVerification />
                     {children}
                 </AuthProvider>
+
+                <ToastProvider>
+                    <AuthProvider>{children}</AuthProvider>
+                </ToastProvider>
+
             </body>
         </html>
     )

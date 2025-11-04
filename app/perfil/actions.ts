@@ -3,7 +3,6 @@ import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
 import { ApiResponse, User } from '@/types'
 import admin from '@/lib/firebaseAdmin'
-import { revalidatePath } from 'next/cache'
 
 async function getAuthHeaders(): Promise<HeadersInit> {
     const cookieStore = await cookies()
@@ -29,8 +28,9 @@ export async function getProfile(username: string): Promise<ApiResponse<User>> {
             }
         }
 
-        const user = await res.json()
-        return { success: true, data: user }
+        const data = await res.json()
+
+        return { success: true, data }
     } catch (error) {
         console.error('Error fetching profile:', error)
         return {
@@ -66,76 +66,13 @@ export async function updateProfile(
         }
 
         const updatedUser = await res.json()
+
         return { success: true, data: updatedUser }
     } catch (error) {
         console.error('Error updating profile:', error)
         return {
             success: false,
             error: 'Error al actualizar el perfil',
-        }
-    }
-}
-
-export async function addFriend(
-    email: string,
-    username: string
-): Promise<ApiResponse<User>> {
-    try {
-        const res = await fetch(`${API_URL}/Amistad/enviar`, {
-            method: 'POST',
-            headers: await getAuthHeaders(),
-            body: JSON.stringify({
-                emailDestino: email,
-                mensaje: `${username} quiere ser tu amigo.`,
-            }),
-        })
-
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}))
-            return {
-                success: false,
-                error: errorData?.error || 'Error al enviar solicitud',
-            }
-        }
-
-        revalidatePath(`/perfil/${username}`)
-
-        return { success: true }
-    } catch (error) {
-        console.error('Error sending friend request:', error)
-        return {
-            success: false,
-            error: 'Error al enviar solicitud de amistad',
-        }
-    }
-}
-
-export async function deleteFriend(
-    friendId: string,
-    username: string
-): Promise<ApiResponse<User>> {
-    try {
-        const res = await fetch(`${API_URL}/Amistad/${friendId}`, {
-            method: 'DELETE',
-            headers: await getAuthHeaders(),
-        })
-
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}))
-            return {
-                success: false,
-                error: errorData?.error || 'Error al eliminar',
-            }
-        }
-
-        revalidatePath(`/perfil/${username}`)
-
-        return { success: true }
-    } catch (error) {
-        console.error('Error deleting friend:', error)
-        return {
-            success: false,
-            error: 'Error al eliminar amigo',
         }
     }
 }
@@ -148,6 +85,7 @@ export async function getCurrentUserId(): Promise<string | null> {
         if (!token) return null
 
         const decodedToken = await admin.auth().verifyIdToken(token)
+
         return decodedToken.uid
     } catch (error) {
         console.error('Error getting current user ID:', error)
@@ -177,6 +115,7 @@ export async function checkFriendshipStatus(
         }
 
         const status = await res.json()
+
         return { success: true, data: status }
     } catch (error) {
         console.error('Error checking friendship:', error)
