@@ -8,6 +8,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { ROUTES } from '@/routes'
 import { ActiveView } from '../Client'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
+import { FriendRequests } from '@/components'
 import Switch from '../Switch'
 
 interface Props {
@@ -43,6 +44,7 @@ export default function Nav({ activeView, mobileView, onClick }: Props) {
                 <Switch activeView={activeView} onClick={onClick} />
             </div>
             <div className={styles.nav__icons}>
+                <FriendRequests />
                 <NotificationBell />
                 
                 <Link

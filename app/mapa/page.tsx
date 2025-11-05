@@ -3,6 +3,7 @@ import { getFriendsData } from '../actions/friends'
 import { getGroupsData } from '../actions/groups'
 import { getFilters } from '../actions/filters'
 
+
 export default async function Map() {
     // Ejecutar en paralelo
     const [friendsData, groupsData, filtersData] = await Promise.all([

@@ -3,6 +3,7 @@ import { SocialData } from '@/types'
 import SocialView from '../SocialView'
 import { useCallback, useEffect, useState } from 'react'
 import { getGroupsData } from '@/app/actions/groups'
+import { getFriendsData } from '@/app/actions/friends'
 
 interface Props {
     isVisible?: boolean
@@ -31,19 +32,35 @@ export default function SocialClient({ isVisible = true, socialData }: Props) {
         }
     }, [])
 
+    const refreshFriends = useCallback(async () => {
+        const res = await getFriendsData()
+        if (res.success && res.data) {
+            setData(prev => ({
+  ...prev,
+  friends: res.data?.friends ?? [],
+  friendsRequests: res.data?.friendsRequests ?? [],
+}))
+        }
+    }, [])
+
     useEffect(() => {
-        const handler = () => {
+        const handlerGroups = () => {
             refreshGroups()
         }
+        const handlerFriends = () => {
+            refreshFriends()
+        }
         if (typeof window !== 'undefined') {
-            window.addEventListener('groups:refresh', handler)
+            window.addEventListener('groups:refresh', handlerGroups)
+            window.addEventListener('friends:refresh', handlerFriends)
         }
         return () => {
             if (typeof window !== 'undefined') {
-                window.removeEventListener('groups:refresh', handler)
+                window.removeEventListener('groups:refresh', handlerGroups)
+                window.removeEventListener('friends:refresh', handlerFriends)
             }
         }
-    }, [refreshGroups])
+    }, [refreshGroups, refreshFriends])
 
     return (
         <SocialView
