@@ -110,7 +110,6 @@ export default function Form() {
                 throw new Error(data.error || data.message || 'Error en el registro')
             }
 
-            console.log('Registro exitoso, redirigiendo a steps...')
             router.push(`${ROUTES.STEPS}/1/`)
         } catch (error: unknown) {
             type FirebaseErrorLike = { code?: string; message: string }

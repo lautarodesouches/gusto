@@ -8,16 +8,13 @@ export function usePaymentVerification() {
         const checkPendingPayment = async () => {
             const hasPendingPayment = localStorage.getItem('pendingPayment')
             
-            if (hasPendingPayment === 'true') {
-                console.log('Verificando pago pendiente...')
-                
+            if (hasPendingPayment === 'true') {                
                 try {
                     // Verificar si hay un pago reciente aprobado
                     const response = await fetch('/api/payment/verify-recent')
                     const data = await response.json()
                     
                     if (response.ok && data.aprobado) {
-                        console.log('✅ Pago verificado y aprobado')
                         
                         // Limpiar localStorage
                         localStorage.removeItem('pendingPayment')
@@ -29,7 +26,6 @@ export function usePaymentVerification() {
                         // Recargar la página para actualizar el estado
                         window.location.reload()
                     } else {
-                        console.log('Pago aún no verificado o no aprobado')
                     }
                 } catch (error) {
                     console.error('Error verificando pago:', error)

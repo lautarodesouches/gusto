@@ -53,8 +53,6 @@ export default function Step({
     }
 
     const handleNext = async () => {
-        // Solo navegar al siguiente paso, NO enviar datos todavía
-        console.log('Navegando al siguiente paso...')
         router.push(`/auth/register/step/${step + 1}`)
     }
 

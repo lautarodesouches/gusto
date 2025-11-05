@@ -81,8 +81,6 @@ export default function PremiumLimitFloatingCard({
 
     if (!isOpen) return null
 
-    console.log('🎯 PremiumLimitFloatingCard renderizado - isOpen:', isOpen)
-
     const currentGroups = limitInfo?.gruposActuales || 3
     const maxGroups = limitInfo?.limiteActual || 3
 
