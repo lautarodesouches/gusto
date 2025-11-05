@@ -121,8 +121,8 @@ export async function addFriend(
             method: 'POST',
             headers: await getAuthHeaders(),
             body: JSON.stringify({
-                usernameDestino: username,
-                mensaje: `${username} quiere ser tu amigo.`,
+                UsernameDestino: username,
+                mensaje: 'Quiere ser tu amigo.',
             }),
         })
 

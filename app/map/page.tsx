@@ -12,6 +12,7 @@ import { MapFilter, MapSocial, Loading, MapView, PremiumLimitFloatingCard } from
 import { Suspense, useState } from 'react'
 import { MapProvider } from '@/components/Map/MapProvider'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
+import { FriendRequests } from '@/components'
 import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
 
@@ -91,9 +92,12 @@ export default function Map() {
                             <span>Premium</span>
                         </button>
                     )}
-        <div className={styles.nav__div}>
-    <NotificationBell />
-  </div>
+                    <div className={styles.nav__div}>
+                        <FriendRequests />
+                    </div>
+                    <div className={styles.nav__div}>
+                        <NotificationBell />
+                    </div>
                     <div className={styles.nav__div}>
                         <FontAwesomeIcon
                             icon={faUser}
