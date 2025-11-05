@@ -77,7 +77,7 @@ export default function FiltersView({
                     onItemClick={onCategoryClick}
                 />
                 <FilterSection
-                    title="Platos"
+                    title="Gustos"
                     filters={filters.dishes}
                     onItemClick={onDishClick}
                 />

@@ -35,8 +35,8 @@ function buildRestaurantQuery(
     const tipo = searchParams.get('tipo')
     if (tipo) query.append('tipo', tipo)
 
-    const plato = searchParams.get('plato')
-    if (plato) query.append('plato', plato)
+    const gustos = searchParams.get('gustos')
+    if (gustos) query.append('gustos', gustos)
 
     const rating = searchParams.get('rating')
     if (rating) query.append('rating', rating)
