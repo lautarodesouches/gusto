@@ -2,18 +2,21 @@
 import { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-regular-svg-icons'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 
 type ImageUploadProps = {
     label: string
     multiple?: boolean
     maxImages?: number
+    sublabel?: string
 }
 
 export default function ImageUpload({
     label,
     multiple = false,
     maxImages = 1,
+    sublabel,
 }: ImageUploadProps) {
     const [images, setImages] = useState<string[]>([])
     const [isDragging, setIsDragging] = useState(false)
@@ -22,9 +25,12 @@ export default function ImageUpload({
     const handleFileSelect = (files: FileList | null) => {
         if (!files) return
 
+        const remainingSlots = maxImages - images.length
+        if (remainingSlots <= 0) return
+
         const newImages: string[] = []
         const filesToProcess = multiple
-            ? Array.from(files).slice(0, maxImages - images.length)
+            ? Array.from(files).slice(0, remainingSlots)
             : [files[0]]
 
         filesToProcess.forEach(file => {
@@ -45,13 +51,22 @@ export default function ImageUpload({
         })
     }
 
+    const handleRemoveImage = (index: number, e: React.MouseEvent) => {
+        e.stopPropagation()
+        setImages(prev => prev.filter((_, idx) => idx !== index))
+    }
+
     const handleClick = () => {
-        fileInputRef.current?.click()
+        if (images.length < maxImages) {
+            fileInputRef.current?.click()
+        }
     }
 
     const handleDragOver = (e: React.DragEvent) => {
         e.preventDefault()
-        setIsDragging(true)
+        if (images.length < maxImages) {
+            setIsDragging(true)
+        }
     }
 
     const handleDragLeave = () => {
@@ -64,8 +79,14 @@ export default function ImageUpload({
         handleFileSelect(e.dataTransfer.files)
     }
 
+    const isFull = images.length >= maxImages
+
     return (
         <div className={styles.upload}>
+            <span className={styles.upload__label}>{label}</span>
+            {sublabel && (
+                <span className={styles.upload__sublabel}>{sublabel}</span>
+            )}
             <input
                 ref={fileInputRef}
                 type="file"
@@ -99,17 +120,38 @@ export default function ImageUpload({
                 ) : (
                     <div className={styles.upload__preview}>
                         {images.map((img, idx) => (
-                            <img
-                                key={idx}
-                                src={img}
-                                alt={`Preview ${idx}`}
-                                className={styles.upload__image}
-                            />
+                            <div key={idx} className={styles.upload__imagecard}>
+                                <img
+                                    src={img}
+                                    alt={`Preview ${idx}`}
+                                    className={styles.upload__image}
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.upload__delete}
+                                    onClick={e => handleRemoveImage(idx, e)}
+                                >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                </button>
+                            </div>
                         ))}
+                        {!isFull && (
+                            <div className={styles.upload__addmore}>
+                                <FontAwesomeIcon
+                                    icon={faImage}
+                                    className={styles.upload__addicon}
+                                />
+                                <span className={styles.upload__addtext}>
+                                    Agregar más
+                                </span>
+                                <span className={styles.upload__counter}>
+                                    {images.length}/{maxImages}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
-            <span className={styles.upload__label}>{label}</span>
         </div>
     )
 }

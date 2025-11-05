@@ -227,20 +227,37 @@ export default function RestaurantRegister() {
                     <section className={styles.section}>
                         <div className={styles.images}>
                             <div className={styles.images__row}>
-                                <RestaurantImageUpload label="Imagen Destacada" />
                                 <RestaurantImageUpload
-                                    label="Imagenes del Interior"
+                                    label="Imagen"
+                                    sublabel="Destacada"
+                                    maxImages={1}
+                                />
+                                <RestaurantImageUpload
+                                    label="Imagenes"
+                                    sublabel="del Interior"
                                     multiple
-                                    maxImages={4}
+                                    maxImages={5}
                                 />
                             </div>
                             <div className={styles.images__row}>
                                 <RestaurantImageUpload
-                                    label="Imagenes del Interior"
+                                    label="Imagenes"
+                                    sublabel="de Comidas"
                                     multiple
-                                    maxImages={4}
+                                    maxImages={5}
                                 />
-                                <RestaurantImageUpload label="Logo" />
+                                <RestaurantImageUpload
+                                    label="Imagenes"
+                                    sublabel="de Menu"
+                                    multiple
+                                    maxImages={5}
+                                />
+                            </div>
+                            <div className={styles.images__single}>
+                                <RestaurantImageUpload
+                                    label="Logo"
+                                    maxImages={1}
+                                />
                             </div>
                         </div>
                     </section>

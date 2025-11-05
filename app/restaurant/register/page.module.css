@@ -166,6 +166,14 @@
     gap: 20px;
 }
 
+.images__single {
+    display: flex;
+    justify-content: center;
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
 /* Responsive */
 @media (max-width: 1400px) {
     .page__form {
