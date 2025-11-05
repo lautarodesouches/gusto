@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -18,15 +19,23 @@ import { ROUTES } from '@/routes'
 
 interface Props {
     group: Group
+    members: {
+        checked: boolean
+        usuarioUsername: string
+        usuarioEmail: string
+        usuarioNombre: string
+        id: string
+    }[]
+    onCheck: (id: string) => void
 }
 
-export default function GroupSocial({ group }: Props) {
+export default function GroupSocial({ group, members, onCheck }: Props) {
     const toast = useToast()
 
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
 
     useEffect(() => {
-        setFilteredMembers(group.miembros)
+        setFilteredMembers(members)
     }, [group])
 
     const handleSearchMembers = (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,16 +72,17 @@ export default function GroupSocial({ group }: Props) {
 
         setFilteredMembers(prev => [...prev])
     }
-const handleKick = async (member: GroupMember) => {
-    const result = await removeGroupMember(group.id, member.usuarioUsername)
 
-    if (!result.success)
-        return toast.error(result.error || 'Error al remover del grupo')
+    const handleKick = async (member: GroupMember) => {
+        const result = await removeGroupMember(group.id, member.usuarioUsername)
 
-    toast.success(`${member.usuarioNombre} fue eliminado del grupo`)
+        if (!result.success)
+            return toast.error(result.error || 'Error al remover del grupo')
 
-    setFilteredMembers(prev => prev.filter(m => m.id !== member.id))
-}
+        toast.success(`${member.usuarioNombre} fue eliminado del grupo`)
+
+        setFilteredMembers(prev => prev.filter(m => m.id !== member.id))
+    }
 
     return (
         <>
@@ -105,45 +115,65 @@ const handleKick = async (member: GroupMember) => {
                         No se encontraron miembros
                     </p>
                 )}
-                {filteredMembers.map(m => (
-                    <article className={styles.member} key={m.id}>
-                        <div className={styles.member__div}>
-                            <FontAwesomeIcon
-                                icon={faUser}
-                                className={styles.member__img}
-                            />
-                        </div>
-                        <div className={styles.member__div}>
-                            <h3 className={styles.member__name}>
-                                {m.usuarioNombre}
-                            </h3>
-                            {m.id === group.administradorId && (
-                                <FontAwesomeIcon
-                                    icon={faCrown}
-                                    className={styles.member__crown}
-                                />
-                            )}
-                        </div>
-                        <div className={styles.member__div}>
-                            <Link
-                                href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faInfo}
-                                    className={styles.members__icon}
-                                />
-                            </Link>
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    readOnly
-                                    className={styles.filter__input}
-                                />
-                                <span className={styles.checkmark}></span>
+                {filteredMembers.map(m => {
+                    const realMember = members.find(e => e.id === m.id)
+                    const isChecked = realMember?.checked ?? false
+                    return (
+                        <article className={styles.member} key={m.id}>
+                            <div className={styles.member__div}>
+                                {[
+                                    'juanperez',
+                                    'carlossanchesz',
+                                    'luciagomez',
+                                    'mariasosa',
+                                ].includes(m.usuarioUsername?.toLowerCase()) ? (
+                                    <img
+                                        src={`/users/${m.usuarioNombre
+                                            .split(' ')[0]
+                                            .toLowerCase()}.jpg`}
+                                        className={styles.member__img}
+                                    />
+                                ) : (
+                                    <FontAwesomeIcon
+                                        icon={faUser}
+                                        className={styles.member__svg}
+                                    />
+                                )}
                             </div>
-                        </div>
-                    </article>
-                ))}
+                            <div className={styles.member__div}>
+                                <h3 className={styles.member__name}>
+                                    {m.usuarioNombre}
+                                </h3>
+                                {m.id === group.administradorId && (
+                                    <FontAwesomeIcon
+                                        icon={faCrown}
+                                        className={styles.member__crown}
+                                    />
+                                )}
+                            </div>
+                            <div className={styles.member__div}>
+                                <Link
+                                    href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faInfo}
+                                        className={styles.members__icon}
+                                    />
+                                </Link>
+                                <div>
+                                    <input
+                                        type="checkbox"
+                                        readOnly
+                                        className={styles.filter__input}
+                                        checked={isChecked}
+                                        onChange={() => onCheck(m.id)}
+                                    />
+                                    <span className={styles.checkmark}></span>
+                                </div>
+                            </div>
+                        </article>
+                    )
+                })}
             </div>
             <form className={styles.invite} onSubmit={handleInvite}>
                 <fieldset className={styles.invite__fieldset}>

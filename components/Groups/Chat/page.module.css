@@ -49,7 +49,7 @@
 }
 
 .chat__message--mine {
-    background: #007aff;
+    background: var(--primary);
     color: white;
     align-self: flex-end;
 }

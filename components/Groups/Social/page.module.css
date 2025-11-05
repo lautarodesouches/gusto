@@ -51,7 +51,7 @@
     margin-top: 30px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
 }
 
 .members__error {
@@ -68,11 +68,17 @@
 }
 
 .member__img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.member__svg {
+    width: 40px;
+    height: 40px;
     background: var(--beige);
     border-radius: 10px;
-    padding: 5px;
 }
 
 .member div:nth-child(2) {

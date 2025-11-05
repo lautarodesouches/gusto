@@ -32,6 +32,8 @@ export function ProfileView({
     onGoPlace,
     onGoBack,
 }: ProfileViewProps) {
+    console.log(profile.fotoPerfilUrl)
+
     return (
         <article className={styles.profile}>
             <header className={styles.header}>
@@ -47,7 +49,7 @@ export function ProfileView({
                 <div className={styles.info__div}>
                     <div className={styles.info__container}>
                         {profile.fotoPerfilUrl ? (
-                            <Image
+                            <img
                                 className={styles.info__img}
                                 src={profile.fotoPerfilUrl}
                                 alt="foto de perfil"

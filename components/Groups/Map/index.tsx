@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import styles from './styles.module.css'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
@@ -25,8 +26,6 @@ const INITIAL_STATE: MapState = {
     isLoading: true,
 }
 
-
-
 function coordinatesChanged(
     prev: Coordinates | null,
     current: Coordinates
@@ -35,12 +34,12 @@ function coordinatesChanged(
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-export default function GroupMap() {
+export default function GroupMap({ members }: { members: any[] }) {
     const toast = useToast()
 
     const router = useRouter()
     const searchParams = useSearchParams()
-     const { id: grupoId } = useParams()
+    const { id: grupoId } = useParams()
 
     const {
         coords,
@@ -50,9 +49,15 @@ export default function GroupMap() {
 
     const [state, setState] = useState<MapState>(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
+    const [allChecked, setAllchecked] = useState(true)
 
     // Ref prevent duplicate fetch
     const isFetchingRef = useRef(false)
+
+    const check = () => {
+        const s = members.every(m => m.checked)
+        setAllchecked(s)
+    }
 
     const updateCenter = useCallback((newCenter: Coordinates) => {
         setState(prev => ({
@@ -68,56 +73,66 @@ export default function GroupMap() {
         }))
     }, [])
 
-   const fetchRestaurants = useCallback(
-    async (center: Coordinates) => {
-        if (isFetchingRef.current) return
+    const fetchRestaurants = useCallback(
+        async (center: Coordinates) => {
+            //if (isFetchingRef.current) return
 
-        isFetchingRef.current = true
-        setState(prev => ({ ...prev, isLoading: true }))
+            isFetchingRef.current = true
+            setState(prev => ({ ...prev, isLoading: true }))
 
-        try {
-            if (!grupoId) {
-                console.error('❌ No se encontró grupoId en la URL')
-                return
+            try {
+                if (!grupoId) {
+                    console.error('❌ No se encontró grupoId en la URL')
+                    return
+                }
+
+                const query = new URLSearchParams()
+                query.append('near.lat', String(center.lat))
+                query.append('near.lng', String(center.lng))
+
+                console.log({ allChecked })
+
+                if (allChecked) {
+                    query.append('gustos', 'pizza')
+                }
+
+                // const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
+                const res = await fetch(`/api/restaurants/?${query.toString()}`)
+
+                console.log({ res })
+
+                if (res.status === 401) {
+                    router.push(ROUTES.LOGIN)
+                    return
+                }
+
+                if (!res.ok) {
+                    throw new Error('Error al cargar restaurantes del grupo')
+                }
+
+                const data = await res.json()
+
+                console.log(data.recomendaciones)
+
+                setState(prev => ({
+                    ...prev,
+                    restaurants: data.recomendaciones || [],
+                    isLoading: false,
+                }))
+            } catch (err) {
+                console.error('Error fetching restaurants:', err)
+                toast.error('Error al cargar restaurantes del grupo')
+                setState(prev => ({
+                    ...prev,
+                    restaurants: [],
+                    isLoading: false,
+                }))
+            } finally {
+                isFetchingRef.current = false
             }
-
-            const query = new URLSearchParams()
-            query.append('near.lat', String(center.lat))
-            query.append('near.lng', String(center.lng))
-
-            const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
-
-            if (res.status === 401) {
-                router.push(ROUTES.LOGIN)
-                return
-            }
-
-            if (!res.ok) {
-                throw new Error('Error al cargar restaurantes del grupo')
-            }
-
-            const data = await res.json()
-
-            setState(prev => ({
-                ...prev,
-                restaurants: data || [],
-                isLoading: false,
-            }))
-        } catch (err) {
-            console.error('Error fetching restaurants:', err)
-            toast.error('Error al cargar restaurantes del grupo')
-            setState(prev => ({
-                ...prev,
-                restaurants: [],
-                isLoading: false,
-            }))
-        } finally {
-            isFetchingRef.current = false
-        }
-    },
-    [grupoId, router, toast]
-)
-
+        },
+        [grupoId, router, toast]
+    )
 
     const handleMapIdle = useCallback(() => {
         if (!mapInstance) return
@@ -151,8 +166,14 @@ export default function GroupMap() {
     useEffect(() => {
         if (!state.center) return
 
+        console.log({ members })
+
         fetchRestaurants(state.center)
-    }, [state.center, searchParams, fetchRestaurants])
+    }, [state.center, searchParams, fetchRestaurants, allChecked])
+
+    useEffect(() => {
+        check()
+    }, [members])
 
     if (locationError) {
         return (

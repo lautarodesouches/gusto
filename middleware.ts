@@ -10,7 +10,8 @@ export function middleware(req: NextRequest) {
     const publicPaths = [
         ROUTES.HOME,
         ROUTES.LOGIN,
-        ROUTES.REGISTER
+        ROUTES.REGISTER,
+        ROUTES.REGISTER__RESTAURANT,
     ]
 
     // Si la ruta es pública, dejar pasar

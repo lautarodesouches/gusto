@@ -284,19 +284,15 @@ export default function RestaurantView({
                     </ul>
                     <h3 className={styles.data__subtitle}>Acerca de</h3>
                     <p className={styles.data__info}>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Repellendus aliquam ex odio tempore in, enim cum quasi.
-                        Voluptas omnis exercitationem sunt aperiam, ducimus
-                        placeat explicabo iste in ipsam est velit. Deleniti
-                        eveniet nostrum asperiores incidunt molestiae ad quo
-                        voluptas magnam. Similique quas animi deserunt tenetur
-                        dignissimos pariatur, eius ex illo repellat alias at
-                        reiciendis, fugit placeat debitis autem laborum harum.
-                        Cupiditate culpa, at accusantium ipsa nam, hic expedita
-                        exercitationem, unde cumque ducimus nobis voluptatum?
-                        Deserunt voluptates, reiciendis itaque eos, culpa
-                        officia ea asperiores ab quisquam et velit odit. Eum,
-                        ratione.
+                        Un espacio donde la buena comida, el ambiente acogedor y
+                        la atención de calidad se combinan para crear una
+                        experiencia única. En nuestro restaurante encontrarás
+                        una amplia variedad de platos preparados con
+                        ingredientes frescos y cuidadosamente seleccionados,
+                        pensados para todos los gustos y ocasiones. Ya sea para
+                        compartir un almuerzo con amigos, disfrutar una cena
+                        especial o simplemente relajarte con algo rico, te
+                        invitamos a vivir un momento lleno de sabor y calidez.
                     </p>
                 </div>
                 <div className={styles.hours}>
@@ -369,18 +365,18 @@ export default function RestaurantView({
                         malo: 2,
                         horrible: 1,
                     }}
-                    rating={4.5}
+                    rating={restaurant.rating}
                 />
                 <div className={styles.rating__div}>
                     <h4 className={styles.rating__title}>Opinión</h4>
-                    <Link href={`${ROUTES.RESTAURANT}/${restaurant.id}/opinion`}>
-                    <button className={styles.rating__button}>
-                        <FontAwesomeIcon
-                            className={styles.rating__icon}
-                            icon={faPen}
-                        />
-                        Escribir una opinión
-                    </button>
+                    <Link href={`${ROUTES.RESTAURANT}${restaurant.id}/opinion`}>
+                        <button className={styles.rating__button}>
+                            <FontAwesomeIcon
+                                className={styles.rating__icon}
+                                icon={faPen}
+                            />
+                            Escribir una opinión
+                        </button>
                     </Link>
                 </div>
             </section>

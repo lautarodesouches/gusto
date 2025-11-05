@@ -8,4 +8,5 @@ export const ROUTES = {
     PROFILE: '/perfil/',
     GROUPS: '/grupos/',
     RESTAURANT: '/restaurante/',
+    RESTAURANT__ADD: '/restaurante/agregar',
 }

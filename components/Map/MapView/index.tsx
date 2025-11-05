@@ -10,8 +10,8 @@ import { Dispatch, SetStateAction } from 'react'
 
 // Default coordinates (fallback)
 const defaultMapCenter = {
-    lat: -34.6488,
-    lng: -58.5605,
+    lat: -34.6717283,
+    lng: -58.5639719,
 }
 
 // Default zoom level

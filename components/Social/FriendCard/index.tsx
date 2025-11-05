@@ -77,13 +77,15 @@ export default function FriendCard({
     return (
         <li className={`${styles.user} ${loading ? styles.loading : ''}`}>
             <div className={styles.user__img}>
-                <FontAwesomeIcon icon={faUser} />
+                {friend.fotoPerfilUrl ? (
+                    <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                ) : (
+                    <FontAwesomeIcon icon={faUser} />
+                )}
             </div>
             <div className={styles.user__data}>
                 <p className={styles.user__name}>{friend.nombre}</p>
-                <p className={styles.user__user}>
-                    {friend.nombre.replaceAll(' ', '').toLowerCase()}
-                </p>
+                <p className={styles.user__user}>{friend.username}</p>
             </div>
             {isSearching && (
                 <div className={styles.user__info}>

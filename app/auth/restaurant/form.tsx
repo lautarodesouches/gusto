@@ -105,12 +105,14 @@ export default function Form() {
                 console.error('Error en el registro externo:', {
                     status: res.status,
                     statusText: res.statusText,
-                    errorData: data
+                    errorData: data,
                 })
-                throw new Error(data.error || data.message || 'Error en el registro')
+                throw new Error(
+                    data.error || data.message || 'Error en el registro'
+                )
             }
 
-            router.push(`${ROUTES.STEPS}/1/`)
+            router.push(ROUTES.RESTAURANT__ADD)
         } catch (error: unknown) {
             type FirebaseErrorLike = { code?: string; message: string }
 

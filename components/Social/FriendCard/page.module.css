@@ -42,9 +42,15 @@
 }
 
 .user__img {
-    background: var(--primary);
-    padding: 5px;
     border-radius: 10px;
+}
+
+.user__img img {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    width: 100%;
+    object-fit: cover;
 }
 
 .user__img svg {
@@ -101,7 +107,7 @@
         font-size: 0.9rem;
     }
 
-    .user__user{
+    .user__user {
         font-size: 0.8rem;
     }
 }

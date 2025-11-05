@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
@@ -9,6 +10,7 @@ import { useToast } from '@/context/ToastContext'
 import { formatChatDate } from '../../../utils/index'
 
 interface Props {
+    admin: string
     groupId: string
 }
 
@@ -18,7 +20,7 @@ interface ChatMessage {
     fecha: string
 }
 
-export default function GroupsChat({ groupId }: Props) {
+export default function GroupsChat({ groupId, admin }: Props) {
     const toast = useToast()
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -93,24 +95,35 @@ export default function GroupsChat({ groupId }: Props) {
     return (
         <div className={styles.container}>
             <div className={styles.chat} ref={chatContainerRef}>
-                {messages.map((msg, i) => (
-                    <article
-                        key={i}
-                        className={`${styles.chat__message} ${
-                            msg.usuario === 'Tú'
-                                ? styles['chat__message--mine']
-                                : ''
-                        }`}
-                    >
-                        <div className={styles.chat__top}>
-                            <p className={styles.chat__sender}>{msg.usuario}</p>
-                            <p className={styles.chat__time}>
-                                {formatChatDate(msg.fecha)}
-                            </p>
-                        </div>
-                        <p className={styles.chat__text}>{msg.mensaje}</p>
-                    </article>
-                ))}
+                {messages.map((msg, i) => {
+                    console.log({ msg })
+                    console.log({ admin })
+
+                    return (
+                        <article
+                            key={i}
+                            className={`${styles.chat__message} ${
+                                admin
+                                    .toLowerCase()
+                                    .includes(
+                                        msg.usuario.toLowerCase().split(' ')[0]
+                                    )
+                                    ? styles['chat__message--mine']
+                                    : ''
+                            }`}
+                        >
+                            <div className={styles.chat__top}>
+                                <p className={styles.chat__sender}>
+                                    {msg.usuario}
+                                </p>
+                                <p className={styles.chat__time}>
+                                    {formatChatDate(msg.fecha)}
+                                </p>
+                            </div>
+                            <p className={styles.chat__text}>{msg.mensaje}</p>
+                        </article>
+                    )
+                })}
                 {/* Scroll item */}
                 <div ref={messagesEndRef} />
             </div>

@@ -46,9 +46,9 @@ export default function Nav({ activeView, mobileView, onClick }: Props) {
             <div className={styles.nav__icons}>
                 <FriendRequests />
                 <NotificationBell />
-                
+
                 <Link
-                    href={ROUTES.PROFILE}
+                    href={`${ROUTES.PROFILE}lautarodesouches`}
                     className={styles.nav__div}
                     aria-label="Perfil de usuario"
                 >

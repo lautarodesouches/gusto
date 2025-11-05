@@ -6,6 +6,7 @@ import GroupSocial from '../Social'
 import Footer from '../Footer'
 import { useCallback, useState } from 'react'
 import GroupComponent from '../Group'
+import { useAuth } from '@/context/AuthContext'
 
 export type ActiveView = 'home' | 'chat' | 'map'
 
@@ -14,8 +15,22 @@ interface Props {
 }
 
 export default function GroupClient({ group }: Props) {
+    const auth = useAuth()
+
     const [activeView, setActiveView] = useState<ActiveView>('home')
     const [mobileView, setMobileView] = useState<'social' | 'group'>('social')
+
+    const [members, setMembers] = useState(
+        group.miembros.map(m => ({ ...m, checked: true }))
+    )
+
+    const handleToggleCheck = (id: string) => {
+        console.log(id, members)
+
+        setMembers(prev =>
+            prev.map(m => (m.id === id ? { ...m, checked: !m.checked } : m))
+        )
+    }
 
     const handleChangeView = useCallback((view: ActiveView) => {
         setActiveView(view)
@@ -39,7 +54,11 @@ export default function GroupClient({ group }: Props) {
                         mobileView === 'social' ? styles.active : ''
                     }`}
                 >
-                    <GroupSocial group={group} />
+                    <GroupSocial
+                        members={members}
+                        group={group}
+                        onCheck={handleToggleCheck}
+                    />
                 </div>
                 <div
                     className={`${styles.content__group} ${
@@ -47,9 +66,11 @@ export default function GroupClient({ group }: Props) {
                     }`}
                 >
                     <GroupComponent
+                        admin={auth.user?.email || ''}
                         activeView={activeView}
-                        onClick={handleChangeView}
                         groupId={group.id}
+                        members={members}
+                        onClick={handleChangeView}
                     />
                 </div>
             </section>

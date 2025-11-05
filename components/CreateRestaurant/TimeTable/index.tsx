@@ -1,0 +1,101 @@
+'use client'
+import { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
+import styles from './page.module.css'
+
+type DaySchedule = {
+    from: string
+    to: string
+    locked: boolean
+}
+
+type ScheduleState = {
+    [key: string]: DaySchedule
+}
+
+const days = [
+    { key: 'lunes', label: 'Lunes' },
+    { key: 'martes', label: 'Martes' },
+    { key: 'miercoles', label: 'Miércoles' },
+    { key: 'jueves', label: 'Jueves' },
+    { key: 'viernes', label: 'Viernes' },
+    { key: 'sabado', label: 'Sábado' },
+    { key: 'domingo', label: 'Domingo' },
+]
+
+export default function TimeTable() {
+    const [schedule, setSchedule] = useState<ScheduleState>(
+        Object.fromEntries(
+            days.map(d => [
+                d.key,
+                { from: '12:00', to: '22:00', locked: false },
+            ])
+        )
+    )
+
+    const handleTimeChange = (
+        day: string,
+        field: 'from' | 'to',
+        value: string
+    ) => {
+        setSchedule(prev => ({
+            ...prev,
+            [day]: { ...prev[day], [field]: value },
+        }))
+    }
+
+    const toggleLock = (day: string) => {
+        setSchedule(prev => ({
+            ...prev,
+            [day]: { ...prev[day], locked: !prev[day].locked },
+        }))
+    }
+
+    return (
+        <div className={styles.timetable}>
+            <div className={styles.timetable__header}>
+                <span className={styles.timetable__day}></span>
+                <span className={styles.timetable__label}>Desde</span>
+                <span className={styles.timetable__label}>Hasta</span>
+                <span className={styles.timetable__lock}></span>
+            </div>
+            {days.map(({ key, label }) => (
+                <div key={key} className={styles.timetable__row}>
+                    <span className={styles.timetable__day}>{label}</span>
+                    <input
+                        type="time"
+                        className={styles.timetable__input}
+                        value={schedule[key].from}
+                        onChange={e =>
+                            handleTimeChange(key, 'from', e.target.value)
+                        }
+                        disabled={schedule[key].locked}
+                    />
+                    <input
+                        type="time"
+                        className={styles.timetable__input}
+                        value={schedule[key].to}
+                        onChange={e =>
+                            handleTimeChange(key, 'to', e.target.value)
+                        }
+                        disabled={schedule[key].locked}
+                    />
+                    <button
+                        type="button"
+                        className={`${styles.timetable__lock} ${
+                            schedule[key].locked
+                                ? styles['timetable__lock--active']
+                                : ''
+                        }`}
+                        onClick={() => toggleLock(key)}
+                    >
+                        <FontAwesomeIcon
+                            icon={schedule[key].locked ? faLock : faUnlock}
+                        />
+                    </button>
+                </div>
+            ))}
+        </div>
+    )
+}

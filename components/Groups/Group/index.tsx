@@ -6,22 +6,26 @@ import Switch from '../Switch'
 
 interface Props {
     activeView: ActiveView
-    onClick: (view: ActiveView) => void
     groupId: string
+    members: unknown[]
+    admin: string
+    onClick: (view: ActiveView) => void
 }
 
 export default function GroupComponent({
     activeView,
     groupId,
+    members,
+    admin,
     onClick,
 }: Props) {
     return (
         <>
             <Switch activeView={activeView} onClick={onClick} />
             {activeView === 'map' ? (
-                <GroupMap />
+                <GroupMap members={members} />
             ) : (
-                <GroupsChat groupId={groupId} />
+                <GroupsChat admin={admin} groupId={groupId} />
             )}
         </>
     )
