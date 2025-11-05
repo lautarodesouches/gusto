@@ -38,6 +38,9 @@ function buildRestaurantQuery(
     const plato = searchParams.get('plato')
     if (plato) query.append('plato', plato)
 
+    const rating = searchParams.get('rating')
+    if (rating) query.append('rating', rating)
+
     return query
 }
 
