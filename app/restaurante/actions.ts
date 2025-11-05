@@ -1,6 +1,6 @@
 'use server'
 import { API_URL } from '@/constants'
-import { ApiResponse, Restaurant, Review } from '@/types'
+import { ApiResponse, Restaurant } from '@/types'
 import { cookies } from 'next/headers'
 
 async function getAuthHeaders(): Promise<HeadersInit> {

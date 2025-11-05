@@ -15,11 +15,9 @@ import Image from 'next/image'
 
 interface ProfileViewProps {
     profile: User
-    isOwnProfile: boolean
-    isFriend: boolean
+    isPending?: boolean
     onAddFriend?: () => void
     onDeleteFriend?: () => void
-    isPending?: boolean
     onEditTastes: () => void
     onGoPlace: (lat: number, lng: number) => void
     onGoBack: () => void
@@ -27,11 +25,9 @@ interface ProfileViewProps {
 
 export function ProfileView({
     profile,
-    isOwnProfile,
-    isFriend,
+    isPending,
     onDeleteFriend,
     onAddFriend,
-    isPending,
     onEditTastes,
     onGoPlace,
     onGoBack,
@@ -108,7 +104,7 @@ export function ProfileView({
                                         {taste.nombre}
                                     </li>
                                 ))}
-                                {isOwnProfile && (
+                                {profile.esMiPerfil && (
                                     <FontAwesomeIcon
                                         className={styles.tastes__edit}
                                         icon={faPlus}
@@ -146,9 +142,9 @@ export function ProfileView({
                 )}
             </div>
             <footer className={styles.footer}>
-                {!isOwnProfile && (
+                {!profile.esMiPerfil && (
                     <>
-                        {isFriend ? (
+                        {profile.esAmigo ? (
                             <button
                                 className={styles.footer__delete}
                                 onClick={onDeleteFriend}

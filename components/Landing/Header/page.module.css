@@ -68,6 +68,22 @@
 
 .header__bcontainer {
     margin-top: 40px;
+    display: flex;
+    gap: 10px;
+}
+
+.header__buttonRes {
+    border-radius: 10px;
+    border: 2px solid var(--white);
+    background: none;
+    color: var(--white);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: color 0.35s ease;
 }
 
 .header__button {

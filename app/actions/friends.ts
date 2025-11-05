@@ -4,7 +4,6 @@ import { ApiResponse, Friend, SolicitudAmistadResponse, User } from '@/types'
 import { getAuthHeaders } from './common'
 import { revalidatePath, revalidateTag } from 'next/cache'
 
-
 export async function getFriends(): Promise<ApiResponse<Friend[]>> {
     try {
         const res = await fetch(`${API_URL}/Amistad/amigos`, {
@@ -36,6 +35,36 @@ export async function getFriends(): Promise<ApiResponse<Friend[]>> {
     }
 }
 
+export async function checkIsFriend(
+    username: string
+): Promise<ApiResponse<{ isFriend: boolean }>> {
+    try {
+        const res = await getFriends()
+
+        if (!res.success || !res.data) {
+            return {
+                success: false,
+                error: res.error || 'No se pudo obtener la lista de amigos',
+            }
+        }
+
+        const isFriend = res.data.some(
+            (friend: Friend) => friend.username === username
+        )
+
+        return {
+            success: true,
+            data: { isFriend },
+        }
+    } catch (error) {
+        console.error('Error checking friend status:', error)
+        return {
+            success: false,
+            error: 'Error al verificar amistad',
+        }
+    }
+}
+
 export async function getFriendRequests(): Promise<ApiResponse<Friend[]>> {
     try {
         const res = await fetch(`${API_URL}/Amistad/solicitudes`, {
@@ -54,7 +83,7 @@ export async function getFriendRequests(): Promise<ApiResponse<Friend[]>> {
 
         const data: SolicitudAmistadResponse[] = await res.json()
 
-        const requests: Friend[] = data.map((solicitud) => ({
+        const requests: Friend[] = data.map(solicitud => ({
             id: solicitud.id,
             nombre: solicitud.remitente.nombre,
             username: solicitud.remitente.username,
@@ -71,7 +100,6 @@ export async function getFriendRequests(): Promise<ApiResponse<Friend[]>> {
         }
     }
 }
-
 
 export async function getFriendsData(): Promise<
     ApiResponse<{ friends: Friend[]; friendsRequests: Friend[] }>
@@ -113,9 +141,7 @@ export async function getFriendsData(): Promise<
     }
 }
 
-export async function addFriend(
-    username: string
-): Promise<ApiResponse<User>> {
+export async function addFriend(username: string): Promise<ApiResponse<User>> {
     try {
         const res = await fetch(`${API_URL}/Amistad/enviar`, {
             method: 'POST',
@@ -147,7 +173,6 @@ export async function addFriend(
 }
 
 export async function deleteFriend(
-    friendId: string,
     username: string
 ): Promise<ApiResponse<User>> {
     try {

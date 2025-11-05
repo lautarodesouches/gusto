@@ -13,15 +13,9 @@ export default async function Profile({ params }: Props) {
 
     if (!result.success || !result.data) notFound()
 
-    const { esMiPerfil, esAmigo } = result.data
-
     return (
         <main className={styles.main}>
-            <ProfileClient
-                profile={result.data}
-                isOwnProfile={esMiPerfil}
-                isFriend={esAmigo}
-            />
+            <ProfileClient profile={result.data} />
         </main>
     )
 }

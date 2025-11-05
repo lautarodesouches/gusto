@@ -5,7 +5,7 @@ import FiltersView from '../FiltersView'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
 import { Filter, Filters } from '@/types'
 
-export type FilterType = 'tipo' | 'plato' | 'rating'
+export type FilterType = 'tipo' | 'gustos' | 'rating'
 
 export interface FilterItem extends Filter {
     checked: boolean
@@ -13,8 +13,8 @@ export interface FilterItem extends Filter {
 
 interface Props {
     isVisible?: boolean
-    onClose?: () => void
     filters: Filters
+    onClose?: () => void
 }
 
 export default function FiltersClient({
@@ -38,7 +38,7 @@ export default function FiltersClient({
     // Solo marcar los seleccionados desde la URL al montar
     useEffect(() => {
         const tipo = searchParams.get('tipo') || ''
-        const plato = searchParams.get('plato') || ''
+        const gustos = searchParams.get('gustos') || ''
         const rating = searchParams.get('rating') || ''
 
         const markSelected = (items: FilterItem[], selectedValue: string) =>
@@ -48,7 +48,7 @@ export default function FiltersClient({
             }))
 
         setCategories(prev => markSelected(prev, tipo))
-        setDishes(prev => markSelected(prev, plato))
+        setDishes(prev => markSelected(prev, gustos))
         setRatings(prev => markSelected(prev, rating))
     }, [searchParams])
 
@@ -73,7 +73,7 @@ export default function FiltersClient({
     const handleCategoryClick = (value: string) =>
         handleSingleSelect(value, setCategories, 'tipo')
     const handleDishClick = (value: string) =>
-        handleSingleSelect(value, setDishes, 'plato')
+        handleSingleSelect(value, setDishes, 'gustos')
     const handleRatingClick = (value: string) =>
         handleSingleSelect(value, setRatings, 'rating')
 

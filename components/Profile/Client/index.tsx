@@ -9,14 +9,10 @@ import { useToast } from '@/context/ToastContext'
 
 interface ProfileClientProps {
     profile: User
-    isOwnProfile?: boolean
-    isFriend?: boolean
 }
 
 export default function ProfileClient({
     profile,
-    isOwnProfile = false,
-    isFriend = true,
 }: ProfileClientProps) {
     const toast = useToast()
 
@@ -60,10 +56,7 @@ export default function ProfileClient({
     const handleDeleteFriend = async () => {
         startTransition(async () => {
             try {
-                const result = await deleteFriend(
-                    '50000000-0000-0000-0000-000000000222',
-                    profile.username
-                )
+                const result = await deleteFriend(profile.username)
 
                 if (!result.success)
                     return toast.error(
@@ -84,8 +77,6 @@ export default function ProfileClient({
     return (
         <ProfileView
             profile={profile}
-            isOwnProfile={isOwnProfile}
-            isFriend={isFriend}
             onDeleteFriend={handleDeleteFriend}
             onAddFriend={handleAddFriend}
             isPending={isPending}

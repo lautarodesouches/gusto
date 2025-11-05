@@ -1,14 +1,18 @@
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell, faUser, faExclamationTriangle, faLock } from '@fortawesome/free-solid-svg-icons'
+import {
+    faUser,
+    faExclamationTriangle,
+    faLock,
+} from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { LOCAL_URL } from '@/constants'
-import { GroupClient, GroupsSocial, FriendRequests } from '@/components'
+import { GroupClient, FriendRequests } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 
@@ -36,11 +40,12 @@ async function fetchGroup({
         })
 
         if (res.status === 401) redirect(ROUTES.LOGIN)
-        
+
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}))
-            const errorMessage = errorData.error || errorData.message || 'Error desconocido'
-            
+            const errorMessage =
+                errorData.error || errorData.message || 'Error desconocido'
+
             // Retornar información del error para manejo específico
             return {
                 status: res.status,
@@ -82,28 +87,33 @@ function GroupErrorView({ error }: { error: GroupError }) {
                 return {
                     icon: faLock,
                     title: 'Acceso denegado',
-                    message: 'No eres miembro de este grupo. Debes ser invitado para acceder.',
+                    message:
+                        'No eres miembro de este grupo. Debes ser invitado para acceder.',
                     showRetry: false,
                 }
             case 400:
                 return {
                     icon: faExclamationTriangle,
                     title: 'ID de grupo inválido',
-                    message: error.message || 'El ID proporcionado no es válido.',
+                    message:
+                        error.message || 'El ID proporcionado no es válido.',
                     showRetry: false,
                 }
             case 404:
                 return {
                     icon: faExclamationTriangle,
                     title: 'Grupo no encontrado',
-                    message: 'El grupo que buscas no existe o ha sido eliminado.',
+                    message:
+                        'El grupo que buscas no existe o ha sido eliminado.',
                     showRetry: false,
                 }
             default:
                 return {
                     icon: faExclamationTriangle,
                     title: 'Error al cargar el grupo',
-                    message: error.message || 'Ocurrió un error inesperado. Por favor, intenta más tarde.',
+                    message:
+                        error.message ||
+                        'Ocurrió un error inesperado. Por favor, intenta más tarde.',
                     showRetry: true,
                 }
         }
@@ -160,31 +170,24 @@ function GroupErrorView({ error }: { error: GroupError }) {
     )
 }
 
-
 export default async function GroupDetail({ params }: Props) {
     const { id } = await params
 
-  
     const userId = await verifyAuthentication()
 
     const headersList = await headers()
     const cookie = headersList.get('cookie') || ''
 
-   
     const result = await fetchGroup({ id, cookie })
 
-   
     if ('status' in result && 'message' in result) {
         return <GroupErrorView error={result} />
     }
 
-   
     const group = result as Group
 
-  
     const isAdmin = group.administradorFirebaseUid === userId
 
-   
     return (
         <main className={styles.main}>
             <GroupClient group={group} />
