@@ -12,7 +12,7 @@ import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { LOCAL_URL } from '@/constants'
-import { GroupClient } from '@/components'
+import { GroupClient, FriendRequests } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 
@@ -138,6 +138,7 @@ function GroupErrorView({ error }: { error: GroupError }) {
                 </div>
 
                 <div className={styles.nav__icons}>
+                    <FriendRequests />
                     <NotificationBell />
                     <Link
                         href={ROUTES.PROFILE}

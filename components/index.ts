@@ -23,3 +23,4 @@ export { default as RestaurantClient } from './Restaurant/Client'
 export { PremiumBenefits, UpgradePremiumModal, PremiumTestButton, PremiumLimitFloatingCard } from './Premium'
 
 export { default as GroupClient } from './Groups/Client'
+export { default as FriendRequests } from './FriendRequests'

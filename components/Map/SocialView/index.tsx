@@ -69,23 +69,6 @@ export default function SocialView({
                             handleClick={() => togglePanel('searchFriend')}
                         />
                     </div>
-                    {socialData.friendsRequests.length > 0 && (
-                        <div className={styles.social__div}>
-                            <h3 className={styles.social__description}>
-                                Invitaciones
-                            </h3>
-                            <hr className={styles.social__line} />
-                            <ul className={styles.social__list}>
-                                {socialData.friendsRequests.map(i => (
-                                    <FriendCard
-                                        friend={i}
-                                        key={i.id}
-                                        invitationId={i.id}
-                                    />
-                                ))}
-                            </ul>
-                        </div>
-                    )}
                     <div className={styles.social__div}>
                         <h3 className={styles.social__description}>Grupos</h3>
                         <hr className={styles.social__line} />

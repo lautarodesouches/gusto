@@ -4,6 +4,7 @@ import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faUser, faCrown } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
+import { FriendRequests } from '@/components'
 import { PremiumLimitFloatingCard } from '@/components/Premium'
 import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
@@ -52,6 +53,9 @@ export default function Nav() {
                             />
                         </div>
                     )}
+                    <div className={styles.nav__div}>
+                        <FriendRequests />
+                    </div>
                     <div className={styles.nav__div}>
                         <NotificationBell />
                     </div>
