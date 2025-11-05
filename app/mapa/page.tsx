@@ -2,6 +2,8 @@ import MapClient from '@/components/Map/Client'
 import { getFriendsData } from '../actions/friends'
 import { getGroupsData } from '../actions/groups'
 import { getFilters } from '../actions/filters'
+import { FriendRequests } from '@/components'
+
 
 export default async function Map() {
     // Ejecutar en paralelo

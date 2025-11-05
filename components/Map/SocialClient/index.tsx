@@ -36,10 +36,10 @@ export default function SocialClient({ isVisible = true, socialData }: Props) {
         const res = await getFriendsData()
         if (res.success && res.data) {
             setData(prev => ({
-                ...prev,
-                friends: res.data.friends,
-                friendsRequests: res.data.friendsRequests,
-            }))
+  ...prev,
+  friends: res.data?.friends ?? [],
+  friendsRequests: res.data?.friendsRequests ?? [],
+}))
         }
     }, [])
 
