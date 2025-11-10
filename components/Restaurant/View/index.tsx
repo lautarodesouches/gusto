@@ -121,7 +121,7 @@ export default function RestaurantView({
                 <header className={styles.top__header}>
                     <div className={styles.top__thumnailcontainer}>
                         <Image
-                            src={`/images/all/poster.jpg`}
+                            src={`/images/restaurant/logo.png`}
                             alt="Icono del restaurante"
                             width={200}
                             height={200}
@@ -158,7 +158,7 @@ export default function RestaurantView({
                     {/* Imagen principal */}
                     <div className={styles.gallery__main}>
                         <Image
-                            src={`/images/all/poster.jpg`}
+                            src={`/images/restaurant/main.png`}
                             className={styles.gallery__mainimage}
                             alt=""
                             width={800}
@@ -182,7 +182,7 @@ export default function RestaurantView({
                             >
                                 <Image
                                     className={styles['gallery__side-image']}
-                                    src={`/images/all/poster.jpg`}
+                                    src={`/images/restaurant/${item.title.toLowerCase()}.png`}
                                     alt={item.title}
                                     width={200}
                                     height={200}

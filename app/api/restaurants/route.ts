@@ -28,8 +28,8 @@ export async function GET(req: Request) {
         // Construir la URL de la API con query params
         const apiUrl = new URL(`${API_URL}/api/Restaurantes`)
 
-        apiUrl.searchParams.append('radiusMeters', '2000') // Fijo por ahora
-        apiUrl.searchParams.append('top', '30')
+        apiUrl.searchParams.append('radiusMeters', '10000') // Fijo por ahora
+        apiUrl.searchParams.append('top', '200')
 
         if (nearLat) apiUrl.searchParams.append('near.lat', nearLat)
         if (nearLng) apiUrl.searchParams.append('near.lng', nearLng)

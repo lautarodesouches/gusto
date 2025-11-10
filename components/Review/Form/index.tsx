@@ -137,7 +137,7 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
                         <div className={styles.reviewForm__cardImage}>
                             {restaurant.imagenUrl ? (
                                 <Image
-                                    src={''}
+                                    src={'/images/restaurant/main.png'}
                                     alt={restaurant.nombre}
                                     fill
                                     style={{ objectFit: 'cover' }}
@@ -195,7 +195,7 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
                     {/* Fecha de visita */}
                     <div className={styles.reviewForm__field}>
                         <label className={styles.reviewForm__label}>
-                            ¿Cuando Fuiste?
+                            ¿Cúando fuiste?
                         </label>
                         <select
                             className={styles.reviewForm__select}
@@ -220,7 +220,7 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
                     {/* Tipo de visita */}
                     <div className={styles.reviewForm__field}>
                         <label className={styles.reviewForm__label}>
-                            ¿Cuando Fuiste?
+                            ¿Con quién fuiste?
                         </label>
                         <div className={styles.reviewForm__buttons}>
                             {VISIT_TYPES.map(type => (
