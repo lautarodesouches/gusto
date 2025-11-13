@@ -1,12 +1,12 @@
 .social {
-    position: fixed; /* fijado respecto a la ventana */
-    bottom: 100px; /* justo arriba del nav (ajusta según altura del nav) */
+    position: fixed;
+    bottom: 100px;
     left: 5%;
     width: 90%;
     margin: auto;
     background: var(--black);
     border-radius: 10px;
-    transform: translateY(20%); /* empieza oculto abajo */
+    transform: translateY(20%);
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
@@ -14,7 +14,7 @@
 .show {
     transform: translateY(0);
     opacity: 1;
-    z-index: 3; /* encima del nav */
+    z-index: 3;
 }
 
 .social__header {
@@ -32,26 +32,26 @@
 
 /* Webkit browsers (Chrome, Edge, Safari) */
 .social__content::-webkit-scrollbar {
-    width: 10px; /* siempre visible */
+    width: 10px;
 }
 
 .social__content::-webkit-scrollbar-track {
-    background: var(--black); /* track negro */
+    background: var(--black);
 }
 
 .social__content::-webkit-scrollbar-thumb {
-    background: var(--primary); /* thumb color primary */
+    background: var(--primary);
     border-radius: 5px;
 }
 
 .social__content::-webkit-scrollbar-thumb:hover {
-    background: darken(var(--primary), 10%); /* opcional hover más oscuro */
+    background: darken(var(--primary), 10%);
 }
 
 /* Firefox */
 .social__content {
-    scrollbar-width: thin; /* thin para siempre visible */
-    scrollbar-color: var(--primary) var(--black); /* thumb color, track color */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) var(--black);
 }
 
 .social__title {
@@ -84,6 +84,10 @@
     padding: 15px 5px;
     width: 47.5%;
     font-size: 1rem;
+}
+
+.social__button:focus {
+    outline: none;
 }
 
 .social__div {
@@ -143,61 +147,127 @@
     font-size: 0.95rem;
 }
 
+/* Logo y botones ocultos en mobile */
+.social__logo,
+.social__contract_btn,
+.social__collapsed_content {
+    display: none;
+}
+
 @media (min-width: 768px) {
+    /* Resetear estilos mobile en desktop */
     .social {
-        position: unset;
+        position: static;
         padding: 0;
-        transform: translateY(0);
+        transform: none;
         width: 100%;
         height: 100%;
         background: var(--background);
-        overflow-y: scroll;
+        overflow: hidden;
         z-index: 10;
+        border-radius: 12px;
+        opacity: 1;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* Webkit browsers (Chrome, Edge, Safari) */
+    /* Siempre mostrar en desktop */
+    .social.show,
+    .social {
+        transform: none;
+        opacity: 1;
+    }
+
+    /* Scrollbar para el contenedor principal */
     .social::-webkit-scrollbar {
-        width: 10px; /* siempre visible */
+        width: 10px;
     }
 
     .social::-webkit-scrollbar-track {
-        background: var(--black); /* track negro */
+        background: var(--black);
     }
 
     .social::-webkit-scrollbar-thumb {
-        background: var(--primary); /* thumb color primary */
+        background: var(--primary);
         border-radius: 5px;
     }
 
     .social::-webkit-scrollbar-thumb:hover {
-        background: darken(var(--primary), 10%); /* opcional hover más oscuro */
+        background: darken(var(--primary), 10%);
     }
 
     /* Firefox */
     .social {
-        scrollbar-width: thin; /* thin para siempre visible */
-        scrollbar-color: var(--primary) var(--black); /* thumb color, track color */
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--black);
     }
 
-    .social__header {
-        padding: 10px;
-        display: none;
-    }
-
-    .social__width {
+    /* Logo visible en desktop */
+    .social__logo {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        color: var(--white);
+        padding: 35px 15px 20px 15px;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .social__logo_full {
+        width: 180px;
+        height: auto;
+    }
+
+    .social__logo_small {
+        width: 50px;
+        height: 50px;
+    }
+
+    /* Botón contraer */
+    .social__contract_btn {
         display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--black);
+        border: 1px solid var(--grey);
+        color: var(--light);
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 0 15px 20px 15px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 
-    .social__title {
-        display: none;
+    .social__contract_btn:focus {
+        outline: none;
     }
 
-    .social__close {
+    .social__contract_btn:hover {
+        background: var(--background);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .social__contract_btn svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+    }
+
+    /* Estado expandido */
+    .social_expanded {
+        width: 100%;
+    }
+
+    .social_expanded .social__logo {
+        padding: 35px 20px 20px 20px;
+    }
+
+    /* Ocultar elementos mobile en desktop */
+    .social__header {
         display: none;
     }
 
@@ -210,15 +280,168 @@
         border: 1px dashed var(--light);
     }
 
+    /* Contenido expandido con overflow-y */
     .social__content {
-        padding: 0 10px 10px 10px;
+        padding: 0 15px 15px 15px;
         overflow-y: auto;
+        overflow-x: hidden;
         max-height: unset;
         margin-top: 0;
+        flex: 1;
+        min-height: 0;
+    }
+
+    .social__content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .social__content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .social__content::-webkit-scrollbar-thumb {
+        background: var(--grey);
+        border-radius: 4px;
+    }
+
+    .social__content::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
     }
 
     .social__div button {
         margin-top: 10px;
         width: 100%;
+    }
+
+    /* Estado colapsado */
+    .social_collapsed {
+        width: 100%;
+    }
+
+    .social_collapsed .social__logo {
+        padding: 35px 10px 20px 10px;
+    }
+
+    .social_collapsed .social__content {
+        display: none;
+    }
+
+    .social_collapsed .social__contract_btn {
+        display: none;
+    }
+
+    /* Vista colapsada - iconos */
+    .social__collapsed_content {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 0 10px 15px 10px;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+    }
+
+    .social_collapsed .social__collapsed_content {
+        display: flex;
+    }
+
+    .social_expanded .social__collapsed_content {
+        display: none;
+    }
+
+    /* Botón expandir */
+    .social__expand_btn {
+        background: var(--black);
+        border: 1px solid var(--grey);
+        color: var(--light);
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    .social__expand_btn:focus {
+        outline: none;
+    }
+
+    .social__expand_btn:hover {
+        background: var(--background);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .social__expand_btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Secciones de amigos y grupos */
+    .collapsed__section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        align-items: center;
+        flex-shrink: 0;
+    }
+
+    /* Avatares colapsados */
+    .collapsed__avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .collapsed__avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .collapsed__avatar svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    /* Botones añadir */
+    .collapsed__add {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        border: 2px dashed var(--grey);
+        background: transparent;
+        color: var(--grey);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .collapsed__add:focus {
+        outline: none;
+    }
+
+    .collapsed__add:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .collapsed__add svg {
+        width: 20px;
+        height: 20px;
     }
 }

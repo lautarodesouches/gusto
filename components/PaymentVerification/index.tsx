@@ -1,8 +1,8 @@
 'use client'
-import styles from './styles.module.css'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import { PaymentSuccess } from '@/components'
 
 export default function PaymentVerification() {
     const router = useRouter()
@@ -55,16 +55,10 @@ export default function PaymentVerification() {
                             localStorage.removeItem('pendingPayment')
                             localStorage.removeItem('paymentEmail')
 
-                            // Mostrar notificación
+                            // Mostrar pantalla de éxito
                             setShowSuccess(true)
-
-                            // Redirigir al home después de 2.5 segundos
-                            setTimeout(() => {
-                                router.push('/')
-                                setTimeout(() => {
-                                    window.location.reload()
-                                }, 300)
-                            }, 2500)
+                            
+                            // El componente PaymentSuccess manejará la redirección automáticamente
                         } else {
                             console.log('⏳ No se pudo actualizar a Premium')
                             localStorage.removeItem('pendingPayment')
@@ -95,55 +89,17 @@ export default function PaymentVerification() {
         }
 
         checkPayment()
-    }, [router, token, loading])
-
-    if (!showSuccess) return null
+    }, [router, token, loading, refreshPremiumStatus])
 
     return (
-        <div className={styles.modal}>
-            <div className={styles.modal__card}>
-                <div className={styles.modal__content}>
-                    {/* Icono animado */}
-                    <div className={styles.modal__icon}>
-                        <svg
-                            className={styles.modal__check}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={3}
-                                d="M5 13l4 4L19 7"
-                            />
-                        </svg>
-                    </div>
-
-                    {/* Mensaje */}
-                    <div>
-                        <h3 className={styles.modal__title}>
-                            ¡Pago Exitoso! 🎉
-                        </h3>
-                        <p className={styles.modal__description}>
-                            Ahora tienes acceso{' '}
-                            <span className={styles.modal__premium}>
-                                Premium
-                            </span>
-                        </p>
-                        <p className={styles.modal__subtitle}>
-                            Puedes crear grupos ilimitados
-                        </p>
-                    </div>
-
-                    {/* Barra de progreso */}
-                    <div className={styles.modal__progressbar}>
-                        <div className={styles.modal__progress}></div>
-                    </div>
-
-                    <p className={styles.modal__redirect}>Redirigiendo...</p>
-                </div>
-            </div>
-        </div>
+        <PaymentSuccess 
+            show={showSuccess}
+            onComplete={() => {
+                router.push('/')
+                setTimeout(() => {
+                    window.location.reload()
+                }, 300)
+            }}
+        />
     )
 }

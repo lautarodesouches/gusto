@@ -83,8 +83,17 @@
 
 @media (min-width: 768px) {
     .nav {
-        padding-top: 20px;
-        position: unset;
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        background: rgba(18, 18, 18, 0.95);
+        border-radius: 12px;
+        padding: 15px 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
     }
 
     .nav__logo {
@@ -92,31 +101,58 @@
     }
 
     .nav__img {
-        width: 150px;
+        width: 120px;
         height: auto;
     }
 
     .nav__fieldset {
-        width: 40%;
+        width: 45%;
         background: var(--background);
+        border-radius: 10px;
+        padding: 12px 15px;
     }
 
     .nav__input {
         background: var(--background);
+        color: var(--light);
+    }
+
+    .nav__input::placeholder {
+        color: var(--grey);
     }
 
     .nav__icons {
         display: flex;
-        gap: 10px;
+        gap: 12px;
+    }
+
+    .nav__div {
+        background: var(--background);
+        width: auto;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nav__div:hover {
+        background: var(--black);
+        transform: scale(1.05);
     }
 
     .nav:focus-within .nav__fieldset {
-        width: 40%;
+        width: 45%;
     }
 
     .nav:focus-within .nav__div {
-        width: unset;
+        width: auto;
         opacity: 1;
         padding: 10px;
+    }
+
+    .nav__icon {
+        width: 22px;
+        height: 22px;
+        color: var(--light);
     }
 }

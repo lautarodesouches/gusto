@@ -1,3 +1,4 @@
+/* Contenedor principal */
 .main {
     display: flex;
     flex-direction: column;
@@ -7,6 +8,9 @@
     width: 100dvw;
 }
 
+/* ==================== MOBILE ==================== */
+
+/* Navegación inferior para mobile */
 .bottom {
     bottom: 20px;
     width: 90%;
@@ -56,48 +60,171 @@
     font-size: 1.1rem;
 }
 
+/* Mapa */
 .map {
     height: 100vh;
 }
 
-.middle__filter {
+/* Desktop oculto en mobile */
+.desktop {
     display: none;
 }
+
+/* ==================== DESKTOP ==================== */
 
 @media (min-width: 768px) {
     .main {
         background: var(--black);
-        overflow: unset;
-    }
-
-    .middle {
-        overflow: hidden;
-        padding: 0 10px;
-        display: grid;
-        grid-template-columns: 1fr 5fr 1fr;
-        gap: 1rem;
-        justify-content: space-around;
-        transition: grid-template-columns 0.3s ease;
-        height: 100%;
-        padding: 1rem;
-        position: relative;
-    }
-
-    .middle__map{
-        border-radius: 5px;
-        height: 100%;
         overflow: hidden;
     }
 
-    .middle__filter {
-        display: block;
-        flex: 1;
-        min-height: 0;
-        z-index: 3;
-        position: relative;
-    }
-
+    /* Ocultar navegación inferior en desktop */
     .bottom {
         display: none;
+    }
+
+    /* Layout desktop con padding y espaciado */
+    .desktop {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        position: relative;
+        overflow: hidden;
+        padding: 20px;
+        gap: 20px;
+    }
+
+    /* Panel social colapsable (sidebar izquierdo) */
+    .desktop__social {
+        background: var(--background);
+        height: 100%;
+        width: 100px;
+        transition: width 0.3s ease;
+        z-index: 10;
+        overflow: hidden;
+        flex-shrink: 0;
+        border-radius: 12px;
+    }
+
+    .desktop__social_expanded {
+        width: 280px;
+    }
+
+    /* Contenedor del mapa */
+    .desktop__map_container {
+        flex: 1;
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+    /* Buscador flotante (superior izquierda) */
+    .desktop__search {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 5;
+    }
+
+    /* Perfil y notificaciones (superior derecha) */
+    .desktop__profile {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 5;
+    }
+
+    /* Mapa ocupa todo el espacio */
+    .map {
+        height: 100%;
+        width: 100%;
+    }
+
+    /* Botón de filtros flotante (inferior izquierda) */
+    .desktop__filters_buttons {
+        position: absolute;
+        bottom: 30px;
+        left: 30px;
+        z-index: 4;
+    }
+
+    .desktop__filter_btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--dark);
+        border: none;
+        border-radius: 50%;
+        width: 3.5rem;
+        height: 3.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .desktop__filter_btn:hover {
+        background-color: var(--grey);
+        transform: scale(1.05);
+    }
+
+    .desktop__filter_btn:active {
+        transform: scale(0.95);
+    }
+
+    .desktop__filter_btn svg {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--white);
+    }
+
+    /* Panel de filtros desplegable */
+    .desktop__filters_panel {
+        position: absolute;
+        bottom: 65px;
+        left: 20px;
+        z-index: 4;
+        /* Sin fondo - el panel de filtros tiene su propio diseño */
+        background: transparent;
+        border: none;
+        padding: 0;
+        max-width: 900px;
+        overflow: visible;
+        animation: deslizar 0.3s ease-out;
+    }
+
+    @keyframes deslizar {
+        from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Scrollbar Webkit */
+    .desktop__filters_panel::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .desktop__filters_panel::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .desktop__filters_panel::-webkit-scrollbar-thumb {
+        background: var(--grey);
+        border-radius: 3px;
+    }
+
+    .desktop__filters_panel::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+    }
+
+    /* Scrollbar Firefox */
+    .desktop__filters_panel {
+        scrollbar-width: thin;
+        scrollbar-color: var(--grey) transparent;
     }
 }
