@@ -19,8 +19,10 @@ export { default as LandingCarousel } from './Landing/Carousel'
 export { default as GroupsSocial } from './Groups/Social'
 export { default as ProfileClient } from './Profile/Client'
 export { default as RestaurantClient } from './Restaurant/Client'
-
-export { PremiumBenefits, UpgradePremiumModal, PremiumTestButton, PremiumLimitFloatingCard, PaymentSuccess } from './Premium'
-
 export { default as GroupClient } from './Groups/Client'
 export { default as FriendRequests } from './FriendRequests'
+export { default as PremiumBenefits } from './Premium/PremiumBenefits'
+export { default as UpgradePremiumModal } from './Premium/UpgradePremiumModal'
+export { default as PremiumTestButton } from './Premium/PremiumTestButton'
+export { default as PaymentSuccess } from './Premium/PaymentSuccess'
+export { default as PremiumLimitFloatingCard } from './Premium/PremiumLimitFloatingCard'
