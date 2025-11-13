@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
-import { createPortal } from 'react-dom'
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell } from '@fortawesome/free-solid-svg-icons'
@@ -17,10 +16,14 @@ interface Notificacion {
     fechaCreacion: string
 }
 
-export default function NotificationBell() {
+interface NotificationBellProps {
+    showPanel?: boolean
+    isActive?: boolean
+}
+
+export default function NotificationBell({ showPanel = false, isActive = false }: NotificationBellProps) {
     const [connection, setConnection] = useState<HubConnection | null>(null)
     const [notificaciones, setNotificaciones] = useState<Notificacion[]>([])
-    const [showPanel, setShowPanel] = useState(false)
     const panelRef = useRef<HTMLDivElement | null>(null)
     const toast = useToast()
 
@@ -73,20 +76,7 @@ export default function NotificationBell() {
         }
     }, [])
 
-    //  Cerrar panel si se hace click fuera de él
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                panelRef.current &&
-                !panelRef.current.contains(event.target as Node)
-            ) {
-                setShowPanel(false)
-            }
-        }
-        document.addEventListener('mousedown', handleClickOutside)
-        return () =>
-            document.removeEventListener('mousedown', handleClickOutside)
-    }, [])
+    // Ya no necesitamos cerrar el panel aquí, lo maneja ProfileBar
 
     //  Acciones disponibles
     const aceptarInvitacion = async (id: string) => {
@@ -97,7 +87,6 @@ export default function NotificationBell() {
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('groups:refresh'))
             }
-            setShowPanel(false)
         } catch (err) {
             console.error('❌ Error aceptando invitación:', err)
             toast.error('No se pudo aceptar la invitación')
@@ -109,7 +98,6 @@ export default function NotificationBell() {
             await connection?.invoke('RechazarInvitacion', id)
             toast.info('Invitación al grupo rechazada')
             setNotificaciones(prev => prev.filter(n => n.id !== id))
-            setShowPanel(false)
         } catch (err) {
             console.error('❌ Error rechazando invitación:', err)
             toast.error('No se pudo rechazar la invitación')
@@ -126,43 +114,52 @@ export default function NotificationBell() {
 
     // 🔹 Render
     return (
-        <div className={styles.container}>
+        <div className={styles.contenedor}>
             <FontAwesomeIcon
                 icon={faBell}
-                className={styles.icon}
-                onClick={() => setShowPanel(!showPanel)}
+                className={`${styles.icono} ${isActive ? styles.icono_activo : ''}`}
             />
 
             {unreadCount > 0 && (
                 <span className={styles.badge}>{unreadCount}</span>
             )}
 
-            {showPanel &&
-                createPortal(
-                    <div className={styles.panel} ref={panelRef}>
-                        <h4>Notificaciones</h4>
+            {showPanel && (
+                <div className={styles.panel} ref={panelRef}>
+                    <h4>
+                        Notificaciones
+                        {unreadCount > 0 && (
+                            <span style={{ 
+                                fontSize: '0.85rem', 
+                                color: 'var(--light)', 
+                                fontWeight: 'normal' 
+                            }}>
+                                {' '}({unreadCount} nueva{unreadCount !== 1 ? 's' : ''})
+                            </span>
+                        )}
+                    </h4>
+                    <div className={styles.contenido}>
                         {notificaciones.length === 0 && (
                             <p>Sin notificaciones</p>
                         )}
 
-                        {}
                         {notificaciones.map(n => {
                             return (
                                 <div
                                     key={n.id}
                                     onClick={() => marcarComoLeida(n.id)}
-                                    className={`${styles.notificationItem} ${
-                                        n.leida ? styles.read : ''
+                                    className={`${styles.item} ${
+                                        n.leida ? styles.leida : ''
                                     }`}
                                 >
-                                    <strong className={styles.title}>
+                                    <strong className={styles.titulo}>
                                         {n.titulo}
                                     </strong>
-                                    <p className={styles.message}>
+                                    <p className={styles.mensaje}>
                                         {n.mensaje}
                                     </p>
 
-                                    <small className={styles.time}>
+                                    <small className={styles.hora}>
                                         {new Date(
                                             n.fechaCreacion
                                         ).toLocaleString('es-AR', {
@@ -175,13 +172,13 @@ export default function NotificationBell() {
 
                                     {/* Botones solo para invitaciones de grupo */}
                                     {n.tipo === 'InvitacionGrupo' && (
-                                        <div className={styles.actions}>
+                                        <div className={styles.acciones}>
                                             <button
                                                 onClick={e => {
                                                     e.stopPropagation()
                                                     aceptarInvitacion(n.id)
                                                 }}
-                                                className={styles.accept}
+                                                className={styles.aceptar}
                                             >
                                                  Aceptar
                                             </button>
@@ -190,7 +187,7 @@ export default function NotificationBell() {
                                                     e.stopPropagation()
                                                     rechazarInvitacion(n.id)
                                                 }}
-                                                className={styles.reject}
+                                                className={styles.rechazar}
                                             >
                                                  Rechazar
                                             </button>
@@ -199,9 +196,9 @@ export default function NotificationBell() {
                                 </div>
                             )
                         })}
-                    </div>,
-                    document.body
-                )}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

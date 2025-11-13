@@ -1,0 +1,366 @@
+/* Backdrop - más oscuro para mejor contraste */
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal con 2 columnas */
+.modal {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    background: var(--dark);
+    border-radius: 20px;
+    max-width: 1200px;
+    width: 100%;
+    min-height: 600px;
+    overflow: hidden;
+    padding: 30px;
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Columna izquierda - Contenido */
+.columna_contenido {
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--dark);
+}
+
+/* Título */
+.titulo {
+    font-family: var(--font-gliker);
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.titulo_blanco {
+    color: var(--white);
+}
+
+.titulo_premium {
+    color: var(--primary);
+}
+
+/* Subtítulo */
+.subtitulo {
+    font-size: 1rem;
+    color: var(--light);
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--grey);
+}
+
+/* Beneficio principal con SVG */
+.beneficio_principal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--background);
+    border: 2px solid var(--grey);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.grupos_svg {
+    width: 100px;
+    height: auto;
+    flex-shrink: 0;
+}
+
+.beneficio_texto {
+    flex: 1;
+}
+
+.beneficio_texto p {
+    font-size: 1rem;
+    color: var(--white);
+    line-height: 1.5;
+}
+
+.destacado {
+    font-weight: 700;
+    color: var(--white);
+}
+
+.destacado_numero {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* Próximamente */
+.proximamente {
+    background: var(--grey);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.proximamente h3 {
+    font-family: var(--font-gliker);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+/* Precio */
+.precio_contenedor {
+    margin-bottom: 20px;
+}
+
+.precio {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    background: var(--background);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 15px 25px;
+}
+
+.precio_monto {
+    font-family: var(--font-gliker);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.precio_periodo {
+    font-size: 1.2rem;
+    color: var(--white);
+}
+
+/* Error */
+.error {
+    padding: 12px 18px;
+    background: rgba(255, 80, 80, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.error span {
+    font-size: 0.9rem;
+    color: var(--primary);
+}
+
+/* Botón de pago */
+.boton_pagar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 30px;
+    background: var(--primary);
+    border: none;
+    border-radius: 12px;
+    color: var(--white);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: auto;
+}
+
+.icono_mercado_pago {
+    width: 30px;
+    height: auto;
+    filter: brightness(0) invert(1);
+}
+
+.boton_pagar:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.boton_pagar:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.boton_pagar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--white);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Columna derecha - Imagen */
+.columna_imagen {
+    position: relative;
+    background: var(--light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botón cerrar en esquina superior derecha */
+.boton_cerrar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: var(--background);
+    border: 2px solid var(--grey);
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.boton_cerrar:hover {
+    background: var(--dark);
+    border-color: var(--white);
+    transform: scale(1.05);
+}
+
+.boton_cerrar:active {
+    transform: scale(0.95);
+}
+
+/* Placeholder imagen */
+.imagen_placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+    opacity: 0.3;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .backdrop {
+        padding: 30px;
+    }
+
+    .modal {
+        max-width: 900px;
+        gap: 20px;
+        padding: 25px;
+    }
+}
+
+@media (max-width: 900px) {
+    .backdrop {
+        padding: 20px;
+    }
+
+    .modal {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        gap: 0;
+        padding: 30px;
+    }
+
+    .columna_imagen {
+        display: none;
+    }
+
+    .columna_contenido {
+        padding: 0;
+    }
+
+    .titulo {
+        font-size: 2.5rem;
+    }
+
+    .grupos_svg {
+        width: 80px;
+    }
+
+    .precio_monto {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .backdrop {
+        padding: 15px;
+    }
+
+    .modal {
+        padding: 25px 20px;
+    }
+
+    .columna_contenido {
+        padding: 0;
+    }
+
+    .titulo {
+        font-size: 2rem;
+    }
+
+    .beneficio_principal {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .grupos_svg {
+        width: 120px;
+    }
+
+    .proximamente h3 {
+        font-size: 1.5rem;
+    }
+
+    .precio_monto {
+        font-size: 1.8rem;
+    }
+}

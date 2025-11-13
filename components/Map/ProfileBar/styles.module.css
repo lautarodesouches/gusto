@@ -1,0 +1,232 @@
+/* Contenedor principal de la barra de perfil */
+.barra_perfil {
+    display: flex;
+    align-items: center;
+}
+
+/* Contenedor unificado con glassmorphism */
+.contenedor {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* Efecto glassmorphism */
+    background: rgba(45, 45, 43, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.5rem;
+    border-radius: 3rem;
+    max-width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Botón Premium */
+.boton_premium {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 3rem;
+    padding: 0.5rem 1rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.boton_premium:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+}
+
+.boton_premium:active {
+    transform: scale(0.98);
+}
+
+.boton_premium svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #FFD700;
+    flex-shrink: 0;
+}
+
+.boton_premium__texto {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--beige);
+    white-space: nowrap;
+}
+
+/* Botón de notificaciones */
+.notificacion {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background);
+    border: 1px solid var(--grey);
+    border-radius: 3rem;
+    padding: 0.5rem 1rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notificacion:hover {
+    background-color: var(--dark);
+    border-color: var(--light);
+}
+
+.notificacion:active {
+    transform: scale(0.95);
+}
+
+/* Estado activo cuando el panel está abierto */
+.notificacion.activo {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.notificacion.activo:hover {
+    background-color: var(--primary);
+    filter: brightness(1.1);
+}
+
+/* Botón de perfil */
+.boton_perfil {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--background);
+    border: 1px solid var(--grey);
+    border-radius: 3rem;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.boton_perfil:hover {
+    background-color: var(--dark);
+    border-color: var(--light);
+}
+
+.boton_perfil:active {
+    transform: scale(0.98);
+}
+
+/* Avatar del perfil */
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(135deg, #7c6dd1 0%, #5b4db8 100%);
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--white);
+}
+
+/* Nombre de usuario */
+.nombre {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+}
+
+/* Corona Premium - Círculo dorado */
+.corona_premium {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #ffc648;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 0.25rem;
+    padding: 0.25rem;
+}
+
+.corona_premium svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--background);
+}
+
+/* Menú desplegable del perfil */
+.menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: var(--background);
+    border: 1px solid var(--grey);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    min-width: 220px;
+    z-index: 1000;
+    overflow: hidden;
+    animation: aparecer 0.2s ease-in-out;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ítem del menú */
+.menu__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    color: var(--light);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.menu__item:hover {
+    background: var(--dark);
+    color: var(--white);
+}
+
+.menu__item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--light);
+    flex-shrink: 0;
+}
+
+.menu__item:hover svg {
+    color: var(--primary);
+}
+
+/* Último item (Cerrar Sesión) */
+.menu__item:last-child {
+    border-top: 1px solid var(--grey);
+    color: var(--primary);
+}
+
+.menu__item:last-child:hover {
+    background: rgba(255, 80, 80, 0.1);
+}

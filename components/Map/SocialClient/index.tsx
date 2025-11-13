@@ -9,11 +9,18 @@ interface Props {
     isVisible?: boolean
     onClose?: () => void
     socialData: SocialData
+    isExpanded?: boolean
+    onToggleExpand?: () => void
 }
 
 type ActivePanel = 'searchFriend' | 'newGroup' | null
 
-export default function SocialClient({ isVisible = true, socialData }: Props) {
+export default function SocialClient({
+    isVisible = true,
+    socialData,
+    isExpanded = true,
+    onToggleExpand,
+}: Props) {
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [data, setData] = useState<SocialData>(socialData)
 
@@ -36,10 +43,10 @@ export default function SocialClient({ isVisible = true, socialData }: Props) {
         const res = await getFriendsData()
         if (res.success && res.data) {
             setData(prev => ({
-  ...prev,
-  friends: res.data?.friends ?? [],
-  friendsRequests: res.data?.friendsRequests ?? [],
-}))
+                ...prev,
+                friends: res.data?.friends ?? [],
+                friendsRequests: res.data?.friendsRequests ?? [],
+            }))
         }
     }, [])
 
@@ -68,6 +75,8 @@ export default function SocialClient({ isVisible = true, socialData }: Props) {
             socialData={data}
             activePanel={activePanel}
             togglePanel={togglePanel}
+            isExpanded={isExpanded}
+            onToggleExpand={onToggleExpand}
         />
     )
 }
