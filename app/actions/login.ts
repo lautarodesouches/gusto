@@ -71,3 +71,27 @@ export async function login(
     }
 }
 
+/**
+ * Elimina la cookie de autenticación
+ * @returns ApiResponse indicando éxito o error
+ */
+export async function logout(): Promise<ApiResponse<null>> {
+    try {
+        const cookieStore = await cookies()
+        cookieStore.delete('token')
+
+        return { success: true, data: null }
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error'
+        console.error('Error inesperado en logout:', {
+            error: errorMessage,
+            timestamp: new Date().toISOString(),
+        })
+        return {
+            success: false,
+            error: ERROR_MESSAGES.INTERNAL_ERROR,
+        }
+    }
+}
+

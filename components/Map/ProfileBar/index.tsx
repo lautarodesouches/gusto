@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faGear, faDoorOpen, faBell } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faGear, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import { UpgradePremiumModal } from '@/components'
+import { logout as logoutAction } from '@/app/actions/login'
 
 export default function ProfileBar() {
     const [showProfileMenu, setShowProfileMenu] = useState(false)
@@ -39,7 +40,11 @@ export default function ProfileBar() {
     }, [])
 
     const handleSignOut = async () => {
+        // Eliminar cookie de autenticación
+        await logoutAction()
+        // Cerrar sesión en Firebase y limpiar estado
         await logout()
+        // Redirigir a login
         router.push(ROUTES.LOGIN)
     }
 
