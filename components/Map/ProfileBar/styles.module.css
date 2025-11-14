@@ -71,6 +71,7 @@
     min-height: 2.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    height: 2.75rem;
 }
 
 .notificacion:hover {
@@ -95,6 +96,7 @@
 
 /* Botón de perfil */
 .boton_perfil {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -103,6 +105,7 @@
     border-radius: 3rem;
     padding: 0.5rem 1rem 0.5rem 0.5rem;
     min-height: 2.75rem;
+    height: 2.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -176,6 +179,7 @@
     z-index: 1000;
     overflow: hidden;
     animation: aparecer 0.2s ease-in-out;
+    margin-top: 0;
 }
 
 @keyframes aparecer {
