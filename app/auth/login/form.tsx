@@ -7,7 +7,7 @@ import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
-import { login } from './actions'
+import { login } from '../../actions/login'
 
 interface FormData {
     email: string
