@@ -110,7 +110,12 @@ export default function Client({ socialData, filters }: Props) {
                     <div className={styles.desktop__filters_buttons}>
                         <button
                             className={styles.desktop__filter_btn}
-                            onClick={() => setShowFiltersPanel(!showFiltersPanel)}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setShowFiltersPanel(!showFiltersPanel)
+                            }}
+                            type="button"
                         >
                             <FontAwesomeIcon icon={showFiltersPanel ? faX : faFilter} />
                         </button>
