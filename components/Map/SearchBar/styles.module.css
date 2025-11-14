@@ -12,6 +12,7 @@
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     transition: all 0.2s ease;
+    flex-wrap: wrap;
 }
 
 /* Campo de entrada del buscador */
@@ -58,4 +59,159 @@
 
 .buscador__input:focus {
     outline: none;
+}
+
+/* Select personalizado */
+.select {
+    position: relative;
+    min-width: 120px;
+}
+
+.select_friends {
+    position: relative;
+    min-width: 180px;
+    width: 180px;
+}
+
+.select__button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    background-color: var(--background);
+    border: 1px solid var(--grey);
+    border-radius: 3rem;
+    padding: 0.5rem 1.25rem;
+    min-height: 2.75rem;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.select__button:hover {
+    border-color: var(--light);
+    background-color: var(--dark);
+}
+
+.select__text {
+    color: var(--white);
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.select__icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--white);
+    flex-shrink: 0;
+}
+
+/* Dropdown del select */
+.select__dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: rgba(45, 45, 43, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.select__option {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.select__option:hover {
+    background-color: var(--dark);
+}
+
+.select__option_active {
+    background-color: var(--grey);
+}
+
+/* Display del amigo seleccionado */
+.select__friend_display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Avatar del amigo (cuadrado de color o icono) */
+.select__friend_avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.select__friend_icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Opción de amigo con avatar */
+.select__option_friend {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.select__option_friend:hover {
+    background-color: var(--dark);
+}
+
+.select__option_friend.select__option_active {
+    background-color: var(--grey);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .buscador {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .select,
+    .select_friends {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .buscador__campo {
+        min-width: 100%;
+    }
 }

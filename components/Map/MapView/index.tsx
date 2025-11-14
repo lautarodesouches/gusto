@@ -1,10 +1,9 @@
 'use client'
 import styles from './styles.module.css'
 import { GoogleMap, InfoWindow, Marker } from '@react-google-maps/api'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Coordinates, Restaurant } from '@/types'
 import { Dispatch, SetStateAction } from 'react'
 
@@ -113,21 +112,27 @@ export default function MapView({
                             }}
                             options={{
                                 disableAutoPan: true,
-                                headerContent: place.nombre,
+                                pixelOffset: new google.maps.Size(0, -10),
                             }}
                             onCloseClick={() => setHoveredMarker(null)}
                         >
                             <div className={styles.info}>
-                                <p className={styles.info__rating}>
-                                    {place.rating.toFixed(2)}
-                                    <FontAwesomeIcon
-                                        icon={faStar}
+                                <h3 className={styles.info__title}>{place.nombre}</h3>
+                                <div className={styles.info__rating}>
+                                    <span className={styles.info__rating_number}>
+                                        {place.rating.toFixed(1)}
+                                    </span>
+                                    <Image
+                                        src="/images/all/star.svg"
+                                        alt="Rating"
+                                        width={16}
+                                        height={16}
                                         className={styles.info__icon}
                                     />
-                                </p>
+                                </div>
                                 <Link href={`${ROUTES.RESTAURANT}${place.id}`}>
                                     <button className={styles.info__button}>
-                                        Más información
+                                        Ver más
                                     </button>
                                 </Link>
                             </div>
