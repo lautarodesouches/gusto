@@ -5,6 +5,16 @@
     background: var(--background);
     padding: 10px 5px;
     border-radius: 10px;
+    position: relative;
+}
+
+.user__link {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .user--loading {
@@ -83,6 +93,8 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
+    position: relative;
+    z-index: 2;
 }
 
 .user__info svg {
