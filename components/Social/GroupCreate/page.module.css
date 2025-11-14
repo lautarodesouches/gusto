@@ -1,5 +1,10 @@
 .create {
-    background: var(--black);
+    /* Efecto glassmorphism */
+    background: rgba(45, 45, 43, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     position: absolute;
     top: 10px;
     left: -320px;
@@ -13,6 +18,51 @@
     justify-content: center;
     flex-direction: column;
     z-index: 9999;
+}
+
+.create__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    z-index: 12;
+}
+
+.create__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.create__close svg {
+    width: 14px;
+    height: 14px;
+}
+
+@media (min-width: 768px) {
+    .create {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-width: 280px;
+        max-width: 280px;
+        height: auto;
+        min-height: 300px;
+    }
+    
+    .create__close {
+        position: absolute;
+    }
 }
 
 .create__container {

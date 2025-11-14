@@ -6,6 +6,8 @@ import MapClient from '../MapClient'
 import SocialClient from '../SocialClient'
 import SearchBar from '../SearchBar'
 import ProfileBar from '../ProfileBar'
+import FriendSearch from '@/components/Social/FriendSearch'
+import GroupCreate from '@/components/Social/GroupCreate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter, faUsers, faX } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
@@ -17,13 +19,20 @@ interface Props {
 
 type ActivePanel = 'filters' | 'social' | null
 
+type SocialPanel = 'searchFriend' | 'newGroup' | null
+
 export default function Client({ socialData, filters }: Props) {
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [isSocialExpanded, setIsSocialExpanded] = useState(true)
     const [showFiltersPanel, setShowFiltersPanel] = useState(false)
+    const [activeSocialPanel, setActiveSocialPanel] = useState<SocialPanel>(null)
 
     const togglePanel = (panel: ActivePanel) => {
         setActivePanel(prev => (prev === panel ? null : panel))
+    }
+
+    const toggleSocialPanel = (panel: SocialPanel) => {
+        setActiveSocialPanel(prev => (prev === panel ? null : panel))
     }
 
     return (
@@ -77,6 +86,8 @@ export default function Client({ socialData, filters }: Props) {
                         isVisible={true}
                         isExpanded={isSocialExpanded}
                         onToggleExpand={() => setIsSocialExpanded(!isSocialExpanded)}
+                        activePanel={activeSocialPanel}
+                        onTogglePanel={toggleSocialPanel}
                     />
                 </aside>
 
@@ -113,6 +124,18 @@ export default function Client({ socialData, filters }: Props) {
                                 isVisible={showFiltersPanel}
                                 onClose={() => setShowFiltersPanel(false)}
                             />
+                        </div>
+                    )}
+
+                    {/* Paneles de social (agregar amigo / crear grupo) en desktop */}
+                    {activeSocialPanel === 'searchFriend' && (
+                        <div className={styles.desktop__social_panel}>
+                            <FriendSearch onClose={() => toggleSocialPanel(null)} />
+                        </div>
+                    )}
+                    {activeSocialPanel === 'newGroup' && (
+                        <div className={styles.desktop__social_panel}>
+                            <GroupCreate handleCancel={() => toggleSocialPanel(null)} />
                         </div>
                     )}
                 </div>

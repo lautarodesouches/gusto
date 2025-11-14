@@ -193,6 +193,18 @@
         animation: deslizar 0.3s ease-out;
     }
 
+    /* Panel de social (agregar amigo / crear grupo) en desktop */
+    .desktop__social_panel {
+        position: absolute;
+        top: 90px;
+        left: 20px;
+        z-index: 6;
+        background: transparent;
+        border: none;
+        padding: 0;
+        animation: deslizar 0.3s ease-out;
+    }
+
     @keyframes deslizar {
         from {
             opacity: 0;

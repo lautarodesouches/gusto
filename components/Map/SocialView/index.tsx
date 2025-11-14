@@ -44,10 +44,13 @@ export default function SocialView({
 }: Props) {
     return (
         <>
-            {activePanel === 'searchFriend' && <FriendSearch />}
-            {activePanel === 'newGroup' && (
-                <GroupCreate handleCancel={() => togglePanel(null)} />
-            )}
+            {/* Paneles para mobile - en desktop se renderizan en el componente padre */}
+            <div className={styles.social__panels_mobile}>
+                {activePanel === 'searchFriend' && <FriendSearch />}
+                {activePanel === 'newGroup' && (
+                    <GroupCreate handleCancel={() => togglePanel(null)} />
+                )}
+            </div>
             <section
                 className={`${styles.social} ${isVisible ? styles.show : ''} ${
                     isExpanded ? styles.social_expanded : styles.social_collapsed

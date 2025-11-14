@@ -4,9 +4,13 @@ import FriendCard from '../FriendCard'
 import { Friend } from '@/types'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faX } from '@fortawesome/free-solid-svg-icons'
 
-export default function FriendSearch() {
+interface FriendSearchProps {
+    onClose?: () => void
+}
+
+export default function FriendSearch({ onClose }: FriendSearchProps) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<Array<Friend>>([])
     const [error, setError] = useState('')
@@ -52,6 +56,15 @@ export default function FriendSearch() {
 
     return (
         <aside className={styles.search}>
+            {onClose && (
+                <button
+                    className={styles.search__close}
+                    onClick={onClose}
+                    aria-label="Cerrar"
+                >
+                    <FontAwesomeIcon icon={faX} />
+                </button>
+            )}
             <header className={styles.search__header}>
                 <FontAwesomeIcon
                     icon={faSearch}
@@ -61,10 +74,13 @@ export default function FriendSearch() {
                     type="text"
                     onChange={handleChange}
                     className={styles.search__input}
-                    placeholder="Buscar por usuario"
+                    placeholder="Usuario de tu amigo"
                     value={query}
                 />
             </header>
+            <p className={styles.search__description}>
+                Busca usuarios por su nombre de usuario para agregarlos como amigos
+            </p>
             {results.length > 0 && (
                 <div className={styles.search__results}>
                     {results.map(f => (

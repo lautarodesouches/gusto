@@ -275,6 +275,11 @@
         display: none;
     }
 
+    /* Ocultar paneles mobile en desktop - se muestran en el componente padre */
+    .social__panels_mobile {
+        display: none;
+    }
+
     .social__button {
         cursor: pointer;
         border: 1px dashed var(--light);
