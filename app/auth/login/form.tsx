@@ -7,22 +7,49 @@ import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
+import { login } from './actions'
 
-interface Form {
+interface FormData {
     email: string
     password: string
+}
+
+interface FirebaseErrorLike {
+    code?: string
+    message?: string
+}
+
+/**
+ * Mapea códigos de error de Firebase a mensajes amigables en español
+ */
+function getFirebaseErrorMessage(error: FirebaseErrorLike): string {
+    const errorMessages: Record<string, string> = {
+        'auth/user-not-found': 'El usuario no existe.',
+        'auth/wrong-password': 'Contraseña incorrecta.',
+        'auth/invalid-email': 'Email inválido.',
+        'auth/user-disabled': 'El usuario está deshabilitado.',
+        'auth/invalid-credential': 'Credenciales inválidas.',
+        'auth/too-many-requests': 'Demasiados intentos fallidos. Intenta más tarde.',
+        'auth/network-request-failed': 'Error de conexión. Verifica tu internet.',
+        'auth/operation-not-allowed': 'Operación no permitida.',
+    }
+
+    if (error.code && errorMessages[error.code]) {
+        return errorMessages[error.code]
+    }
+
+    return error.message || 'Error desconocido.'
 }
 
 export default function Form() {
     const router = useRouter()
 
-    const [form, setForm] = useState<Form>({
+    const [form, setForm] = useState<FormData>({
         email: '',
         password: '',
     })
     const [errorMessage, setErrorMessage] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
-
     const [showPassword, setShowPassword] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,10 +58,14 @@ export default function Form() {
             ...prevForm,
             [name]: value,
         }))
+        // Limpiar error cuando el usuario empieza a escribir
+        if (errorMessage) {
+            setErrorMessage('')
+        }
     }
 
     const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword)
+        setShowPassword(prev => !prev)
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -43,64 +74,43 @@ export default function Form() {
         setErrorMessage('')
 
         try {
+            // Validación básica del lado del cliente
+            if (!form.email.trim()) {
+                setErrorMessage('Por favor ingresa tu email.')
+                return
+            }
+            if (!form.password.trim()) {
+                setErrorMessage('Por favor ingresa tu contraseña.')
+                return
+            }
+
+            // Autenticación con Firebase (debe ser en el cliente)
             const auth = getAuth()
             const userCredential = await signInWithEmailAndPassword(
                 auth,
-                form.email,
+                form.email.trim(),
                 form.password
             )
 
-            // Obtener token
+            // Obtener token de Firebase
             const firebaseToken = await userCredential.user.getIdToken()
 
-            // Mandar al backend para setear cookie
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firebaseToken }),
-            })
+            // Usar server action para verificar token y establecer cookie
+            const result = await login(firebaseToken)
 
-            const data = await res.json()
-
-            if (res.ok && data.success) {
+            if (result.success) {
                 router.push(ROUTES.MAP)
             } else {
-                setErrorMessage(data.error || 'Error desconocido')
+                setErrorMessage(result.error || 'Error al iniciar sesión.')
             }
         } catch (error: unknown) {
-            // Mapear los códigos de Firebase a mensajes amigables
-            if (
-                typeof error === 'object' &&
-                error !== null &&
-                'code' in error
-            ) {
-                const firebaseError = error as {
-                    code: string
-                    message?: string
-                }
-                switch (firebaseError.code) {
-                    case 'auth/user-not-found':
-                        setErrorMessage('El usuario no existe.')
-                        break
-                    case 'auth/wrong-password':
-                        setErrorMessage('Contraseña incorrecta.')
-                        break
-                    case 'auth/invalid-email':
-                        setErrorMessage('Email inválido.')
-                        break
-                    case 'auth/user-disabled':
-                        setErrorMessage('El usuario está deshabilitado.')
-                        break
-                    case 'auth/invalid-credential':
-                        setErrorMessage('Credenciales inválidas.')
-                        break
-                    default:
-                        setErrorMessage(
-                            firebaseError.message || 'Error desconocido.'
-                        )
-                }
+            if (error && typeof error === 'object' && 'code' in error) {
+                const fbError = error as FirebaseErrorLike
+                setErrorMessage(getFirebaseErrorMessage(fbError))
+            } else if (error instanceof Error) {
+                setErrorMessage(error.message || 'Error desconocido.')
             } else {
-                setErrorMessage('Error desconocido.')
+                setErrorMessage('Error desconocido. Por favor intenta nuevamente.')
             }
         } finally {
             setIsSubmitting(false)
