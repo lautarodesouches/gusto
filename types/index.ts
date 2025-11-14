@@ -202,7 +202,6 @@ export interface Filter {
 
 export interface Filters {
     dishes: Filter[]
-    categories: Filter[]
     ratings: Filter[]
 }
 

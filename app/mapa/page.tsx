@@ -20,7 +20,6 @@ export default async function Map() {
     }
 
     const filters = {
-        categories: filtersData.data?.categories ?? [],
         dishes: filtersData.data?.dishes ?? [],
         ratings: filtersData.data?.ratings ?? [],
     }

@@ -5,7 +5,6 @@ import { faClose } from '@fortawesome/free-solid-svg-icons'
 import { FilterItem } from '../FiltersClient'
 
 interface FiltersProps {
-    categories: FilterItem[]
     dishes: FilterItem[]
     ratings: FilterItem[]
 }
@@ -14,7 +13,6 @@ interface Props {
     isVisible: boolean
     onClose: () => void
     filters: FiltersProps
-    onCategoryClick: (name: string) => void
     onDishClick: (name: string) => void
     onRatingClick: (name: string) => void
 }
@@ -56,7 +54,6 @@ export default function FiltersView({
     isVisible,
     filters,
     onClose,
-    onCategoryClick,
     onDishClick,
     onRatingClick,
 }: Props) {
@@ -71,11 +68,6 @@ export default function FiltersView({
                     </button>
                 </header>
                 <div className={styles.filter__content}>
-                    <FilterSection
-                        title="Tipo"
-                        filters={filters.categories}
-                        onItemClick={onCategoryClick}
-                    />
                     <FilterSection
                         title="Gustos"
                         filters={filters.dishes}
@@ -93,11 +85,6 @@ export default function FiltersView({
             <div className={styles.filter__desktop_layout}>
                 {/* Grid de 2 columnas */}
                 <div className={styles.filtro__columnas_principales}>
-                    <FilterSection
-                        title="Tipo"
-                        filters={filters.categories}
-                        onItemClick={onCategoryClick}
-                    />
                     <FilterSection
                         title="Gustos"
                         filters={filters.dishes}

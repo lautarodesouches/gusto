@@ -25,9 +25,6 @@ export default function FiltersClient({
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
 
-    const [categories, setCategories] = useState<FilterItem[]>(
-        filters.categories.map(f => ({ ...f, checked: false }))
-    )
     const [dishes, setDishes] = useState<FilterItem[]>(
         filters.dishes.map(f => ({ ...f, checked: false }))
     )
@@ -37,7 +34,6 @@ export default function FiltersClient({
 
     // Solo marcar los seleccionados desde la URL al montar
     useEffect(() => {
-        const tipo = searchParams.get('tipo') || ''
         const gustos = searchParams.get('gustos') || ''
         const rating = searchParams.get('rating') || ''
 
@@ -47,7 +43,6 @@ export default function FiltersClient({
                 checked: item.value === selectedValue,
             }))
 
-        setCategories(prev => markSelected(prev, tipo))
         setDishes(prev => markSelected(prev, gustos))
         setRatings(prev => markSelected(prev, rating))
     }, [searchParams])
@@ -70,8 +65,6 @@ export default function FiltersClient({
         })
     }
 
-    const handleCategoryClick = (value: string) =>
-        handleSingleSelect(value, setCategories, 'tipo')
     const handleDishClick = (value: string) =>
         handleSingleSelect(value, setDishes, 'gustos')
     const handleRatingClick = (value: string) =>
@@ -81,8 +74,7 @@ export default function FiltersClient({
         <FiltersView
             isVisible={isVisible}
             onClose={onClose}
-            filters={{ categories, dishes, ratings }}
-            onCategoryClick={handleCategoryClick}
+            filters={{ dishes, ratings }}
             onDishClick={handleDishClick}
             onRatingClick={handleRatingClick}
         />
