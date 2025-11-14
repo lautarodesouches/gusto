@@ -70,7 +70,7 @@ export default function FiltersView({
             {/* Layout mobile */}
             <div className={styles.filter__mobile_layout}>
                 <header className={styles.filter__header}>
-                    <h2 className={styles.filter__title}>Gustos & Filtros</h2>
+                    <h2 className={styles.filter__title}>Filtros</h2>
                     <button className={styles.filter__close_btn} onClick={onClose}>
                         <FontAwesomeIcon icon={faClose} />
                     </button>

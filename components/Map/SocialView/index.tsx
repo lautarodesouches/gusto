@@ -10,6 +10,8 @@ import GroupCreate from '@/components/Social/GroupCreate'
 import FriendCard from '@/components/Social/FriendCard'
 import GroupCard from '@/components/Social/GroupCard'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 interface Props {
     isVisible: boolean
@@ -42,15 +44,32 @@ export default function SocialView({
     isExpanded = true,
     onToggleExpand,
 }: Props) {
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const handleClose = () => {
+        togglePanel(null)
+    }
+
     return (
         <>
-            {/* Paneles para mobile - en desktop se renderizan en el componente padre */}
-            <div className={styles.social__panels_mobile}>
-                {activePanel === 'searchFriend' && <FriendSearch />}
-                {activePanel === 'newGroup' && (
-                    <GroupCreate handleCancel={() => togglePanel(null)} />
-                )}
-            </div>
+            {/* Modales para mobile - en desktop se renderizan en el componente padre */}
+            {mounted && typeof window !== 'undefined' && activePanel && createPortal(
+                <div className={styles.modal__backdrop} onClick={handleClose}>
+                    <div className={styles.modal__content} onClick={(e) => e.stopPropagation()}>
+                        {activePanel === 'searchFriend' && (
+                            <FriendSearch onClose={handleClose} />
+                        )}
+                        {activePanel === 'newGroup' && (
+                            <GroupCreate handleCancel={handleClose} />
+                        )}
+                    </div>
+                </div>,
+                document.body
+            )}
             <section
                 className={`${styles.social} ${isVisible ? styles.show : ''} ${
                     isExpanded ? styles.social_expanded : styles.social_collapsed

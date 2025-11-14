@@ -37,6 +37,11 @@ export default function Client({ socialData, filters }: Props) {
 
     return (
         <main className={styles.main}>
+            {/* Mobile: Mapa */}
+            <div className={styles.mobile__map_container}>
+                <MapClient containerStyle={styles.map_mobile} />
+            </div>
+
             {/* Mobile bottom nav */}
             <section className={styles.bottom}>
                 <div className={styles.bottom__container}>
