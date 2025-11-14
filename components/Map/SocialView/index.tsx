@@ -176,16 +176,8 @@ export default function SocialView({
 
                         {/* Grupos colapsados */}
                         <div className={styles.collapsed__section}>
-                            {socialData.groups.map((g, idx) => (
-                                <div 
-                                    key={g.id} 
-                                    className={styles.collapsed__avatar} 
-                                    style={{ 
-                                        backgroundColor: idx === 0 ? '#f59e0b' : '#a855f7' 
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faUsers} />
-                                </div>
+                            {socialData.groups.map((g) => (
+                                <GroupCard key={g.id} group={g} showOnlyImage />
                             ))}
                             <button className={styles.collapsed__add} onClick={() => togglePanel('newGroup')}>
                                 <FontAwesomeIcon icon={faPlus} />
