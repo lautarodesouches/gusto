@@ -1,0 +1,134 @@
+.container {
+    min-height: 100vh;
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    padding-top: 8rem;
+}
+
+.cableContainer {
+    position: absolute;
+    top: 2rem;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 1;
+}
+
+.cable {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    z-index: 2;
+    text-align: center;
+}
+
+.errorImageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.errorImage {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+}
+
+.message {
+    color: var(--white);
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.6;
+    margin: 0;
+    text-align: center;
+}
+
+.button {
+    background: var(--white);
+    color: var(--black);
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: var(--font-gliker);
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 1rem;
+}
+
+.button:hover {
+    background: var(--primary);
+    color: var(--beige);
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .cableContainer {
+        display: none;
+    }
+
+    .container {
+        padding: 1.5rem;
+        padding-top: 4rem;
+    }
+
+    .errorImage {
+        max-width: 450px;
+    }
+
+    .message {
+        font-size: 1rem;
+    }
+
+    .button {
+        padding: 0.75rem 2rem;
+        font-size: 0.9rem;
+    }
+
+    .content {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .errorImage {
+        max-width: 350px;
+    }
+
+    .message {
+        font-size: 0.9rem;
+    }
+
+    .content {
+        gap: 1.5rem;
+    }
+
+    .container {
+        padding-top: 3rem;
+    }
+}
+

@@ -1,36 +1,197 @@
+/* Estilo del InfoWindow - Contenedor principal */
+:global(.gm-style .gm-style-iw-c) {
+    background-color: #262624 !important;
+    border-radius: 1rem !important;
+    padding: 0 !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5) !important;
+    border: 3px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Contenedor del contenido */
+:global(.gm-style .gm-style-iw-d) {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+/* Triángulo/flecha que apunta al pin */
+:global(.gm-style-iw-tc) {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)) !important;
+}
+
+:global(.gm-style-iw-tc::after) {
+    background: #262624 !important;
+    background-color: #262624 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+:global(.gm-style .gm-style-iw-tc::after) {
+    background: #262624 !important;
+    background-color: #262624 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+:global(.gm-style-iw-tc > div) {
+    background: #262624 !important;
+}
+
+:global(.gm-style-iw-tc > div::after) {
+    background: #262624 !important;
+}
+
+:global(div[style*="background-color: white"]:not(button)) {
+    background-color: #262624 !important;
+}
+
+:global(.gm-style > div > div > div > div > div > div > div[style*="background-color"]) {
+    background-color: #262624 !important;
+}
+
+:global(.gm-ui-hover-effect) {
+    display: none !important;
+}
+
+:global(.gm-style .gm-style-iw) {
+    padding-top: 0 !important;
+}
+
+:global(.gm-style .gm-style-iw-d) {
+    box-sizing: border-box !important;
+}
+
+/* Botón de cerrar (X) - Estilos más agresivos */
+:global(.gm-style-iw-chr) {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 1000 !important;
+}
+
+:global(.gm-style-iw-chr > button) {
+    width: 32px !important;
+    height: 32px !important;
+    background-color: white !important;
+    background: white !important;
+    border-radius: 50% !important;
+    opacity: 1 !important;
+    border: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+}
+
+/* Ocultar imagen original */
+:global(.gm-style-iw-chr > button img) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Estilizar el span que contiene la X - con máxima especificidad */
+:global(.gm-style-iw-chr > button span),
+:global(.gm-style-iw-chr > button > span),
+:global(.gm-style-iw-chr button span) {
+    display: block !important;
+    color: #262624 !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transition: color 0.3s ease !important;
+    filter: none !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+/* Hover - cambiar a rojo con múltiples selectores */
+:global(.gm-style-iw-chr > button:hover span),
+:global(.gm-style-iw-chr > button:hover > span),
+:global(.gm-style-iw-chr button:hover span) {
+    color: #ff5050 !important;
+}
+
 .info {
     display: flex;
-    flex: 1;
     flex-direction: column;
-    gap: 5px;
+    gap: 0.875rem;
+    padding: 1rem 1.25rem 1rem 1.25rem;
+    min-width: 220px;
+    max-width: 280px;
+    background-color: transparent;
 }
 
 .info__title {
-    font-size: 0.9rem;
-    color: var(--dark);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+    padding-right: 2.5rem;
+    padding-top: 0.25rem;
 }
 
 .info__rating {
     display: flex;
-    gap: 5px;
+    gap: 0.5rem;
     align-items: center;
-    font-weight: 400;
+}
+
+.info__rating_number {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--white);
 }
 
 .info__icon {
-    color: var(--primary);
-    width: 10px;
-    height: 10px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 }
 
 .info__button {
-    margin-top: 5px;
+    width: 100%;
+    background: white;
+    color: #262624;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-family: var(--font-gliker);
+    padding: 0.75rem 1rem;
     border: none;
-    border-radius: 5px;
-    background: var(--primary);
-    color: var(--white);
-    padding: 5px;
+    border-radius: 10px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.info__button:hover {
+    background: #ff5050;
+    color: #ffeecf;
+    transform: translateY(-2px);
+}
+
+.info__button:active {
+    transform: translateY(0);
+}
+
+/* Asegurar que el link no interfiera */
+.info a {
+    text-decoration: none;
+    display: block;
+    width: 100%;
 }
 
 @media (min-width: 768px) {
