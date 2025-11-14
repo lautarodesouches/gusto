@@ -169,6 +169,7 @@
         opacity: 1;
         display: flex;
         flex-direction: column;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* Siempre mostrar en desktop */
@@ -207,9 +208,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 35px 15px 20px 15px;
-        transition: all 0.3s ease;
+        padding: 15px;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         flex-shrink: 0;
+    }
+    
+    .social__logo_full,
+    .social__logo_small {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .social__logo_full {
@@ -236,9 +242,10 @@
         cursor: pointer;
         margin: 0 15px 20px 15px;
         font-size: 0.85rem;
-        transition: all 0.3s ease;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         flex-shrink: 0;
         white-space: nowrap;
+        animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .social__contract_btn:focus {
@@ -263,7 +270,11 @@
     }
 
     .social_expanded .social__logo {
-        padding: 35px 20px 20px 20px;
+        padding: 15px;
+    }
+    
+    .social_expanded .social__content {
+        animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* Ocultar elementos mobile en desktop */
@@ -294,23 +305,15 @@
         margin-top: 0;
         flex: 1;
         min-height: 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .social__content::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    .social__content::-webkit-scrollbar-track {
+        width: 0;
+        height: 0;
         background: transparent;
-    }
-
-    .social__content::-webkit-scrollbar-thumb {
-        background: var(--grey);
-        border-radius: 4px;
-    }
-
-    .social__content::-webkit-scrollbar-thumb:hover {
-        background: var(--primary);
     }
 
     .social__div button {
@@ -324,11 +327,12 @@
     }
 
     .social_collapsed .social__logo {
-        padding: 35px 10px 20px 10px;
+        padding: 15px;
     }
 
     .social_collapsed .social__content {
         display: none;
+        opacity: 0;
     }
 
     .social_collapsed .social__contract_btn {
@@ -346,14 +350,40 @@
         overflow-y: auto;
         overflow-x: hidden;
         min-height: 0;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Ocultar scrollbar en contenido colapsado */
+    .social__collapsed_content::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        background: transparent;
+    }
+    
+    .social__collapsed_content {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
     }
 
     .social_collapsed .social__collapsed_content {
         display: flex;
+        animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .social_expanded .social__collapsed_content {
         display: none;
+        opacity: 0;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Botón expandir */
@@ -368,7 +398,8 @@
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease;
-        width: 100%;
+        width: 48px;
+        height: 48px;
         flex-shrink: 0;
     }
 
@@ -399,8 +430,8 @@
 
     /* Avatares colapsados */
     .collapsed__avatar {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -416,14 +447,14 @@
     }
 
     .collapsed__avatar svg {
-        width: 26px;
-        height: 26px;
+        width: 24px;
+        height: 24px;
     }
 
     /* Botones añadir */
     .collapsed__add {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 12px;
         border: 2px dashed var(--grey);
         background: transparent;

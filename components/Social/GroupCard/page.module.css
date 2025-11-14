@@ -41,11 +41,17 @@
     background: var(--primary);
     padding: 5px;
     border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .group__img svg {
-    width: 35px;
-    height: 35px;
+    width: 38px;
+    height: 38px;
     color: var(--white);
 }
 

@@ -147,16 +147,8 @@ export default function SocialView({
 
                         {/* Amigos colapsados */}
                         <div className={styles.collapsed__section}>
-                            {socialData.friends.slice(0, 3).map((f, idx) => (
-                                <div 
-                                    key={f.id} 
-                                    className={styles.collapsed__avatar} 
-                                    style={{ 
-                                        backgroundColor: idx === 0 ? '#667eea' : idx === 1 ? '#a3e635' : '#f87171' 
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faUsers} />
-                                </div>
+                            {socialData.friends.map((f) => (
+                                <FriendCard key={f.id} friend={f} showOnlyImage />
                             ))}
                             <button className={styles.collapsed__add} onClick={() => togglePanel('searchFriend')}>
                                 <FontAwesomeIcon icon={faPlus} />
