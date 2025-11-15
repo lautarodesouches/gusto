@@ -14,6 +14,7 @@ import { faFilter, faUsers, faX } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { useRegistrationCheck } from '@/hooks/useRegistrationCheck'
 import { IncompleteRegistrationModal } from '@/components/modal/IncompleteRegistrationModal'
+import Nav from '../Nav'
 
 
 interface Props {
