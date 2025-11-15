@@ -18,6 +18,7 @@ import { useState } from 'react'
 import Nav from '../Nav'
 import { useRegistrationCheck } from '@/hooks/useRegistrationCheck'
 import { IncompleteRegistrationModal } from '@/components/modal/IncompleteRegistrationModal'
+import Nav from '../Nav'
 
 interface Props {
     socialData: SocialData
@@ -44,16 +45,25 @@ export default function Client({ socialData, filters }: Props) {
     const toggleSocialPanel = (panel: SocialPanel) => {
         setActiveSocialPanel(prev => (prev === panel ? null : panel))
     }
+<<<<<<< HEAD
 
     // Mientras chequea…
     if (checking) {
+=======
+     if (checking) {
+>>>>>>> fde467cc4bce040a2dfb085ef4d71ed801c9890d
         return <div style={{ color: 'white', padding: 20 }}>Cargando...</div>
     }
 
     return (
         <main className={styles.main}>
+<<<<<<< HEAD
 
             {/* Modal de registro incompleto */}
+=======
+            
+            {/* Modal si no completó el registro */}
+>>>>>>> fde467cc4bce040a2dfb085ef4d71ed801c9890d
             {incompleto && <IncompleteRegistrationModal paso={paso} />}
 
             {/* Si el registro NO está completo → solo modal */}
@@ -112,6 +122,46 @@ export default function Client({ socialData, filters }: Props) {
                             onClose={() => togglePanel('social')}
                         />
                     </section>
+<<<<<<< HEAD
+=======
+                </>
+            )}
+            {/* Mobile bottom nav */}
+            <section className={styles.bottom}>
+                <div className={styles.bottom__container}>
+                    <button
+                        className={styles.bottom__button}
+                        onClick={() => togglePanel('filters')}
+                    >
+                        <FontAwesomeIcon
+                            icon={faFilter}
+                            className={styles.bottom__icon}
+                        />
+                        <span className={styles.bottom__span}>Filtros</span>
+                    </button>
+                    <button
+                        className={styles.bottom__button}
+                        onClick={() => togglePanel('social')}
+                    >
+                        <FontAwesomeIcon
+                            icon={faUsers}
+                            className={styles.bottom__icon}
+                        />
+                        <span className={styles.bottom__span}>Social</span>
+                    </button>
+                </div>
+                <FiltersClient
+                    isVisible={activePanel === 'filters'}
+                    onClose={() => togglePanel('filters')}
+                    filters={filters}
+                />
+                <SocialClient
+                    socialData={socialData}
+                    isVisible={activePanel === 'social'}
+                    onClose={() => togglePanel('social')}
+                />
+            </section>
+>>>>>>> fde467cc4bce040a2dfb085ef4d71ed801c9890d
 
                     {/* ========== DESKTOP LAYOUT ========== */}
                     <section className={styles.desktop}>
@@ -178,9 +228,20 @@ export default function Client({ socialData, filters }: Props) {
                                 </div>
                             )}
                         </div>
+<<<<<<< HEAD
                     </section>
                 </>
             )}
+=======
+                    )}
+                    {activeSocialPanel === 'newGroup' && (
+                        <div className={styles.desktop__social_panel}>
+                            <GroupCreate handleCancel={() => toggleSocialPanel(null)} />
+                        </div>
+                    )}
+                </div>
+            </section>
+>>>>>>> fde467cc4bce040a2dfb085ef4d71ed801c9890d
         </main>
     )
 }

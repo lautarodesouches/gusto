@@ -14,9 +14,7 @@ export async function GET(req: Request) {
             )
         }
 
-        // Llamar al endpoint del backend que verifica si el registro está completo
-        // Asumiendo que el backend tiene un endpoint para esto
-        // Si no existe, podemos verificar llamando a /Usuario/resumen y verificando que tenga gustos
+      
         const response = await fetch(`${API_URL}/Usuario/resumen`, {
             method: 'GET',
             headers: {
@@ -34,7 +32,7 @@ export async function GET(req: Request) {
 
         const data = await response.json()
         
-        // Consideramos el registro completo si tiene al menos 3 gustos
+     
         const registroCompleto = data.gustos && Array.isArray(data.gustos) && data.gustos.length >= 3
 
         return NextResponse.json({ registroCompleto })

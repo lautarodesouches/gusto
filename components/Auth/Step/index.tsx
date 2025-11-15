@@ -23,7 +23,7 @@ export default function Step({
     content = [],
 }: Props) {
     const step = useStep()
-    // El paso 3 muestra "SIGUIENTE", el paso 4 tiene su propio botón "FINALIZAR"
+   
     const isLastStep = false
     const { data, setData } = useRegister()
     const router = useRouter()
@@ -36,10 +36,9 @@ export default function Step({
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
 
-    // Sincronizar con los items que ya están seleccionados desde el backend
-    // Solo cuando se carga el paso por primera vez o cuando cambia el paso
+   
     useEffect(() => {
-        // Si cambió el paso, resetear el flag de inicialización
+       
         if (currentStepRef.current !== step) {
             hasInitialized.current = false
             currentStepRef.current = step
@@ -53,14 +52,13 @@ export default function Step({
                 ids: preSelected.map(i => i.id)
             })
             
-            // Sincronizar con el backend solo en la primera carga del paso
-            // Esto asegura que si el usuario vuelve atrás, vea lo que realmente está guardado
+           
             setData({
                 [stepKey]: preSelected,
             })
             hasInitialized.current = true
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+      
     }, [content, step])
 
     const getEndpoint = () => {
@@ -103,7 +101,7 @@ export default function Step({
             [stepKey]: newSelection,
         })
 
-        // Si estamos en el paso 3 (gustos) y ahora tenemos 3 o más, limpiar el error
+     
         if (step === 3 && newSelection.length >= 3) {
             setError(null)
         }
