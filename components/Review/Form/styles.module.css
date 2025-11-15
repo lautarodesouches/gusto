@@ -161,11 +161,33 @@
     color: white;
     font-size: 1rem;
     cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
 }
 
 .reviewForm__select:focus {
     outline: none;
     border-color: #ff5757;
+}
+
+.reviewForm__select:hover {
+    border-color: #4a4a4a;
+}
+
+.reviewForm__dateContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .reviewForm__dateContainer {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Botones de tipo de visita */

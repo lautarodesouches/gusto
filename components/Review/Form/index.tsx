@@ -64,7 +64,8 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
         if (currentRating >= starIndex - 0.5) return 'half'
         return 'empty'
     }
-    const [visitDate, setVisitDate] = useState('')
+    const [visitMonth, setVisitMonth] = useState('')
+    const [visitYear, setVisitYear] = useState('')
     const [visitType, setVisitType] = useState<string>('')
     const [comment, setComment] = useState('')
     const [title, setTitle] = useState('')
@@ -73,7 +74,11 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
     const [agreed, setAgreed] = useState(false)
 
     const currentYear = new Date().getFullYear()
-    const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
+    const currentMonth = new Date().getMonth() + 1
+    const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
+    
+    // Construir visitDate cuando cambian mes o año
+    const visitDate = visitMonth && visitYear ? `${visitYear}-${visitMonth}` : ''
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
@@ -116,7 +121,9 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
         const formData = new FormData()
         formData.append('restaurantId', restaurant.id)
         formData.append('rating', rating.toString())
-        formData.append('visitDate', visitDate)
+        if (visitDate) {
+            formData.append('visitDate', visitDate)
+        }
         formData.append('visitType', visitType)
         formData.append('comment', comment)
         formData.append('title', title)
@@ -242,26 +249,57 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
                     {/* Fecha de visita */}
                     <div className={styles.reviewForm__field}>
                         <label className={styles.reviewForm__label}>
-                            ¿Cúando fuiste?
+                            ¿Cuándo fuiste?
                         </label>
-                        <select
-                            className={styles.reviewForm__select}
-                            value={visitDate}
-                            onChange={e => setVisitDate(e.target.value)}
-                            required
-                        >
-                            <option value="">Seleccionar mes y año</option>
-                            {years.map(year =>
-                                MONTHS.map((month, index) => (
-                                    <option
-                                        key={`${year}-${index}`}
-                                        value={`${year}-${index + 1}`}
-                                    >
-                                        {month} {year}
+                        <div className={styles.reviewForm__dateContainer}>
+                            <select
+                                className={styles.reviewForm__select}
+                                value={visitMonth}
+                                onChange={e => setVisitMonth(e.target.value)}
+                                required
+                            >
+                                <option value="">Mes</option>
+                                {MONTHS.map((month, index) => {
+                                    const monthValue = String(index + 1).padStart(2, '0')
+                                    // Solo permitir meses pasados si es el año actual
+                                    if (visitYear === String(currentYear)) {
+                                        if (index + 1 > currentMonth) {
+                                            return null
+                                        }
+                                    }
+                                    return (
+                                        <option
+                                            key={index}
+                                            value={monthValue}
+                                        >
+                                            {month}
+                                        </option>
+                                    )
+                                })}
+                            </select>
+                            <select
+                                className={styles.reviewForm__select}
+                                value={visitYear}
+                                onChange={e => {
+                                    setVisitYear(e.target.value)
+                                    // Si el mes seleccionado es mayor al mes actual del año seleccionado, resetear mes
+                                    if (e.target.value === String(currentYear)) {
+                                        const selectedMonth = parseInt(visitMonth)
+                                        if (selectedMonth > currentMonth) {
+                                            setVisitMonth('')
+                                        }
+                                    }
+                                }}
+                                required
+                            >
+                                <option value="">Año</option>
+                                {years.map(year => (
+                                    <option key={year} value={year}>
+                                        {year}
                                     </option>
-                                ))
-                            )}
-                        </select>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     {/* Tipo de visita */}
