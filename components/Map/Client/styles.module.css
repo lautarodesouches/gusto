@@ -12,57 +12,78 @@
 
 /* Navegación inferior para mobile */
 .bottom {
-    bottom: 20px;
-    width: 90%;
-    left: 5%;
-    margin: auto;
-    position: absolute;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
     flex-direction: column-reverse;
-    gap: 20px;
+    gap: 15px;
+    padding: 0;
 }
 
-.bottom__container {
-    z-index: 2;
-    position: relative;
-    padding: 10px 0;
-    /* Efecto glassmorphism */
-    background: rgba(45, 45, 43, 0.9);
+/* Wrapper principal - Fondo oscuro que abarca todo el ancho */
+.bottom__wrapper {
+    width: 100%;
+    background: rgba(45, 45, 43, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    border-radius: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Buscador en la parte superior del contenedor */
+.bottom__search {
+    width: 100%;
+}
+
+/* Contenedor de botones */
+.bottom__buttons {
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 .bottom__button {
-    width: 40%;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    background: none;
-    color: var(--light);
+    gap: 8px;
+    background: var(--background);
+    color: var(--white);
     border: 1px solid var(--grey);
-    padding: 10px 5px;
-    border-radius: 10px;
+    padding: 12px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.bottom__button:hover {
+    background: var(--dark);
+    border-color: var(--light);
+}
+
+.bottom__button:active {
+    transform: scale(0.98);
 }
 
 .bottom__icon {
-    width: 30px;
-    height: 30px;
-    fill: var(--grey);
+    width: 24px;
+    height: 24px;
+    color: var(--white);
 }
 
 .bottom__span {
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 /* Mapa */
@@ -83,6 +104,29 @@
     width: 100%;
 }
 
+/* Selectores flotantes en mobile (superior izquierda) */
+.mobile__filters {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 20;
+    pointer-events: auto;
+    overflow: visible;
+}
+
+/* Perfil flotante en mobile (superior derecha) */
+.mobile__profile {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.mobile__profile > * {
+    pointer-events: auto;
+}
+
 /* Desktop oculto en mobile */
 .desktop {
     display: none;
@@ -98,6 +142,12 @@
 
     /* Ocultar mapa mobile en desktop */
     .mobile__map_container {
+        display: none;
+    }
+
+    /* Ocultar elementos mobile en desktop */
+    .mobile__filters,
+    .mobile__profile {
         display: none;
     }
 

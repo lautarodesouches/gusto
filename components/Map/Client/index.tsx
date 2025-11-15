@@ -6,6 +6,7 @@ import MapClient from '../MapClient'
 import SocialClient from '../SocialClient'
 import SearchBar from '../SearchBar'
 import ProfileBar from '../ProfileBar'
+import FiltersSelector from '../FiltersSelector'
 import FriendSearch from '@/components/Social/FriendSearch'
 import GroupCreate from '@/components/Social/GroupCreate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -39,33 +40,54 @@ export default function Client({ socialData, filters }: Props) {
         <main className={styles.main}>
             {/* Mobile: Mapa */}
             <div className={styles.mobile__map_container}>
+                {/* Selectores en la parte superior izquierda */}
+                <div className={styles.mobile__filters}>
+                    <FiltersSelector />
+                </div>
+
+                {/* Perfil y notificaciones en la parte superior derecha */}
+                <div className={styles.mobile__profile}>
+                    <ProfileBar />
+                </div>
+
                 <MapClient containerStyle={styles.map_mobile} />
             </div>
 
-            {/* Mobile bottom nav */}
+            {/* Mobile bottom nav - NUEVO DISEÑO */}
             <section className={styles.bottom}>
-                <div className={styles.bottom__container}>
-                    <button
-                        className={styles.bottom__button}
-                        onClick={() => togglePanel('filters')}
-                    >
-                        <FontAwesomeIcon
-                            icon={faFilter}
-                            className={styles.bottom__icon}
-                        />
-                        <span className={styles.bottom__span}>Filtros</span>
-                    </button>
-                    <button
-                        className={styles.bottom__button}
-                        onClick={() => togglePanel('social')}
-                    >
-                        <FontAwesomeIcon
-                            icon={faUsers}
-                            className={styles.bottom__icon}
-                        />
-                        <span className={styles.bottom__span}>Social</span>
-                    </button>
+                {/* Contenedor principal con fondo oscuro */}
+                <div className={styles.bottom__wrapper}>
+                    {/* Buscador arriba */}
+                    <div className={styles.bottom__search}>
+                        <SearchBar />
+                    </div>
+
+                    {/* Botones Filtros y Social debajo */}
+                    <div className={styles.bottom__buttons}>
+                        <button
+                            className={styles.bottom__button}
+                            onClick={() => togglePanel('filters')}
+                        >
+                            <FontAwesomeIcon
+                                icon={faFilter}
+                                className={styles.bottom__icon}
+                            />
+                            <span className={styles.bottom__span}>Filtros</span>
+                        </button>
+                        <button
+                            className={styles.bottom__button}
+                            onClick={() => togglePanel('social')}
+                        >
+                            <FontAwesomeIcon
+                                icon={faUsers}
+                                className={styles.bottom__icon}
+                            />
+                            <span className={styles.bottom__span}>Social</span>
+                        </button>
+                    </div>
                 </div>
+
+                {/* Paneles desplegables */}
                 <FiltersClient
                     isVisible={activePanel === 'filters'}
                     onClose={() => togglePanel('filters')}
