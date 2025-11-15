@@ -5,7 +5,6 @@ import { Friend } from '@/types'
 import {
     faCircleCheck,
     faCirclePlus,
-    faInfo,
     faThumbsDown,
     faThumbsUp,
     faUser,
@@ -30,7 +29,9 @@ export default function FriendCard({
     const [loading, setLoading] = useState(false)
     const [isInvitating, setIsInvitating] = useState(false)
 
-    const handleAddFriend = async () => {
+    const handleAddFriend = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
         setLoading(true)
 
         try {
@@ -52,7 +53,9 @@ export default function FriendCard({
         }
     }
 
-    const handleAction = async (action: 'aceptar' | 'rechazar') => {
+    const handleAction = async (action: 'aceptar' | 'rechazar', e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
         if (!invitationId) return
 
         setLoading(true)
@@ -76,17 +79,23 @@ export default function FriendCard({
 
     return (
         <li className={`${styles.user} ${loading ? styles.loading : ''}`}>
-            <div className={styles.user__img}>
-                {friend.fotoPerfilUrl ? (
-                    <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
-                ) : (
-                    <FontAwesomeIcon icon={faUser} />
-                )}
-            </div>
-            <div className={styles.user__data}>
-                <p className={styles.user__name}>{friend.nombre}</p>
-                <p className={styles.user__user}>{friend.username}</p>
-            </div>
+            <Link
+                href={`${ROUTES.PROFILE}${friend.username}`}
+                className={styles.user__link}
+            >
+                <div className={styles.user__img}>
+                    {friend.fotoPerfilUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                    ) : (
+                        <FontAwesomeIcon icon={faUser} />
+                    )}
+                </div>
+                <div className={styles.user__data}>
+                    <p className={styles.user__name}>{friend.nombre}</p>
+                    <p className={styles.user__user}>{friend.username}</p>
+                </div>
+            </Link>
             {isSearching && (
                 <div className={styles.user__info}>
                     <FontAwesomeIcon
@@ -101,23 +110,13 @@ export default function FriendCard({
                     <FontAwesomeIcon
                         icon={faThumbsUp}
                         className={styles.user__icon}
-                        onClick={() => handleAction('aceptar')}
+                        onClick={(e) => handleAction('aceptar', e)}
                     />
                     <FontAwesomeIcon
                         icon={faThumbsDown}
                         className={styles.user__icon}
-                        onClick={() => handleAction('rechazar')}
+                        onClick={(e) => handleAction('rechazar', e)}
                     />
-                </div>
-            )}
-            {!invitationId && (
-                <div className={styles.user__info}>
-                    <Link href={`${ROUTES.PROFILE}${friend.username}`}>
-                        <FontAwesomeIcon
-                            icon={faInfo}
-                            className={styles.user__icon}
-                        />
-                    </Link>
                 </div>
             )}
         </li>

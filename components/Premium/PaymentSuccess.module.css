@@ -1,0 +1,212 @@
+/* Pantalla de pago exitoso */
+.pantalla {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--primary);
+    opacity: 0;
+    transform: scale(0.95);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pantalla.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.pantalla.saliendo {
+    opacity: 0;
+    transform: scale(1.05);
+}
+
+/* Contenido centrado */
+.contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+    flex: 1;
+    justify-content: center;
+}
+
+/* Contenedor del SVG check personalizado */
+.check_contenedor {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 40px;
+    animation: checkBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.check_svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@keyframes checkBounce {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Título sin emoji */
+.titulo {
+    font-family: var(--font-gliker);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 20px;
+    animation: fadeInUp 0.5s ease-out 0.4s both;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Mensaje principal */
+.mensaje {
+    font-size: 1.5rem;
+    color: var(--beige);
+    margin-bottom: 15px;
+    animation: fadeInUp 0.5s ease-out 0.5s both;
+}
+
+.premium_text {
+    font-weight: 700;
+    color: var(--white);
+}
+
+/* Submensaje */
+.submensaje {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    animation: fadeInUp 0.5s ease-out 0.6s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Barra de progreso inferior - pegada al fondo, ancho completo y gruesa */
+.barra_container {
+    width: 100%;
+    padding: 0;
+    animation: fadeInUp 0.5s ease-out 0.7s both;
+}
+
+.barra_texto {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--white);
+    text-align: center;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+/* Fondo de la barra - más gruesa */
+.barra_fondo {
+    width: 100%;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+/* Progreso de la barra */
+.barra_progreso {
+    height: 100%;
+    background: var(--white);
+    width: 0%;
+    animation: llenarBarra 3s linear forwards;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes llenarBarra {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contenido {
+        padding: 30px 20px;
+    }
+
+    .check_contenedor {
+        width: 160px;
+        height: 160px;
+        margin-bottom: 30px;
+    }
+
+    .titulo {
+        font-size: 2.8rem;
+    }
+
+    .mensaje {
+        font-size: 1.3rem;
+    }
+
+    .submensaje {
+        font-size: 1.1rem;
+    }
+
+    .barra_texto {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .barra_fondo {
+        height: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .check_contenedor {
+        width: 140px;
+        height: 140px;
+        margin-bottom: 25px;
+    }
+
+    .titulo {
+        font-size: 2.2rem;
+        letter-spacing: 1px;
+    }
+
+    .mensaje {
+        font-size: 1.1rem;
+    }
+
+    .submensaje {
+        font-size: 1rem;
+    }
+
+    .barra_texto {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+
+    .barra_fondo {
+        height: 20px;
+    }
+}

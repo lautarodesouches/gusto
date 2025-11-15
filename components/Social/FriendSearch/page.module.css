@@ -1,5 +1,10 @@
 .search {
-    background: var(--background);
+    /* Efecto glassmorphism */
+    background: rgba(45, 45, 43, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     position: absolute;
     top: 10px;
     left: -320px;
@@ -11,32 +16,100 @@
     z-index: 11;
 }
 
+.search__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    z-index: 12;
+}
+
+.search__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.search__close svg {
+    width: 14px;
+    height: 14px;
+}
+
+@media (min-width: 768px) {
+    .search {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-width: 280px;
+        max-width: 280px;
+    }
+    
+    .search__close {
+        position: absolute;
+    }
+}
+
 .search__header {
     width: 100%;
-    background: var(--dark);
     display: flex;
-    gap: 5px;
-    border-radius: 10px;
-    padding: 5px;
     align-items: center;
+    gap: 0.75rem;
+    background-color: var(--background);
+    border: 1px solid var(--grey);
+    border-radius: 10px;
+    padding: 0.5rem 1.25rem;
+    min-height: 2.75rem;
+    transition: all 0.2s ease;
+}
+
+.search__header:focus-within {
+    border-color: var(--light);
+    background-color: var(--dark);
+}
+
+.search__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--white);
+    flex-shrink: 0;
 }
 
 .search__input {
-    background: none;
-    border: none;
-    border-radius: 10px;
     width: 100%;
-    height: 30px;
-    padding: 5px;
+    color: var(--white);
+    font-size: 0.95rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.search__input::placeholder {
     color: var(--light);
 }
 
-.search__input:focus-visible{
+.search__input:focus {
     outline: none;
 }
 
-.search__header:has(.search__input:focus-visible) {
-    outline: 1px solid var(--primary);
+.search__description {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding: 0 5px;
+    color: var(--light);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: center;
 }
 
 .search__results {

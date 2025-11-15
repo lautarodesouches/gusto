@@ -8,40 +8,61 @@ import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import { auth } from '@/lib/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { register } from '../../actions/register'
 
 const fields = [
     {
         name: 'email',
         type: 'email',
         placeholder: 'ejemplo@gmail.com',
-        isPassword: false,
     },
     {
         name: 'password',
         type: 'password',
         placeholder: 'Contraseña',
-        isPassword: true,
     },
     {
         name: 'repeat',
         type: 'password',
         placeholder: 'Repetir',
-        isPassword: true,
     },
-    { name: 'name', type: 'text', placeholder: 'Nombre', isPassword: false },
+    { name: 'name', type: 'text', placeholder: 'Nombre' },
     {
         name: 'lastname',
         type: 'text',
         placeholder: 'Apellido',
-        isPassword: false,
     },
     {
         name: 'username',
         type: 'text',
         placeholder: 'Usuario',
-        isPassword: false,
     },
-]
+] as const
+
+interface FirebaseErrorLike {
+    code?: string
+    message?: string
+}
+
+/**
+ * Mapea códigos de error de Firebase a mensajes amigables en español
+ */
+function getFirebaseErrorMessage(error: FirebaseErrorLike): string {
+    const errorMessages: Record<string, string> = {
+        'auth/email-already-in-use': 'El email ya está registrado.',
+        'auth/weak-password': 'La contraseña es muy débil.',
+        'auth/invalid-email': 'El email ingresado no es válido.',
+        'auth/operation-not-allowed': 'Operación no permitida.',
+        'auth/network-request-failed':
+            'Error de conexión. Verifica tu internet.',
+    }
+
+    if (error.code && errorMessages[error.code]) {
+        return errorMessages[error.code]
+    }
+
+    return error.message || 'Error desconocido.'
+}
 
 export default function Form() {
     const router = useRouter()
@@ -56,6 +77,10 @@ export default function Form() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setForm(prev => ({ ...prev, [name]: { value, error: '' } }))
+        // Limpiar error global cuando el usuario empieza a escribir
+        if (globalError) {
+            setGlobalError('')
+        }
     }
 
     const setFieldError = (field: keyof FormState, message: string) => {
@@ -78,68 +103,71 @@ export default function Form() {
         }
 
         try {
-            // Firebase
+            // Autenticación con Firebase (debe ser en el cliente)
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
-                form.email.value,
+                form.email.value.trim(),
                 form.password.value
             )
             const user = userCredential.user
             const idToken = await user.getIdToken()
 
-            // Registro en backend
-            const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: form.name.value,
-                    apellido: form.lastname.value,
-                    email: form.email.value,
-                    username: form.username.value,
-                    firebaseToken: idToken,
-                }),
+            // Usar server action para registrar usuario y establecer cookie
+            const result = await register(idToken, {
+                nombre: form.name.value.trim(),
+                apellido: form.lastname.value.trim(),
+                email: form.email.value.trim(),
+                username: form.username.value.trim(),
             })
 
-            if (!res.ok) {
-                const data = await res.json()
-                console.error('Error en el registro externo:', {
-                    status: res.status,
-                    statusText: res.statusText,
-                    errorData: data,
-                })
-                throw new Error(
-                    data.error || data.message || 'Error en el registro'
-                )
+            if (result.success) {
+                router.push(ROUTES.RESTAURANT__ADD)
+            } else {
+                // Manejar errores del backend
+                const errorMessage = result.error || 'Error en el registro'
+
+                // Intentar mapear errores comunes del backend a campos específicos
+                if (
+                    errorMessage.toLowerCase().includes('email') ||
+                    errorMessage.toLowerCase().includes('correo')
+                ) {
+                    setFieldError('email', errorMessage)
+                } else if (
+                    errorMessage.toLowerCase().includes('usuario') ||
+                    errorMessage.toLowerCase().includes('username')
+                ) {
+                    setFieldError('username', errorMessage)
+                } else {
+                    setGlobalError(errorMessage)
+                }
             }
-
-            router.push(ROUTES.RESTAURANT__ADD)
         } catch (error: unknown) {
-            type FirebaseErrorLike = { code?: string; message: string }
-
+            // Manejar errores de Firebase
             if (error && typeof error === 'object' && 'code' in error) {
                 const fbError = error as FirebaseErrorLike
+                const errorMessage = getFirebaseErrorMessage(fbError)
+
+                // Mapear errores de Firebase a campos específicos
                 switch (fbError.code) {
                     case 'auth/email-already-in-use':
-                        setFieldError('email', 'El email ya está registrado.')
+                        setFieldError('email', errorMessage)
                         break
                     case 'auth/weak-password':
-                        setFieldError('password', 'La contraseña es muy débil.')
+                        setFieldError('password', errorMessage)
                         break
                     case 'auth/invalid-email':
-                        setFieldError(
-                            'email',
-                            'El email ingresado no es válido.'
-                        )
+                        setFieldError('email', errorMessage)
                         break
                     default:
-                        setGlobalError(fbError.message)
+                        setGlobalError(errorMessage)
                 }
             } else if (error instanceof Error) {
-                setGlobalError(error.message)
+                setGlobalError(error.message || 'Error desconocido.')
             } else {
-                setGlobalError('Error inesperado')
+                setGlobalError(
+                    'Error inesperado. Por favor intenta nuevamente.'
+                )
             }
-            console.error('Registro falló:', error)
         } finally {
             setIsButtonDisabled(false)
         }
@@ -159,7 +187,9 @@ export default function Form() {
                             value={form[field].value}
                             error={form[field].error}
                             onChange={handleChange}
-                            isPassword={f.isPassword}
+                            isPassword={
+                                f.name === 'password' || f.name === 'repeat'
+                            }
                         />
                     )
                 })}
