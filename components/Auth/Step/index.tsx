@@ -110,16 +110,6 @@ export default function Step({
     }
 
     const handleNext = async () => {
-        // Validación especial para paso 3 (gustos): mínimo 3 gustos
-        if (step === 3) {
-            const current = selected as RegisterItem[]
-            if (current.length < 3) {
-                setError('Debes seleccionar al menos 3 gustos para continuar.')
-                return
-            }
-        }
-
-        // Guardar en el backend antes de avanzar
         const endpoint = getEndpoint()
         if (!endpoint || !token) {
             router.push(`/auth/register/step/${step + 1}`)
@@ -133,6 +123,37 @@ export default function Step({
             const current = selected as RegisterItem[]
             const ids = current.map(item => item.id)
             const skip = current.length === 0
+
+            // Para paso 3 (gustos): validar mínimo de 3, pero SIEMPRE guardar
+            if (step === 3) {
+                if (current.length < 3) {
+                    // Guardar igual para sincronizar con backend (aunque tenga 0 gustos)
+                    console.log(`[Step ${step}] Guardando con menos de 3 gustos (sincronización):`, { ids, skip, endpoint })
+                    
+                    const saveResponse = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            ids,
+                            skip,
+                        }),
+                    })
+
+                    if (!saveResponse.ok) {
+                        const errorData = await saveResponse.json().catch(() => ({}))
+                        console.error(`[Step ${step}] Error guardando:`, errorData)
+                    } else {
+                        // Guardado exitoso, resetear flag para recargar desde backend
+                        hasInitialized.current = false
+                    }
+
+                    // Mostrar error y NO avanzar
+                    setError('Debes seleccionar al menos 3 gustos para continuar.')
+                    return
+                }
+            }
 
             console.log(`[Step ${step}] Guardando:`, { ids, skip, endpoint })
 

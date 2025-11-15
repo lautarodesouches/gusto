@@ -1,7 +1,9 @@
 import { AuthStep } from '@/components'
+
 import { API_URL } from '@/constants'
 import { RegisterItem } from '@/types'
 import { cookies } from 'next/headers'
+import { PreventWrapper } from '../../PreventWrapper'
 
 const getData = async () => {
     const cookieStore = await cookies()
@@ -40,11 +42,14 @@ export default async function Step() {
     const data = await getData()
 
     return (
-        <AuthStep
-            title="Alguna alergia o intolerancia?"
-            description="Selecciona las que corresponden; son preferencias críticas"
-            inputDescription="Escribe tus alergias o intolerancias"
-            content={data}
-        />
+        <>
+            <PreventWrapper />
+            <AuthStep
+                title="Alguna alergia o intolerancia?"
+                description="Selecciona las que corresponden; son preferencias críticas"
+                inputDescription="Escribe tus alergias o intolerancias"
+                content={data}
+            />
+        </>
     )
 }

@@ -2,6 +2,7 @@ import { AuthStep } from '@/components'
 import { API_URL } from '@/constants'
 import { RegisterItem } from '@/types'
 import { cookies } from 'next/headers'
+import { PreventWrapper } from '../../PreventWrapper'
 
 const getData = async () => {
     const cookieStore = await cookies()
@@ -37,14 +38,19 @@ const getData = async () => {
 }
 
 export default async function StepThree() {
+    
+
     const data = await getData()
 
     return (
+         <>
+            <PreventWrapper />
         <AuthStep
             title="Condiciones médicas o dietas especiales"
             description="Información que afecta a las recomendaciones (ej: diabetes)"
             inputDescription="Escribe tus condiciones médicas o dietas"
             content={data}
-        />
+             />
+        </>
     )
 }
