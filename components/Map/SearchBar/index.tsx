@@ -3,9 +3,14 @@ import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
 import Image from 'next/image'
 
 export default function SearchBar() {
+    const searchParams = useSearchParams()
+    const updateUrlParam = useUpdateUrlParam()
+    
     const [kmOpen, setKmOpen] = useState(false)
     const [friendsOpen, setFriendsOpen] = useState(false)
     const [selectedKm, setSelectedKm] = useState('3k')
@@ -22,9 +27,41 @@ export default function SearchBar() {
         { name: 'Amigo 4', color: '#9C27B0', isDefault: false }
     ]
 
+    // Inicializar selectedKm desde la URL
+    useEffect(() => {
+        const kmFromUrl = searchParams.get('radius')
+        if (kmFromUrl) {
+            // Convertir de metros a formato km (ej: 3000 -> '3k')
+            const meters = parseInt(kmFromUrl)
+            if (meters === 3000) setSelectedKm('3k')
+            else if (meters === 6000) setSelectedKm('6k')
+            else if (meters === 10000) setSelectedKm('10k')
+            else if (meters >= 50000 || kmFromUrl === 'Max') setSelectedKm('Max')
+        }
+    }, [searchParams])
+
     const handleKmSelect = (option: string) => {
         setSelectedKm(option)
         setKmOpen(false)
+        
+        // Convertir opción a metros y guardar en URL
+        let radiusMeters: string | null = null
+        switch (option) {
+            case '3k':
+                radiusMeters = '3000'
+                break
+            case '6k':
+                radiusMeters = '6000'
+                break
+            case '10k':
+                radiusMeters = '10000'
+                break
+            case 'Max':
+                radiusMeters = '50000' // o un valor muy grande
+                break
+        }
+        
+        updateUrlParam('radius', radiusMeters)
     }
 
     const handleFriendSelect = (friendName: string) => {
