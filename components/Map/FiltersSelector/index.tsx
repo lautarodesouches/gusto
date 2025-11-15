@@ -1,13 +1,13 @@
 'use client'
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
 import Image from 'next/image'
 
-export default function SearchBar() {
+export default function FiltersSelector() {
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
     
@@ -31,7 +31,6 @@ export default function SearchBar() {
     useEffect(() => {
         const kmFromUrl = searchParams.get('radius')
         if (kmFromUrl) {
-            // Convertir de metros a formato km (ej: 3000 -> '3k')
             const meters = parseInt(kmFromUrl)
             if (meters === 3000) setSelectedKm('3k')
             else if (meters === 6000) setSelectedKm('6k')
@@ -44,7 +43,6 @@ export default function SearchBar() {
         setSelectedKm(option)
         setKmOpen(false)
         
-        // Convertir opción a metros y guardar en URL
         let radiusMeters: string | null = null
         switch (option) {
             case '3k':
@@ -57,7 +55,7 @@ export default function SearchBar() {
                 radiusMeters = '10000'
                 break
             case 'Max':
-                radiusMeters = '50000' // o un valor muy grande
+                radiusMeters = '50000'
                 break
         }
         
@@ -90,18 +88,7 @@ export default function SearchBar() {
     }, [])
 
     return (
-        <div className={styles.buscador}>
-            {/* Campo de búsqueda */}
-            <div className={styles.buscador__campo}>
-                <FontAwesomeIcon icon={faSearch} className={styles.buscador__icono} />
-                <input
-                    type="text"
-                    placeholder="Escribe un lugar"
-                    name="search"
-                    className={styles.buscador__input}
-                />
-            </div>
-
+        <div className={styles.selector}>
             {/* Select de Kilómetros */}
             <div className={styles.select} ref={kmRef}>
                 <button 
@@ -198,3 +185,4 @@ export default function SearchBar() {
         </div>
     )
 }
+

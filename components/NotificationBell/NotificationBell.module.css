@@ -1,9 +1,12 @@
 /* Contenedor principal */
 .contenedor {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 100%;
+  height: 2.75rem;
+  min-height: 2.75rem;
 }
 
 /* Icono de campana */
@@ -13,6 +16,9 @@
   color: var(--white);
   transition: 0.2s;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Icono activo (cuando el panel está abierto) */
@@ -57,6 +63,7 @@
   color: var(--white);
   display: flex;
   flex-direction: column;
+  margin-top: 0;
 }
 
 @keyframes deslizar {

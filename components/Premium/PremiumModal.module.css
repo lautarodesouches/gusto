@@ -246,7 +246,7 @@
     justify-content: center;
 }
 
-/* Botón cerrar en esquina superior derecha */
+/* Botón cerrar en esquina superior derecha (desktop) */
 .boton_cerrar {
     position: absolute;
     top: 20px;
@@ -272,6 +272,35 @@
 }
 
 .boton_cerrar:active {
+    transform: scale(0.95);
+}
+
+/* Botón cerrar para mobile (solo visible en mobile) */
+.boton_cerrar_mobile {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--background);
+    border: 2px solid var(--grey);
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 20;
+}
+
+.boton_cerrar_mobile:hover {
+    background: var(--dark);
+    border-color: var(--white);
+    transform: scale(1.05);
+}
+
+.boton_cerrar_mobile:active {
     transform: scale(0.95);
 }
 
@@ -313,6 +342,11 @@
         display: none;
     }
 
+    /* Mostrar botón cerrar mobile */
+    .boton_cerrar_mobile {
+        display: flex;
+    }
+
     .columna_contenido {
         padding: 0;
     }
@@ -337,6 +371,14 @@
 
     .modal {
         padding: 25px 20px;
+    }
+
+    /* Ajustar botón cerrar mobile para pantallas pequeñas */
+    .boton_cerrar_mobile {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
     }
 
     .columna_contenido {

@@ -71,6 +71,7 @@
     min-height: 2.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    height: 2.75rem;
 }
 
 .notificacion:hover {
@@ -95,6 +96,7 @@
 
 /* Botón de perfil */
 .boton_perfil {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -103,6 +105,7 @@
     border-radius: 3rem;
     padding: 0.5rem 1rem 0.5rem 0.5rem;
     min-height: 2.75rem;
+    height: 2.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -176,6 +179,7 @@
     z-index: 1000;
     overflow: hidden;
     animation: aparecer 0.2s ease-in-out;
+    margin-top: 0;
 }
 
 @keyframes aparecer {
@@ -229,4 +233,42 @@
 
 .menu__item:last-child:hover {
     background: rgba(255, 80, 80, 0.1);
+}
+
+/* ==================== MOBILE ==================== */
+@media (max-width: 768px) {
+    /* Ocultar el texto del nombre en mobile */
+    .nombre {
+        display: none;
+    }
+
+    /* Hacer el botón premium más pequeño */
+    .boton_premium__texto {
+        display: none;
+    }
+
+    .boton_premium {
+        padding: 0.5rem;
+        min-width: 2.75rem;
+        justify-content: center;
+    }
+
+    /* Ajustar el contenedor para mobile */
+    .contenedor {
+        gap: 0.5rem;
+        padding: 0.375rem;
+    }
+
+    /* Ajustar botón de perfil */
+    .boton_perfil {
+        padding: 0.5rem;
+        min-width: 2.75rem;
+        justify-content: center;
+    }
+
+    /* Notificación más compacta */
+    .notificacion {
+        padding: 0.5rem;
+        min-width: 2.75rem;
+    }
 }

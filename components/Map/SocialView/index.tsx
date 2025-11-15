@@ -10,6 +10,8 @@ import GroupCreate from '@/components/Social/GroupCreate'
 import FriendCard from '@/components/Social/FriendCard'
 import GroupCard from '@/components/Social/GroupCard'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 interface Props {
     isVisible: boolean
@@ -42,15 +44,32 @@ export default function SocialView({
     isExpanded = true,
     onToggleExpand,
 }: Props) {
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    const handleClose = () => {
+        togglePanel(null)
+    }
+
     return (
         <>
-            {/* Paneles para mobile - en desktop se renderizan en el componente padre */}
-            <div className={styles.social__panels_mobile}>
-                {activePanel === 'searchFriend' && <FriendSearch />}
-                {activePanel === 'newGroup' && (
-                    <GroupCreate handleCancel={() => togglePanel(null)} />
-                )}
-            </div>
+            {/* Modales para mobile - en desktop se renderizan en el componente padre */}
+            {mounted && typeof window !== 'undefined' && activePanel && createPortal(
+                <div className={styles.modal__backdrop} onClick={handleClose}>
+                    <div className={styles.modal__content} onClick={(e) => e.stopPropagation()}>
+                        {activePanel === 'searchFriend' && (
+                            <FriendSearch onClose={handleClose} />
+                        )}
+                        {activePanel === 'newGroup' && (
+                            <GroupCreate handleCancel={handleClose} />
+                        )}
+                    </div>
+                </div>,
+                document.body
+            )}
             <section
                 className={`${styles.social} ${isVisible ? styles.show : ''} ${
                     isExpanded ? styles.social_expanded : styles.social_collapsed
@@ -147,16 +166,8 @@ export default function SocialView({
 
                         {/* Amigos colapsados */}
                         <div className={styles.collapsed__section}>
-                            {socialData.friends.slice(0, 3).map((f, idx) => (
-                                <div 
-                                    key={f.id} 
-                                    className={styles.collapsed__avatar} 
-                                    style={{ 
-                                        backgroundColor: idx === 0 ? '#667eea' : idx === 1 ? '#a3e635' : '#f87171' 
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faUsers} />
-                                </div>
+                            {socialData.friends.map((f) => (
+                                <FriendCard key={f.id} friend={f} showOnlyImage />
                             ))}
                             <button className={styles.collapsed__add} onClick={() => togglePanel('searchFriend')}>
                                 <FontAwesomeIcon icon={faPlus} />
@@ -165,16 +176,8 @@ export default function SocialView({
 
                         {/* Grupos colapsados */}
                         <div className={styles.collapsed__section}>
-                            {socialData.groups.map((g, idx) => (
-                                <div 
-                                    key={g.id} 
-                                    className={styles.collapsed__avatar} 
-                                    style={{ 
-                                        backgroundColor: idx === 0 ? '#f59e0b' : '#a855f7' 
-                                    }}
-                                >
-                                    <FontAwesomeIcon icon={faUsers} />
-                                </div>
+                            {socialData.groups.map((g) => (
+                                <GroupCard key={g.id} group={g} showOnlyImage />
                             ))}
                             <button className={styles.collapsed__add} onClick={() => togglePanel('newGroup')}>
                                 <FontAwesomeIcon icon={faPlus} />

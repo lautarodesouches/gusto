@@ -19,10 +19,12 @@ export default function FriendCard({
     friend,
     isSearching,
     invitationId,
+    showOnlyImage = false,
 }: {
     friend: Friend
     isSearching?: boolean
     invitationId?: string
+    showOnlyImage?: boolean
 }) {
     const toast = useToast()
 
@@ -75,6 +77,25 @@ export default function FriendCard({
         } finally {
             setLoading(false)
         }
+    }
+
+    // Si solo se muestra la imagen (modo compacto)
+    if (showOnlyImage) {
+        return (
+            <Link
+                href={`${ROUTES.PROFILE}${friend.username}`}
+                className={styles.user__image_only}
+            >
+                <div className={styles.user__img}>
+                    {friend.fotoPerfilUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                    ) : (
+                        <FontAwesomeIcon icon={faUser} />
+                    )}
+                </div>
+            </Link>
+        )
     }
 
     return (

@@ -7,6 +7,7 @@ import MapClient from '../MapClient'
 import SocialClient from '../SocialClient'
 import SearchBar from '../SearchBar'
 import ProfileBar from '../ProfileBar'
+import FiltersSelector from '../FiltersSelector'
 import FriendSearch from '@/components/Social/FriendSearch'
 import GroupCreate from '@/components/Social/GroupCreate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -51,33 +52,52 @@ export default function Client({ socialData, filters }: Props) {
 
     return (
         <main className={styles.main}>
-            
-            {/* ⬇️ Modal si no completó el registro */}
+
+            {/* Modal de registro incompleto */}
             {incompleto && <IncompleteRegistrationModal paso={paso} />}
 
-            {/* ⬇️ Si NO completó preferencias, NO mostramos mapa ni layout */}
+            {/* Si el registro NO está completo → solo modal */}
             {!incompleto && (
                 <>
                     <Nav />
 
-                    {/* MOBILE BOTTOM NAV */}
-                    <section className={styles.bottom}>
-                        <div className={styles.bottom__container}>
-                            <button
-                                className={styles.bottom__button}
-                                onClick={() => togglePanel('filters')}
-                            >
-                                <FontAwesomeIcon icon={faFilter} className={styles.bottom__icon} />
-                                <span className={styles.bottom__span}>Filtros</span>
-                            </button>
+                    {/* ========== MOBILE MAP AREA (NUEVO DISEÑO) ========== */}
+                    <div className={styles.mobile__map_container}>
+                        <div className={styles.mobile__filters}>
+                            <FiltersSelector />
+                        </div>
 
-                            <button
-                                className={styles.bottom__button}
-                                onClick={() => togglePanel('social')}
-                            >
-                                <FontAwesomeIcon icon={faUsers} className={styles.bottom__icon} />
-                                <span className={styles.bottom__span}>Social</span>
-                            </button>
+                        <div className={styles.mobile__profile}>
+                            <ProfileBar />
+                        </div>
+
+                        <MapClient containerStyle={styles.map_mobile} />
+                    </div>
+
+                    {/* ========== MOBILE BOTTOM NAV (NUEVO DISEÑO) ========== */}
+                    <section className={styles.bottom}>
+                        <div className={styles.bottom__wrapper}>
+                            <div className={styles.bottom__search}>
+                                <SearchBar />
+                            </div>
+
+                            <div className={styles.bottom__buttons}>
+                                <button
+                                    className={styles.bottom__button}
+                                    onClick={() => togglePanel('filters')}
+                                >
+                                    <FontAwesomeIcon icon={faFilter} className={styles.bottom__icon} />
+                                    <span className={styles.bottom__span}>Filtros</span>
+                                </button>
+
+                                <button
+                                    className={styles.bottom__button}
+                                    onClick={() => togglePanel('social')}
+                                >
+                                    <FontAwesomeIcon icon={faUsers} className={styles.bottom__icon} />
+                                    <span className={styles.bottom__span}>Social</span>
+                                </button>
+                            </div>
                         </div>
 
                         <FiltersClient
@@ -93,10 +113,10 @@ export default function Client({ socialData, filters }: Props) {
                         />
                     </section>
 
-                    {/* DESKTOP */}
+                    {/* ========== DESKTOP LAYOUT ========== */}
                     <section className={styles.desktop}>
 
-                        {/* Panel social colapsable */}
+                        {/* Left social sidebar */}
                         <aside
                             className={`${styles.desktop__social} ${
                                 isSocialExpanded ? styles.desktop__social_expanded : ''
@@ -112,9 +132,8 @@ export default function Client({ socialData, filters }: Props) {
                             />
                         </aside>
 
-                        {/* MAPA + FLOTANTES */}
+                        {/* MAPA + FLOATING UI */}
                         <div className={styles.desktop__map_container}>
-
                             <div className={styles.desktop__search}>
                                 <SearchBar />
                             </div>
@@ -128,7 +147,10 @@ export default function Client({ socialData, filters }: Props) {
                             <div className={styles.desktop__filters_buttons}>
                                 <button
                                     className={styles.desktop__filter_btn}
-                                    onClick={() => setShowFiltersPanel(!showFiltersPanel)}
+                                    onClick={e => {
+                                        e.stopPropagation()
+                                        setShowFiltersPanel(!showFiltersPanel)
+                                    }}
                                 >
                                     <FontAwesomeIcon icon={showFiltersPanel ? faX : faFilter} />
                                 </button>

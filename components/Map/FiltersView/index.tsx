@@ -34,13 +34,21 @@ const FilterSection = ({
                 <li
                     className={styles.filter__item}
                     key={item.id}
-                    onClick={() => onItemClick(item.value)}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onItemClick(item.value)
+                    }}
                 >
                     <input
                         type="checkbox"
                         checked={item.checked}
                         readOnly
                         className={styles.filter__input}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                        }}
                     />
                     <span className={styles.checkmark}></span>
                     <span className={styles.filter__span}>{item.name}</span>
@@ -62,7 +70,7 @@ export default function FiltersView({
             {/* Layout mobile */}
             <div className={styles.filter__mobile_layout}>
                 <header className={styles.filter__header}>
-                    <h2 className={styles.filter__title}>Gustos & Filtros</h2>
+                    <h2 className={styles.filter__title}>Filtros</h2>
                     <button className={styles.filter__close_btn} onClick={onClose}>
                         <FontAwesomeIcon icon={faClose} />
                     </button>
@@ -100,13 +108,21 @@ export default function FiltersView({
                             <label
                                 key={rating.id}
                                 className={styles.filtro__item_valoracion}
-                                onClick={() => onRatingClick(rating.value)}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    onRatingClick(rating.value)
+                                }}
                             >
                                 <input
                                     type="checkbox"
                                     checked={rating.checked}
                                     readOnly
                                     className={styles.filtro__input_valoracion}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                    }}
                                 />
                                 <span className={styles.filtro__checkmark_valoracion}></span>
                                 <span className={styles.filtro__texto_valoracion}>{rating.name}</span>

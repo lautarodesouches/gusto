@@ -41,6 +41,9 @@ function buildRestaurantQuery(
     const rating = searchParams.get('rating')
     if (rating) query.append('rating', rating)
 
+    const radius = searchParams.get('radius')
+    if (radius) query.append('radius', radius)
+
     return query
 }
 
