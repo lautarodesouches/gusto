@@ -119,6 +119,24 @@ export async function POST(req: Request) {
         }
         console.log('Step3 guardado correctamente')
 
+        // Llamar a finalizar para limpiar Redis y marcar registro como completo
+        console.log('Finalizando registro...')
+        const resFinalizar = await fetch(`${API_URL}/Usuario/finalizar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (!resFinalizar.ok) {
+            const errorText = await resFinalizar.text()
+            console.error('Error al finalizar registro:', resFinalizar.status, errorText)
+            // No fallamos aquí, los datos ya están guardados
+        } else {
+            console.log('Registro finalizado correctamente')
+        }
+
         console.log('=== Todos los steps guardados exitosamente ===')
         return NextResponse.json({
             success: true,

@@ -21,7 +21,13 @@ const getData = async () => {
             throw new Error('Error en el fetch')
         }
 
-        data = await res.json()
+        const response = await res.json()
+        // El backend devuelve objetos con campo Seleccionado
+        data = response.map((item: { id: number; nombre: string; seleccionado?: boolean }) => ({
+            id: item.id,
+            nombre: item.nombre,
+            seleccionado: item.seleccionado || false,
+        }))
     } catch (error) {
         console.error('Error cargando los datos:', error)
         data = []

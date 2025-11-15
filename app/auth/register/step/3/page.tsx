@@ -23,7 +23,12 @@ const getData = async () => {
 
         const temp = await res.json()
 
-        data = temp.gustos
+        // El backend devuelve gustos con campo seleccionado
+        data = (temp.gustos || []).map((item: { id: number; nombre: string; seleccionado?: boolean }) => ({
+            id: item.id,
+            nombre: item.nombre,
+            seleccionado: item.seleccionado || false,
+        }))
     } catch (error) {
         console.error('Error cargando los datos:', error)
         data = []
