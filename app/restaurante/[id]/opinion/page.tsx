@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getRestaurant } from '../../actions'
 import ReviewForm from '@/components/Review/Form'
+import SimpleNavbar from '@/components/Navbar/Simple'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -15,5 +16,10 @@ export default async function OpinionPage({ params }: PageProps) {
         notFound()
     }
 
-    return <ReviewForm restaurant={result.data} />
+    return (
+        <>
+            <SimpleNavbar />
+            <ReviewForm restaurant={result.data} />
+        </>
+    )
 }
