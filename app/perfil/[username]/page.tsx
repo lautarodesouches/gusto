@@ -9,9 +9,17 @@ interface Props {
 
 export default async function Profile({ params }: Props) {
     const { username } = await params
+    
+    // Si el username es "configuracion", no procesar aquí (debe ir a la ruta estática)
+    if (username === 'configuracion') {
+        notFound()
+    }
+    
     const result = await getProfile(username)
 
-    if (!result.success || !result.data) notFound()
+    if (!result.success || !result.data) {
+        notFound()
+    }
 
     return (
         <main className={styles.main}>
