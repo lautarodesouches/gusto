@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faX } from '@fortawesome/free-solid-svg-icons'
 import { PremiumLimitFloatingCard } from '@/components'
 import { createGroup } from '@/app/actions/groups'
 import { useToast } from '@/context/ToastContext'
@@ -29,9 +29,6 @@ export default function GroupCreate({
         try {
             const result = await createGroup({ name, description })
 
-            // Debug: Log para ver qué está devolviendo el backend
-            console.log('Result:', result)
-
             if (!result.success) {
                 // Verificar si es error de límite de grupos
                 const errorData = result as any // Castear para acceder a campos adicionales
@@ -44,9 +41,6 @@ export default function GroupCreate({
                         ) ||
                             errorData.error.includes('límite')))
                 ) {
-                    console.log(
-                        'Detectando límite de grupos, mostrando cartel flotante'
-                    )
                     setLimitInfo({
                         tipoPlan: errorData.tipoPlan,
                         limiteActual: errorData.limiteActual,
@@ -76,10 +70,17 @@ export default function GroupCreate({
             setLoading(false)
         }
     }
-
+    
     return (
         <>
             <aside className={styles.create}>
+                <button
+                    className={styles.create__close}
+                    onClick={handleCancel}
+                    aria-label="Cerrar"
+                >
+                    <FontAwesomeIcon icon={faX} />
+                </button>
                 <div className={styles.create__container}>
                     <FontAwesomeIcon
                         icon={faPen}
@@ -88,14 +89,14 @@ export default function GroupCreate({
                 </div>
                 <input
                     type="text"
-                    placeholder="Ingrese Nombre del Grupo"
+                    placeholder="Nombre del grupo"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     className={styles.create__input}
                 />
                 <input
                     type="text"
-                    placeholder="Ingrese Descripcion del Grupo"
+                    placeholder="Descripcion"
                     value={description}
                     onChange={e => setDescription(e.target.value)}
                     className={styles.create__input}
@@ -106,7 +107,7 @@ export default function GroupCreate({
                         disabled={loading}
                         className={styles.create__button}
                     >
-                        Guardar y Crear
+                        Crear
                     </button>
                     <button
                         onClick={() => {

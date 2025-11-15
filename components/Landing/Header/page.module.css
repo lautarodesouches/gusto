@@ -69,6 +69,7 @@
 .header__bcontainer {
     margin-top: 40px;
     display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -84,6 +85,32 @@
     overflow: hidden;
     z-index: 1;
     transition: color 0.35s ease;
+}
+
+.header__buttonRes span {
+    position: relative;
+    z-index: 2;
+}
+
+.header__buttonRes::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    right: 100%;
+    background: var(--white);
+    z-index: 1;
+    transition: all 0.35s ease;
+}
+
+.header__buttonRes:hover::after {
+    left: 0;
+    right: 0;
+}
+
+.header__buttonRes:hover span {
+    color: var(--black);
 }
 
 .header__button {
@@ -178,5 +205,6 @@
 
     .header__bcontainer {
         margin: 0;
+        flex-direction: row;
     }
 }

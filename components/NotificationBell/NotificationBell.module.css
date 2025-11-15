@@ -1,101 +1,261 @@
-.container {
+/* Contenedor principal */
+.contenedor {
   position: relative;
   display: inline-block;
+  width: 100%;
+  height: 100%;
 }
 
-.icon {
-  font-size: 22px;
-  color: var(--grey);
-  cursor: pointer;
+/* Icono de campana */
+.icono {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--white);
   transition: 0.2s;
+  pointer-events: none;
 }
 
-.icon:hover {
-  color: var(--primary);
+/* Icono activo (cuando el panel está abierto) */
+.icono_activo {
+  color: var(--black);
 }
 
+/* Badge con el número de notificaciones */
 .badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -8px;
+  right: -8px;
   background-color: var(--primary);
   color: var(--white);
-  font-size: 12px;
+  font-size: 10px;
+  font-weight: 700;
   border-radius: 50%;
-  padding: 2px 6px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 
+/* Panel de notificaciones */
 .panel {
-  position: fixed; 
-  right: 80px; 
-  top: 60px;
-  background-color: var(--black);
+  position: absolute; 
+  right: 0; 
+  top: calc(100% + 10px);
+  background-color: var(--background);
   border: 1px solid var(--grey);
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  width: 260px;
-  max-height: 320px;
-  overflow-y: auto;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  width: 360px;
+  max-height: 480px;
+  overflow: hidden;
   z-index: 9999; 
-  animation: fadeIn 0.2s ease-in-out;
+  animation: deslizar 0.3s ease-out;
   color: var(--white);
-  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
 }
 
+@keyframes deslizar {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-.notificationItem {
+/* Encabezado del panel */
+.panel h4 {
+  padding: 18px 20px;
+  margin: 0;
+  color: var(--white);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--grey);
+  background: var(--dark);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Contenido del panel */
+.contenido {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  max-height: 400px;
+}
+
+/* Scrollbar Webkit */
+.contenido::-webkit-scrollbar {
+  width: 6px;
+}
+
+.contenido::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.contenido::-webkit-scrollbar-thumb {
+  background: var(--grey);
+  border-radius: 3px;
+}
+
+.contenido::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Scrollbar Firefox */
+.contenido {
+  scrollbar-width: thin;
+  scrollbar-color: var(--grey) transparent;
+}
+
+/* Mensaje sin notificaciones */
+.panel p {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--light);
+  font-size: 0.95rem;
+}
+
+/* Item de notificación */
+.item {
   border-bottom: 1px solid var(--dark);
-  padding: 10px 12px;
+  padding: 16px 20px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.notificationItem:hover {
+.item:last-child {
+  border-bottom: none;
+}
+
+.item:hover {
   background: var(--dark);
 }
 
-.read {
-  opacity: 0.6;
+.item:active {
+  background: var(--background);
 }
 
-.title {
+/* Indicador de no leída (círculo rojo) */
+.item::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+/* Notificación leída */
+.leida::before {
+  opacity: 0;
+}
+
+.leida {
+  opacity: 0.7;
+}
+
+/* Título de la notificación */
+.titulo {
   display: block;
   font-weight: 600;
+  font-size: 0.95rem;
   color: var(--white);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  line-height: 1.3;
 }
 
-.message {
+/* Mensaje de la notificación */
+.mensaje {
   margin: 0;
   color: var(--light);
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
-.time {
+/* Hora de la notificación */
+.hora {
   display: block;
-  margin-top: 6px;
-  font-size: 12px;
+  margin-top: 8px;
+  font-size: 0.75rem;
   color: var(--grey);
+  font-weight: 500;
 }
-.actions {
+
+/* Contenedor de acciones (botones) */
+.acciones {
   display: flex;
   gap: 8px;
-  margin-top: 5px;
+  margin-top: 12px;
 }
 
-.accept,
-.reject {
-  padding: 4px 8px;
+/* Botones de aceptar y rechazar */
+.aceptar,
+.rechazar {
+  flex: 1;
+  padding: 8px 16px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.accept {
+/* Botón aceptar */
+.aceptar {
   background-color: var(--primary);
   color: var(--white);
 }
 
-.reject {
+.aceptar:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 80, 80, 0.3);
+}
+
+.aceptar:active {
+  transform: translateY(0);
+}
+
+/* Botón rechazar */
+.rechazar {
   background-color: transparent;
   border: 1px solid var(--grey);
-  color: var(--white);
+  color: var(--light);
+}
+
+.rechazar:hover {
+  border-color: var(--light);
+  background: var(--dark);
+}
+
+.rechazar:active {
+  background: var(--background);
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 480px) {
+  .panel {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: calc(100vw - 20px);
+  }
 }
