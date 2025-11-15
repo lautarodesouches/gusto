@@ -5,6 +5,7 @@ import './globals.css'
 import { AuthProvider } from '@/context/AuthContext'
 
 import PaymentVerification from '@/components/PaymentVerification'
+import RegistrationCheck from '@/components/RegistrationCheck'
 
 import { ToastProvider } from '@/context/ToastContext'
 
@@ -54,6 +55,7 @@ export default function RootLayout({
                 <ToastProvider>
                     <AuthProvider>
                         <PaymentVerification />
+                        <RegistrationCheck />
                         {children}
                     </AuthProvider>
                 </ToastProvider>

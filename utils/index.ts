@@ -75,4 +75,16 @@ export function formatChatDate(dateString: string): string {
         month: 'short',
         year: 'numeric',
     }).format(date)
+
+
+
+}
+
+export function pasoToNumber(paso: string) {
+    switch (paso) {
+        case "Restricciones": return 1
+        case "Condiciones": return 2
+        case "Gustos": return 3
+        default: return 1
+    }
 }

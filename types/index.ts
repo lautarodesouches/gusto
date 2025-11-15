@@ -1,6 +1,7 @@
 export type RegisterItem = {
     id: number
     nombre: string
+    seleccionado?: boolean
 }
 
 export type Field = {

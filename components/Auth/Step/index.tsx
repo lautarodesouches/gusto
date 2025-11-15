@@ -6,7 +6,8 @@ import { useStep } from '@/hooks/useStep'
 import { useRegister } from '@/context/RegisterContext'
 import { useRouter } from 'next/navigation'
 import { RegisterItem } from '@/types'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useAuth } from '@/context/AuthContext'
 
 interface Props {
     title: string
@@ -22,38 +23,182 @@ export default function Step({
     content = [],
 }: Props) {
     const step = useStep()
-    const isLastStep = step === 3
+   
+    const isLastStep = false
     const { data, setData } = useRegister()
     const router = useRouter()
+    const { token } = useAuth()
     const [error, setError] = useState<string | null>(null)
+    const [saving, setSaving] = useState(false)
+    const hasInitialized = useRef(false)
+    const currentStepRef = useRef(step)
 
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
 
+   
+    useEffect(() => {
+       
+        if (currentStepRef.current !== step) {
+            hasInitialized.current = false
+            currentStepRef.current = step
+        }
+
+        if (content.length > 0 && !hasInitialized.current) {
+            const preSelected = content.filter(item => item.seleccionado)
+            console.log(`[Step ${step}] Sincronizando desde backend:`, {
+                totalItems: content.length,
+                seleccionados: preSelected.length,
+                ids: preSelected.map(i => i.id)
+            })
+            
+           
+            setData({
+                [stepKey]: preSelected,
+            })
+            hasInitialized.current = true
+        }
+      
+    }, [content, step])
+
+    const getEndpoint = () => {
+        switch (step) {
+            case 1:
+                return '/api/usuario/restricciones'
+            case 2:
+                return '/api/usuario/condiciones'
+            case 3:
+                return '/api/usuario/gustos'
+            default:
+                return null
+        }
+    }
+
     const handleSelect = (id: number) => {
-        setError(null)
+        setError(null) // Limpiar error cuando el usuario interactúa
         const current = selected as RegisterItem[]
         const alreadySelected = current.some(item => item.id === id)
 
-        if (alreadySelected) {
-            setData({
-                [stepKey]: current.filter(item => item.id !== id),
-            })
-            return
-        }
+        let newSelection: RegisterItem[]
 
-        if (current.length < 5) {
+        if (alreadySelected) {
+            newSelection = current.filter(item => item.id !== id)
+        } else {
+            if (current.length >= 5) {
+                setError('Puedes seleccionar máximo 5 opciones')
+                return
+            }
             const newItem = content.find(item => item.id === id)
             if (newItem) {
-                setData({
-                    [stepKey]: [...current, newItem],
-                })
+                newSelection = [...current, newItem]
+            } else {
+                return
             }
+        }
+
+        // Solo actualizar estado local (NO guardar en backend todavía)
+        setData({
+            [stepKey]: newSelection,
+        })
+
+     
+        if (step === 3 && newSelection.length >= 3) {
+            setError(null)
         }
     }
 
     const handleNext = async () => {
-        router.push(`/auth/register/step/${step + 1}`)
+        const endpoint = getEndpoint()
+        if (!endpoint || !token) {
+            router.push(`/auth/register/step/${step + 1}`)
+            return
+        }
+
+        setSaving(true)
+        setError(null)
+
+        try {
+            const current = selected as RegisterItem[]
+            const ids = current.map(item => item.id)
+            const skip = current.length === 0
+
+            // Para paso 3 (gustos): validar mínimo de 3, pero SIEMPRE guardar
+            if (step === 3) {
+                if (current.length < 3) {
+                    // Guardar igual para sincronizar con backend (aunque tenga 0 gustos)
+                    console.log(`[Step ${step}] Guardando con menos de 3 gustos (sincronización):`, { ids, skip, endpoint })
+                    
+                    const saveResponse = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            ids,
+                            skip,
+                        }),
+                    })
+
+                    if (!saveResponse.ok) {
+                        const errorData = await saveResponse.json().catch(() => ({}))
+                        console.error(`[Step ${step}] Error guardando:`, errorData)
+                    } else {
+                        // Guardado exitoso, resetear flag para recargar desde backend
+                        hasInitialized.current = false
+                    }
+
+                    // Mostrar error y NO avanzar
+                    setError('Debes seleccionar al menos 3 gustos para continuar.')
+                    return
+                }
+            }
+
+            console.log(`[Step ${step}] Guardando:`, { ids, skip, endpoint })
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ids,
+                    skip,
+                }),
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}))
+                console.error(`[Step ${step}] Error guardando en backend:`, errorData)
+                
+                // Extraer el mensaje de error del backend
+                let errorMessage = 'Error al guardar. Por favor intenta de nuevo.'
+                if (errorData.message) {
+                    errorMessage = errorData.message
+                } else if (errorData.error) {
+                    errorMessage = errorData.error
+                } else if (typeof errorData === 'string') {
+                    errorMessage = errorData
+                }
+                
+                setError(errorMessage)
+                return // No avanzar si falla
+            }
+
+            const responseData = await response.json().catch(() => ({}))
+            console.log(`[Step ${step}] Guardado exitoso:`, responseData)
+
+            // Si todo está bien, resetear el flag de inicialización para que cuando vuelva atrás
+            // se recargue desde el backend (esto fuerza la recarga de datos desde el servidor)
+            hasInitialized.current = false
+            
+            // Avanzar al siguiente paso
+            router.push(`/auth/register/step/${step + 1}`)
+        } catch (error) {
+            console.error('Error en handleNext:', error)
+            setError('Error al guardar. Por favor intenta de nuevo.')
+        } finally {
+            setSaving(false)
+        }
     }
 
     const handleBack = () => {
@@ -124,8 +269,11 @@ export default function Step({
                         <button
                             onClick={handleNext}
                             className={styles.skipButton}
+                            disabled={saving}
                         >
-                            {isLastStep
+                            {saving
+                                ? 'GUARDANDO...'
+                                : isLastStep
                                 ? 'FINALIZAR'
                                 : selected.length === 0
                                 ? 'SALTAR'

@@ -1,7 +1,9 @@
 import { AuthStep } from '@/components'
+
 import { API_URL } from '@/constants'
 import { RegisterItem } from '@/types'
 import { cookies } from 'next/headers'
+import { PreventWrapper } from '../../PreventWrapper'
 
 const getData = async () => {
     const cookieStore = await cookies()
@@ -21,7 +23,13 @@ const getData = async () => {
             throw new Error('Error en el fetch')
         }
 
-        data = await res.json()
+        const response = await res.json()
+        // El backend devuelve objetos con campo Seleccionado
+        data = response.map((item: { id: number; nombre: string; seleccionado?: boolean }) => ({
+            id: item.id,
+            nombre: item.nombre,
+            seleccionado: item.seleccionado || false,
+        }))
     } catch (error) {
         console.error('Error cargando los datos:', error)
         data = []
@@ -34,11 +42,14 @@ export default async function Step() {
     const data = await getData()
 
     return (
-        <AuthStep
-            title="Alguna alergia o intolerancia?"
-            description="Selecciona las que corresponden; son preferencias críticas"
-            inputDescription="Escribe tus alergias o intolerancias"
-            content={data}
-        />
+        <>
+            <PreventWrapper />
+            <AuthStep
+                title="Alguna alergia o intolerancia?"
+                description="Selecciona las que corresponden; son preferencias críticas"
+                inputDescription="Escribe tus alergias o intolerancias"
+                content={data}
+            />
+        </>
     )
 }

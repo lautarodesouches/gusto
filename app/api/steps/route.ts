@@ -119,6 +119,24 @@ export async function POST(req: Request) {
         }
         console.log('Step3 guardado correctamente')
 
+        
+        console.log('Finalizando registro...')
+        const resFinalizar = await fetch(`${API_URL}/Usuario/finalizar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (!resFinalizar.ok) {
+            const errorText = await resFinalizar.text()
+            console.error('Error al finalizar registro:', resFinalizar.status, errorText)
+           
+        } else {
+            console.log('Registro finalizado correctamente')
+        }
+
         console.log('=== Todos los steps guardados exitosamente ===')
         return NextResponse.json({
             success: true,
