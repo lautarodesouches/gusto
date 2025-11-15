@@ -3,7 +3,7 @@
 import { useState, useTransition, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faImage } from '@fortawesome/free-solid-svg-icons'
+import { faImage } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import styles from './styles.module.css'
 import { Restaurant } from '@/types'
@@ -45,6 +45,25 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
 
     const [rating, setRating] = useState(0)
     const [hoverRating, setHoverRating] = useState(0)
+    
+    // Manejar clic en estrella (entero o media)
+    const handleStarClick = (starIndex: number, isHalf: boolean) => {
+        const value = isHalf ? starIndex - 0.5 : starIndex
+        setRating(value)
+    }
+    
+    // Manejar hover en estrella
+    const handleStarHover = (starIndex: number, isHalf: boolean) => {
+        const value = isHalf ? starIndex - 0.5 : starIndex
+        setHoverRating(value)
+    }
+    
+    // Obtener el tipo de estrella a mostrar
+    const getStarType = (starIndex: number, currentRating: number) => {
+        if (currentRating >= starIndex) return 'full'
+        if (currentRating >= starIndex - 0.5) return 'half'
+        return 'empty'
+    }
     const [visitDate, setVisitDate] = useState('')
     const [visitType, setVisitType] = useState<string>('')
     const [comment, setComment] = useState('')
@@ -172,23 +191,51 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
                             ¿Cómo calificarías tu experiencia?
                         </label>
                         <div className={styles.reviewForm__stars}>
-                            {[1, 2, 3, 4, 5].map(star => (
-                                <button
-                                    key={star}
-                                    type="button"
-                                    className={`${styles.reviewForm__star} ${
-                                        star <= (hoverRating || rating)
-                                            ? styles['reviewForm__star--active']
-                                            : ''
-                                    }`}
-                                    onClick={() => setRating(star)}
-                                    onMouseEnter={() => setHoverRating(star)}
-                                    onMouseLeave={() => setHoverRating(0)}
-                                    aria-label={`${star} estrellas`}
-                                >
-                                    <FontAwesomeIcon icon={faStar} />
-                                </button>
-                            ))}
+                            {[1, 2, 3, 4, 5].map(star => {
+                                const displayRating = hoverRating || rating
+                                const starType = getStarType(star, displayRating)
+                                
+                                // Determinar qué imagen mostrar
+                                let starImage = '/images/all/star-empty.svg'
+                                if (starType === 'full') {
+                                    starImage = '/images/all/star.svg'
+                                } else if (starType === 'half') {
+                                    starImage = '/images/all/star-half.svg'
+                                }
+                                
+                                return (
+                                    <div
+                                        key={star}
+                                        className={styles.reviewForm__starContainer}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                    >
+                                        {/* Imagen de la estrella completa */}
+                                        <Image
+                                            src={starImage}
+                                            alt={`${star} estrellas`}
+                                            width={70}
+                                            height={70}
+                                            className={styles.reviewForm__starImage}
+                                        />
+                                        {/* Mitad izquierda clickeable (media estrella) */}
+                                        <button
+                                            type="button"
+                                            className={styles.reviewForm__starHalf}
+                                            onClick={() => handleStarClick(star, true)}
+                                            onMouseEnter={() => handleStarHover(star, true)}
+                                            aria-label={`${star - 0.5} estrellas`}
+                                        />
+                                        {/* Mitad derecha clickeable (estrella completa) */}
+                                        <button
+                                            type="button"
+                                            className={`${styles.reviewForm__starHalf} ${styles.reviewForm__starHalfRight}`}
+                                            onClick={() => handleStarClick(star, false)}
+                                            onMouseEnter={() => handleStarHover(star, false)}
+                                            aria-label={`${star} estrellas`}
+                                        />
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
 

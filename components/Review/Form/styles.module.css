@@ -105,31 +105,51 @@
 .reviewForm__stars {
     display: flex;
     gap: 0.5rem;
+    align-items: center;
 }
 
-.reviewForm__star {
-    background: none;
-    border: 2px solid #ff5757;
-    color: #ff5757;
-    font-size: 2.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    padding: 0.5rem;
-    border-radius: 50%;
+.reviewForm__starContainer {
+    position: relative;
     width: 70px;
     height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
-.reviewForm__star:hover {
+.reviewForm__starImage {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.reviewForm__starHalf {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    z-index: 1;
+    transition: transform 0.2s;
+}
+
+.reviewForm__starHalfRight {
+    left: 50%;
+}
+
+.reviewForm__starContainer:hover .reviewForm__starImage {
     transform: scale(1.1);
-}
-
-.reviewForm__star--active {
-    background: #ff5757;
-    color: white;
+    transition: transform 0.2s;
 }
 
 /* Select */
