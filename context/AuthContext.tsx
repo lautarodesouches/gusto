@@ -24,15 +24,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [token, setToken] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
-    const [isPremium, setIsPremium] = useState(false) // TODO: Cambiar a false en producción
+    const [isPremium, setIsPremium] = useState(false)
 
     // Función para verificar el estado Premium
     const refreshPremiumStatus = async () => {
-        // 🔧 MODO TESTEO: Forzar isPremium a false
-        setIsPremium(false)
-        return
-        
-        /* // Descomentarizar en producción
         if (!token) {
             setIsPremium(false)
             return
@@ -56,7 +51,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Error al verificar estado premium:', error)
             setIsPremium(false)
         }
-        */
     }
 
     //  Maneja cambios de autenticación (login/logout)
