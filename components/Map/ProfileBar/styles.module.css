@@ -193,6 +193,33 @@
     }
 }
 
+/* Información del usuario en el menú */
+.menu__user_info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    color: var(--light);
+    font-size: 0.95rem;
+    text-align: left;
+    border-bottom: 1px solid var(--grey);
+}
+
+.menu__user_info svg {
+    width: 18px;
+    height: 18px;
+    color: var(--light);
+    flex-shrink: 0;
+}
+
+.menu__user_info span {
+    color: var(--white);
+    font-weight: 500;
+}
+
 /* Ítem del menú */
 .menu__item {
     width: 100%;

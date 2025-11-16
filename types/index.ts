@@ -1,5 +1,5 @@
 export type RegisterItem = {
-    id: number
+    id: string
     nombre: string
     seleccionado?: boolean
 }

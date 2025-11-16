@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { pasoToNumber } from '@/utils'
 
 export function useRegistrationCheck() {
     const { token, loading, user } = useAuth()
@@ -18,11 +17,12 @@ export function useRegistrationCheck() {
                 }
 
                 const data = await res.json()
+                // El backend ahora solo devuelve { registroCompleto: boolean }
                 if (!data.registroCompleto) {
                     setEstado({
                         checking: false,
                         incompleto: true,
-                        paso: pasoToNumber(data.pasoActual)
+                        paso: 1 // Siempre redirigir al paso 1 si no está completo
                     })
                 } else {
                     setEstado({ checking: false, incompleto: false, paso: 1 })

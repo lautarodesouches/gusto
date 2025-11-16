@@ -55,3 +55,48 @@ export async function POST(req: Request) {
     }
 }
 
+export async function PUT(req: Request) {
+    try {
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
+
+        if (!token) {
+            return NextResponse.json(
+                { error: 'No autorizado: falta token' },
+                { status: 401 }
+            )
+        }
+
+        const body = await req.json()
+        const { ids, skip } = body
+
+        const safeIds = Array.isArray(ids) ? ids : []
+        
+        const response = await fetch(`${API_URL}/CondicionMedica/condiciones`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!response.ok) {
+            const errorText = await response.text()
+            return NextResponse.json(
+                { error: errorText },
+                { status: response.status }
+            )
+        }
+
+        const data = await response.json()
+        return NextResponse.json(data)
+    } catch (error) {
+        console.error('Error en /api/usuario/condiciones PUT:', error)
+        return NextResponse.json(
+            { error: 'Error interno' },
+            { status: 500 }
+        )
+    }
+}
+

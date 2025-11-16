@@ -65,7 +65,7 @@ export async function POST(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                ids: safeStep1.map((item: { id: number }) => item.id),
+            ids: safeStep1.map((item: { id: string }) => item.id),
                 skip: safeStep1.length === 0,
             }),
         })
@@ -86,7 +86,8 @@ export async function POST(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                ids: safeStep2.map((item: { id: number }) => item.id),
+               ids: safeStep2.map((item: { id: string }) => item.id),
+
                 skip: safeStep2.length === 0,
             }),
         })
@@ -107,7 +108,8 @@ export async function POST(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                ids: safeStep3.map((item: { id: number }) => item.id),
+             ids: safeStep3.map((item: { id: string }) => item.id),
+
                 skip: safeStep3.length === 0,
             }),
         })
