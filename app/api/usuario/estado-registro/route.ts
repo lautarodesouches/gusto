@@ -20,17 +20,18 @@ export async function GET() {
 
         if (!res.ok) {
             return NextResponse.json(
-                { registroCompleto: false, paso: 1 },
+                { registroCompleto: false },
                 { status: res.status }
             )
         }
 
         const data = await res.json()
+        // El backend solo devuelve { registroCompleto: boolean }
         return NextResponse.json(data)
     } catch (e) {
         console.error(e)
         return NextResponse.json(
-            { registroCompleto: false, paso: 1 },
+            { registroCompleto: false },
             { status: 500 }
         )
     }

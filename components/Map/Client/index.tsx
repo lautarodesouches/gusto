@@ -59,7 +59,7 @@ export default function Client({ socialData, filters }: Props) {
             {/* ⬇️ Si NO completó preferencias, NO mostramos mapa ni layout */}
             {!incompleto && (
                 <>
-                    <Nav />
+                    {/* Nav eliminado - solo se usa ProfileBar */}
 
                     {/* MOBILE BOTTOM NAV */}
                     <section className={styles.bottom}>
