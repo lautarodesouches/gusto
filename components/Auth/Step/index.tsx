@@ -30,6 +30,7 @@ export default function Step({
     const { token } = useAuth()
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
+    const [searchTerm, setSearchTerm] = useState('')
     const hasInitialized = useRef(false)
     const currentStepRef = useRef(step)
 
@@ -81,6 +82,7 @@ export default function Step({
     useEffect(() => {
         handleStepChange()
         syncDataFromBackend()
+        setSearchTerm('') // Limpiar búsqueda al cambiar de paso
     }, [content, step, stepKey, data, setData])
 
     const getEndpoint = () => {
@@ -268,6 +270,14 @@ export default function Step({
         router.push(`${basePath}/${step - 1}`)
     }
 
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value)
+    }
+
+    const filteredContent = content.filter(item => 
+        item.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
     return (
         <>
             {content.length !== 0 ? (
@@ -288,6 +298,8 @@ export default function Step({
                                 type="text"
                                 placeholder={inputDescription}
                                 className={styles.input}
+                                value={searchTerm}
+                                onChange={handleSearchChange}
                             />
                         </div>
                         <div className={styles.counter}>
@@ -298,7 +310,7 @@ export default function Step({
                     </section>
 
                     <section className={styles.gridContainer}>
-                        {content.map(({ id, nombre }) => {
+                        {filteredContent.map(({ id, nombre }) => {
                             // Comparar IDs correctamente (pueden ser string o number)
                             const isSelected = selected.some(
                                 item => String(item.id) === String(id)
