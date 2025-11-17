@@ -41,43 +41,46 @@ export default function Step({
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
 
-   
-    useEffect(() => {
-       
+    const handleStepChange = () => {
         if (currentStepRef.current !== step) {
             hasInitialized.current = false
             currentStepRef.current = step
         }
+    }
 
-        // Solo sincronizar desde el backend si:
-        // 1. Hay contenido disponible
-        // 2. No se ha inicializado aún
-        // 3. NO hay datos ya en el contexto (para no sobrescribir cambios del usuario)
-        if (content.length > 0 && !hasInitialized.current) {
-            const preSelected = content.filter(item => item.seleccionado)
-            const currentData = data[stepKey] || []
-            
-            // Solo sincronizar si no hay datos en el contexto o si los datos del backend son diferentes
-            // Esto evita sobrescribir cambios que el usuario acaba de hacer
-            const shouldSync = currentData.length === 0 || 
-                preSelected.length !== currentData.length ||
-                !preSelected.every(item => currentData.some(c => c.id === item.id))
-            
-            if (shouldSync) {
-                console.log(`[Step ${step}] Sincronizando desde backend:`, {
-                    totalItems: content.length,
-                    seleccionados: preSelected.length,
-                    ids: preSelected.map(i => i.id),
-                    currentDataLength: currentData.length
-                })
-                
-                setData({
-                    [stepKey]: preSelected,
-                })
-            }
-            hasInitialized.current = true
+    const shouldSyncData = (preSelected: RegisterItem[], currentData: RegisterItem[]): boolean => {
+        return currentData.length === 0 || 
+            preSelected.length !== currentData.length ||
+            !preSelected.every(item => currentData.some(c => c.id === item.id))
+    }
+
+    const syncDataFromBackend = () => {
+        if (content.length === 0 || hasInitialized.current) {
+            return
         }
-      
+
+        const preSelected = content.filter(item => item.seleccionado)
+        const currentData = data[stepKey] || []
+        
+        if (shouldSyncData(preSelected, currentData)) {
+            console.log(`[Step ${step}] Sincronizando desde backend:`, {
+                totalItems: content.length,
+                seleccionados: preSelected.length,
+                ids: preSelected.map(i => i.id),
+                currentDataLength: currentData.length
+            })
+            
+            setData({
+                [stepKey]: preSelected,
+            })
+        }
+        
+        hasInitialized.current = true
+    }
+
+    useEffect(() => {
+        handleStepChange()
+        syncDataFromBackend()
     }, [content, step, stepKey, data, setData])
 
     const getEndpoint = () => {
