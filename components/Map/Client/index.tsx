@@ -6,16 +6,12 @@ import FiltersClient from '../FiltersClient'
 import MapClient from '../MapClient'
 import SocialClient from '../SocialClient'
 import SearchBar from '../SearchBar'
-import ProfileBar from '../ProfileBar'
-import FiltersSelector from '../FiltersSelector'
+import ProfileBar from '@/components/Navbar/ProfileBar'
 import FriendSearch from '@/components/Social/FriendSearch'
 import GroupCreate from '@/components/Social/GroupCreate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter, faUsers, faX } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
-
-// ⬇️ Tus imports
-import Nav from '../Nav'
 import { useRegistrationCheck } from '@/hooks/useRegistrationCheck'
 import { IncompleteRegistrationModal } from '@/components/modal/IncompleteRegistrationModal'
 
@@ -28,14 +24,14 @@ type ActivePanel = 'filters' | 'social' | null
 type SocialPanel = 'searchFriend' | 'newGroup' | null
 
 export default function Client({ socialData, filters }: Props) {
-
     // ⬇️ Tu lógica de registro incompleto
     const { checking, incompleto, paso } = useRegistrationCheck()
 
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [isSocialExpanded, setIsSocialExpanded] = useState(true)
     const [showFiltersPanel, setShowFiltersPanel] = useState(false)
-    const [activeSocialPanel, setActiveSocialPanel] = useState<SocialPanel>(null)
+    const [activeSocialPanel, setActiveSocialPanel] =
+        useState<SocialPanel>(null)
 
     const togglePanel = (panel: ActivePanel) => {
         setActivePanel(prev => (prev === panel ? null : panel))
@@ -52,15 +48,12 @@ export default function Client({ socialData, filters }: Props) {
 
     return (
         <main className={styles.main}>
-            
             {/* ⬇️ Modal si no completó el registro */}
             {incompleto && <IncompleteRegistrationModal paso={paso} />}
 
             {/* ⬇️ Si NO completó preferencias, NO mostramos mapa ni layout */}
             {!incompleto && (
                 <>
-                    {/* Nav eliminado - solo se usa ProfileBar */}
-
                     {/* MOBILE BOTTOM NAV */}
                     <section className={styles.bottom}>
                         <div className={styles.bottom__container}>
@@ -68,16 +61,26 @@ export default function Client({ socialData, filters }: Props) {
                                 className={styles.bottom__button}
                                 onClick={() => togglePanel('filters')}
                             >
-                                <FontAwesomeIcon icon={faFilter} className={styles.bottom__icon} />
-                                <span className={styles.bottom__span}>Filtros</span>
+                                <FontAwesomeIcon
+                                    icon={faFilter}
+                                    className={styles.bottom__icon}
+                                />
+                                <span className={styles.bottom__span}>
+                                    Filtros
+                                </span>
                             </button>
 
                             <button
                                 className={styles.bottom__button}
                                 onClick={() => togglePanel('social')}
                             >
-                                <FontAwesomeIcon icon={faUsers} className={styles.bottom__icon} />
-                                <span className={styles.bottom__span}>Social</span>
+                                <FontAwesomeIcon
+                                    icon={faUsers}
+                                    className={styles.bottom__icon}
+                                />
+                                <span className={styles.bottom__span}>
+                                    Social
+                                </span>
                             </button>
                         </div>
 
@@ -96,18 +99,21 @@ export default function Client({ socialData, filters }: Props) {
 
                     {/* DESKTOP */}
                     <section className={styles.desktop}>
-
                         {/* Panel social colapsable */}
                         <aside
                             className={`${styles.desktop__social} ${
-                                isSocialExpanded ? styles.desktop__social_expanded : ''
+                                isSocialExpanded
+                                    ? styles.desktop__social_expanded
+                                    : ''
                             }`}
                         >
                             <SocialClient
                                 socialData={socialData}
                                 isVisible={true}
                                 isExpanded={isSocialExpanded}
-                                onToggleExpand={() => setIsSocialExpanded(!isSocialExpanded)}
+                                onToggleExpand={() =>
+                                    setIsSocialExpanded(!isSocialExpanded)
+                                }
                                 activePanel={activeSocialPanel}
                                 onTogglePanel={toggleSocialPanel}
                             />
@@ -115,7 +121,6 @@ export default function Client({ socialData, filters }: Props) {
 
                         {/* MAPA + FLOTANTES */}
                         <div className={styles.desktop__map_container}>
-
                             <div className={styles.desktop__search}>
                                 <SearchBar />
                             </div>
@@ -129,9 +134,13 @@ export default function Client({ socialData, filters }: Props) {
                             <div className={styles.desktop__filters_buttons}>
                                 <button
                                     className={styles.desktop__filter_btn}
-                                    onClick={() => setShowFiltersPanel(!showFiltersPanel)}
+                                    onClick={() =>
+                                        setShowFiltersPanel(!showFiltersPanel)
+                                    }
                                 >
-                                    <FontAwesomeIcon icon={showFiltersPanel ? faX : faFilter} />
+                                    <FontAwesomeIcon
+                                        icon={showFiltersPanel ? faX : faFilter}
+                                    />
                                 </button>
                             </div>
 
@@ -140,20 +149,28 @@ export default function Client({ socialData, filters }: Props) {
                                     <FiltersClient
                                         filters={filters}
                                         isVisible={showFiltersPanel}
-                                        onClose={() => setShowFiltersPanel(false)}
+                                        onClose={() =>
+                                            setShowFiltersPanel(false)
+                                        }
                                     />
                                 </div>
                             )}
 
                             {activeSocialPanel === 'searchFriend' && (
                                 <div className={styles.desktop__social_panel}>
-                                    <FriendSearch onClose={() => toggleSocialPanel(null)} />
+                                    <FriendSearch
+                                        onClose={() => toggleSocialPanel(null)}
+                                    />
                                 </div>
                             )}
 
                             {activeSocialPanel === 'newGroup' && (
                                 <div className={styles.desktop__social_panel}>
-                                    <GroupCreate handleCancel={() => toggleSocialPanel(null)} />
+                                    <GroupCreate
+                                        handleCancel={() =>
+                                            toggleSocialPanel(null)
+                                        }
+                                    />
                                 </div>
                             )}
                         </div>
