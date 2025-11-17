@@ -1,45 +1,9 @@
 import { AuthStep } from '@/components'
-import { API_URL } from '@/constants'
-import { RegisterItem } from '@/types'
-import { cookies } from 'next/headers'
-
-const getData = async () => {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('token')?.value
-
-    let data: RegisterItem[] = []
-
-    try {
-        const res = await fetch(`${API_URL}/Gusto`, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            cache: 'no-store',
-        })
-
-        if (!res.ok) {
-            throw new Error('Error en el fetch')
-        }
-
-        const temp = await res.json()
-
-        // El backend devuelve gustos con campo seleccionado
-       data = (temp.gustos || []).map(
-    (item: { id: string; nombre: string; seleccionado?: boolean }) => ({
-        id: item.id,          // ← GUID STRING
-        nombre: item.nombre,
-        seleccionado: item.seleccionado || false,
-        }))
-    } catch (error) {
-        console.error('Error cargando los datos:', error)
-        data = []
-    }
-
-    return data
-}
+import { getGustos } from '@/app/actions/steps'
 
 export default async function Step() {
-    const data = await getData()
+    const result = await getGustos()
+    const data = result.success && result.data ? result.data : []
 
     return (
         <AuthStep

@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { useRegister } from '@/context/RegisterContext'
 import { useEffect, useState, useRef } from 'react'
 import { RegisterItem } from '@/types'
+import { saveSteps } from '@/app/actions/steps'
 
 export default function StepFour() {
 
@@ -103,22 +104,16 @@ console.log('[Step 4] Resumen OK:', {
                 return
             }
 
-          
             const dataToSend = {
                 step1: data.step1,
                 step2: data.step2,
                 step3: data.step3,
             }
 
-            const response = await fetch('/api/steps', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSend),
-            })
+            const result = await saveSteps(dataToSend)
 
-            if (!response.ok) {
-                const errorData = await response.json()
-                alert(errorData.error || 'Error al guardar tus preferencias')
+            if (!result.success) {
+                alert(result.error || 'Error al guardar tus preferencias')
                 return
             }
 

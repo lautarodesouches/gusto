@@ -34,11 +34,6 @@ export default function Step({
     const hasInitialized = useRef(false)
     const currentStepRef = useRef(step)
 
-    // Debug: Log cuando cambian los valores importantes
-    useEffect(() => {
-        console.log('[Step] Estado actual:', { step, mode, basePath, hasToken: !!token })
-    }, [step, mode, basePath, token])
-
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
 
