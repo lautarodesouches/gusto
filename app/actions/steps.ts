@@ -26,6 +26,7 @@ interface BackendItem {
     id: number | string
     nombre: string
     seleccionado?: boolean
+    imagenUrl?: string
 }
 
 /**
@@ -44,6 +45,7 @@ function mapToRegisterItem(item: BackendItem): RegisterItem {
         id: String(item.id),
         nombre: item.nombre,
         seleccionado: item.seleccionado || false,
+        imagenUrl: item.imagenUrl,
     }
 }
 

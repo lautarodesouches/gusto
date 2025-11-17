@@ -307,20 +307,32 @@ export default function Step({
                     </section>
 
                     <section className={styles.gridContainer}>
-                        {filteredContent.map(({ id, nombre }) => {
+                        {filteredContent.map(({ id, nombre, imagenUrl }) => {
                             // Comparar IDs correctamente (pueden ser string o number)
                             const isSelected = selected.some(
                                 item => String(item.id) === String(id)
                             )
+                            // Para step 3, usar imagenUrl si está disponible
+                            const hasImage = step === 3 && imagenUrl
                             return (
                                 <button
                                     key={id}
                                     onClick={() => handleSelect(id)}
                                     className={`${styles.gridItem} ${
                                         isSelected ? styles.selected : ''
-                                    }`}
+                                    } ${hasImage ? styles.withImage : ''}`}
                                 >
-                                    {nombre}
+                                    {hasImage && (
+                                        <img
+                                            src={imagenUrl}
+                                            alt={nombre}
+                                            className={styles.gridItemImage}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                    <span className={styles.gridItemText}>
+                                        {nombre}
+                                    </span>
                                 </button>
                             )
                         })}
