@@ -53,7 +53,6 @@ export default function GroupCard({
             >
                 <div className={styles.group__img}>
                     {firstMemberPhoto ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={firstMemberPhoto} alt={group.nombre} />
                     ) : (
                         <FontAwesomeIcon icon={faUsers} />
@@ -71,7 +70,6 @@ export default function GroupCard({
             >
                 <div className={styles.group__img}>
                     {firstMemberPhoto ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={firstMemberPhoto} alt={group.nombre} />
                     ) : (
                         <FontAwesomeIcon icon={faUsers} />
