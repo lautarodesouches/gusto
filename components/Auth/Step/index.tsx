@@ -107,7 +107,8 @@ export default function Step({
         if (alreadySelected) {
             newSelection = current.filter(item => String(item.id) !== String(id))
         } else {
-            if (current.length >= 5) {
+            // Para step 3 (gustos) no hay límite máximo, para otros steps máximo 5
+            if (step !== 3 && current.length >= 5) {
                 setError('Puedes seleccionar máximo 5 opciones')
                 return
             }
@@ -124,7 +125,7 @@ export default function Step({
             [stepKey]: newSelection,
         })
 
-     
+        // Para step 3, limpiar error si tiene al menos 3
         if (step === 3 && newSelection.length >= 3) {
             setError(null)
         }
@@ -160,20 +161,19 @@ export default function Step({
                 // Si el id es un número, convertirlo a string (aunque gustos deberían ser siempre strings/GUIDs)
                 return typeof item.id === 'number' ? String(item.id) : item.id
             })
-            const skip = current.length === 0
-
-            // Para paso 3 (gustos): el backend valida mínimo de 3 gustos
-            // Permite lista vacía (0 gustos) pero rechaza 1-2 gustos
+            
+            // Para paso 3 (gustos): requiere mínimo 3 gustos, no se puede saltar
             if (step === 3) {
-                if (current.length > 0 && current.length < 3) {
-                    // NO intentar guardar si tiene 1-2 gustos (el backend lo rechazará)
-                    // Solo mostrar error y NO avanzar
+                if (current.length < 3) {
+                    // NO permitir avanzar si tiene menos de 3 gustos
                     setError('Debes seleccionar al menos 3 gustos para continuar.')
+                    setSaving(false)
                     return
                 }
-                // Si tiene 0 gustos (lista vacía) o 3+, intentar guardar
-                // El backend permite lista vacía pero valida mínimo de 3 si hay gustos
             }
+            
+            // Para step 3 no se puede saltar, para otros steps sí
+            const skip = step === 3 ? false : current.length === 0
 
             // Usar PUT en modo edición, POST en modo registro
             const method = mode === 'edicion' ? 'PUT' : 'POST'
@@ -299,7 +299,9 @@ export default function Step({
                         </div>
                         <div className={styles.counter}>
                             <span>
-                                {(selected as unknown as number[]).length}/5
+                                {step === 3 
+                                    ? (selected as unknown as number[]).length
+                                    : `${(selected as unknown as number[]).length}/5`}
                             </span>
                         </div>
                     </section>
@@ -340,12 +342,14 @@ export default function Step({
                         <button
                             onClick={handleNext}
                             className={styles.skipButton}
-                            disabled={saving}
+                            disabled={saving || (step === 3 && selected.length < 3)}
                         >
                             {saving
                                 ? 'GUARDANDO...'
                                 : isLastStep
                                 ? 'FINALIZAR'
+                                : step === 3 && selected.length < 3
+                                ? 'SELECCIONA MÍNIMO 3'
                                 : selected.length === 0
                                 ? 'SALTAR'
                                 : 'SIGUIENTE'}

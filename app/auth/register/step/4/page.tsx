@@ -125,7 +125,7 @@ export default function StepFour() {
 
             router.push(ROUTES.MAP)
         } catch (error) {
-            alert('Error al finalizar el registro')
+            console.error('Error al finalizar el registro:', error)
         }
     }
 
