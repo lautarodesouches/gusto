@@ -1,4 +1,5 @@
 'use client'
+
 import { Filters, SocialData } from '@/types'
 import styles from './styles.module.css'
 import FiltersClient from '../FiltersClient'
@@ -13,16 +14,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter, faUsers, faX } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 
+// ⬇️ Tus imports
+import Nav from '../Nav'
+import { useRegistrationCheck } from '@/hooks/useRegistrationCheck'
+import { IncompleteRegistrationModal } from '@/components/modal/IncompleteRegistrationModal'
+
 interface Props {
     socialData: SocialData
     filters: Filters
 }
 
 type ActivePanel = 'filters' | 'social' | null
-
 type SocialPanel = 'searchFriend' | 'newGroup' | null
 
 export default function Client({ socialData, filters }: Props) {
+
+    // ⬇️ Tu lógica de registro incompleto
+    const { checking, incompleto, paso } = useRegistrationCheck()
+
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [isSocialExpanded, setIsSocialExpanded] = useState(true)
     const [showFiltersPanel, setShowFiltersPanel] = useState(false)
@@ -36,142 +45,121 @@ export default function Client({ socialData, filters }: Props) {
         setActiveSocialPanel(prev => (prev === panel ? null : panel))
     }
 
+    // Mientras chequea…
+    if (checking) {
+        return <div style={{ color: 'white', padding: 20 }}>Cargando...</div>
+    }
+
     return (
         <main className={styles.main}>
-            {/* Mobile: Mapa */}
-            <div className={styles.mobile__map_container}>
-                {/* Selectores en la parte superior izquierda */}
-                <div className={styles.mobile__filters}>
-                    <FiltersSelector />
-                </div>
+            
+            {/* ⬇️ Modal si no completó el registro */}
+            {incompleto && <IncompleteRegistrationModal paso={paso} />}
 
-                {/* Perfil y notificaciones en la parte superior derecha */}
-                <div className={styles.mobile__profile}>
-                    <ProfileBar />
-                </div>
+            {/* ⬇️ Si NO completó preferencias, NO mostramos mapa ni layout */}
+            {!incompleto && (
+                <>
+                    {/* Nav eliminado - solo se usa ProfileBar */}
 
-                <MapClient containerStyle={styles.map_mobile} />
-            </div>
+                    {/* MOBILE BOTTOM NAV */}
+                    <section className={styles.bottom}>
+                        <div className={styles.bottom__container}>
+                            <button
+                                className={styles.bottom__button}
+                                onClick={() => togglePanel('filters')}
+                            >
+                                <FontAwesomeIcon icon={faFilter} className={styles.bottom__icon} />
+                                <span className={styles.bottom__span}>Filtros</span>
+                            </button>
 
-            {/* Mobile bottom nav - NUEVO DISEÑO */}
-            <section className={styles.bottom}>
-                {/* Contenedor principal con fondo oscuro */}
-                <div className={styles.bottom__wrapper}>
-                    {/* Buscador arriba */}
-                    <div className={styles.bottom__search}>
-                        <SearchBar />
-                    </div>
-
-                    {/* Botones Filtros y Social debajo */}
-                    <div className={styles.bottom__buttons}>
-                        <button
-                            className={styles.bottom__button}
-                            onClick={() => togglePanel('filters')}
-                        >
-                            <FontAwesomeIcon
-                                icon={faFilter}
-                                className={styles.bottom__icon}
-                            />
-                            <span className={styles.bottom__span}>Filtros</span>
-                        </button>
-                        <button
-                            className={styles.bottom__button}
-                            onClick={() => togglePanel('social')}
-                        >
-                            <FontAwesomeIcon
-                                icon={faUsers}
-                                className={styles.bottom__icon}
-                            />
-                            <span className={styles.bottom__span}>Social</span>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Paneles desplegables */}
-                <FiltersClient
-                    isVisible={activePanel === 'filters'}
-                    onClose={() => togglePanel('filters')}
-                    filters={filters}
-                />
-                <SocialClient
-                    socialData={socialData}
-                    isVisible={activePanel === 'social'}
-                    onClose={() => togglePanel('social')}
-                />
-            </section>
-
-            {/* Desktop layout */}
-            <section className={styles.desktop}>
-                {/* Social panel colapsable a la izquierda */}
-                <aside
-                    className={`${styles.desktop__social} ${
-                        isSocialExpanded ? styles.desktop__social_expanded : ''
-                    }`}
-                >
-                    <SocialClient
-                        socialData={socialData}
-                        isVisible={true}
-                        isExpanded={isSocialExpanded}
-                        onToggleExpand={() => setIsSocialExpanded(!isSocialExpanded)}
-                        activePanel={activeSocialPanel}
-                        onTogglePanel={toggleSocialPanel}
-                    />
-                </aside>
-
-                {/* Contenedor del mapa con componentes flotantes */}
-                <div className={styles.desktop__map_container}>
-                    {/* Buscador en la parte superior izquierda */}
-                    <div className={styles.desktop__search}>
-                        <SearchBar />
-                    </div>
-
-                    {/* Perfil y notificaciones en la parte superior derecha */}
-                    <div className={styles.desktop__profile}>
-                        <ProfileBar />
-                    </div>
-
-                    {/* Mapa */}
-                    <MapClient containerStyle={styles.map} />
-
-                    {/* Botón de filtros flotante en la parte inferior izquierda */}
-                    <div className={styles.desktop__filters_buttons}>
-                        <button
-                            className={styles.desktop__filter_btn}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setShowFiltersPanel(!showFiltersPanel)
-                            }}
-                            type="button"
-                        >
-                            <FontAwesomeIcon icon={showFiltersPanel ? faX : faFilter} />
-                        </button>
-                    </div>
-
-                    {/* Panel de filtros desplegable */}
-                    {showFiltersPanel && (
-                        <div className={styles.desktop__filters_panel}>
-                            <FiltersClient
-                                filters={filters}
-                                isVisible={showFiltersPanel}
-                                onClose={() => setShowFiltersPanel(false)}
-                            />
+                            <button
+                                className={styles.bottom__button}
+                                onClick={() => togglePanel('social')}
+                            >
+                                <FontAwesomeIcon icon={faUsers} className={styles.bottom__icon} />
+                                <span className={styles.bottom__span}>Social</span>
+                            </button>
                         </div>
-                    )}
 
-                    {/* Paneles de social (agregar amigo / crear grupo) en desktop */}
-                    {activeSocialPanel === 'searchFriend' && (
-                        <div className={styles.desktop__social_panel}>
-                            <FriendSearch onClose={() => toggleSocialPanel(null)} />
+                        <FiltersClient
+                            isVisible={activePanel === 'filters'}
+                            onClose={() => togglePanel('filters')}
+                            filters={filters}
+                        />
+
+                        <SocialClient
+                            socialData={socialData}
+                            isVisible={activePanel === 'social'}
+                            onClose={() => togglePanel('social')}
+                        />
+                    </section>
+
+                    {/* DESKTOP */}
+                    <section className={styles.desktop}>
+
+                        {/* Panel social colapsable */}
+                        <aside
+                            className={`${styles.desktop__social} ${
+                                isSocialExpanded ? styles.desktop__social_expanded : ''
+                            }`}
+                        >
+                            <SocialClient
+                                socialData={socialData}
+                                isVisible={true}
+                                isExpanded={isSocialExpanded}
+                                onToggleExpand={() => setIsSocialExpanded(!isSocialExpanded)}
+                                activePanel={activeSocialPanel}
+                                onTogglePanel={toggleSocialPanel}
+                            />
+                        </aside>
+
+                        {/* MAPA + FLOTANTES */}
+                        <div className={styles.desktop__map_container}>
+
+                            <div className={styles.desktop__search}>
+                                <SearchBar />
+                            </div>
+
+                            <div className={styles.desktop__profile}>
+                                <ProfileBar />
+                            </div>
+
+                            <MapClient containerStyle={styles.map} />
+
+                            <div className={styles.desktop__filters_buttons}>
+                                <button
+                                    className={styles.desktop__filter_btn}
+                                    onClick={() => setShowFiltersPanel(!showFiltersPanel)}
+                                >
+                                    <FontAwesomeIcon icon={showFiltersPanel ? faX : faFilter} />
+                                </button>
+                            </div>
+
+                            {showFiltersPanel && (
+                                <div className={styles.desktop__filters_panel}>
+                                    <FiltersClient
+                                        filters={filters}
+                                        isVisible={showFiltersPanel}
+                                        onClose={() => setShowFiltersPanel(false)}
+                                    />
+                                </div>
+                            )}
+
+                            {activeSocialPanel === 'searchFriend' && (
+                                <div className={styles.desktop__social_panel}>
+                                    <FriendSearch onClose={() => toggleSocialPanel(null)} />
+                                </div>
+                            )}
+
+                            {activeSocialPanel === 'newGroup' && (
+                                <div className={styles.desktop__social_panel}>
+                                    <GroupCreate handleCancel={() => toggleSocialPanel(null)} />
+                                </div>
+                            )}
                         </div>
-                    )}
-                    {activeSocialPanel === 'newGroup' && (
-                        <div className={styles.desktop__social_panel}>
-                            <GroupCreate handleCancel={() => toggleSocialPanel(null)} />
-                        </div>
-                    )}
-                </div>
-            </section>
+                    </section>
+                </>
+            )}
         </main>
     )
 }

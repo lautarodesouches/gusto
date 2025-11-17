@@ -10,8 +10,11 @@ import { faUser, faGear, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import { UpgradePremiumModal } from '@/components'
 import { logout as logoutAction } from '@/app/actions/login'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 
 export default function ProfileBar() {
+    const { user: backendUser, loading: backendLoading } = useCurrentUser()
+
     const [showProfileMenu, setShowProfileMenu] = useState(false)
     const [showNotifications, setShowNotifications] = useState(false)
     const [showPremiumModal, setShowPremiumModal] = useState(false)
@@ -49,7 +52,9 @@ export default function ProfileBar() {
     }
 
     const handleViewProfile = () => {
-        router.push(`${ROUTES.PROFILE}${user?.displayName || user?.email || 'usuario'}`)
+        // Usar idUsuario (username) del backend, no email
+        const username = backendUser?.idUsuario || user?.displayName || 'usuario'
+        router.push(`${ROUTES.PROFILE}${username}`)
         setShowProfileMenu(false)
     }
 
@@ -57,7 +62,16 @@ export default function ProfileBar() {
         // TODO: Implementar ruta de configuración
         setShowProfileMenu(false)
     }
-
+    if (backendLoading) {
+        return (
+            <div className={styles.barra_perfil}>
+                <div className={styles.contenedor}>
+                    <span className={styles.nombre}>...</span>
+                </div>
+            </div>
+        )
+    }
+    
     return (
         <>
             <div className={styles.barra_perfil} ref={containerRef}>
@@ -98,7 +112,7 @@ export default function ProfileBar() {
                             <FontAwesomeIcon icon={faUser} />
                         </div>
                         <span className={styles.nombre}>
-                            {user?.displayName || user?.email || 'Nombre User'}
+                            {backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}
                         </span>
                         {/* Corona Premium */}
                         {isPremium && (
@@ -124,6 +138,11 @@ export default function ProfileBar() {
                     {/* Menú desplegable */}
                     {showProfileMenu && (
                         <div className={styles.menu}>
+                            {/* Mostrar username/email del usuario */}
+                            <div className={styles.menu__user_info}>
+                                <FontAwesomeIcon icon={faUser} />
+                                <span>{backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}</span>
+                            </div>
                             <button
                                 className={styles.menu__item}
                                 onClick={handleViewProfile}

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
 import { useStep } from '@/hooks/useStep'
 import { ROUTES } from '@/routes'
+import { useRegister } from '@/context/RegisterContext'
 
 interface Props {
     steps?: number
@@ -10,11 +11,14 @@ interface Props {
 
 export default function Progress({ steps = 4 }: Props) {
     const activeStep = useStep()
-
     const router = useRouter()
+    
+    // Obtener basePath del contexto (siempre disponible porque está dentro de RegisterProvider)
+    const { basePath: contextBasePath } = useRegister()
+    const basePath = contextBasePath || ROUTES.STEPS
 
     const handleStepClick = (stepNumber: number) => {
-        router.push(`${ROUTES.STEPS}/${stepNumber}`)
+        router.push(`${basePath}/${stepNumber}`)
     }
 
     return (

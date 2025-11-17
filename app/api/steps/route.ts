@@ -65,7 +65,7 @@ export async function POST(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                ids: safeStep1.map((item: { id: number }) => item.id),
+            ids: safeStep1.map((item: { id: string }) => item.id),
                 skip: safeStep1.length === 0,
             }),
         })
@@ -86,7 +86,8 @@ export async function POST(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                ids: safeStep2.map((item: { id: number }) => item.id),
+               ids: safeStep2.map((item: { id: string }) => item.id),
+
                 skip: safeStep2.length === 0,
             }),
         })
@@ -107,7 +108,8 @@ export async function POST(req: Request) {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                ids: safeStep3.map((item: { id: number }) => item.id),
+             ids: safeStep3.map((item: { id: string }) => item.id),
+
                 skip: safeStep3.length === 0,
             }),
         })
@@ -118,6 +120,24 @@ export async function POST(req: Request) {
             throw new Error(`Error en gustos: ${res3.status}`)
         }
         console.log('Step3 guardado correctamente')
+
+        
+        console.log('Finalizando registro...')
+        const resFinalizar = await fetch(`${API_URL}/Usuario/finalizar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (!resFinalizar.ok) {
+            const errorText = await resFinalizar.text()
+            console.error('Error al finalizar registro:', resFinalizar.status, errorText)
+           
+        } else {
+            console.log('Registro finalizado correctamente')
+        }
 
         console.log('=== Todos los steps guardados exitosamente ===')
         return NextResponse.json({

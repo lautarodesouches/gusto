@@ -1,9 +1,7 @@
 import { AuthStep } from '@/components'
-
 import { API_URL } from '@/constants'
 import { RegisterItem } from '@/types'
 import { cookies } from 'next/headers'
-import { PreventWrapper } from '../../PreventWrapper'
 
 const getData = async () => {
     const cookieStore = await cookies()
@@ -12,7 +10,7 @@ const getData = async () => {
     let data: RegisterItem[] = []
 
     try {
-        const res = await fetch(`${API_URL}/Restriccion`, {
+        const res = await fetch(`${API_URL}/Gusto`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -23,12 +21,14 @@ const getData = async () => {
             throw new Error('Error en el fetch')
         }
 
-        const response = await res.json()
-        // El backend devuelve objetos con campo Seleccionado
-        data = response.map((item: { id: number; nombre: string; seleccionado?: boolean }) => ({
-            id: item.id,
-            nombre: item.nombre,
-            seleccionado: item.seleccionado || false,
+        const temp = await res.json()
+
+        // El backend devuelve gustos con campo seleccionado
+       data = (temp.gustos || []).map(
+    (item: { id: string; nombre: string; seleccionado?: boolean }) => ({
+        id: item.id,          // ← GUID STRING
+        nombre: item.nombre,
+        seleccionado: item.seleccionado || false,
         }))
     } catch (error) {
         console.error('Error cargando los datos:', error)
@@ -42,14 +42,12 @@ export default async function Step() {
     const data = await getData()
 
     return (
-        <>
-            <PreventWrapper />
-            <AuthStep
-                title="Alguna alergia o intolerancia?"
-                description="Selecciona las que corresponden; son preferencias críticas"
-                inputDescription="Escribe tus alergias o intolerancias"
-                content={data}
-            />
-        </>
+        <AuthStep
+            title="Que te gusta comer?"
+            description="Seleccioná al menos 3 y hasta 5 tipos de cocina o platos que prefieras (mínimo 3 requeridos)"
+            inputDescription="Escribe una comida"
+            content={data}
+        />
     )
 }
+
