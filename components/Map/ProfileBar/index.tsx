@@ -8,7 +8,7 @@ import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGear, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
-import { UpgradePremiumModal } from '@/components'
+import { FriendRequests, UpgradePremiumModal } from '@/components'
 import { logout as logoutAction } from '@/app/actions/login'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 
@@ -59,7 +59,7 @@ export default function ProfileBar() {
     }
 
     const handleConfiguration = () => {
-        // TODO: Implementar ruta de configuración
+       
         setShowProfileMenu(false)
     }
     if (backendLoading) {
@@ -102,6 +102,12 @@ export default function ProfileBar() {
                             isActive={showNotifications}
                         />
                     </div>
+
+
+                    
+                         <div className={styles.friendRequests}>
+                        <FriendRequests />
+                     </div>
 
                     {/* Perfil */}
                     <button
