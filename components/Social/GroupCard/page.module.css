@@ -5,6 +5,16 @@
     background: var(--background);
     padding: 10px 5px;
     border-radius: 10px;
+    position: relative;
+}
+
+.group__link {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .group--loading {
@@ -82,25 +92,6 @@
     font-size: 0.95rem;
 }
 
-.group__info{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-
-.group__info svg {
-    padding: 5px;
-    cursor: pointer;
-}
-
-.group__icon {
-    width: 15px;
-    height: 15px;
-    color: var(--light);
-    border-radius: 50%;
-    border: 1px solid var(--light);
-}
 
 /* Modo solo imagen (compacto) */
 .group__image_only {
