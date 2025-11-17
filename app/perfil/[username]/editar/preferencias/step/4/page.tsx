@@ -8,7 +8,6 @@ import { RegisterItem } from '@/types'
 import { saveSteps } from '@/app/actions/steps'
 
 export default function StepFour() {
-
     const router = useRouter()
     const params = useParams()
     const username = params.username as string
@@ -24,14 +23,15 @@ export default function StepFour() {
 
     const hasLoadedRef = useRef(false)
 
-    
     useEffect(() => {
         if (hasLoadedRef.current) return
         hasLoadedRef.current = true
 
         const loadData = async () => {
             try {
-                const response = await fetch('/api/usuario/resumen?modo=edicion')
+                const response = await fetch(
+                    '/api/usuario/resumen?modo=edicion'
+                )
 
                 if (!response.ok) {
                     console.error('Error al cargar resumen del usuario')
@@ -42,44 +42,44 @@ export default function StepFour() {
                 const resumen = await response.json()
 
                 const step1Data =
-                    resumen.restricciones?.map((item: { id: string | number; nombre: string }) => ({
-                        id: item.id,
-                        nombre: item.nombre
-                    })) || []
+                    resumen.restricciones?.map(
+                        (item: { id: string | number; nombre: string }) => ({
+                            id: item.id,
+                            nombre: item.nombre,
+                        })
+                    ) || []
 
                 const step2Data =
-                    resumen.condicionesMedicas?.map((item: { id: string | number; nombre: string }) => ({
-                        id: item.id,
-                        nombre: item.nombre
-                    })) || []
+                    resumen.condicionesMedicas?.map(
+                        (item: { id: string | number; nombre: string }) => ({
+                            id: item.id,
+                            nombre: item.nombre,
+                        })
+                    ) || []
 
                 // Los gustos usan GUIDs (strings), mantenerlos como strings
                 const step3Data: RegisterItem[] =
-                    resumen.gustos?.map((item: { id: string | number; nombre: string }) => ({
-                        id: typeof item.id === 'string' ? item.id : String(item.id),
-                        nombre: item.nombre
-                    })) || []
+                    resumen.gustos?.map(
+                        (item: { id: string | number; nombre: string }) => ({
+                            id:
+                                typeof item.id === 'string'
+                                    ? item.id
+                                    : String(item.id),
+                            nombre: item.nombre,
+                        })
+                    ) || []
 
-console.log('[Step 4] Resumen OK:', {
-    gustos: step3Data.map((g: RegisterItem) => g.nombre),
-    ids: step3Data.map((g: RegisterItem) => g.id)
-})
-
-
-              
                 setData({
                     step1: step1Data,
                     step2: step2Data,
-                    step3: step3Data
+                    step3: step3Data,
                 })
 
-             
                 setDisplayData({
                     step1: step1Data,
                     step2: step2Data,
-                    step3: step3Data
+                    step3: step3Data,
                 })
-
             } catch (error) {
                 console.error('Error cargando resumen:', error)
             } finally {
@@ -119,7 +119,7 @@ console.log('[Step 4] Resumen OK:', {
 
             router.push('/mapa/')
         } catch (error) {
-            alert('Error al finalizar el registro')
+            console.error('Error al finalizar el registro:', error)
         }
     }
 
@@ -127,7 +127,7 @@ console.log('[Step 4] Resumen OK:', {
         router.push(`${basePath}/3`)
     }
 
-    const renderSelections = (items?: { nombre: string }[]) => (
+    const renderSelections = (items?: { nombre: string }[]) =>
         !items || items.length === 0 ? (
             <p>No seleccionaste nada.</p>
         ) : (
@@ -139,7 +139,6 @@ console.log('[Step 4] Resumen OK:', {
                 ))}
             </ul>
         )
-    )
 
     return (
         <div className={styles.container}>
@@ -151,23 +150,35 @@ console.log('[Step 4] Resumen OK:', {
 
             <section className={styles.reviewContainer}>
                 {loading ? (
-                    <div style={{ color: 'var(--white)', textAlign: 'center', padding: '2rem' }}>
+                    <div
+                        style={{
+                            color: 'var(--white)',
+                            textAlign: 'center',
+                            padding: '2rem',
+                        }}
+                    >
                         Cargando datos...
                     </div>
                 ) : (
                     <>
                         <div className={styles.reviewCard}>
-                            <h3 className={styles.reviewTitle}>Alergias e intolerancias</h3>
+                            <h3 className={styles.reviewTitle}>
+                                Alergias e intolerancias
+                            </h3>
                             {renderSelections(displayData.step1)}
                         </div>
 
                         <div className={styles.reviewCard}>
-                            <h3 className={styles.reviewTitle}>Condiciones médicas</h3>
+                            <h3 className={styles.reviewTitle}>
+                                Condiciones médicas
+                            </h3>
                             {renderSelections(displayData.step2)}
                         </div>
 
                         <div className={styles.reviewCard}>
-                            <h3 className={styles.reviewTitle}>Tus preferencias de comida</h3>
+                            <h3 className={styles.reviewTitle}>
+                                Tus preferencias de comida
+                            </h3>
                             {renderSelections(displayData.step3)}
                         </div>
                     </>
@@ -175,7 +186,9 @@ console.log('[Step 4] Resumen OK:', {
             </section>
 
             <nav className={styles.actions}>
-                <button onClick={handleBack} className={styles.backButton}>VOLVER</button>
+                <button onClick={handleBack} className={styles.backButton}>
+                    VOLVER
+                </button>
                 <button onClick={handleFinish} className={styles.finishButton}>
                     {mode === 'edicion' ? 'CONFIRMAR' : 'FINALIZAR'}
                 </button>
