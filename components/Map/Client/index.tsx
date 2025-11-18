@@ -12,7 +12,7 @@ import FriendSearch from '@/components/Social/FriendSearch'
 import GroupCreate from '@/components/Social/GroupCreate'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter, faUsers, faX } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ⬇️ Tus imports
 import Nav from '../Nav'
@@ -29,13 +29,19 @@ type SocialPanel = 'searchFriend' | 'newGroup' | null
 
 export default function Client({ socialData, filters }: Props) {
 
-    // ⬇️ Tu lógica de registro incompleto
-    const { checking, incompleto, paso } = useRegistrationCheck()
+    const { checking, incompleto, paso, mostrarModal } = useRegistrationCheck()
+    const [showModal, setShowModal] = useState(false)
 
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [isSocialExpanded, setIsSocialExpanded] = useState(true)
     const [showFiltersPanel, setShowFiltersPanel] = useState(false)
     const [activeSocialPanel, setActiveSocialPanel] = useState<SocialPanel>(null)
+
+    useEffect(() => {
+        if (mostrarModal) {
+            setShowModal(true)
+        }
+    }, [mostrarModal])
 
     const togglePanel = (panel: ActivePanel) => {
         setActivePanel(prev => (prev === panel ? null : panel))
@@ -45,7 +51,6 @@ export default function Client({ socialData, filters }: Props) {
         setActiveSocialPanel(prev => (prev === panel ? null : panel))
     }
 
-    // Mientras chequea…
     if (checking) {
         return <div style={{ color: 'white', padding: 20 }}>Cargando...</div>
     }
@@ -53,13 +58,15 @@ export default function Client({ socialData, filters }: Props) {
     return (
         <main className={styles.main}>
             
-            {/* ⬇️ Modal si no completó el registro */}
-            {incompleto && <IncompleteRegistrationModal paso={paso} />}
+            {showModal && (
+                <IncompleteRegistrationModal 
+                    paso={paso} 
+                    onClose={() => setShowModal(false)} 
+                />
+            )}
 
-            {/* ⬇️ Si NO completó preferencias, NO mostramos mapa ni layout */}
-            {!incompleto && (
-                <>
-                    {/* Nav eliminado - solo se usa ProfileBar */}
+            <>
+                {/* Nav eliminado - solo se usa ProfileBar */}
 
                     {/* MOBILE BOTTOM NAV */}
                     <section className={styles.bottom}>
@@ -159,7 +166,8 @@ export default function Client({ socialData, filters }: Props) {
                         </div>
                     </section>
                 </>
-            )}
+            
+            
         </main>
     )
 }

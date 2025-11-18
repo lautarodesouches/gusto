@@ -37,7 +37,6 @@ export default function InputField({
 
     return (
         <div className={styles.container}>
-            {error && <span className={styles.error}>* {error}</span>}
             <div className={styles.form__group}>
                 {icon && !isPassword && (
                     <FontAwesomeIcon
@@ -61,6 +60,7 @@ export default function InputField({
                     />
                 )}
             </div>
+            {error && <span className={styles.error}>* {error}</span>}
         </div>
     )
 }
