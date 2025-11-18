@@ -15,6 +15,7 @@ import { LOCAL_URL } from '@/constants'
 import { GroupClient, FriendRequests } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
+import Navbar from '@/components/Navbar'
 
 interface Props {
     params: Promise<{ id: string }>
@@ -189,8 +190,11 @@ export default async function GroupDetail({ params }: Props) {
     const isAdmin = group.administradorFirebaseUid === userId
 
     return (
-        <main className={styles.main}>
-            <GroupClient group={group} />
-        </main>
+        <>
+            <Navbar />
+            <main className={styles.main}>
+                <GroupClient group={group} />
+            </main>
+        </>
     )
 }

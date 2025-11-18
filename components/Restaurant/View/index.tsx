@@ -9,8 +9,6 @@ import {
     faGlobe,
     faBuilding,
     faPen,
-    faBell,
-    faUser,
     faPhone,
     faEnvelope,
 } from '@fortawesome/free-solid-svg-icons'
@@ -93,30 +91,6 @@ export default function RestaurantView({
 
     return (
         <main className={styles.main}>
-            <header className={styles.header}>
-                <div className={styles.header__div}>
-                    <Link className={styles.header__link} href={ROUTES.MAP}>
-                        <Image
-                            className={styles.header__brand}
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
-                            width={300}
-                            height={200}
-                            priority
-                        />
-                    </Link>
-                </div>
-                <div className={styles.header__div}>
-                    <FontAwesomeIcon
-                        className={styles.header__icon}
-                        icon={faBell}
-                    />
-                    <FontAwesomeIcon
-                        className={styles.header__icon}
-                        icon={faUser}
-                    />
-                </div>
-            </header>
             <section className={styles.top}>
                 <header className={styles.top__header}>
                     <div className={styles.top__thumnailcontainer}>

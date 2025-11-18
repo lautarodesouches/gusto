@@ -118,7 +118,7 @@ export default function ProfileBar() {
                             <FontAwesomeIcon icon={faUser} />
                         </div>
                         <span className={styles.nombre}>
-                            {backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}
+                            {backendUser?.idUsuario || user?.displayName || 'Usuario'}
                         </span>
                         {/* Corona Premium */}
                         {isPremium && (
@@ -144,10 +144,10 @@ export default function ProfileBar() {
                     {/* Menú desplegable */}
                     {showProfileMenu && (
                         <div className={styles.menu}>
-                            {/* Mostrar username/email del usuario */}
+                            {/* Mostrar username del usuario */}
                             <div className={styles.menu__user_info}>
                                 <FontAwesomeIcon icon={faUser} />
-                                <span>{backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}</span>
+                                <span>{backendUser?.idUsuario || user?.displayName || 'Usuario'}</span>
                             </div>
                             <button
                                 className={styles.menu__item}

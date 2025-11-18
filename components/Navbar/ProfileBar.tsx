@@ -52,7 +52,7 @@ export default function ProfileBar() {
     }
 
     const handleViewProfile = () => {
-        // Usar idUsuario (username) del backend, no email
+        // Usar idUsuario (username) del backend para la ruta
         const username = backendUser?.idUsuario || user?.displayName || 'usuario'
         router.push(`${ROUTES.PROFILE}${username}`)
         setShowProfileMenu(false)
@@ -116,7 +116,7 @@ export default function ProfileBar() {
                             <FontAwesomeIcon icon={faUser} />
                         </div>
                         <span className={styles.nombre}>
-                            {backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}
+                            {backendUser?.idUsuario || user?.displayName || 'Usuario'}
                         </span>
                         {/* Corona Premium */}
                         {isPremium && (
@@ -142,11 +142,6 @@ export default function ProfileBar() {
                     {/* Menú desplegable */}
                     {showProfileMenu && (
                         <div className={styles.menu}>
-                            {/* Mostrar username/email del usuario */}
-                            <div className={styles.menu__user_info}>
-                                <FontAwesomeIcon icon={faUser} />
-                                <span>{backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}</span>
-                            </div>
                             <button
                                 className={styles.menu__item}
                                 onClick={handleViewProfile}
