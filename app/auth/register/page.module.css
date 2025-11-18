@@ -36,9 +36,16 @@
 
 .error {
     display: block;
-    color: var(--primary);
-    font-weight: 400;
-    margin-top: 4px;
+    color: #ff5757;
+    font-weight: 500;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 87, 87, 0.1);
+    border: 1px solid rgba(255, 87, 87, 0.3);
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.9rem;
+    line-height: 1.4;
 }
 
 @media (min-width: 768px) {

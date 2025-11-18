@@ -14,7 +14,7 @@ export default async function Restaurant({ params }: Props) {
     if (!result.success || !result.data) notFound()
 
     const restaurant = result.data
-    const reviews = restaurant.reviews || []
+    const reviews = Array.isArray(restaurant.reviews) ? restaurant.reviews : []
 
     return <RestaurantClient restaurant={restaurant} reviews={reviews} />
 }

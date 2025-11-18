@@ -8,7 +8,6 @@ import Image from 'next/image'
 import styles from './styles.module.css'
 import { Restaurant } from '@/types'
 import { useToast } from '@/context/ToastContext'
-import { submitReview } from '@/app/actions/review'
 
 interface ReviewFormProps {
     restaurant: Restaurant
@@ -119,29 +118,41 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
         }
 
         const formData = new FormData()
-        formData.append('restaurantId', restaurant.id)
-        formData.append('rating', rating.toString())
+        formData.append('restauranteId', restaurant.id)
+        formData.append('valoracion', rating.toString())
+        if (comment) formData.append('opinion', comment)
+        if (title) formData.append('titulo', title)
         if (visitDate) {
-            formData.append('visitDate', visitDate)
+            const [year, monthIndex] = visitDate.split('-')
+            const month = parseInt(monthIndex) - 1
+            const fechaVisita = new Date(parseInt(year), month, 1)
+            formData.append('fechaVisita', fechaVisita.toISOString())
         }
-        formData.append('visitType', visitType)
-        formData.append('comment', comment)
-        formData.append('title', title)
+        if (visitType) formData.append('motivoVisita', visitType)
 
-        images.forEach((image, index) => {
-            formData.append(`image-${index}`, image)
+        images.forEach((image) => {
+            formData.append('imagenes', image)
         })
 
         startTransition(async () => {
-            const result = await submitReview({ name: '', description: '' })
+            try {
+                const res = await fetch('/api/opinion-restaurante', {
+                    method: 'POST',
+                    body: formData,
+                })
 
-            toast.success('Opinion enviada')
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}))
+                    toast.error(errorData.error || 'Error al enviar opinión')
+                    return
+                }
 
-            if (result.success) {
                 toast.success('¡Opinión enviada exitosamente!')
                 router.push(`/restaurante/${restaurant.id}`)
-            } else {
-                toast.error(result.error || 'Error al enviar opinión')
+                router.refresh()
+            } catch (error) {
+                console.error('Error al enviar opinión:', error)
+                toast.error('Error al enviar opinión')
             }
         })
     }

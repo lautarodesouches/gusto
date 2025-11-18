@@ -27,7 +27,7 @@ export default function ProfileClient({
     }
 
     const handleGoBack = () => {
-        router.back()
+        router.push(ROUTES.MAP)
     }
 
     const [isPending, startTransition] = useTransition()

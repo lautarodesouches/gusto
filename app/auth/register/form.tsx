@@ -7,7 +7,7 @@ import { FormState } from '@/types'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import { auth } from '@/lib/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, deleteUser } from 'firebase/auth'
 import { register } from '../../actions/register'
 
 const fields = [
@@ -123,18 +123,35 @@ export default function Form() {
             if (result.success) {
                 router.push(`${ROUTES.STEPS}/1/`)
             } else {
+                // Si falla el backend, eliminar la cuenta de Firebase
+                try {
+                    await deleteUser(user)
+                } catch (deleteError) {
+                    console.error('Error al eliminar cuenta de Firebase:', deleteError)
+                }
+
                 // Manejar errores del backend
                 const errorMessage = result.error || 'Error en el registro'
 
                 // Intentar mapear errores comunes del backend a campos específicos
+                const lowerMessage = errorMessage.toLowerCase()
+                
+                // Detectar errores de username duplicado (más específico primero)
                 if (
-                    errorMessage.toLowerCase().includes('email') ||
-                    errorMessage.toLowerCase().includes('correo')
+                    lowerMessage.includes('nombre de usuario') ||
+                    (lowerMessage.includes('usuario') && lowerMessage.includes('en uso')) ||
+                    (lowerMessage.includes('username') && (lowerMessage.includes('en uso') || lowerMessage.includes('already')))
+                ) {
+                    setFieldError('username', errorMessage)
+                } else if (
+                    lowerMessage.includes('email') ||
+                    lowerMessage.includes('correo') ||
+                    lowerMessage.includes('correo electrónico')
                 ) {
                     setFieldError('email', errorMessage)
                 } else if (
-                    errorMessage.toLowerCase().includes('usuario') ||
-                    errorMessage.toLowerCase().includes('username')
+                    lowerMessage.includes('usuario') ||
+                    lowerMessage.includes('username')
                 ) {
                     setFieldError('username', errorMessage)
                 } else {

@@ -161,6 +161,18 @@
     cursor: pointer;
 }
 
+.visited__empty {
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+}
+
+.visited__empty_text {
+    font-size: 1rem;
+    color: var(--grey);
+    font-style: italic;
+}
+
 .footer {
     margin-bottom: 20px;
     text-align: center;
