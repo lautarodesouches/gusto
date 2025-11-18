@@ -8,7 +8,7 @@ import styles from './ProfileBar.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGear, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
-import { FriendRequests, UpgradePremiumModal } from '@/components'
+import { UpgradePremiumModal } from '@/components'
 import { logout as logoutAction } from '@/app/actions/login'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 
@@ -103,9 +103,6 @@ export default function ProfileBar() {
                         />
                     </div>
 
-                    <div className={styles.friendRequests}>
-                        <FriendRequests />
-                    </div>
 
                     {/* Perfil */}
                     <button
