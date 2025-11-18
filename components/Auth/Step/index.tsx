@@ -30,54 +30,54 @@ export default function Step({
     const { token } = useAuth()
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false)
+    const [searchTerm, setSearchTerm] = useState('')
     const hasInitialized = useRef(false)
     const currentStepRef = useRef(step)
-
-    // Debug: Log cuando cambian los valores importantes
-    useEffect(() => {
-        console.log('[Step] Estado actual:', { step, mode, basePath, hasToken: !!token })
-    }, [step, mode, basePath, token])
 
     const stepKey = `step${step}` as keyof typeof data
     const selected = data[stepKey] ?? []
 
-   
-    useEffect(() => {
-       
+    const handleStepChange = () => {
         if (currentStepRef.current !== step) {
             hasInitialized.current = false
             currentStepRef.current = step
         }
+    }
 
-        // Solo sincronizar desde el backend si:
-        // 1. Hay contenido disponible
-        // 2. No se ha inicializado aún
-        // 3. NO hay datos ya en el contexto (para no sobrescribir cambios del usuario)
-        if (content.length > 0 && !hasInitialized.current) {
-            const preSelected = content.filter(item => item.seleccionado)
-            const currentData = data[stepKey] || []
-            
-            // Solo sincronizar si no hay datos en el contexto o si los datos del backend son diferentes
-            // Esto evita sobrescribir cambios que el usuario acaba de hacer
-            const shouldSync = currentData.length === 0 || 
-                preSelected.length !== currentData.length ||
-                !preSelected.every(item => currentData.some(c => c.id === item.id))
-            
-            if (shouldSync) {
-                console.log(`[Step ${step}] Sincronizando desde backend:`, {
-                    totalItems: content.length,
-                    seleccionados: preSelected.length,
-                    ids: preSelected.map(i => i.id),
-                    currentDataLength: currentData.length
-                })
-                
-                setData({
-                    [stepKey]: preSelected,
-                })
-            }
-            hasInitialized.current = true
+    const shouldSyncData = (preSelected: RegisterItem[], currentData: RegisterItem[]): boolean => {
+        return currentData.length === 0 || 
+            preSelected.length !== currentData.length ||
+            !preSelected.every(item => currentData.some(c => c.id === item.id))
+    }
+
+    const syncDataFromBackend = () => {
+        if (content.length === 0 || hasInitialized.current) {
+            return
         }
-      
+
+        const preSelected = content.filter(item => item.seleccionado)
+        const currentData = data[stepKey] || []
+        
+        if (shouldSyncData(preSelected, currentData)) {
+            console.log(`[Step ${step}] Sincronizando desde backend:`, {
+                totalItems: content.length,
+                seleccionados: preSelected.length,
+                ids: preSelected.map(i => i.id),
+                currentDataLength: currentData.length
+            })
+            
+            setData({
+                [stepKey]: preSelected,
+            })
+        }
+        
+        hasInitialized.current = true
+    }
+
+    useEffect(() => {
+        handleStepChange()
+        syncDataFromBackend()
+        setSearchTerm('') // Limpiar búsqueda al cambiar de paso
     }, [content, step, stepKey, data, setData])
 
     const getEndpoint = () => {
@@ -107,7 +107,8 @@ export default function Step({
         if (alreadySelected) {
             newSelection = current.filter(item => String(item.id) !== String(id))
         } else {
-            if (current.length >= 5) {
+            // Para step 3 (gustos) no hay límite máximo, para otros steps máximo 5
+            if (step !== 3 && current.length >= 5) {
                 setError('Puedes seleccionar máximo 5 opciones')
                 return
             }
@@ -124,7 +125,7 @@ export default function Step({
             [stepKey]: newSelection,
         })
 
-     
+        // Para step 3, limpiar error si tiene al menos 3
         if (step === 3 && newSelection.length >= 3) {
             setError(null)
         }
@@ -160,20 +161,19 @@ export default function Step({
                 // Si el id es un número, convertirlo a string (aunque gustos deberían ser siempre strings/GUIDs)
                 return typeof item.id === 'number' ? String(item.id) : item.id
             })
-            const skip = current.length === 0
-
-            // Para paso 3 (gustos): el backend valida mínimo de 3 gustos
-            // Permite lista vacía (0 gustos) pero rechaza 1-2 gustos
+            
+            // Para paso 3 (gustos): requiere mínimo 3 gustos, no se puede saltar
             if (step === 3) {
-                if (current.length > 0 && current.length < 3) {
-                    // NO intentar guardar si tiene 1-2 gustos (el backend lo rechazará)
-                    // Solo mostrar error y NO avanzar
+                if (current.length < 3) {
+                    // NO permitir avanzar si tiene menos de 3 gustos
                     setError('Debes seleccionar al menos 3 gustos para continuar.')
+                    setSaving(false)
                     return
                 }
-                // Si tiene 0 gustos (lista vacía) o 3+, intentar guardar
-                // El backend permite lista vacía pero valida mínimo de 3 si hay gustos
             }
+            
+            // Para step 3 no se puede saltar, para otros steps sí
+            const skip = step === 3 ? false : current.length === 0
 
             // Usar PUT en modo edición, POST en modo registro
             const method = mode === 'edicion' ? 'PUT' : 'POST'
@@ -265,6 +265,14 @@ export default function Step({
         router.push(`${basePath}/${step - 1}`)
     }
 
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value)
+    }
+
+    const filteredContent = content.filter(item => 
+        item.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
     return (
         <>
             {content.length !== 0 ? (
@@ -285,30 +293,46 @@ export default function Step({
                                 type="text"
                                 placeholder={inputDescription}
                                 className={styles.input}
+                                value={searchTerm}
+                                onChange={handleSearchChange}
                             />
                         </div>
                         <div className={styles.counter}>
                             <span>
-                                {(selected as unknown as number[]).length}/5
+                                {step === 3 
+                                    ? (selected as unknown as number[]).length
+                                    : `${(selected as unknown as number[]).length}/5`}
                             </span>
                         </div>
                     </section>
 
                     <section className={styles.gridContainer}>
-                        {content.map(({ id, nombre }) => {
+                        {filteredContent.map(({ id, nombre, imagenUrl }) => {
                             // Comparar IDs correctamente (pueden ser string o number)
                             const isSelected = selected.some(
                                 item => String(item.id) === String(id)
                             )
+                            // Para step 3, usar imagenUrl si está disponible
+                            const hasImage = step === 3 && imagenUrl
                             return (
                                 <button
                                     key={id}
                                     onClick={() => handleSelect(id)}
                                     className={`${styles.gridItem} ${
                                         isSelected ? styles.selected : ''
-                                    }`}
+                                    } ${hasImage ? styles.withImage : ''}`}
                                 >
-                                    {nombre}
+                                    {hasImage && (
+                                        <img
+                                            src={imagenUrl}
+                                            alt={nombre}
+                                            className={styles.gridItemImage}
+                                            loading="lazy"
+                                        />
+                                    )}
+                                    <span className={styles.gridItemText}>
+                                        {nombre}
+                                    </span>
                                 </button>
                             )
                         })}
@@ -330,12 +354,14 @@ export default function Step({
                         <button
                             onClick={handleNext}
                             className={styles.skipButton}
-                            disabled={saving}
+                            disabled={saving || (step === 3 && selected.length < 3)}
                         >
                             {saving
                                 ? 'GUARDANDO...'
                                 : isLastStep
                                 ? 'FINALIZAR'
+                                : step === 3 && selected.length < 3
+                                ? 'SELECCIONA MÍNIMO 3'
                                 : selected.length === 0
                                 ? 'SALTAR'
                                 : 'SIGUIENTE'}

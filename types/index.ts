@@ -2,6 +2,7 @@ export type RegisterItem = {
     id: string
     nombre: string
     seleccionado?: boolean
+    imagenUrl?: string
 }
 
 export type Field = {

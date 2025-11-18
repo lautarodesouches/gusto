@@ -3,7 +3,7 @@
 import { useState, useTransition, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar, faImage } from '@fortawesome/free-solid-svg-icons'
+import { faImage } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import styles from './styles.module.css'
 import { Restaurant } from '@/types'
@@ -44,7 +44,27 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
 
     const [rating, setRating] = useState(0)
     const [hoverRating, setHoverRating] = useState(0)
-    const [visitDate, setVisitDate] = useState('')
+    
+    // Manejar clic en estrella (entero o media)
+    const handleStarClick = (starIndex: number, isHalf: boolean) => {
+        const value = isHalf ? starIndex - 0.5 : starIndex
+        setRating(value)
+    }
+    
+    // Manejar hover en estrella
+    const handleStarHover = (starIndex: number, isHalf: boolean) => {
+        const value = isHalf ? starIndex - 0.5 : starIndex
+        setHoverRating(value)
+    }
+    
+    // Obtener el tipo de estrella a mostrar
+    const getStarType = (starIndex: number, currentRating: number) => {
+        if (currentRating >= starIndex) return 'full'
+        if (currentRating >= starIndex - 0.5) return 'half'
+        return 'empty'
+    }
+    const [visitMonth, setVisitMonth] = useState('')
+    const [visitYear, setVisitYear] = useState('')
     const [visitType, setVisitType] = useState<string>('')
     const [comment, setComment] = useState('')
     const [title, setTitle] = useState('')
@@ -53,7 +73,11 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
     const [agreed, setAgreed] = useState(false)
 
     const currentYear = new Date().getFullYear()
-    const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
+    const currentMonth = new Date().getMonth() + 1
+    const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
+    
+    // Construir visitDate cuando cambian mes o año
+    const visitDate = visitMonth && visitYear ? `${visitYear}-${visitMonth}` : ''
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
@@ -185,49 +209,108 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
                             ¿Cómo calificarías tu experiencia?
                         </label>
                         <div className={styles.reviewForm__stars}>
-                            {[1, 2, 3, 4, 5].map(star => (
-                                <button
-                                    key={star}
-                                    type="button"
-                                    className={`${styles.reviewForm__star} ${
-                                        star <= (hoverRating || rating)
-                                            ? styles['reviewForm__star--active']
-                                            : ''
-                                    }`}
-                                    onClick={() => setRating(star)}
-                                    onMouseEnter={() => setHoverRating(star)}
-                                    onMouseLeave={() => setHoverRating(0)}
-                                    aria-label={`${star} estrellas`}
-                                >
-                                    <FontAwesomeIcon icon={faStar} />
-                                </button>
-                            ))}
+                            {[1, 2, 3, 4, 5].map(star => {
+                                const displayRating = hoverRating || rating
+                                const starType = getStarType(star, displayRating)
+                                
+                                // Determinar qué imagen mostrar
+                                let starImage = '/images/all/star-empty.svg'
+                                if (starType === 'full') {
+                                    starImage = '/images/all/star.svg'
+                                } else if (starType === 'half') {
+                                    starImage = '/images/all/star-half.svg'
+                                }
+                                
+                                return (
+                                    <div
+                                        key={star}
+                                        className={styles.reviewForm__starContainer}
+                                        onMouseLeave={() => setHoverRating(0)}
+                                    >
+                                        {/* Imagen de la estrella completa */}
+                                        <Image
+                                            src={starImage}
+                                            alt={`${star} estrellas`}
+                                            width={70}
+                                            height={70}
+                                            className={styles.reviewForm__starImage}
+                                        />
+                                        {/* Mitad izquierda clickeable (media estrella) */}
+                                        <button
+                                            type="button"
+                                            className={styles.reviewForm__starHalf}
+                                            onClick={() => handleStarClick(star, true)}
+                                            onMouseEnter={() => handleStarHover(star, true)}
+                                            aria-label={`${star - 0.5} estrellas`}
+                                        />
+                                        {/* Mitad derecha clickeable (estrella completa) */}
+                                        <button
+                                            type="button"
+                                            className={`${styles.reviewForm__starHalf} ${styles.reviewForm__starHalfRight}`}
+                                            onClick={() => handleStarClick(star, false)}
+                                            onMouseEnter={() => handleStarHover(star, false)}
+                                            aria-label={`${star} estrellas`}
+                                        />
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
 
                     {/* Fecha de visita */}
                     <div className={styles.reviewForm__field}>
                         <label className={styles.reviewForm__label}>
-                            ¿Cúando fuiste?
+                            ¿Cuándo fuiste?
                         </label>
-                        <select
-                            className={styles.reviewForm__select}
-                            value={visitDate}
-                            onChange={e => setVisitDate(e.target.value)}
-                            required
-                        >
-                            <option value="">Seleccionar mes y año</option>
-                            {years.map(year =>
-                                MONTHS.map((month, index) => (
-                                    <option
-                                        key={`${year}-${index}`}
-                                        value={`${year}-${index + 1}`}
-                                    >
-                                        {month} {year}
+                        <div className={styles.reviewForm__dateContainer}>
+                            <select
+                                className={styles.reviewForm__select}
+                                value={visitMonth}
+                                onChange={e => setVisitMonth(e.target.value)}
+                                required
+                            >
+                                <option value="">Mes</option>
+                                {MONTHS.map((month, index) => {
+                                    const monthValue = String(index + 1).padStart(2, '0')
+                                    // Solo permitir meses pasados si es el año actual
+                                    if (visitYear === String(currentYear)) {
+                                        if (index + 1 > currentMonth) {
+                                            return null
+                                        }
+                                    }
+                                    return (
+                                        <option
+                                            key={index}
+                                            value={monthValue}
+                                        >
+                                            {month}
+                                        </option>
+                                    )
+                                })}
+                            </select>
+                            <select
+                                className={styles.reviewForm__select}
+                                value={visitYear}
+                                onChange={e => {
+                                    setVisitYear(e.target.value)
+                                    // Si el mes seleccionado es mayor al mes actual del año seleccionado, resetear mes
+                                    if (e.target.value === String(currentYear)) {
+                                        const selectedMonth = parseInt(visitMonth)
+                                        if (selectedMonth > currentMonth) {
+                                            setVisitMonth('')
+                                        }
+                                    }
+                                }}
+                                required
+                            >
+                                <option value="">Año</option>
+                                {years.map(year => (
+                                    <option key={year} value={year}>
+                                        {year}
                                     </option>
-                                ))
-                            )}
-                        </select>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     {/* Tipo de visita */}
