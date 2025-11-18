@@ -65,7 +65,6 @@ export interface Review {
     foto?: string
     restauranteId?: string
 
-    // campos opcionales antiguos (para compatibilidad)
     userId?: string
     userName?: string
     userAvatar?: string
@@ -73,6 +72,29 @@ export interface Review {
     content?: string
     images?: string[]
     isVerified?: boolean
+    
+    esImportada?: boolean
+    fuenteExterna?: string
+    fechaVisita?: string
+    motivoVisita?: string
+    mesAnioVisita?: string
+    
+    autorExterno?: string
+    imagenAutorExterno?: string
+    valoracion?: number
+    opinion?: string
+    fechaCreacion?: string
+    titulo?: string
+    usuarioId?: string
+    usuario?: {
+        nombre?: string
+        username?: string
+        fotoPerfilUrl?: string
+    }
+    fotos?: Array<{
+        url?: string
+        id?: string
+    }>
 }
 
 export interface Gusto {

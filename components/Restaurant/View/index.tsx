@@ -396,7 +396,7 @@ export default function RestaurantView({
             </section>
             <section className={styles.opinions}>
                 <h3 className={styles.opinions__title}>
-                    Todas las opiniones (54)
+                    Todas las opiniones ({reviews.length})
                 </h3>
                 <p className={styles.opinions__text}>
                     Las opiniones son valoraciones subjetivas de miembros de{' '}

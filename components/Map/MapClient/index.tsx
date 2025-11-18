@@ -23,7 +23,7 @@ const INITIAL_STATE: MapState = {
     isLoading: true,
 }
 
-/* ------------------------------ HELPERS ------------------------------ */
+
 
 function buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams) {
     const query = new URLSearchParams()
@@ -43,6 +43,9 @@ function buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams
     const radius = searchParams.get('radius')
     if (radius) query.append('radius', radius)
 
+    const amigoUsername = searchParams.get('amigoUsername')
+    if (amigoUsername) query.append('amigoUsername', amigoUsername)
+
     return query
 }
 
@@ -51,7 +54,7 @@ function coordinatesChanged(prev: Coordinates | null, current: Coordinates): boo
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-/* ---------------------------- COMPONENT ----------------------------- */
+
 
 export default function MapClient({ containerStyle }: { containerStyle: string }) {
     const router = useRouter()
@@ -66,8 +69,9 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     const isFetchingRef = useRef(false)
     const [shouldSearchButton, setShouldSearchButton] = useState(false)
     const [initialLoaded, setInitialLoaded] = useState(false) // ⭐ para cargar solo una vez
+    const lastAmigoUsernameRef = useRef<string | null>(null)
 
-    /* -------------------------- STATE UPDATERS --------------------------- */
+ 
 
     const updateCenter = useCallback((newCenter: Coordinates) => {
         setState(prev => ({
@@ -80,7 +84,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         setState(prev => ({ ...prev, hoveredMarker: markerId }))
     }, [])
 
-    /* -------------------------- FETCH RESTAURANTS --------------------------- */
+   
 
     const fetchRestaurants = useCallback(
         async (center: Coordinates) => {
@@ -125,7 +129,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         [searchParams, router, toast]
     )
 
-    /* --------------------------- MAP MOVEMENT --------------------------- */
+
 
     const handleMapIdle = useCallback(() => {
         if (!mapInstance) return
@@ -144,7 +148,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
 
     }, [mapInstance, state.center, updateCenter, initialLoaded])
 
-    /* ---------------------- INITIAL LOAD (FETCH) ---------------------- */
+   
 
     useEffect(() => {
         if (!coords) return
@@ -152,14 +156,25 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
 
         updateCenter(coords)
 
-        // ⭐ Una vez seteado el center inicial → hacer fetch inmediato
+     
         setTimeout(() => {
             fetchRestaurants(coords)
             setInitialLoaded(true)
         }, 100)
     }, [coords, state.center, updateCenter, fetchRestaurants])
 
-    /* --------------------------- UI / RETURN --------------------------- */
+    // Recargar restaurantes cuando cambie el amigoUsername
+    useEffect(() => {
+        if (!state.center || !initialLoaded) return
+        
+        const currentAmigoUsername = searchParams.get('amigoUsername')
+        if (currentAmigoUsername !== lastAmigoUsernameRef.current) {
+            lastAmigoUsernameRef.current = currentAmigoUsername
+            fetchRestaurants(state.center)
+        }
+    }, [searchParams, state.center, initialLoaded, fetchRestaurants])
+
+
 
     if (locationError) {
         return <ErrorComponent message={locationError} onRetry={() => window.location.reload()} />
@@ -173,7 +188,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
 
-                {/* 🔍 BOTÓN FLOTANTE (SLIDE-DOWN) */}
+             
                 {shouldSearchButton && (
                     <div
                         style={{

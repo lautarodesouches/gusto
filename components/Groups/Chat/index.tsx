@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState, useRef } from 'react'
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
+import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
 import { formatChatDate } from '../../../utils/index'
@@ -28,6 +28,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
     const [connection, setConnection] = useState<HubConnection | null>(null)
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [input, setInput] = useState('')
+    const connectionRef = useRef<HubConnection | null>(null)
 
     const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
         messagesEndRef.current?.scrollIntoView({ behavior })
@@ -38,38 +39,185 @@ export default function GroupsChat({ groupId, admin }: Props) {
     }, [messages])
 
     useEffect(() => {
-        if (connection) return
-        const conn = new HubConnectionBuilder()
-            .withUrl(`${API_URL}/chatHub`)
-            .withAutomaticReconnect()
-            .build()
-
-        const handleReceiveMessage = (msg: ChatMessage) => {
-            console.log('📩 Mensaje recibido:', msg)
-            setMessages(prev => [...prev, msg])
+        let isMounted = true
+        let conn: HubConnection | null = null
+        let startPromise: Promise<void> | null = null
+        const originalConsoleError = console.error
+        let errorInterceptorActive = true
+        
+        // Interceptar console.error temporalmente para silenciar errores de negociación
+        console.error = (...args: any[]) => {
+            if (errorInterceptorActive && args.length > 0) {
+                const firstArg = args[0]
+                const errorMsg = firstArg?.message || firstArg?.toString() || String(firstArg || '')
+                
+                // Silenciar errores específicos de SignalR durante negociación
+                if (errorMsg.includes('stopped during negotiation') || 
+                    errorMsg.includes('The connection was stopped') ||
+                    errorMsg.includes('Failed to start the connection')) {
+                    // Verificar si es realmente un error de aborto/negociación
+                    const fullMsg = args.map(a => String(a)).join(' ')
+                    if (fullMsg.includes('negotiation') || fullMsg.includes('AbortError')) {
+                        return // Silenciar este error
+                    }
+                }
+            }
+            originalConsoleError.apply(console, args)
         }
 
-        conn.on('ReceiveMessage', handleReceiveMessage)
+        const connect = async () => {
+            try {
+                // Detener conexión anterior si existe
+                if (connectionRef.current) {
+                    try {
+                        await connectionRef.current.stop()
+                    } catch {
+                        // Ignorar errores al detener conexión anterior
+                    }
+                    connectionRef.current = null
+                }
 
-        conn.on('LoadChatHistory', mensajes => {
-            setMessages(mensajes)
-            // Scroll
-            setTimeout(() => scrollToBottom('auto'), 100)
-        })
+                conn = new HubConnectionBuilder()
+                    .withUrl(`${API_URL}/chatHub`, {
+                        // Configurar opciones para manejar mejor los errores
+                        skipNegotiation: false,
+                    })
+                    .withAutomaticReconnect({
+                        nextRetryDelayInMilliseconds: (retryContext) => {
+                            // Evitar reconexiones rápidas que puedan causar errores
+                            return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000)
+                        }
+                    })
+                    .build()
 
-        conn.start()
-            .then(() => {
-                console.log('🟢 Conectado a SignalR')
-                conn.invoke('JoinGroup', groupId)
-            })
-            .catch(err => console.error('Error al conectar:', err))
+                connectionRef.current = conn
 
-        setConnection(conn)
+                // Manejador de errores global para la conexión
+                conn.onclose((error) => {
+                    if (error && isMounted) {
+                        // Solo loguear si no es un cierre normal
+                        if (error !== undefined) {
+                            const errorMsg = error.message || String(error)
+                            if (!errorMsg.includes('stopped during negotiation') && 
+                                !errorMsg.includes('AbortError')) {
+                                console.log('🔴 Conexión cerrada:', errorMsg)
+                            }
+                        }
+                    }
+                })
+
+                const handleReceiveMessage = (msg: ChatMessage) => {
+                    if (!isMounted) return
+                    console.log('📩 Mensaje recibido:', msg)
+                    setMessages(prev => [...prev, msg])
+                }
+
+                conn.on('ReceiveMessage', handleReceiveMessage)
+
+                conn.on('LoadChatHistory', mensajes => {
+                    if (!isMounted) return
+                    setMessages(mensajes)
+                    // Scroll
+                    setTimeout(() => scrollToBottom('auto'), 100)
+                })
+
+                // Verificar estado antes de iniciar
+                if (conn.state === HubConnectionState.Disconnected) {
+                    startPromise = conn.start()
+                    
+                    // Interceptar el error antes de que SignalR lo loguee
+                    startPromise = startPromise.catch((err: any) => {
+                        const errorMsg = err?.message || String(err)
+                        const errorName = err?.name || ''
+                        
+                        // Silenciar errores de aborto y negociación
+                        if (errorName === 'AbortError' || 
+                            errorMsg.includes('stopped during negotiation') ||
+                            errorMsg.includes('The connection was stopped')) {
+                            // No hacer nada - estos errores son normales
+                            return Promise.resolve()
+                        }
+                        
+                        // Re-lanzar otros errores
+                        throw err
+                    })
+                    
+                    await startPromise
+                    
+                    // Si llegamos aquí sin error, la conexión está conectada
+                    // Verificamos que el componente siga montado y la conexión exista
+                    if (isMounted && conn) {
+                        console.log('🟢 Conectado a SignalR')
+                        setConnection(conn)
+                        try {
+                            await conn.invoke('JoinGroup', groupId)
+                        } catch (invokeErr) {
+                            // Si falla el invoke, puede ser que la conexión se haya perdido
+                            // pero no es crítico, el usuario puede seguir usando el chat
+                            console.warn('⚠️ Error al unirse al grupo:', invokeErr)
+                        }
+                    }
+                }
+            } catch (err: any) {
+                // Ignorar errores de aborto durante la negociación
+                const errorMsg = err?.message || String(err)
+                const errorName = err?.name || ''
+                
+                if (errorName === 'AbortError' || 
+                    errorMsg.includes('stopped during negotiation') ||
+                    errorMsg.includes('The connection was stopped')) {
+                    // Silenciar estos errores - son normales cuando el componente se desmonta
+                    return
+                }
+                
+                if (isMounted) {
+                    console.error('Error al conectar:', err)
+                }
+            }
+        }
+
+        connect()
 
         return () => {
-            console.log('🧹 Cerrando conexión SignalR...')
-            conn.off('ReceiveMessage', handleReceiveMessage)
-            conn.stop()
+            isMounted = false
+            errorInterceptorActive = false
+            
+            // Restaurar console.error original
+            console.error = originalConsoleError
+            
+            // Detener inmediatamente cualquier conexión en progreso
+            const currentConn = connectionRef.current
+            
+            if (currentConn) {
+                // Detener la conexión inmediatamente sin esperar
+                // Esto previene que SignalR loguee errores de negociación
+                try {
+                    if (currentConn.state !== HubConnectionState.Disconnected) {
+                        currentConn.stop().catch(() => {
+                            // Silenciar todos los errores al detener
+                        })
+                    }
+                } catch {
+                    // Ignorar errores
+                }
+                
+                currentConn.off('ReceiveMessage')
+                connectionRef.current = null
+                setConnection(null)
+            }
+            
+            // También cancelar la promesa de inicio si está en progreso
+            if (startPromise && conn) {
+                try {
+                    if (conn.state !== HubConnectionState.Disconnected) {
+                        conn.stop().catch(() => {
+                            // Silenciar errores
+                        })
+                    }
+                } catch {
+                    // Ignorar errores
+                }
+            }
         }
     }, [groupId])
 

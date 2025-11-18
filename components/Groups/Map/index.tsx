@@ -50,6 +50,8 @@ export default function GroupMap({ members }: { members: any[] }) {
     const [state, setState] = useState<MapState>(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
     const [allChecked, setAllchecked] = useState(true)
+    const [shouldSearchButton, setShouldSearchButton] = useState(false)
+    const [initialLoaded, setInitialLoaded] = useState(false)
 
     // Ref prevent duplicate fetch
     const isFetchingRef = useRef(false)
@@ -75,7 +77,7 @@ export default function GroupMap({ members }: { members: any[] }) {
 
     const fetchRestaurants = useCallback(
         async (center: Coordinates) => {
-            //if (isFetchingRef.current) return
+            if (isFetchingRef.current) return
 
             isFetchingRef.current = true
             setState(prev => ({ ...prev, isLoading: true }))
@@ -89,17 +91,10 @@ export default function GroupMap({ members }: { members: any[] }) {
                 const query = new URLSearchParams()
                 query.append('near.lat', String(center.lat))
                 query.append('near.lng', String(center.lng))
+                query.append('radiusMeters', searchParams.get('radius') || '1000')
+                query.append('top', '10')
 
-                console.log({ allChecked })
-
-                if (allChecked) {
-                    query.append('gustos', 'pizza')
-                }
-
-                // const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
-                const res = await fetch(`/api/restaurants/?${query.toString()}`)
-
-                console.log({ res })
+                const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
 
                 if (res.status === 401) {
                     router.push(ROUTES.LOGIN)
@@ -112,13 +107,13 @@ export default function GroupMap({ members }: { members: any[] }) {
 
                 const data = await res.json()
 
-                console.log(data.recomendaciones)
-
                 setState(prev => ({
                     ...prev,
                     restaurants: data.recomendaciones || [],
                     isLoading: false,
                 }))
+
+                setShouldSearchButton(false)
             } catch (err) {
                 console.error('Error fetching restaurants:', err)
                 toast.error('Error al cargar restaurantes del grupo')
@@ -131,7 +126,7 @@ export default function GroupMap({ members }: { members: any[] }) {
                 isFetchingRef.current = false
             }
         },
-        [grupoId, router, toast]
+        [grupoId, router, toast, searchParams]
     )
 
     const handleMapIdle = useCallback(() => {
@@ -149,10 +144,9 @@ export default function GroupMap({ members }: { members: any[] }) {
 
         updateCenter(newCenter)
 
-        const query = new URLSearchParams(searchParams.toString())
-        query.set('near.lat', String(newCenter.lat))
-        query.set('near.lng', String(newCenter.lng))
-    }, [mapInstance, state.center, searchParams, router, updateCenter])
+        // ⭐ SOLO mostramos botón — NADA MÁS (no buscar automáticamente)
+        if (initialLoaded) setShouldSearchButton(true)
+    }, [mapInstance, state.center, updateCenter, initialLoaded])
 
     // Update center when coords are available
     useEffect(() => {
@@ -160,16 +154,13 @@ export default function GroupMap({ members }: { members: any[] }) {
         if (state.center) return
 
         updateCenter(coords)
-    }, [coords, state.center, updateCenter])
 
-    // Fetch restaurants when center or filters change
-    useEffect(() => {
-        if (!state.center) return
-
-        console.log({ members })
-
-        fetchRestaurants(state.center)
-    }, [state.center, searchParams, fetchRestaurants, allChecked])
+        // Cargar restaurantes solo la primera vez
+        setTimeout(() => {
+            fetchRestaurants(coords)
+            setInitialLoaded(true)
+        }, 100)
+    }, [coords, state.center, updateCenter, fetchRestaurants])
 
     useEffect(() => {
         check()
@@ -195,6 +186,34 @@ export default function GroupMap({ members }: { members: any[] }) {
     return (
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
+                {shouldSearchButton && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            top: '10px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 20,
+                            animation: 'slideDown 0.3s ease',
+                        }}
+                    >
+                        <button
+                            onClick={() => fetchRestaurants(state.center!)}
+                            style={{
+                                background: 'white',
+                                padding: '10px 22px',
+                                borderRadius: '8px',
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                                fontWeight: 'bold',
+                                cursor: 'pointer',
+                                border: 'none',
+                            }}
+                        >
+                            🔍 Buscar en esta zona
+                        </button>
+                    </div>
+                )}
+
                 <MapView
                     containerStyle={styles.map}
                     coords={state.center}
@@ -205,6 +224,19 @@ export default function GroupMap({ members }: { members: any[] }) {
                     setHoveredMarker={setHoveredMarker}
                     onIdle={handleMapIdle}
                 />
+
+                <style jsx>{`
+                    @keyframes slideDown {
+                        from {
+                            opacity: 0;
+                            transform: translateX(-50%) translateY(-15px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateX(-50%) translateY(0);
+                        }
+                    }
+                `}</style>
             </MapProvider>
         </Suspense>
     )
