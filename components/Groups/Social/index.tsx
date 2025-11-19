@@ -166,16 +166,9 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                                 className={styles.member__link}
                             >
                                 <div className={styles.member__div}>
-                                    {[
-                                        'juanperez',
-                                        'carlossanchesz',
-                                        'luciagomez',
-                                        'mariasosa',
-                                    ].includes(m.usuarioUsername?.toLowerCase()) ? (
+                                    {m.fotoPerfilUrl ? (
                                         <img
-                                            src={`/users/${m.usuarioNombre
-                                                .split(' ')[0]
-                                                .toLowerCase()}.jpg`}
+                                            src={m.fotoPerfilUrl}
                                             className={styles.member__img}
                                             alt={m.usuarioNombre}
                                         />

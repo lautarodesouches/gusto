@@ -150,6 +150,7 @@ export type GroupMember = {
     usuarioUsername: string
     fechaUnion: string
     esAdministrador: boolean
+    fotoPerfilUrl?: string
 }
 
 export type User = {
