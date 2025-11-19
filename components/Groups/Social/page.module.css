@@ -173,6 +173,36 @@
     background-position: center;
 }
 
+.member__delete_btn {
+    background: var(--primary);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+.member__delete_btn:hover:not(:disabled) {
+    background: #ff3333;
+    transform: scale(1.05);
+}
+
+.member__delete_btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.member__delete_icon {
+    width: 18px;
+    height: 18px;
+    color: var(--white);
+}
+
 .members__icon {
     width: 15px;
     height: 15px;
