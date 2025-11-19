@@ -182,3 +182,61 @@ export async function removeGroupMember(
         return { success: false, error: 'Error al eliminar miembro' }
     }
 }
+
+export async function activateGroupMember(
+    groupId: string,
+    usuarioId: string
+): Promise<ApiResponse<null>> {
+    try {
+        const url = new URL(`${API_URL}/Grupo/activarMiembro`)
+        url.searchParams.append('grupoId', groupId)
+        url.searchParams.append('UsuarioId', usuarioId)
+
+        const res = await fetch(url.toString(), {
+            method: 'PUT',
+            headers: await getAuthHeaders(),
+        })
+
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+            return {
+                success: false,
+                error: data?.message || 'Error al activar miembro',
+            }
+        }
+
+        return { success: true, data: null }
+    } catch (err) {
+        console.error('Error activating group member:', err)
+        return { success: false, error: 'Error al activar miembro' }
+    }
+}
+
+export async function deactivateGroupMember(
+    groupId: string,
+    usuarioId: string
+): Promise<ApiResponse<null>> {
+    try {
+        const url = new URL(`${API_URL}/Grupo/desactivarMiembro`)
+        url.searchParams.append('grupoId', groupId)
+        url.searchParams.append('UsuarioId', usuarioId)
+
+        const res = await fetch(url.toString(), {
+            method: 'PUT',
+            headers: await getAuthHeaders(),
+        })
+
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) {
+            return {
+                success: false,
+                error: data?.message || 'Error al desactivar miembro',
+            }
+        }
+
+        return { success: true, data: null }
+    } catch (err) {
+        console.error('Error deactivating group member:', err)
+        return { success: false, error: 'Error al desactivar miembro' }
+    }
+}

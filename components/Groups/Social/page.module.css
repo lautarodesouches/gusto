@@ -104,17 +104,73 @@
     font-weight: 400;
     color: var(--white);
     text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .member__crown {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+    color: #FFD700;
+    flex-shrink: 0;
 }
 
 .member > div:last-child {
     display: flex;
     gap: 20px;
     align-items: center;
+}
+
+/* Checkbox estilo igual a filtros */
+.member__checkbox_label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.filter__input {
+    display: none;
+}
+
+.checkmark {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    min-height: 14px;
+    aspect-ratio: 1;
+    background: none;
+    border: 1.5px solid var(--grey);
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    position: relative;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.member__checkbox_label:hover .checkmark {
+    border-color: var(--light);
+}
+
+.filter__input:checked + .checkmark {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.filter__input:checked + .checkmark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .members__icon {

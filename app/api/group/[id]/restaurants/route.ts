@@ -32,8 +32,6 @@ export async function GET(
     if (nearLat) apiUrl.searchParams.append('near.lat', nearLat)
     if (nearLng) apiUrl.searchParams.append('near.lng', nearLng)
 
-    console.log('🔗 Llamando a backend:', apiUrl.href)
-
     const res = await fetch(apiUrl.toString(), {
       headers: {
         'Content-Type': 'application/json',

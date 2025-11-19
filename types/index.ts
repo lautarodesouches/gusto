@@ -142,10 +142,14 @@ export type Group = {
 }
 
 export type GroupMember = {
-    usuarioUsername: string
-    usuarioEmail: string
-    usuarioNombre: string
     id: string
+    usuarioId: string
+    usuarioFirebaseUid: string
+    usuarioNombre: string
+    usuarioEmail: string
+    usuarioUsername: string
+    fechaUnion: string
+    esAdministrador: boolean
 }
 
 export type User = {

@@ -18,13 +18,7 @@ import { ROUTES } from '@/routes'
 
 interface Props {
     group: Group
-    members: {
-        checked: boolean
-        usuarioUsername: string
-        usuarioEmail: string
-        usuarioNombre: string
-        id: string
-    }[]
+    members: (GroupMember & { checked: boolean })[]
     onCheck: (id: string) => void
 }
 
@@ -135,6 +129,7 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                                                 .split(' ')[0]
                                                 .toLowerCase()}.jpg`}
                                             className={styles.member__img}
+                                            alt={m.usuarioNombre}
                                         />
                                     ) : (
                                         <FontAwesomeIcon
@@ -146,26 +141,25 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                                 <div className={styles.member__div}>
                                     <h3 className={styles.member__name}>
                                         {m.usuarioNombre}
+                                        {m.esAdministrador && (
+                                            <FontAwesomeIcon
+                                                icon={faCrown}
+                                                className={styles.member__crown}
+                                            />
+                                        )}
                                     </h3>
-                                    {m.id === group.administradorId && (
-                                        <FontAwesomeIcon
-                                            icon={faCrown}
-                                            className={styles.member__crown}
-                                        />
-                                    )}
                                 </div>
                             </Link>
                             <div className={styles.member__div}>
-                                <div>
+                                <label className={styles.member__checkbox_label}>
                                     <input
                                         type="checkbox"
-                                        readOnly
                                         className={styles.filter__input}
                                         checked={isChecked}
                                         onChange={() => onCheck(m.id)}
                                     />
                                     <span className={styles.checkmark}></span>
-                                </div>
+                                </label>
                             </div>
                         </article>
                     )

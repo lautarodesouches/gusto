@@ -35,7 +35,16 @@ function coordinatesChanged(
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-export default function GroupMap({ members: _members }: { members: any[] }) {
+interface GroupMapProps {
+    members: Array<{
+        id: string
+        checked: boolean
+        usuarioUsername: string
+        [key: string]: any
+    }>
+}
+
+export default function GroupMap({ members }: GroupMapProps) {
     const toast = useToast()
 
     const router = useRouter()
@@ -154,6 +163,21 @@ export default function GroupMap({ members: _members }: { members: any[] }) {
             setInitialLoaded(true)
         }, 100)
     }, [coords, state.center, updateCenter, fetchRestaurants])
+
+    // Recargar restaurantes cuando cambien los miembros (checked/unchecked)
+    // Usamos un string serializado de los estados checked para detectar cambios
+    const membersCheckedState = members.map(m => `${m.id}:${m.checked}`).join(',')
+    const lastMembersStateRef = useRef<string>('')
+    
+    useEffect(() => {
+        if (!state.center || !initialLoaded) return
+        
+        // Solo recargar si realmente cambió el estado de los miembros
+        if (membersCheckedState !== lastMembersStateRef.current) {
+            lastMembersStateRef.current = membersCheckedState
+            fetchRestaurants(state.center)
+        }
+    }, [membersCheckedState, state.center, initialLoaded, fetchRestaurants])
 
     if (locationError) {
         return (
