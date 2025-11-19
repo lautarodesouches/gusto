@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
@@ -45,7 +44,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
             .build()
 
         const handleReceiveMessage = (msg: ChatMessage) => {
-            console.log('📩 Mensaje recibido:', msg)
             setMessages(prev => [...prev, msg])
         }
 
@@ -59,15 +57,15 @@ export default function GroupsChat({ groupId, admin }: Props) {
 
         conn.start()
             .then(() => {
-                console.log('🟢 Conectado a SignalR')
                 conn.invoke('JoinGroup', groupId)
             })
-            .catch(err => console.error('Error al conectar:', err))
+            .catch(() => {
+                // Error al conectar
+            })
 
         setConnection(conn)
 
         return () => {
-            console.log('🧹 Cerrando conexión SignalR...')
             conn.off('ReceiveMessage', handleReceiveMessage)
             conn.stop()
         }
@@ -79,9 +77,8 @@ export default function GroupsChat({ groupId, admin }: Props) {
         try {
             await connection.invoke('SendMessageToGroup', groupId, input)
             setInput('')
-        } catch (err) {
+        } catch {
             toast.error(`Hubo un error al enviar el mensaje`)
-            console.error(err)
         }
     }
 
@@ -96,9 +93,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
         <div className={styles.container}>
             <div className={styles.chat} ref={chatContainerRef}>
                 {messages.map((msg, i) => {
-                    console.log({ msg })
-                    console.log({ admin })
-
                     return (
                         <article
                             key={i}

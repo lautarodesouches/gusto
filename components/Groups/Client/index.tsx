@@ -25,8 +25,6 @@ export default function GroupClient({ group }: Props) {
     )
 
     const handleToggleCheck = (id: string) => {
-        console.log(id, members)
-
         setMembers(prev =>
             prev.map(m => (m.id === id ? { ...m, checked: !m.checked } : m))
         )

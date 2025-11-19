@@ -82,7 +82,6 @@ export default function GroupMap({ members }: { members: any[] }) {
 
             try {
                 if (!grupoId) {
-                    console.error('❌ No se encontró grupoId en la URL')
                     return
                 }
 
@@ -90,16 +89,12 @@ export default function GroupMap({ members }: { members: any[] }) {
                 query.append('near.lat', String(center.lat))
                 query.append('near.lng', String(center.lng))
 
-                console.log({ allChecked })
-
                 if (allChecked) {
                     query.append('gustos', 'pizza')
                 }
 
                 // const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
                 const res = await fetch(`/api/restaurants/?${query.toString()}`)
-
-                console.log({ res })
 
                 if (res.status === 401) {
                     router.push(ROUTES.LOGIN)
@@ -112,15 +107,12 @@ export default function GroupMap({ members }: { members: any[] }) {
 
                 const data = await res.json()
 
-                console.log(data.recomendaciones)
-
                 setState(prev => ({
                     ...prev,
                     restaurants: data.recomendaciones || [],
                     isLoading: false,
                 }))
-            } catch (err) {
-                console.error('Error fetching restaurants:', err)
+            } catch {
                 toast.error('Error al cargar restaurantes del grupo')
                 setState(prev => ({
                     ...prev,
@@ -165,8 +157,6 @@ export default function GroupMap({ members }: { members: any[] }) {
     // Fetch restaurants when center or filters change
     useEffect(() => {
         if (!state.center) return
-
-        console.log({ members })
 
         fetchRestaurants(state.center)
     }, [state.center, searchParams, fetchRestaurants, allChecked])
