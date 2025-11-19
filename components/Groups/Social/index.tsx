@@ -28,8 +28,14 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
 
     useEffect(() => {
-        setFilteredMembers(members)
-    }, [group])
+        // Ordenar miembros: administradores primero
+        const sortedMembers = [...members].sort((a, b) => {
+            const aIsAdmin = a.esAdministrador ? 1 : 0
+            const bIsAdmin = b.esAdministrador ? 1 : 0
+            return bIsAdmin - aIsAdmin // Administradores primero (1 - 0 = 1, 0 - 1 = -1)
+        })
+        setFilteredMembers(sortedMembers)
+    }, [group, members])
 
     const handleSearchMembers = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -42,7 +48,14 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                 m.usuarioEmail.toLowerCase().includes(value)
         )
 
-        setFilteredMembers(filtered)
+        // Ordenar: administradores primero
+        const sorted = filtered.sort((a, b) => {
+            const aIsAdmin = a.esAdministrador ? 1 : 0
+            const bIsAdmin = b.esAdministrador ? 1 : 0
+            return bIsAdmin - aIsAdmin
+        })
+
+        setFilteredMembers(sorted)
     }
 
     const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
