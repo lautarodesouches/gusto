@@ -11,6 +11,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useUserLocation } from '@/hooks/useUserLocation'
 import { Coordinates, Restaurant } from '@/types'
 import { ROUTES } from '@/routes'
+import SearchZoneButton from '@/components/Map/SearchZoneButton'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -174,33 +175,10 @@ export default function GroupMap({ members: _members }: { members: any[] }) {
     return (
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
-                {shouldSearchButton && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 20,
-                            animation: 'slideDown 0.3s ease',
-                        }}
-                    >
-                        <button
-                            onClick={() => fetchRestaurants(state.center!)}
-                            style={{
-                                background: 'white',
-                                padding: '10px 22px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
-                                fontWeight: 'bold',
-                                cursor: 'pointer',
-                                border: 'none',
-                            }}
-                        >
-                            🔍 Buscar en esta zona
-                        </button>
-                    </div>
-                )}
+                <SearchZoneButton
+                    isVisible={shouldSearchButton}
+                    onClick={() => fetchRestaurants(state.center!)}
+                />
 
                 <MapView
                     containerStyle={styles.map}
@@ -212,19 +190,6 @@ export default function GroupMap({ members: _members }: { members: any[] }) {
                     setHoveredMarker={setHoveredMarker}
                     onIdle={handleMapIdle}
                 />
-
-                <style jsx>{`
-                    @keyframes slideDown {
-                        from {
-                            opacity: 0;
-                            transform: translateX(-50%) translateY(-15px);
-                        }
-                        to {
-                            opacity: 1;
-                            transform: translateX(-50%) translateY(0);
-                        }
-                    }
-                `}</style>
             </MapProvider>
         </Suspense>
     )

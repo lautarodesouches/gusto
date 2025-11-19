@@ -8,6 +8,7 @@ import { ROUTES } from '@/routes'
 import { Restaurant, Coordinates } from '@/types'
 import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
+import SearchZoneButton from '../SearchZoneButton'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -113,8 +114,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                 }))
 
                 setShouldSearchButton(false)
-            } catch (err) {
-                console.error(err)
+            } catch {
                 toast.error('Error al cargar restaurantes')
 
                 setState(prev => ({
@@ -187,34 +187,10 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     return (
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
-
-             
-                {shouldSearchButton && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            top: '10px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 20,
-                            animation: 'slideDown 0.3s ease',
-                        }}
-                    >
-                        <button
-                            onClick={() => fetchRestaurants(state.center!)}
-                            style={{
-                                background: 'white',
-                                padding: '10px 22px',
-                                borderRadius: '8px',
-                                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
-                                fontWeight: 'bold',
-                                cursor: 'pointer',
-                            }}
-                        >
-                            🔍 Buscar en esta zona
-                        </button>
-                    </div>
-                )}
+                <SearchZoneButton
+                    isVisible={shouldSearchButton}
+                    onClick={() => fetchRestaurants(state.center!)}
+                />
 
                 <MapView
                     containerStyle={containerStyle}
@@ -227,19 +203,6 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                     onIdle={handleMapIdle}
                 />
             </MapProvider>
-
-            <style jsx>{`
-                @keyframes slideDown {
-                    from {
-                        opacity: 0;
-                        transform: translateX(-50%) translateY(-15px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateX(-50%) translateY(0);
-                    }
-                }
-            `}</style>
         </Suspense>
     )
 }
