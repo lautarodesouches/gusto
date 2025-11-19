@@ -1,5 +1,6 @@
 .main {
     background: var(--background);
+    padding-top: 20px;
     padding-bottom: 30px;
 }
 
@@ -41,7 +42,6 @@
 
 .top {
     padding: 0 20px;
-    margin-top: 20px;
 }
 
 .top__header {

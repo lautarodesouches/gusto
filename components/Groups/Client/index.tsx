@@ -1,12 +1,12 @@
 'use client'
 import styles from './styles.module.css'
 import { Group } from '@/types'
-import Nav from '../Nav'
 import GroupSocial from '../Social'
 import Footer from '../Footer'
 import { useCallback, useState } from 'react'
 import GroupComponent from '../Group'
 import { useAuth } from '@/context/AuthContext'
+import Switch from '../Switch'
 
 export type ActiveView = 'home' | 'chat' | 'map'
 
@@ -25,8 +25,6 @@ export default function GroupClient({ group }: Props) {
     )
 
     const handleToggleCheck = (id: string) => {
-        console.log(id, members)
-
         setMembers(prev =>
             prev.map(m => (m.id === id ? { ...m, checked: !m.checked } : m))
         )
@@ -43,10 +41,10 @@ export default function GroupClient({ group }: Props) {
 
     return (
         <>
-            <Nav
-                activeView={activeView}
-                mobileView={mobileView}
+            <Switch 
+                activeView={activeView} 
                 onClick={handleChangeView}
+                hideOnMobileHome={true}
             />
             <section className={styles.content}>
                 <div

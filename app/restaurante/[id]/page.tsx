@@ -1,6 +1,7 @@
 import { RestaurantClient } from '@/components'
 import { getRestaurant } from '../actions'
 import { notFound } from 'next/navigation'
+import Navbar from '@/components/Navbar'
 
 interface Props {
     params: Promise<{ id: string }>
@@ -16,5 +17,10 @@ export default async function Restaurant({ params }: Props) {
     const restaurant = result.data
     const reviews = Array.isArray(restaurant.reviews) ? restaurant.reviews : []
 
-    return <RestaurantClient restaurant={restaurant} reviews={reviews} />
+    return (
+        <>
+            <Navbar />
+            <RestaurantClient restaurant={restaurant} reviews={reviews} />
+        </>
+    )
 }

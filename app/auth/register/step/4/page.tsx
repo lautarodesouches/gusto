@@ -20,9 +20,21 @@ export default function StepFour() {
     }>({})
     const hasLoadedRef = useRef(false)
 
-    // Cargar datos desde el backend al montar el componente
+    // Sincronizar displayData con el contexto (selecciones del usuario)
+    // Solo cargar desde backend si el contexto está vacío
     useEffect(() => {
-        // Solo cargar una vez
+        // Si el contexto tiene datos (selecciones del usuario), usarlos directamente
+        if (data.step1 || data.step2 || data.step3) {
+            setDisplayData({
+                step1: data.step1,
+                step2: data.step2,
+                step3: data.step3,
+            })
+            setLoading(false)
+            return
+        }
+
+        // Si el contexto está vacío y aún no hemos cargado, cargar desde backend
         if (hasLoadedRef.current) return
         hasLoadedRef.current = true
 
@@ -32,13 +44,6 @@ export default function StepFour() {
                     '/api/usuario/resumen?modo=registro'
                 )
                 if (!response.ok) {
-                    console.error('Error al cargar resumen del usuario')
-                    // Si falla, usar datos del contexto como fallback
-                    setDisplayData({
-                        step1: data.step1,
-                        step2: data.step2,
-                        step3: data.step3,
-                    })
                     setLoading(false)
                     return
                 }
@@ -70,21 +75,14 @@ export default function StepFour() {
                         })
                     ) || []
 
-                // Actualizar el contexto con los datos cargados
-                setData({
-                    step1: step1Data,
-                    step2: step2Data,
-                    step3: step3Data,
-                })
-
-                // Actualizar el estado local para mostrar
+                // Solo actualizar displayData, NO sobrescribir el contexto
+                // El contexto debe mantener las selecciones del usuario de steps 1-3
                 setDisplayData({
                     step1: step1Data,
                     step2: step2Data,
                     step3: step3Data,
                 })
-            } catch (error) {
-                console.error('Error cargando resumen:', error)
+            } catch {
                 // Si falla, usar datos del contexto como fallback
                 setDisplayData({
                     step1: data.step1,
@@ -97,13 +95,16 @@ export default function StepFour() {
         }
 
         loadData()
-    }, []) // Solo ejecutar una vez al montar
+    }, [data.step1, data.step2, data.step3]) // Re-ejecutar si el contexto cambia
 
     const handleFinish = async () => {
         try {
-            // Usar displayData que tiene los datos más actualizados
-            const gustos = displayData.step3 || data.step3 || []
-            if (gustos.length < 3) {
+            // Usar datos del contexto (selecciones del usuario) o displayData como fallback
+            const step1ToSend = data.step1 || displayData.step1 || []
+            const step2ToSend = data.step2 || displayData.step2 || []
+            const step3ToSend = data.step3 || displayData.step3 || []
+
+            if (step3ToSend.length < 3) {
                 alert(
                     'Debes seleccionar al menos 3 gustos para continuar. Por favor vuelve al paso 3.'
                 )
@@ -111,9 +112,9 @@ export default function StepFour() {
             }
 
             const dataToSend = {
-                step1: data.step1,
-                step2: data.step2,
-                step3: data.step3,
+                step1: step1ToSend,
+                step2: step2ToSend,
+                step3: step3ToSend,
             }
 
             const result = await saveSteps(dataToSend)
@@ -124,8 +125,8 @@ export default function StepFour() {
             }
 
             router.push(ROUTES.MAP)
-        } catch (error) {
-            console.error('Error al finalizar el registro:', error)
+        } catch {
+            alert('Error al finalizar el registro. Por favor intenta nuevamente.')
         }
     }
 

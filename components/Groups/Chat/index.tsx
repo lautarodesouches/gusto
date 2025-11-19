@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
@@ -42,28 +41,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
         let isMounted = true
         let conn: HubConnection | null = null
         let startPromise: Promise<void> | null = null
-        const originalConsoleError = console.error
-        let errorInterceptorActive = true
-        
-        // Interceptar console.error temporalmente para silenciar errores de negociación
-        console.error = (...args: any[]) => {
-            if (errorInterceptorActive && args.length > 0) {
-                const firstArg = args[0]
-                const errorMsg = firstArg?.message || firstArg?.toString() || String(firstArg || '')
-                
-                // Silenciar errores específicos de SignalR durante negociación
-                if (errorMsg.includes('stopped during negotiation') || 
-                    errorMsg.includes('The connection was stopped') ||
-                    errorMsg.includes('Failed to start the connection')) {
-                    // Verificar si es realmente un error de aborto/negociación
-                    const fullMsg = args.map(a => String(a)).join(' ')
-                    if (fullMsg.includes('negotiation') || fullMsg.includes('AbortError')) {
-                        return // Silenciar este error
-                    }
-                }
-            }
-            originalConsoleError.apply(console, args)
-        }
 
         const connect = async () => {
             try {
@@ -79,12 +56,10 @@ export default function GroupsChat({ groupId, admin }: Props) {
 
                 conn = new HubConnectionBuilder()
                     .withUrl(`${API_URL}/chatHub`, {
-                        // Configurar opciones para manejar mejor los errores
                         skipNegotiation: false,
                     })
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: (retryContext) => {
-                            // Evitar reconexiones rápidas que puedan causar errores
                             return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000)
                         }
                     })
@@ -95,20 +70,16 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 // Manejador de errores global para la conexión
                 conn.onclose((error) => {
                     if (error && isMounted) {
-                        // Solo loguear si no es un cierre normal
-                        if (error !== undefined) {
-                            const errorMsg = error.message || String(error)
-                            if (!errorMsg.includes('stopped during negotiation') && 
-                                !errorMsg.includes('AbortError')) {
-                                console.log('🔴 Conexión cerrada:', errorMsg)
-                            }
+                        const errorMsg = error.message || String(error)
+                        if (!errorMsg.includes('stopped during negotiation') && 
+                            !errorMsg.includes('AbortError')) {
+                            toast.error('Se perdió la conexión con el chat')
                         }
                     }
                 })
 
                 const handleReceiveMessage = (msg: ChatMessage) => {
                     if (!isMounted) return
-                    console.log('📩 Mensaje recibido:', msg)
                     setMessages(prev => [...prev, msg])
                 }
 
@@ -117,7 +88,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 conn.on('LoadChatHistory', mensajes => {
                     if (!isMounted) return
                     setMessages(mensajes)
-                    // Scroll
                     setTimeout(() => scrollToBottom('auto'), 100)
                 })
 
@@ -125,53 +95,45 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 if (conn.state === HubConnectionState.Disconnected) {
                     startPromise = conn.start()
                     
-                    // Interceptar el error antes de que SignalR lo loguee
-                    startPromise = startPromise.catch((err: any) => {
-                        const errorMsg = err?.message || String(err)
-                        const errorName = err?.name || ''
+                    startPromise = startPromise.catch((err: unknown) => {
+                        const error = err as Error
+                        const errorMsg = error?.message || String(err)
+                        const errorName = (error as { name?: string })?.name || ''
                         
                         // Silenciar errores de aborto y negociación
                         if (errorName === 'AbortError' || 
                             errorMsg.includes('stopped during negotiation') ||
                             errorMsg.includes('The connection was stopped')) {
-                            // No hacer nada - estos errores son normales
                             return Promise.resolve()
                         }
                         
-                        // Re-lanzar otros errores
                         throw err
                     })
                     
                     await startPromise
                     
-                    // Si llegamos aquí sin error, la conexión está conectada
-                    // Verificamos que el componente siga montado y la conexión exista
                     if (isMounted && conn) {
-                        console.log('🟢 Conectado a SignalR')
                         setConnection(conn)
                         try {
                             await conn.invoke('JoinGroup', groupId)
-                        } catch (invokeErr) {
-                            // Si falla el invoke, puede ser que la conexión se haya perdido
-                            // pero no es crítico, el usuario puede seguir usando el chat
-                            console.warn('⚠️ Error al unirse al grupo:', invokeErr)
+                        } catch {
+                            toast.error('Error al unirse al grupo del chat')
                         }
                     }
                 }
-            } catch (err: any) {
-                // Ignorar errores de aborto durante la negociación
-                const errorMsg = err?.message || String(err)
-                const errorName = err?.name || ''
+            } catch (err: unknown) {
+                const error = err as Error
+                const errorMsg = error?.message || String(err)
+                const errorName = (error as { name?: string })?.name || ''
                 
                 if (errorName === 'AbortError' || 
                     errorMsg.includes('stopped during negotiation') ||
                     errorMsg.includes('The connection was stopped')) {
-                    // Silenciar estos errores - son normales cuando el componente se desmonta
                     return
                 }
                 
                 if (isMounted) {
-                    console.error('Error al conectar:', err)
+                    toast.error('Error al conectar con el chat')
                 }
             }
         }
@@ -180,21 +142,14 @@ export default function GroupsChat({ groupId, admin }: Props) {
 
         return () => {
             isMounted = false
-            errorInterceptorActive = false
             
-            // Restaurar console.error original
-            console.error = originalConsoleError
-            
-            // Detener inmediatamente cualquier conexión en progreso
             const currentConn = connectionRef.current
             
             if (currentConn) {
-                // Detener la conexión inmediatamente sin esperar
-                // Esto previene que SignalR loguee errores de negociación
                 try {
                     if (currentConn.state !== HubConnectionState.Disconnected) {
                         currentConn.stop().catch(() => {
-                            // Silenciar todos los errores al detener
+                            // Silenciar errores al detener
                         })
                     }
                 } catch {
@@ -205,21 +160,8 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 connectionRef.current = null
                 setConnection(null)
             }
-            
-            // También cancelar la promesa de inicio si está en progreso
-            if (startPromise && conn) {
-                try {
-                    if (conn.state !== HubConnectionState.Disconnected) {
-                        conn.stop().catch(() => {
-                            // Silenciar errores
-                        })
-                    }
-                } catch {
-                    // Ignorar errores
-                }
-            }
         }
-    }, [groupId])
+    }, [groupId, toast])
 
     const handleSend = async () => {
         if (!input.trim() || !connection) return
@@ -227,9 +169,8 @@ export default function GroupsChat({ groupId, admin }: Props) {
         try {
             await connection.invoke('SendMessageToGroup', groupId, input)
             setInput('')
-        } catch (err) {
+        } catch {
             toast.error(`Hubo un error al enviar el mensaje`)
-            console.error(err)
         }
     }
 
@@ -244,9 +185,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
         <div className={styles.container}>
             <div className={styles.chat} ref={chatContainerRef}>
                 {messages.map((msg, i) => {
-                    console.log({ msg })
-                    console.log({ admin })
-
                     return (
                         <article
                             key={i}

@@ -8,7 +8,7 @@ import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faGear, faDoorOpen } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
-import { FriendRequests, UpgradePremiumModal } from '@/components'
+import { UpgradePremiumModal } from '@/components'
 import { logout as logoutAction } from '@/app/actions/login'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 
@@ -104,10 +104,6 @@ export default function ProfileBar() {
                     </div>
 
 
-                    
-                         <div className={styles.friendRequests}>
-                        <FriendRequests />
-                     </div>
 
                     {/* Perfil */}
                     <button
@@ -118,7 +114,7 @@ export default function ProfileBar() {
                             <FontAwesomeIcon icon={faUser} />
                         </div>
                         <span className={styles.nombre}>
-                            {backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}
+                            {backendUser?.idUsuario || user?.displayName || 'Usuario'}
                         </span>
                         {/* Corona Premium */}
                         {isPremium && (
@@ -144,10 +140,10 @@ export default function ProfileBar() {
                     {/* Menú desplegable */}
                     {showProfileMenu && (
                         <div className={styles.menu}>
-                            {/* Mostrar username/email del usuario */}
+                            {/* Mostrar username del usuario */}
                             <div className={styles.menu__user_info}>
                                 <FontAwesomeIcon icon={faUser} />
-                                <span>{backendUser?.idUsuario || user?.displayName || user?.email || 'Usuario'}</span>
+                                <span>{backendUser?.idUsuario || user?.displayName || 'Usuario'}</span>
                             </div>
                             <button
                                 className={styles.menu__item}

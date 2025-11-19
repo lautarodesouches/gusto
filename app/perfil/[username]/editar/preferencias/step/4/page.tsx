@@ -23,7 +23,21 @@ export default function StepFour() {
 
     const hasLoadedRef = useRef(false)
 
+    // Sincronizar displayData con el contexto (selecciones del usuario)
+    // Solo cargar desde backend si el contexto está vacío
     useEffect(() => {
+        // Si el contexto tiene datos (selecciones del usuario), usarlos directamente
+        if (data.step1 || data.step2 || data.step3) {
+            setDisplayData({
+                step1: data.step1,
+                step2: data.step2,
+                step3: data.step3,
+            })
+            setLoading(false)
+            return
+        }
+
+        // Si el contexto está vacío y aún no hemos cargado, cargar desde backend
         if (hasLoadedRef.current) return
         hasLoadedRef.current = true
 
@@ -34,7 +48,6 @@ export default function StepFour() {
                 )
 
                 if (!response.ok) {
-                    console.error('Error al cargar resumen del usuario')
                     setLoading(false)
                     return
                 }
@@ -69,32 +82,36 @@ export default function StepFour() {
                         })
                     ) || []
 
-                setData({
-                    step1: step1Data,
-                    step2: step2Data,
-                    step3: step3Data,
-                })
-
+                // Solo actualizar displayData, NO sobrescribir el contexto
+                // El contexto debe mantener las selecciones del usuario de steps 1-3
                 setDisplayData({
                     step1: step1Data,
                     step2: step2Data,
                     step3: step3Data,
                 })
-            } catch (error) {
-                console.error('Error cargando resumen:', error)
+            } catch {
+                // Si falla, usar datos del contexto como fallback
+                setDisplayData({
+                    step1: data.step1,
+                    step2: data.step2,
+                    step3: data.step3,
+                })
             } finally {
                 setLoading(false)
             }
         }
 
         loadData()
-    }, [])
+    }, [data.step1, data.step2, data.step3]) // Re-ejecutar si el contexto cambia
 
     const handleFinish = async () => {
         try {
-            const gustos = displayData.step3 || []
+            // Usar datos del contexto (selecciones del usuario) o displayData como fallback
+            const step1ToSend = data.step1 || displayData.step1 || []
+            const step2ToSend = data.step2 || displayData.step2 || []
+            const step3ToSend = data.step3 || displayData.step3 || []
 
-            if (gustos.length < 3) {
+            if (step3ToSend.length < 3) {
                 alert('Debes seleccionar al menos 3 gustos.')
                 return
             }
@@ -105,9 +122,9 @@ export default function StepFour() {
             }
 
             const dataToSend = {
-                step1: data.step1,
-                step2: data.step2,
-                step3: data.step3,
+                step1: step1ToSend,
+                step2: step2ToSend,
+                step3: step3ToSend,
             }
 
             const result = await saveSteps(dataToSend)
@@ -118,8 +135,8 @@ export default function StepFour() {
             }
 
             router.push('/mapa/')
-        } catch (error) {
-            console.error('Error al finalizar el registro:', error)
+        } catch {
+            alert('Error al finalizar el registro. Por favor intenta nuevamente.')
         }
     }
 

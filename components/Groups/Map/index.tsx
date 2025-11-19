@@ -34,7 +34,7 @@ function coordinatesChanged(
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-export default function GroupMap({ members }: { members: any[] }) {
+export default function GroupMap({ members: _members }: { members: any[] }) {
     const toast = useToast()
 
     const router = useRouter()
@@ -49,17 +49,11 @@ export default function GroupMap({ members }: { members: any[] }) {
 
     const [state, setState] = useState<MapState>(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
-    const [allChecked, setAllchecked] = useState(true)
     const [shouldSearchButton, setShouldSearchButton] = useState(false)
     const [initialLoaded, setInitialLoaded] = useState(false)
 
     // Ref prevent duplicate fetch
     const isFetchingRef = useRef(false)
-
-    const check = () => {
-        const s = members.every(m => m.checked)
-        setAllchecked(s)
-    }
 
     const updateCenter = useCallback((newCenter: Coordinates) => {
         setState(prev => ({
@@ -84,7 +78,6 @@ export default function GroupMap({ members }: { members: any[] }) {
 
             try {
                 if (!grupoId) {
-                    console.error('❌ No se encontró grupoId en la URL')
                     return
                 }
 
@@ -114,8 +107,7 @@ export default function GroupMap({ members }: { members: any[] }) {
                 }))
 
                 setShouldSearchButton(false)
-            } catch (err) {
-                console.error('Error fetching restaurants:', err)
+            } catch {
                 toast.error('Error al cargar restaurantes del grupo')
                 setState(prev => ({
                     ...prev,
@@ -161,10 +153,6 @@ export default function GroupMap({ members }: { members: any[] }) {
             setInitialLoaded(true)
         }, 100)
     }, [coords, state.center, updateCenter, fetchRestaurants])
-
-    useEffect(() => {
-        check()
-    }, [members])
 
     if (locationError) {
         return (
