@@ -44,8 +44,9 @@ function buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams
     const radius = searchParams.get('radius')
     if (radius) query.append('radius', radius)
 
-    const amigoUsername = searchParams.get('amigoUsername')
-    if (amigoUsername) query.append('amigoUsername', amigoUsername)
+    // Leer 'amigo' de la URL y enviarlo como 'amigoUsername' al backend
+    const amigo = searchParams.get('amigo')
+    if (amigo) query.append('amigoUsername', amigo)
 
     return query
 }
@@ -71,6 +72,8 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     const [shouldSearchButton, setShouldSearchButton] = useState(false)
     const [initialLoaded, setInitialLoaded] = useState(false) // ⭐ para cargar solo una vez
     const lastAmigoUsernameRef = useRef<string | null>(null)
+    const lastGustosRef = useRef<string | null>(null)
+    const lastRatingRef = useRef<string | null>(null)
 
  
 
@@ -163,13 +166,30 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         }, 100)
     }, [coords, state.center, updateCenter, fetchRestaurants])
 
-    // Recargar restaurantes cuando cambie el amigoUsername
+    // Recargar restaurantes cuando cambie el amigo (parámetro de URL)
     useEffect(() => {
         if (!state.center || !initialLoaded) return
         
-        const currentAmigoUsername = searchParams.get('amigoUsername')
-        if (currentAmigoUsername !== lastAmigoUsernameRef.current) {
-            lastAmigoUsernameRef.current = currentAmigoUsername
+        const currentAmigo = searchParams.get('amigo')
+        if (currentAmigo !== lastAmigoUsernameRef.current) {
+            lastAmigoUsernameRef.current = currentAmigo
+            fetchRestaurants(state.center)
+        }
+    }, [searchParams, state.center, initialLoaded, fetchRestaurants])
+
+    // Recargar restaurantes cuando cambien los filtros (gustos o rating)
+    useEffect(() => {
+        if (!state.center || !initialLoaded) return
+        
+        const currentGustos = searchParams.get('gustos')
+        const currentRating = searchParams.get('rating')
+        
+        const gustosChanged = currentGustos !== lastGustosRef.current
+        const ratingChanged = currentRating !== lastRatingRef.current
+        
+        if (gustosChanged || ratingChanged) {
+            lastGustosRef.current = currentGustos
+            lastRatingRef.current = currentRating
             fetchRestaurants(state.center)
         }
     }, [searchParams, state.center, initialLoaded, fetchRestaurants])

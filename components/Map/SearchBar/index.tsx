@@ -1,7 +1,7 @@
 'use client'
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faChevronDown, faChevronUp, faUser } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
@@ -44,14 +44,14 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
 
     // Inicializar selectedFriend desde la URL
     useEffect(() => {
-        const amigoUsernameFromUrl = searchParams.get('amigoUsername')
-        if (amigoUsernameFromUrl && friends.length > 0) {
-            const friend = friends.find(f => f.username === amigoUsernameFromUrl)
+        const amigoFromUrl = searchParams.get('amigo')
+        if (amigoFromUrl && friends.length > 0) {
+            const friend = friends.find(f => f.username === amigoFromUrl)
             if (friend) {
                 setSelectedFriend(friend.nombre)
                 setSelectedFriendUsername(friend.username)
             }
-        } else if (!amigoUsernameFromUrl) {
+        } else if (!amigoFromUrl) {
             setSelectedFriend('Tus Gustos')
             setSelectedFriendUsername(null)
         }
@@ -96,13 +96,13 @@ const handleFriendSelect = (friendUsername: string | null) => {
     if (!friendUsername) {
         setSelectedFriend('Tus Gustos')
         setSelectedFriendUsername(null)
-        updateUrlParam('amigoUsername', null)
+        updateUrlParam('amigo', null)
     } else {
         const friend = friends.find(f => f.username === friendUsername)
         if (friend) {
             setSelectedFriend(friend.nombre)
             setSelectedFriendUsername(friend.username)
-            updateUrlParam('amigoUsername', friendUsername)
+            updateUrlParam('amigo', friendUsername)
         }
     }
     setFriendsOpen(false)
@@ -199,6 +199,25 @@ useEffect(() => {
                         className={styles.select__friend_icon}
                     />
                 </div>
+            ) : selectedFriendUsername ? (
+                (() => {
+                    const friend = friends.find(f => f.username === selectedFriendUsername)
+                    return friend ? (
+                        <div className={styles.select__friend_avatar}>
+                            {friend.fotoPerfilUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                            ) : (
+                                <FontAwesomeIcon icon={faUser} />
+                            )}
+                        </div>
+                    ) : (
+                        <div 
+                            className={styles.select__friend_avatar}
+                            style={{ backgroundColor: getSelectedFriendColor() }}
+                        />
+                    )
+                })()
             ) : (
                 <div 
                     className={styles.select__friend_avatar}
@@ -233,25 +252,25 @@ useEffect(() => {
             </button>
 
             {/* AMIGOS REALES */}
-            {friends.map((amigo, index) => {
-                // Colores para los avatares (similar al código anterior)
-                const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0']
-                const color = colors[index % colors.length]
-                
+            {friends.map((amigo) => {
                 return (
                     <button
                         key={amigo.id}
                         className={styles.select__option_friend}
                         onClick={() => handleFriendSelect(amigo.username)}
                     >
-                        <div 
-                            className={styles.select__friend_avatar}
-                            style={{ backgroundColor: color }}
-                        />
+                        <div className={styles.select__friend_avatar}>
+                            {amigo.fotoPerfilUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={amigo.fotoPerfilUrl} alt={amigo.nombre} />
+                            ) : (
+                                <FontAwesomeIcon icon={faUser} />
+                            )}
+                        </div>
                         <span>{amigo.nombre}</span>
                     </button>
                 )
-            }            )}
+            })}
         </div>
     )}
 </div>
