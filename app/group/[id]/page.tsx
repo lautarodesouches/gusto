@@ -190,11 +190,11 @@ export default async function GroupDetail({ params }: Props) {
     const isAdmin = group.administradorFirebaseUid === userId
 
     return (
-        <>
+        <div className={styles.wrapper}>
             <Navbar />
             <main className={styles.main}>
                 <GroupClient group={group} />
             </main>
-        </>
+        </div>
     )
 }

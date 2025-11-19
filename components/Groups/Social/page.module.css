@@ -67,6 +67,20 @@
     gap: 10px;
 }
 
+.member__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.member__link:hover {
+    opacity: 0.8;
+}
+
 .member__img {
     width: 40px;
     height: 40px;
@@ -81,7 +95,7 @@
     border-radius: 10px;
 }
 
-.member div:nth-child(2) {
+.member__link > div:nth-child(2) {
     flex: 1;
 }
 
@@ -97,7 +111,7 @@
     height: 20px;
 }
 
-.member div:nth-child(3) {
+.member > div:last-child {
     display: flex;
     gap: 20px;
     align-items: center;

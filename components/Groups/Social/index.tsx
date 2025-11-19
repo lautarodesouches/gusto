@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faCrown,
     faGear,
-    faInfo,
     faSearch,
     faUser,
     faUserPlus,
@@ -120,46 +119,43 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                     const isChecked = realMember?.checked ?? false
                     return (
                         <article className={styles.member} key={m.id}>
+                            <Link
+                                href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
+                                className={styles.member__link}
+                            >
+                                <div className={styles.member__div}>
+                                    {[
+                                        'juanperez',
+                                        'carlossanchesz',
+                                        'luciagomez',
+                                        'mariasosa',
+                                    ].includes(m.usuarioUsername?.toLowerCase()) ? (
+                                        <img
+                                            src={`/users/${m.usuarioNombre
+                                                .split(' ')[0]
+                                                .toLowerCase()}.jpg`}
+                                            className={styles.member__img}
+                                        />
+                                    ) : (
+                                        <FontAwesomeIcon
+                                            icon={faUser}
+                                            className={styles.member__svg}
+                                        />
+                                    )}
+                                </div>
+                                <div className={styles.member__div}>
+                                    <h3 className={styles.member__name}>
+                                        {m.usuarioNombre}
+                                    </h3>
+                                    {m.id === group.administradorId && (
+                                        <FontAwesomeIcon
+                                            icon={faCrown}
+                                            className={styles.member__crown}
+                                        />
+                                    )}
+                                </div>
+                            </Link>
                             <div className={styles.member__div}>
-                                {[
-                                    'juanperez',
-                                    'carlossanchesz',
-                                    'luciagomez',
-                                    'mariasosa',
-                                ].includes(m.usuarioUsername?.toLowerCase()) ? (
-                                    <img
-                                        src={`/users/${m.usuarioNombre
-                                            .split(' ')[0]
-                                            .toLowerCase()}.jpg`}
-                                        className={styles.member__img}
-                                    />
-                                ) : (
-                                    <FontAwesomeIcon
-                                        icon={faUser}
-                                        className={styles.member__svg}
-                                    />
-                                )}
-                            </div>
-                            <div className={styles.member__div}>
-                                <h3 className={styles.member__name}>
-                                    {m.usuarioNombre}
-                                </h3>
-                                {m.id === group.administradorId && (
-                                    <FontAwesomeIcon
-                                        icon={faCrown}
-                                        className={styles.member__crown}
-                                    />
-                                )}
-                            </div>
-                            <div className={styles.member__div}>
-                                <Link
-                                    href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={faInfo}
-                                        className={styles.members__icon}
-                                    />
-                                </Link>
                                 <div>
                                     <input
                                         type="checkbox"

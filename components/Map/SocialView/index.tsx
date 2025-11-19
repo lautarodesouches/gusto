@@ -1,10 +1,7 @@
 import { SocialData } from '@/types'
 import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    faPlus,
-    faUsers,
-} from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import FriendSearch from '@/components/Social/FriendSearch'
 import GroupCreate from '@/components/Social/GroupCreate'
 import FriendCard from '@/components/Social/FriendCard'
@@ -57,22 +54,33 @@ export default function SocialView({
     return (
         <>
             {/* Modales para mobile - en desktop se renderizan en el componente padre */}
-            {mounted && typeof window !== 'undefined' && activePanel && createPortal(
-                <div className={styles.modal__backdrop} onClick={handleClose}>
-                    <div className={styles.modal__content} onClick={(e) => e.stopPropagation()}>
-                        {activePanel === 'searchFriend' && (
-                            <FriendSearch onClose={handleClose} />
-                        )}
-                        {activePanel === 'newGroup' && (
-                            <GroupCreate handleCancel={handleClose} />
-                        )}
-                    </div>
-                </div>,
-                document.body
-            )}
+            {mounted &&
+                typeof window !== 'undefined' &&
+                activePanel &&
+                createPortal(
+                    <div
+                        className={styles.modal__backdrop}
+                        onClick={handleClose}
+                    >
+                        <div
+                            className={styles.modal__content}
+                            onClick={e => e.stopPropagation()}
+                        >
+                            {activePanel === 'searchFriend' && (
+                                <FriendSearch onClose={handleClose} />
+                            )}
+                            {activePanel === 'newGroup' && (
+                                <GroupCreate handleCancel={handleClose} />
+                            )}
+                        </div>
+                    </div>,
+                    document.body
+                )}
             <section
                 className={`${styles.social} ${isVisible ? styles.show : ''} ${
-                    isExpanded ? styles.social_expanded : styles.social_collapsed
+                    isExpanded
+                        ? styles.social_expanded
+                        : styles.social_collapsed
                 }`}
             >
                 {/* Logo que cambia según el estado */}
@@ -100,11 +108,24 @@ export default function SocialView({
 
                 {/* Botón "Contraer Pestaña" cuando está expandido */}
                 {isExpanded && onToggleExpand && (
-                    <button className={styles.social__contract_btn} onClick={onToggleExpand}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect width="18" height="18" x="3" y="3" rx="2"/>
-                            <path d="M15 3v18"/>
-                            <path d="m10 15-3-3 3-3"/>
+                    <button
+                        className={styles.social__contract_btn}
+                        onClick={onToggleExpand}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <rect width="18" height="18" x="3" y="3" rx="2" />
+                            <path d="M15 3v18" />
+                            <path d="m10 15-3-3 3-3" />
                         </svg>
                         <span>Contraer Pestaña</span>
                     </button>
@@ -114,7 +135,9 @@ export default function SocialView({
                 {isExpanded && (
                     <div className={styles.social__content}>
                         <div className={styles.social__div}>
-                            <h3 className={styles.social__description}>Amigos</h3>
+                            <h3 className={styles.social__description}>
+                                Amigos
+                            </h3>
                             <hr className={styles.social__line} />
                             <ul className={styles.social__list}>
                                 {socialData.friends.map(f => (
@@ -126,7 +149,9 @@ export default function SocialView({
                             />
                         </div>
                         <div className={styles.social__div}>
-                            <h3 className={styles.social__description}>Grupos</h3>
+                            <h3 className={styles.social__description}>
+                                Grupos
+                            </h3>
                             <hr className={styles.social__line} />
                             <ul className={styles.social__list}>
                                 {socialData.groups.map(g => (
@@ -149,29 +174,55 @@ export default function SocialView({
                             onClick={onToggleExpand}
                             title="Expandir panel"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect width="18" height="18" x="3" y="3" rx="2"/>
-                                <path d="M9 3v18"/>
-                                <path d="m14 9 3 3-3 3"/>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <rect
+                                    width="18"
+                                    height="18"
+                                    x="3"
+                                    y="3"
+                                    rx="2"
+                                />
+                                <path d="M9 3v18" />
+                                <path d="m14 9 3 3-3 3" />
                             </svg>
                         </button>
 
                         {/* Amigos colapsados */}
                         <div className={styles.collapsed__section}>
-                            {socialData.friends.map((f) => (
-                                <FriendCard key={f.id} friend={f} showOnlyImage />
+                            {socialData.friends.map(f => (
+                                <FriendCard
+                                    key={f.id}
+                                    friend={f}
+                                    showOnlyImage
+                                />
                             ))}
-                            <button className={styles.collapsed__add} onClick={() => togglePanel('searchFriend')}>
+                            <button
+                                className={styles.collapsed__add}
+                                onClick={() => togglePanel('searchFriend')}
+                            >
                                 <FontAwesomeIcon icon={faPlus} />
                             </button>
                         </div>
 
                         {/* Grupos colapsados */}
                         <div className={styles.collapsed__section}>
-                            {socialData.groups.map((g) => (
+                            {socialData.groups.map(g => (
                                 <GroupCard key={g.id} group={g} showOnlyImage />
                             ))}
-                            <button className={styles.collapsed__add} onClick={() => togglePanel('newGroup')}>
+                            <button
+                                className={styles.collapsed__add}
+                                onClick={() => togglePanel('newGroup')}
+                            >
                                 <FontAwesomeIcon icon={faPlus} />
                             </button>
                         </div>
