@@ -59,7 +59,7 @@
 
 @media (max-width: 768px) {
     .container {
-        top: 0.75rem;
+        top: 5.5rem; /* 80px (max-height navbar) + 8px (padding) + espacio */
     }
     
     .button {

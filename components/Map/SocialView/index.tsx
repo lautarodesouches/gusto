@@ -113,14 +113,6 @@ export default function SocialView({
                 {/* Vista expandida */}
                 {isExpanded && (
                     <div className={styles.social__content}>
-                        <div className={styles.social__buttons}>
-                            <FriendButton
-                                handleClick={() => togglePanel('searchFriend')}
-                            />
-                            <GroupButton
-                                handleClick={() => togglePanel('newGroup')}
-                            />
-                        </div>
                         <div className={styles.social__div}>
                             <h3 className={styles.social__description}>Amigos</h3>
                             <hr className={styles.social__line} />

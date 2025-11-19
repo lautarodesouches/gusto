@@ -9,7 +9,12 @@ import Image from 'next/image'
 import { Friend } from '@/types'
 import { getFriends } from '@/app/actions/friends'
 
-export default function SearchBar() {
+interface SearchBarProps {
+    showSearchField?: boolean
+    showSelectors?: boolean
+}
+
+export default function SearchBar({ showSearchField = true, showSelectors = true }: SearchBarProps) {
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
     
@@ -129,47 +134,52 @@ useEffect(() => {
     return (
         <div className={styles.buscador}>
             {/* Campo de búsqueda */}
-            <div className={styles.buscador__campo}>
-                <FontAwesomeIcon icon={faSearch} className={styles.buscador__icono} />
-                <input
-                    type="text"
-                    placeholder="Escribe un lugar"
-                    name="search"
-                    className={styles.buscador__input}
-                />
-            </div>
+            {showSearchField && (
+                <div className={styles.buscador__campo}>
+                    <FontAwesomeIcon icon={faSearch} className={styles.buscador__icono} />
+                    <input
+                        type="text"
+                        placeholder="Escribe un lugar"
+                        name="search"
+                        className={styles.buscador__input}
+                    />
+                </div>
+            )}
 
             {/* Select de Kilómetros */}
-            <div className={styles.select} ref={kmRef}>
-                <button 
-                    className={styles.select__button}
-                    onClick={() => {
-                        setKmOpen(!kmOpen)
-                        setFriendsOpen(false)
-                    }}
-                >
-                    <span className={styles.select__text}>{selectedKm}</span>
-                    <FontAwesomeIcon 
-                        icon={kmOpen ? faChevronUp : faChevronDown} 
-                        className={styles.select__icon}
-                    />
-                </button>
-                {kmOpen && (
-                    <div className={styles.select__dropdown}>
-                        {kmOptions.map((option) => (
-                            <button
-                                key={option}
-                                className={`${styles.select__option} ${selectedKm === option ? styles.select__option_active : ''}`}
-                                onClick={() => handleKmSelect(option)}
-                            >
-                                {option}
-                            </button>
-                        ))}
-                    </div>
-                )}
-            </div>
+            {showSelectors && (
+                <div className={styles.select} ref={kmRef}>
+                    <button 
+                        className={styles.select__button}
+                        onClick={() => {
+                            setKmOpen(!kmOpen)
+                            setFriendsOpen(false)
+                        }}
+                    >
+                        <span className={styles.select__text}>{selectedKm}</span>
+                        <FontAwesomeIcon 
+                            icon={kmOpen ? faChevronUp : faChevronDown} 
+                            className={styles.select__icon}
+                        />
+                    </button>
+                    {kmOpen && (
+                        <div className={styles.select__dropdown}>
+                            {kmOptions.map((option) => (
+                                <button
+                                    key={option}
+                                    className={`${styles.select__option} ${selectedKm === option ? styles.select__option_active : ''}`}
+                                    onClick={() => handleKmSelect(option)}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
 
            {/* SELECT DE AMIGOS */}
+{showSelectors && (
 <div className={styles.select_friends} ref={friendsRef}>
     <button
         className={styles.select__button}
@@ -241,10 +251,11 @@ useEffect(() => {
                         <span>{amigo.nombre}</span>
                     </button>
                 )
-            })}
+            }            )}
         </div>
     )}
 </div>
+)}
         </div>
     )
 }

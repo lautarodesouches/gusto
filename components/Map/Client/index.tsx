@@ -62,8 +62,30 @@ export default function Client({ socialData, filters }: Props) {
 
             {!incompleto && (
                 <>
+                    {/* MOBILE */}
+                    <section className={styles.mobile__map_container}>
+                        {/* Navbar mobile fijo en la parte superior - solo selectores y profile bar */}
+                        <nav className={styles.mobile__navbar}>
+                            <div className={styles.mobile__navbar_content}>
+                                <div className={styles.mobile__navbar_selectors}>
+                                    <SearchBar showSearchField={false} />
+                                </div>
+                                <div className={styles.mobile__navbar_profile}>
+                                    <ProfileBar />
+                                </div>
+                            </div>
+                        </nav>
+
+                        <MapClient containerStyle={styles.map_mobile} />
+                    </section>
+
                     {/* MOBILE BOTTOM NAV */}
                     <section className={styles.bottom}>
+                        {/* Buscador arriba de los botones */}
+                        <div className={styles.bottom__search}>
+                            <SearchBar showSearchField={true} showSelectors={false} />
+                        </div>
+
                         <div className={styles.bottom__container}>
                             <button
                                 className={styles.bottom__button}
