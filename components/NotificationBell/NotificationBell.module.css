@@ -49,8 +49,6 @@
 /* Panel de notificaciones */
 .panel {
   position: fixed; 
-  right: 20px; 
-  top: calc(100% + 10px);
   background-color: var(--background);
   border: 1px solid var(--grey);
   border-radius: 16px;

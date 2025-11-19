@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faUser, faUsers } from '@fortawesome/free-solid-svg-icons'
@@ -37,14 +38,18 @@ export default function NotificationBell({ showPanel = false, isActive = false }
     const [notificacionesConnection, setNotificacionesConnection] = useState<HubConnection | null>(null)
     const [solicitudesConnection, setSolicitudesConnection] = useState<HubConnection | null>(null)
     const [notificaciones, setNotificaciones] = useState<UnifiedNotification[]>([])
+    const [mounted, setMounted] = useState(false)
+    const bellRef = useRef<HTMLDivElement | null>(null)
     const panelRef = useRef<HTMLDivElement | null>(null)
     const toast = useToast()
 
     // Conexión con el Hub de Notificaciones
     useEffect(() => {
+        let conn: HubConnection | null = null
+
         const connectNotificaciones = async () => {
             try {
-                const conn = new HubConnectionBuilder()
+                conn = new HubConnectionBuilder()
                     .withUrl(`${API_URL}/notificacionesHub`, {
                         withCredentials: true,
                     })
@@ -53,6 +58,7 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Cargar notificaciones iniciales al conectar
                 conn.on('CargarNotificaciones', (data: Notificacion[]) => {
+                    console.log('🔔 Notificaciones cargadas:', data)
                     setNotificaciones(prev => {
                         const existingIds = new Set(prev.map(n => n.id))
                         const newNotifs = data
@@ -73,6 +79,7 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Nueva notificación recibida en tiempo real
                 conn.on('RecibirNotificacion', (notif: Notificacion) => {
+                    console.log('📩 Nueva notificación recibida:', notif)
                     setNotificaciones(prev => {
                         const exists = prev.some(n => n.id === notif.id)
                         if (exists) return prev
@@ -93,30 +100,35 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Eliminar notificación si el servidor lo indica
                 conn.on('NotificacionEliminada', (id: string) => {
+                    console.log('🗑️ Notificación eliminada:', id)
                     setNotificaciones(prev => prev.filter(n => n.id !== id))
                 })
 
                 await conn.start()
+                console.log('✅ Conectado a NotificacionesHub')
                 setNotificacionesConnection(conn)
-            } catch {
-                // Error conectando con NotificationHub
+            } catch (err) {
+                console.error('❌ Error conectando con NotificacionesHub:', err)
             }
         }
 
         connectNotificaciones()
 
         return () => {
-            if (notificacionesConnection) {
-                notificacionesConnection.stop()
+            if (conn) {
+                conn.stop()
+                console.log('🔴 Conexión NotificacionesHub cerrada')
             }
         }
     }, [])
 
     // Conexión con el Hub de Solicitudes de Amistad
     useEffect(() => {
+        let conn: HubConnection | null = null
+
         const connectSolicitudes = async () => {
             try {
-                const conn = new HubConnectionBuilder()
+                conn = new HubConnectionBuilder()
                     .withUrl(`${API_URL}/solicitudesAmistadHub`, {
                         withCredentials: true,
                     })
@@ -125,6 +137,7 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Cargar solicitudes pendientes al conectar
                 conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
+                    console.log('🔁 Solicitudes pendientes (NotificationBell):', data)
                     setNotificaciones(prev => {
                         const existingIds = new Set(prev.map(n => n.id))
                         const newSolicitudes = data
@@ -145,6 +158,7 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Nueva solicitud recibida en tiempo real
                 conn.on('RecibirSolicitudAmistad', (solicitud: SolicitudAmistadResponse) => {
+                    console.log('📩 Nueva solicitud recibida (NotificationBell):', solicitud)
                     setNotificaciones(prev => {
                         const exists = prev.some(n => n.id === solicitud.id)
                         if (exists) return prev
@@ -165,21 +179,24 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Solicitud eliminada (aceptada/rechazada)
                 conn.on('SolicitudEliminada', (id: string) => {
+                    console.log('🗑️ Solicitud eliminada (NotificationBell):', id)
                     setNotificaciones(prev => prev.filter(n => n.id !== id))
                 })
 
                 await conn.start()
+                console.log('✅ Conectado a SolicitudesAmistadHub (NotificationBell)')
                 setSolicitudesConnection(conn)
-            } catch {
-                // Error conectando con SolicitudesAmistadHub
+            } catch (err) {
+                console.error('❌ Error conectando con SolicitudesAmistadHub (NotificationBell):', err)
             }
         }
 
         connectSolicitudes()
 
         return () => {
-            if (solicitudesConnection) {
-                solicitudesConnection.stop()
+            if (conn) {
+                conn.stop()
+                console.log('🔴 Conexión SolicitudesAmistadHub cerrada (NotificationBell)')
             }
         }
     }, [])
@@ -241,12 +258,41 @@ export default function NotificationBell({ showPanel = false, isActive = false }
         )
     }
 
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    // Calcular posición del panel
+    useEffect(() => {
+        if (!showPanel || !bellRef.current || !panelRef.current) return
+
+        const updatePosition = () => {
+            if (!bellRef.current || !panelRef.current) return
+
+            const bellRect = bellRef.current.getBoundingClientRect()
+            const panel = panelRef.current
+
+            // Posicionar el panel debajo del botón de notificaciones
+            panel.style.top = `${bellRect.bottom + 10}px`
+            panel.style.right = `${window.innerWidth - bellRect.right}px`
+        }
+
+        updatePosition()
+        window.addEventListener('scroll', updatePosition, true)
+        window.addEventListener('resize', updatePosition)
+
+        return () => {
+            window.removeEventListener('scroll', updatePosition, true)
+            window.removeEventListener('resize', updatePosition)
+        }
+    }, [showPanel])
+
     const unreadCount = notificaciones.filter(n => !n.leida).length
 
     // 🔹 Render
     return (
         <>
-            <div className={styles.contenedor}>
+            <div className={styles.contenedor} ref={bellRef}>
                 <FontAwesomeIcon
                     icon={faBell}
                     className={`${styles.icono} ${isActive ? styles.icono_activo : ''}`}
@@ -257,8 +303,8 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                 )}
             </div>
 
-            {showPanel && (
-                <div className={styles.panel} ref={panelRef}>
+            {mounted && showPanel && createPortal(
+                <div className={styles.panel} ref={panelRef} data-notification-panel="true">
                     <h4>
                         Notificaciones
                         {unreadCount > 0 && (
@@ -278,8 +324,23 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                         {notificaciones.map(n => {
                             const isAmistad = n.tipo === 'solicitud_amistad'
-                            const isGrupo = n.tipo === 'notificacion' && n.tipoNotificacion === 'InvitacionGrupo'
+                            // Detectar notificaciones de grupos (case-insensitive)
+                            const isGrupo = n.tipo === 'notificacion' && 
+                                n.tipoNotificacion && 
+                                n.tipoNotificacion.toLowerCase().includes('grupo')
                             const hasActions = isAmistad || isGrupo
+                            
+                            // Debug: log para ver qué notificaciones tenemos
+                            if (n.tipo === 'notificacion') {
+                                console.log('📋 Notificación detectada:', {
+                                    id: n.id,
+                                    tipo: n.tipo,
+                                    tipoNotificacion: n.tipoNotificacion,
+                                    titulo: n.titulo,
+                                    mensaje: n.mensaje,
+                                    isGrupo
+                                })
+                            }
 
                             return (
                                 <div
@@ -398,7 +459,8 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                             )
                         })}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     )
