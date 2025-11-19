@@ -7,13 +7,14 @@
 }
 
 .content__social {
-    border-radius: 10px;
     padding: 10px;
+    border-radius: 10px;
     flex: 1;
     background: var(--background);
 }
 
 .content__group {
+    padding-top: 10px;
     position: relative;
     flex: 2;
     height: 100%;
