@@ -82,7 +82,7 @@ export async function verifyRecentPayment(): Promise<{ success: boolean; data?: 
 /**
  * Verifica el estado de un pago específico
  */
-export async function verifyPayment(pagoId: string): Promise<{ success: boolean; data?: any; error?: string }> {
+export async function verifyPayment(pagoId: string): Promise<{ success: boolean; data?: PaymentVerification; error?: string }> {
     try {
         const headers = await getAuthHeaders()
         const res = await fetch(`${API_URL}/api/Pago/verificar/${pagoId}`, {

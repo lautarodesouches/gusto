@@ -67,13 +67,6 @@ export default function Step({
         const currentData = data[stepKey] || []
         
         if (shouldSyncData(preSelected, currentData)) {
-            console.log(`[Step ${step}] Sincronizando desde backend:`, {
-                totalItems: content.length,
-                seleccionados: preSelected.length,
-                ids: preSelected.map(i => i.id),
-                currentDataLength: currentData.length
-            })
-            
             setData({
                 [stepKey]: preSelected,
             })
@@ -140,8 +133,6 @@ export default function Step({
     }
 
     const handleNext = async () => {
-        const endpoint = getEndpoint()
-        
         // Validar que basePath esté definido
         if (!basePath) {
             console.error('[Step] basePath no está definido')
@@ -149,8 +140,8 @@ export default function Step({
         }
         
         // NO saltar el guardado en el paso 3 - siempre debe guardar antes de avanzar
-        if (!endpoint || !token) {
-            // Si no hay endpoint o token, solo navegar (no debería pasar en modo edición)
+        if (!token) {
+            // Si no hay token, solo navegar (no debería pasar en modo edición)
             if (step === 3) {
                 router.push(`${basePath}/4`)
             } else {
@@ -190,15 +181,6 @@ export default function Step({
                 return
             }
 
-            console.log(`[Step ${step}] Guardando (${mode}):`, { 
-                ids, 
-                idsLength: ids.length,
-                idsType: typeof ids[0],
-                selectedItems: current.map(i => ({ id: i.id, nombre: i.nombre })),
-                skip, 
-                mode 
-            })
-
             const result = await saveAction(ids, skip)
 
             if (!result.success) {
@@ -210,11 +192,6 @@ export default function Step({
             }
 
             // Éxito
-            console.log(`[Step ${step}] Guardado exitoso (${mode}):`, {
-                idsEnviados: ids,
-                selectedCount: current.length,
-                mode
-            })
 
             // En modo edición, después de guardar exitosamente, NO resetear hasInitialized
             // para que los datos del contexto se mantengan y no se sobrescriban al volver

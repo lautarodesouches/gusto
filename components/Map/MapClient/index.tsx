@@ -27,7 +27,7 @@ const INITIAL_STATE: MapState = {
 
 
 
-function buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams) {
+function _buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams) {
     const query = new URLSearchParams()
 
     query.append('near.lat', String(center.lat))

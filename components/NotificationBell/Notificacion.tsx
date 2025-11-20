@@ -58,7 +58,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Cargar notificaciones iniciales al conectar
                 conn.on('CargarNotificaciones', (data: Notificacion[]) => {
-                    console.log('🔔 Notificaciones cargadas:', data)
                     setNotificaciones(prev => {
                         const existingIds = new Set(prev.map(n => n.id))
                         const newNotifs = data
@@ -79,7 +78,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Nueva notificación recibida en tiempo real
                 conn.on('RecibirNotificacion', (notif: Notificacion) => {
-                    console.log('📩 Nueva notificación recibida:', notif)
                     setNotificaciones(prev => {
                         const exists = prev.some(n => n.id === notif.id)
                         if (exists) return prev
@@ -100,12 +98,10 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Eliminar notificación si el servidor lo indica
                 conn.on('NotificacionEliminada', (id: string) => {
-                    console.log('🗑️ Notificación eliminada:', id)
                     setNotificaciones(prev => prev.filter(n => n.id !== id))
                 })
 
                 await conn.start()
-                console.log('✅ Conectado a NotificacionesHub')
                 setNotificacionesConnection(conn)
             } catch (err) {
                 console.error('❌ Error conectando con NotificacionesHub:', err)
@@ -117,7 +113,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
         return () => {
             if (conn) {
                 conn.stop()
-                console.log('🔴 Conexión NotificacionesHub cerrada')
             }
         }
     }, [])
@@ -137,7 +132,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Cargar solicitudes pendientes al conectar
                 conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
-                    console.log('🔁 Solicitudes pendientes (NotificationBell):', data)
                     setNotificaciones(prev => {
                         const existingIds = new Set(prev.map(n => n.id))
                         const newSolicitudes = data
@@ -158,7 +152,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Nueva solicitud recibida en tiempo real
                 conn.on('RecibirSolicitudAmistad', (solicitud: SolicitudAmistadResponse) => {
-                    console.log('📩 Nueva solicitud recibida (NotificationBell):', solicitud)
                     setNotificaciones(prev => {
                         const exists = prev.some(n => n.id === solicitud.id)
                         if (exists) return prev
@@ -179,12 +172,10 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                 // Solicitud eliminada (aceptada/rechazada)
                 conn.on('SolicitudEliminada', (id: string) => {
-                    console.log('🗑️ Solicitud eliminada (NotificationBell):', id)
                     setNotificaciones(prev => prev.filter(n => n.id !== id))
                 })
 
                 await conn.start()
-                console.log('✅ Conectado a SolicitudesAmistadHub (NotificationBell)')
                 setSolicitudesConnection(conn)
             } catch (err) {
                 console.error('❌ Error conectando con SolicitudesAmistadHub (NotificationBell):', err)
@@ -196,7 +187,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
         return () => {
             if (conn) {
                 conn.stop()
-                console.log('🔴 Conexión SolicitudesAmistadHub cerrada (NotificationBell)')
             }
         }
     }, [])
@@ -330,17 +320,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                                 n.tipoNotificacion.toLowerCase().includes('grupo')
                             const hasActions = isAmistad || isGrupo
                             
-                            // Debug: log para ver qué notificaciones tenemos
-                            if (n.tipo === 'notificacion') {
-                                console.log('📋 Notificación detectada:', {
-                                    id: n.id,
-                                    tipo: n.tipo,
-                                    tipoNotificacion: n.tipoNotificacion,
-                                    titulo: n.titulo,
-                                    mensaje: n.mensaje,
-                                    isGrupo
-                                })
-                            }
 
                             return (
                                 <div

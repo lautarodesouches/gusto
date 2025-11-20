@@ -51,26 +51,26 @@ export default function StepFour() {
                 const resumen = result.data
 
                 // Mapear los datos del backend al formato esperado
-                const step1Data =
+                const step1Data: RegisterItem[] =
                     resumen.restricciones?.map(
-                        (item: { id: string; nombre: string }) => ({
-                            id: item.id,
+                        (item) => ({
+                            id: typeof item.id === 'string' ? item.id : String(item.id),
                             nombre: item.nombre,
                         })
                     ) || []
 
-                const step2Data =
+                const step2Data: RegisterItem[] =
                     resumen.condicionesMedicas?.map(
-                        (item: { id: string; nombre: string }) => ({
-                            id: item.id,
+                        (item) => ({
+                            id: typeof item.id === 'string' ? item.id : String(item.id),
                             nombre: item.nombre,
                         })
                     ) || []
 
-                const step3Data =
+                const step3Data: RegisterItem[] =
                     resumen.gustos?.map(
-                        (item: { id: string; nombre: string }) => ({
-                            id: item.id,
+                        (item) => ({
+                            id: typeof item.id === 'string' ? item.id : String(item.id),
                             nombre: item.nombre,
                         })
                     ) || []

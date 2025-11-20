@@ -4,8 +4,6 @@ import { cookies } from 'next/headers'
 
 export async function POST(req: Request) {
     try {
-        console.log('=== Iniciando guardado de steps ===')
-        
         let body
         try {
             body = await req.json()
@@ -20,28 +18,10 @@ export async function POST(req: Request) {
         // Alergias - Condiciones - Gustos
         const { step1, step2, step3 } = body
         
-        console.log('Steps recibidos (raw):', { 
-            step1Type: typeof step1,
-            step1IsArray: Array.isArray(step1),
-            step2Type: typeof step2,
-            step2IsArray: Array.isArray(step2),
-            step3Type: typeof step3,
-            step3IsArray: Array.isArray(step3),
-            step1, 
-            step2, 
-            step3 
-        })
-        
         // Asegurar que los steps sean arrays
         const safeStep1 = Array.isArray(step1) ? step1 : []
         const safeStep2 = Array.isArray(step2) ? step2 : []
         const safeStep3 = Array.isArray(step3) ? step3 : []
-        
-        console.log('Steps procesados:', {
-            step1Length: safeStep1.length,
-            step2Length: safeStep2.length,
-            step3Length: safeStep3.length,
-        })
 
         // Token
         const cookieStore = await cookies()
@@ -56,7 +36,6 @@ export async function POST(req: Request) {
             )
         }
 
-        console.log('Token encontrado, enviando step1 (restricciones)...')
         // 1
         const res1 = await fetch(`${API_URL}/Usuario/restricciones`, {
             method: 'POST',
@@ -75,9 +54,7 @@ export async function POST(req: Request) {
             console.error('Error en step1 (restricciones):', res1.status, errorText)
             throw new Error(`Error en restricciones: ${res1.status}`)
         }
-        console.log('Step1 guardado correctamente')
 
-        console.log('Enviando step2 (condiciones)...')
         // 2
         const res2 = await fetch(`${API_URL}/Usuario/condiciones`, {
             method: 'POST',
@@ -97,9 +74,7 @@ export async function POST(req: Request) {
             console.error('Error en step2 (condiciones):', res2.status, errorText)
             throw new Error(`Error en condiciones: ${res2.status}`)
         }
-        console.log('Step2 guardado correctamente')
 
-        console.log('Enviando step3 (gustos)...')
         // 3
         const res3 = await fetch(`${API_URL}/Usuario/gustos`, {
             method: 'POST',
@@ -119,10 +94,7 @@ export async function POST(req: Request) {
             console.error('Error en step3 (gustos):', res3.status, errorText)
             throw new Error(`Error en gustos: ${res3.status}`)
         }
-        console.log('Step3 guardado correctamente')
 
-        
-        console.log('Finalizando registro...')
         const resFinalizar = await fetch(`${API_URL}/Usuario/finalizar`, {
             method: 'POST',
             headers: {
@@ -134,12 +106,8 @@ export async function POST(req: Request) {
         if (!resFinalizar.ok) {
             const errorText = await resFinalizar.text()
             console.error('Error al finalizar registro:', resFinalizar.status, errorText)
-           
-        } else {
-            console.log('Registro finalizado correctamente')
         }
 
-        console.log('=== Todos los steps guardados exitosamente ===')
         return NextResponse.json({
             success: true,
         })

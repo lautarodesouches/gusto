@@ -60,9 +60,6 @@ export async function getFilters(): Promise<ApiResponse<Filters>> {
 
         const dishes = (await getDishes()).data || []
 
-        // Limit
-        dishes.length = 10
-
         const ratings = [
             { id: '1', name: '3.5', value: '3.5' },
             { id: '2', name: '4', value: '4' },

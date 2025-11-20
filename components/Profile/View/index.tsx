@@ -32,8 +32,6 @@ export function ProfileView({
     onGoPlace,
     onGoBack,
 }: ProfileViewProps) {
-    console.log(profile.fotoPerfilUrl)
-
     return (
         <article className={styles.profile}>
             <header className={styles.header}>

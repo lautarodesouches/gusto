@@ -31,14 +31,12 @@ export default function FriendRequests() {
 
                 // Cargar solicitudes pendientes al conectar
                 conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
-                    console.log('🔁 Solicitudes pendientes:', data)
                     setSolicitudes(data)
                 })
 
 
                 // Nueva solicitud recibida en tiempo real
                 conn.on('RecibirSolicitudAmistad', (solicitud: SolicitudAmistadResponse) => {
-                    console.log('📩 Nueva solicitud recibida:', solicitud)
                     setSolicitudes(prev => {
                         const exists = prev.some(s => s.id === solicitud.id)
                         return exists ? prev : [solicitud, ...prev]
@@ -47,12 +45,10 @@ export default function FriendRequests() {
 
                 // Solicitud eliminada (aceptada/rechazada)
                 conn.on('SolicitudEliminada', (id: string) => {
-                    console.log('🗑️ Solicitud eliminada:', id)
                     setSolicitudes(prev => prev.filter(s => s.id !== id))
                 })
 
                 await conn.start()
-                console.log('✅ Conectado a SolicitudesAmistadHub')
                 setConnection(conn)
             } catch (err) {
                 console.error('❌ Error conectando con SolicitudesAmistadHub:', err)
@@ -64,7 +60,6 @@ export default function FriendRequests() {
         return () => {
             if (connection) {
                 connection.stop()
-                console.log('🔴 Conexión cerrada')
             }
         }
     }, [])

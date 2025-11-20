@@ -2,6 +2,7 @@
 import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
 import { ApiResponse, User } from '@/types'
+import { UpdateProfilePayload } from '@/types/profile'
 import admin from '@/lib/firebaseAdmin'
 
 async function getAuthHeaders(): Promise<HeadersInit> {
@@ -41,10 +42,10 @@ export async function getProfile(username: string): Promise<ApiResponse<User>> {
 }
 
 export async function updateProfile(
-    data: { username?: string; esPrivado?: boolean; nombre?: string; apellido?: string; bio?: string } | FormData
+    data: UpdateProfilePayload | FormData
 ): Promise<ApiResponse<User>> {
     try {
-        let payload: any
+        let payload: UpdateProfilePayload
         
         if (data instanceof FormData) {
             payload = {

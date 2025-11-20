@@ -87,7 +87,7 @@ export default function GroupMap({ members }: GroupMapProps) {
                 }
 
                 const params = {
-                    grupoId,
+                    grupoId: Array.isArray(grupoId) ? grupoId[0] : grupoId,
                     nearLat: String(center.lat),
                     nearLng: String(center.lng),
                     radiusMeters: searchParams.get('radius') || '1000',

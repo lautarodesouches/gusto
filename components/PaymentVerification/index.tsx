@@ -21,20 +21,13 @@ export default function PaymentVerification() {
             // Verificar que hay un pago pendiente y el usuario está autenticado
             if (pendingPayment === 'true' && paymentEmail && token) {
                 try {
-                    console.log('🔍 Verificando estado del pago...')
-                    console.log('📧 Email de pago:', paymentEmail)
-                    console.log('🔑 Token disponible:', !!token)
-
                     // Esperar 3 segundos para dar tiempo a procesar
                     await new Promise(resolve => setTimeout(resolve, 3000))
 
                     // Forzar actualización a Premium (solo para desarrollo)
                     const upgradeResult = await upgradeToPremium()
 
-                    console.log('📡 Upgrade result:', upgradeResult)
-
-                    if (upgradeResult.success && (upgradeResult.data?.isPremium || upgradeResult.data?.success)) {
-                        console.log('✅ Usuario actualizado a Premium')
+                    if (upgradeResult.success && upgradeResult.data?.isPremium) {
 
                         // Actualizar el estado Premium en el contexto
                         await refreshPremiumStatus()
@@ -48,8 +41,6 @@ export default function PaymentVerification() {
                         
                         // El componente PaymentSuccess manejará la redirección automáticamente
                     } else {
-                        console.log('⏳ No se pudo actualizar a Premium')
-                        console.error('❌ Error:', upgradeResult.error)
                         localStorage.removeItem('pendingPayment')
                         localStorage.removeItem('paymentEmail')
                     }

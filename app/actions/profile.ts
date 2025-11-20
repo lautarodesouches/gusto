@@ -1,6 +1,7 @@
 'use server'
 import { API_URL } from '@/constants'
 import { ApiResponse, User } from '@/types'
+import { UserResumen } from '@/types/profile'
 import { getAuthHeaders } from './common'
 
 export async function getCurrentUserProfile(): Promise<ApiResponse<User>> {
@@ -79,7 +80,7 @@ export async function getRegistrationStatus(): Promise<ApiResponse<{ registroCom
     }
 }
 
-export async function getUserResumen(modo: 'registro' | 'edicion' = 'registro'): Promise<ApiResponse<any>> {
+export async function getUserResumen(modo: 'registro' | 'edicion' = 'registro'): Promise<ApiResponse<UserResumen>> {
     try {
         const res = await fetch(`${API_URL}/Usuario/resumen?modo=${modo}`, {
             headers: await getAuthHeaders(),
