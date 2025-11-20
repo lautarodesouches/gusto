@@ -3,6 +3,7 @@ import { getFriendsData } from '../actions/friends'
 import { getGroupsData } from '../actions/groups'
 import { getFilters } from '../actions/filters'
 
+export const dynamic = 'force-dynamic'
 
 export default async function Map() {
     // Ejecutar en paralelo

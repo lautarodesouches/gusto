@@ -17,6 +17,8 @@ import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import Navbar from '@/components/Navbar'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
     params: Promise<{ id: string }>
 }

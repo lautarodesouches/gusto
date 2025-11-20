@@ -2,6 +2,8 @@ import { AuthStep } from '@/components'
 import { getRestricciones } from '@/app/actions/steps'
 import { PreventWrapper } from '../../PreventWrapper'
 
+export const dynamic = 'force-dynamic'
+
 export default async function Step() {
     const result = await getRestricciones()
     const data = result.success && result.data ? result.data : []
