@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import styles from './styles.module.css'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
@@ -9,7 +8,7 @@ import ErrorComponent from '@/components/Error'
 import { useToast } from '@/context/ToastContext'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useUserLocation } from '@/hooks/useUserLocation'
-import { Coordinates, Restaurant } from '@/types'
+import { Coordinates, Restaurant, GroupMember } from '@/types'
 import { ROUTES } from '@/routes'
 import SearchZoneButton from '@/components/Map/SearchZoneButton'
 
@@ -36,12 +35,7 @@ function coordinatesChanged(
 }
 
 interface GroupMapProps {
-    members: Array<{
-        id: string
-        checked: boolean
-        usuarioUsername: string
-        [key: string]: any
-    }>
+    members: (GroupMember & { checked: boolean })[]
 }
 
 export default function GroupMap({ members }: GroupMapProps) {

@@ -17,6 +17,7 @@ import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
+import Image from 'next/image'
 
 interface Props {
     group: Group
@@ -167,10 +168,12 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                             >
                                 <div className={styles.member__div}>
                                     {m.fotoPerfilUrl ? (
-                                        <img
+                                        <Image
                                             src={m.fotoPerfilUrl}
                                             className={styles.member__img}
                                             alt={m.usuarioNombre}
+                                            width={40}
+                                            height={40}
                                         />
                                     ) : (
                                         <FontAwesomeIcon

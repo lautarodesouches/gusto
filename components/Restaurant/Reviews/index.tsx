@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Review } from '@/types'
+import Image from 'next/image'
 
 interface ReviewCardProps {
   review: Review
@@ -45,7 +45,13 @@ function ReviewCard({ review, showImages = true }: ReviewCardProps) {
         <div className={styles['review-card__user']}>
           <div className={styles['review-card__avatar']}>
             {getAvatar() ? (
-              <img src={getAvatar()} alt={getDisplayName()} />
+              <Image
+                src={getAvatar()}
+                alt={getDisplayName()}
+                width={40}
+                height={40}
+                className={styles['review-card__avatar']}
+              />
             ) : (
               <span>{getDisplayName().charAt(0).toUpperCase()}</span>
             )}
@@ -78,7 +84,13 @@ function ReviewCard({ review, showImages = true }: ReviewCardProps) {
         <div className={styles['review-card__images']}>
           {review.images.map((image, index) => (
             <div key={index} className={styles['review-card__image']}>
-              <img src={image} alt={`Foto ${index + 1}`} />
+              <Image
+                src={image}
+                alt={`Foto ${index + 1}`}
+                width={200}
+                height={200}
+                className={styles['review-card__image']}
+              />
             </div>
           ))}
         </div>
