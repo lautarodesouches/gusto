@@ -68,6 +68,10 @@ export default function GroupClient({ group }: Props) {
         }
     }, [])
 
+    const handleMemberRemoved = useCallback((memberId: string) => {
+        setMembers(prev => prev.filter(m => m.id !== memberId))
+    }, [])
+
     return (
         <>
             <Switch 
@@ -85,6 +89,7 @@ export default function GroupClient({ group }: Props) {
                         members={members}
                         group={group}
                         onCheck={handleToggleCheck}
+                        onMemberRemoved={handleMemberRemoved}
                     />
                 </div>
                 <div
