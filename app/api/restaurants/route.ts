@@ -24,6 +24,7 @@ export async function GET(req: Request) {
         const gustos = searchParams.get('gustos')
         const rating = searchParams.get('rating')
         const radius = searchParams.get('radius')
+        const amigoUsername = searchParams.get('amigoUsername')
 
         // Construir la URL de la API con query params
         const apiUrl = new URL(`${API_URL}/api/Restaurantes`)
@@ -36,6 +37,7 @@ export async function GET(req: Request) {
 
         if (gustos) apiUrl.searchParams.append('gustos', gustos)
         if (rating) apiUrl.searchParams.append('rating', rating)
+        if (amigoUsername) apiUrl.searchParams.append('amigoUsername', amigoUsername)
 
         // Llamada a la API externa
         const res = await fetch(apiUrl.toString(), {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useState } from 'react'
 import styles from './page.module.css'
@@ -7,6 +6,22 @@ import { faPen, faX } from '@fortawesome/free-solid-svg-icons'
 import { PremiumLimitFloatingCard } from '@/components'
 import { createGroup } from '@/app/actions/groups'
 import { useToast } from '@/context/ToastContext'
+
+interface LimitInfo {
+    tipoPlan?: string
+    limiteActual?: number
+    gruposActuales?: number
+    beneficiosPremium?: string[]
+}
+
+interface CreateGroupErrorResponse {
+    error?: string
+    needsPremium?: boolean
+    tipoPlan?: string
+    limiteActual?: number
+    gruposActuales?: number
+    beneficiosPremium?: string[]
+}
 
 export default function GroupCreate({
     handleCancel,
@@ -19,7 +34,11 @@ export default function GroupCreate({
     const [description, setDescription] = useState('')
     const [loading, setLoading] = useState(false)
     const [showLimitCard, setShowLimitCard] = useState(false)
-    const [limitInfo, setLimitInfo] = useState<any>(null)
+    const [limitInfo, setLimitInfo] = useState<{
+        tipoPlan?: string
+        limiteActual?: number
+        gruposActuales?: number
+    } | undefined>(undefined)
 
     const handleSubmit = async () => {
         if (!name || !description) return
@@ -31,7 +50,7 @@ export default function GroupCreate({
 
             if (!result.success) {
                 // Verificar si es error de límite de grupos
-                const errorData = result as any // Castear para acceder a campos adicionales
+                const errorData = result as CreateGroupErrorResponse
                 if (
                     errorData.error === 'LIMITE_GRUPOS_ALCANZADO' ||
                     errorData.needsPremium ||
@@ -45,7 +64,6 @@ export default function GroupCreate({
                         tipoPlan: errorData.tipoPlan,
                         limiteActual: errorData.limiteActual,
                         gruposActuales: errorData.gruposActuales,
-                        beneficiosPremium: errorData.beneficiosPremium,
                     })
                     setShowLimitCard(true)
                     return
@@ -127,7 +145,7 @@ export default function GroupCreate({
                 isOpen={showLimitCard}
                 onClose={() => {
                     setShowLimitCard(false)
-                    setLimitInfo(null)
+                    setLimitInfo(undefined)
                 }}
                 limitInfo={limitInfo}
             />

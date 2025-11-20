@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import FiltersView from '../FiltersView'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
@@ -24,6 +24,7 @@ export default function FiltersClient({
 }: Props) {
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
+    const isUpdatingFromUrlRef = useRef(false)
 
     const [dishes, setDishes] = useState<FilterItem[]>(
         filters.dishes.map(f => ({ ...f, checked: false }))
@@ -43,32 +44,53 @@ export default function FiltersClient({
                 checked: item.value === selectedValue,
             }))
 
+        isUpdatingFromUrlRef.current = true
         setDishes(prev => markSelected(prev, gustos))
         setRatings(prev => markSelected(prev, rating))
+        // Resetear la bandera después de un pequeño delay
+        setTimeout(() => {
+            isUpdatingFromUrlRef.current = false
+        }, 0)
     }, [searchParams])
 
-    // Función genérica para seleccionar un solo item y actualizar URL
+    // Función genérica para seleccionar un solo item
     const handleSingleSelect = (
         value: string,
-        setItems: React.Dispatch<React.SetStateAction<FilterItem[]>>,
-        paramKey: string
+        setItems: React.Dispatch<React.SetStateAction<FilterItem[]>>
     ) => {
         setItems(prev => {
-            let selected = ''
-            const newState = prev.map(item => {
+            return prev.map(item => {
                 const isSelected = item.value === value ? !item.checked : false
-                if (isSelected) selected = item.value
                 return { ...item, checked: isSelected }
             })
-            updateUrlParam(paramKey, selected || null)
-            return newState
         })
     }
 
+    // Sincronizar cambios de estado con la URL (solo si no viene de la URL)
+    useEffect(() => {
+        if (isUpdatingFromUrlRef.current) return
+        
+        const selectedGusto = dishes.find(item => item.checked)?.value || ''
+        const currentGusto = searchParams.get('gustos') || ''
+        if (selectedGusto !== currentGusto) {
+            updateUrlParam('gustos', selectedGusto || null)
+        }
+    }, [dishes, searchParams, updateUrlParam])
+
+    useEffect(() => {
+        if (isUpdatingFromUrlRef.current) return
+        
+        const selectedRating = ratings.find(item => item.checked)?.value || ''
+        const currentRating = searchParams.get('rating') || ''
+        if (selectedRating !== currentRating) {
+            updateUrlParam('rating', selectedRating || null)
+        }
+    }, [ratings, searchParams, updateUrlParam])
+
     const handleDishClick = (value: string) =>
-        handleSingleSelect(value, setDishes, 'gustos')
+        handleSingleSelect(value, setDishes)
     const handleRatingClick = (value: string) =>
-        handleSingleSelect(value, setRatings, 'rating')
+        handleSingleSelect(value, setRatings)
 
     return (
         <FiltersView

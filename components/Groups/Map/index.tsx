@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import styles from './styles.module.css'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
@@ -9,8 +8,9 @@ import ErrorComponent from '@/components/Error'
 import { useToast } from '@/context/ToastContext'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useUserLocation } from '@/hooks/useUserLocation'
-import { Coordinates, Restaurant } from '@/types'
+import { Coordinates, Restaurant, GroupMember } from '@/types'
 import { ROUTES } from '@/routes'
+import SearchZoneButton from '@/components/Map/SearchZoneButton'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -34,7 +34,11 @@ function coordinatesChanged(
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-export default function GroupMap({ members }: { members: any[] }) {
+interface GroupMapProps {
+    members: (GroupMember & { checked: boolean })[]
+}
+
+export default function GroupMap({ members }: GroupMapProps) {
     const toast = useToast()
 
     const router = useRouter()
@@ -49,15 +53,11 @@ export default function GroupMap({ members }: { members: any[] }) {
 
     const [state, setState] = useState<MapState>(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
-    const [allChecked, setAllchecked] = useState(true)
+    const [shouldSearchButton, setShouldSearchButton] = useState(false)
+    const [initialLoaded, setInitialLoaded] = useState(false)
 
     // Ref prevent duplicate fetch
     const isFetchingRef = useRef(false)
-
-    const check = () => {
-        const s = members.every(m => m.checked)
-        setAllchecked(s)
-    }
 
     const updateCenter = useCallback((newCenter: Coordinates) => {
         setState(prev => ({
@@ -75,31 +75,23 @@ export default function GroupMap({ members }: { members: any[] }) {
 
     const fetchRestaurants = useCallback(
         async (center: Coordinates) => {
-            //if (isFetchingRef.current) return
+            if (isFetchingRef.current) return
 
             isFetchingRef.current = true
             setState(prev => ({ ...prev, isLoading: true }))
 
             try {
                 if (!grupoId) {
-                    console.error('❌ No se encontró grupoId en la URL')
                     return
                 }
 
                 const query = new URLSearchParams()
                 query.append('near.lat', String(center.lat))
                 query.append('near.lng', String(center.lng))
+                query.append('radiusMeters', searchParams.get('radius') || '1000')
+                query.append('top', '10')
 
-                console.log({ allChecked })
-
-                if (allChecked) {
-                    query.append('gustos', 'pizza')
-                }
-
-                // const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
-                const res = await fetch(`/api/restaurants/?${query.toString()}`)
-
-                console.log({ res })
+                const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
 
                 if (res.status === 401) {
                     router.push(ROUTES.LOGIN)
@@ -112,15 +104,14 @@ export default function GroupMap({ members }: { members: any[] }) {
 
                 const data = await res.json()
 
-                console.log(data.recomendaciones)
-
                 setState(prev => ({
                     ...prev,
                     restaurants: data.recomendaciones || [],
                     isLoading: false,
                 }))
-            } catch (err) {
-                console.error('Error fetching restaurants:', err)
+
+                setShouldSearchButton(false)
+            } catch {
                 toast.error('Error al cargar restaurantes del grupo')
                 setState(prev => ({
                     ...prev,
@@ -131,7 +122,7 @@ export default function GroupMap({ members }: { members: any[] }) {
                 isFetchingRef.current = false
             }
         },
-        [grupoId, router, toast]
+        [grupoId, router, toast, searchParams]
     )
 
     const handleMapIdle = useCallback(() => {
@@ -149,10 +140,9 @@ export default function GroupMap({ members }: { members: any[] }) {
 
         updateCenter(newCenter)
 
-        const query = new URLSearchParams(searchParams.toString())
-        query.set('near.lat', String(newCenter.lat))
-        query.set('near.lng', String(newCenter.lng))
-    }, [mapInstance, state.center, searchParams, router, updateCenter])
+        // ⭐ SOLO mostramos botón — NADA MÁS (no buscar automáticamente)
+        if (initialLoaded) setShouldSearchButton(true)
+    }, [mapInstance, state.center, updateCenter, initialLoaded])
 
     // Update center when coords are available
     useEffect(() => {
@@ -160,20 +150,28 @@ export default function GroupMap({ members }: { members: any[] }) {
         if (state.center) return
 
         updateCenter(coords)
-    }, [coords, state.center, updateCenter])
 
-    // Fetch restaurants when center or filters change
+        // Cargar restaurantes solo la primera vez
+        setTimeout(() => {
+            fetchRestaurants(coords)
+            setInitialLoaded(true)
+        }, 100)
+    }, [coords, state.center, updateCenter, fetchRestaurants])
+
+    // Recargar restaurantes cuando cambien los miembros (checked/unchecked)
+    // Usamos un string serializado de los estados checked para detectar cambios
+    const membersCheckedState = members.map(m => `${m.id}:${m.checked}`).join(',')
+    const lastMembersStateRef = useRef<string>('')
+    
     useEffect(() => {
-        if (!state.center) return
-
-        console.log({ members })
-
-        fetchRestaurants(state.center)
-    }, [state.center, searchParams, fetchRestaurants, allChecked])
-
-    useEffect(() => {
-        check()
-    }, [members])
+        if (!state.center || !initialLoaded) return
+        
+        // Solo recargar si realmente cambió el estado de los miembros
+        if (membersCheckedState !== lastMembersStateRef.current) {
+            lastMembersStateRef.current = membersCheckedState
+            fetchRestaurants(state.center)
+        }
+    }, [membersCheckedState, state.center, initialLoaded, fetchRestaurants])
 
     if (locationError) {
         return (
@@ -195,6 +193,11 @@ export default function GroupMap({ members }: { members: any[] }) {
     return (
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
+                <SearchZoneButton
+                    isVisible={shouldSearchButton}
+                    onClick={() => fetchRestaurants(state.center!)}
+                />
+
                 <MapView
                     containerStyle={styles.map}
                     coords={state.center}

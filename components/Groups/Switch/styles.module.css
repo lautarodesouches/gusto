@@ -41,12 +41,22 @@
     z-index: 1;
 }
 
+/* Ocultar en mobile cuando está en home */
+.switch--hidden-mobile {
+    display: none;
+}
+
 @media (min-width: 768px) {
     .switch {
         max-width: 200px;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 20px;
+        left: 20px;
         z-index: 99;
+    }
+    
+    /* En desktop, siempre mostrar incluso si tiene la clase hidden */
+    .switch--hidden-mobile {
+        display: flex;
     }
 }

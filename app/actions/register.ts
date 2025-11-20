@@ -113,7 +113,12 @@ export async function register(
         }
 
         // Parsear respuesta del backend
-        let backendData: { user?: { usuario?: string }; message?: string }
+        let backendData: { 
+            user?: { usuario?: string }
+            message?: string
+            error?: string
+            detail?: string
+        }
         try {
             backendData = await backendResponse.json()
         } catch {
@@ -131,9 +136,41 @@ export async function register(
                 data: backendData,
                 timestamp: new Date().toISOString(),
             })
+            
+            // Parsear errores específicos del backend
+            let errorMessage = backendData.message || ERROR_MESSAGES.REGISTRATION_FAILED
+            
+            // Detectar username duplicado
+            if (backendData.detail) {
+                const detail = backendData.detail.toLowerCase()
+                if (detail.includes('duplicate key') && detail.includes('ix_usuarios_idusuario')) {
+                    const match = backendData.detail.match(/duplicate key value is \(([^)]+)\)/i)
+                    const username = match ? match[1] : 'este'
+                    errorMessage = `El nombre de usuario "${username}" ya está en uso. Por favor elige otro.`
+                } else if (detail.includes('duplicate') && (detail.includes('username') || detail.includes('usuario'))) {
+                    errorMessage = 'Este nombre de usuario ya está en uso. Por favor elige otro.'
+                } else if (detail.includes('duplicate') && (detail.includes('email') || detail.includes('correo'))) {
+                    errorMessage = 'Este correo electrónico ya está registrado.'
+                }
+            }
+            
+            // Detectar errores comunes en el mensaje
+            if (backendData.message) {
+                const message = backendData.message.toLowerCase()
+                if (message.includes('username') || message.includes('usuario')) {
+                    if (message.includes('duplicate') || message.includes('ya existe') || message.includes('already exists')) {
+                        errorMessage = 'Este nombre de usuario ya está en uso. Por favor elige otro.'
+                    }
+                } else if (message.includes('email') || message.includes('correo')) {
+                    if (message.includes('duplicate') || message.includes('ya existe') || message.includes('already exists')) {
+                        errorMessage = 'Este correo electrónico ya está registrado.'
+                    }
+                }
+            }
+            
             return {
                 success: false,
-                error: backendData.message || ERROR_MESSAGES.REGISTRATION_FAILED,
+                error: errorMessage,
             }
         }
 

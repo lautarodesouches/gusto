@@ -19,7 +19,7 @@ export default function ProfileClient({
     const router = useRouter()
 
     const handleEditTastes = () => {
-        router.push(`${ROUTES.STEPS}/3`)
+        router.push(`/perfil/${profile.username}/editar/preferencias/step/1`)
     }
 
     const handleGoPlace = (lat: number, lng: number) => {
@@ -27,7 +27,7 @@ export default function ProfileClient({
     }
 
     const handleGoBack = () => {
-        router.back()
+        router.push(ROUTES.MAP)
     }
 
     const [isPending, startTransition] = useTransition()

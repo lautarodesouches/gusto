@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState, useRef } from 'react'
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
+import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
 import { formatChatDate } from '../../../utils/index'
@@ -28,6 +27,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
     const [connection, setConnection] = useState<HubConnection | null>(null)
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [input, setInput] = useState('')
+    const connectionRef = useRef<HubConnection | null>(null)
 
     const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
         messagesEndRef.current?.scrollIntoView({ behavior })
@@ -38,40 +38,130 @@ export default function GroupsChat({ groupId, admin }: Props) {
     }, [messages])
 
     useEffect(() => {
-        if (connection) return
-        const conn = new HubConnectionBuilder()
-            .withUrl(`${API_URL}/chatHub`)
-            .withAutomaticReconnect()
-            .build()
+        let isMounted = true
+        let conn: HubConnection | null = null
+        let startPromise: Promise<void> | null = null
 
-        const handleReceiveMessage = (msg: ChatMessage) => {
-            console.log('📩 Mensaje recibido:', msg)
-            setMessages(prev => [...prev, msg])
+        const connect = async () => {
+            try {
+                // Detener conexión anterior si existe
+                if (connectionRef.current) {
+                    try {
+                        await connectionRef.current.stop()
+                    } catch {
+                        // Ignorar errores al detener conexión anterior
+                    }
+                    connectionRef.current = null
+                }
+
+                conn = new HubConnectionBuilder()
+                    .withUrl(`${API_URL}/chatHub`, {
+                        skipNegotiation: false,
+                    })
+                    .withAutomaticReconnect({
+                        nextRetryDelayInMilliseconds: (retryContext) => {
+                            return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000)
+                        }
+                    })
+                    .build()
+
+                connectionRef.current = conn
+
+                // Manejador de errores global para la conexión
+                conn.onclose((error) => {
+                    if (error && isMounted) {
+                        const errorMsg = error.message || String(error)
+                        if (!errorMsg.includes('stopped during negotiation') && 
+                            !errorMsg.includes('AbortError')) {
+                            toast.error('Se perdió la conexión con el chat')
+                        }
+                    }
+                })
+
+                const handleReceiveMessage = (msg: ChatMessage) => {
+                    if (!isMounted) return
+                    setMessages(prev => [...prev, msg])
+                }
+
+                conn.on('ReceiveMessage', handleReceiveMessage)
+
+                conn.on('LoadChatHistory', mensajes => {
+                    if (!isMounted) return
+                    setMessages(mensajes)
+                    setTimeout(() => scrollToBottom('auto'), 100)
+                })
+
+                // Verificar estado antes de iniciar
+                if (conn.state === HubConnectionState.Disconnected) {
+                    startPromise = conn.start()
+                    
+                    startPromise = startPromise.catch((err: unknown) => {
+                        const error = err as Error
+                        const errorMsg = error?.message || String(err)
+                        const errorName = (error as { name?: string })?.name || ''
+                        
+                        // Silenciar errores de aborto y negociación
+                        if (errorName === 'AbortError' || 
+                            errorMsg.includes('stopped during negotiation') ||
+                            errorMsg.includes('The connection was stopped')) {
+                            return Promise.resolve()
+                        }
+                        
+                        throw err
+                    })
+                    
+                    await startPromise
+                    
+                    if (isMounted && conn) {
+                        setConnection(conn)
+                        try {
+                            await conn.invoke('JoinGroup', groupId)
+                        } catch {
+                            toast.error('Error al unirse al grupo del chat')
+                        }
+                    }
+                }
+            } catch (err: unknown) {
+                const error = err as Error
+                const errorMsg = error?.message || String(err)
+                const errorName = (error as { name?: string })?.name || ''
+                
+                if (errorName === 'AbortError' || 
+                    errorMsg.includes('stopped during negotiation') ||
+                    errorMsg.includes('The connection was stopped')) {
+                    return
+                }
+                
+                if (isMounted) {
+                    toast.error('Error al conectar con el chat')
+                }
+            }
         }
 
-        conn.on('ReceiveMessage', handleReceiveMessage)
-
-        conn.on('LoadChatHistory', mensajes => {
-            setMessages(mensajes)
-            // Scroll
-            setTimeout(() => scrollToBottom('auto'), 100)
-        })
-
-        conn.start()
-            .then(() => {
-                console.log('🟢 Conectado a SignalR')
-                conn.invoke('JoinGroup', groupId)
-            })
-            .catch(err => console.error('Error al conectar:', err))
-
-        setConnection(conn)
+        connect()
 
         return () => {
-            console.log('🧹 Cerrando conexión SignalR...')
-            conn.off('ReceiveMessage', handleReceiveMessage)
-            conn.stop()
+            isMounted = false
+            
+            const currentConn = connectionRef.current
+            
+            if (currentConn) {
+                try {
+                    if (currentConn.state !== HubConnectionState.Disconnected) {
+                        currentConn.stop().catch(() => {
+                            // Silenciar errores al detener
+                        })
+                    }
+                } catch {
+                    // Ignorar errores
+                }
+                
+                currentConn.off('ReceiveMessage')
+                connectionRef.current = null
+                setConnection(null)
+            }
         }
-    }, [groupId])
+    }, [groupId, toast])
 
     const handleSend = async () => {
         if (!input.trim() || !connection) return
@@ -79,9 +169,8 @@ export default function GroupsChat({ groupId, admin }: Props) {
         try {
             await connection.invoke('SendMessageToGroup', groupId, input)
             setInput('')
-        } catch (err) {
+        } catch {
             toast.error(`Hubo un error al enviar el mensaje`)
-            console.error(err)
         }
     }
 
@@ -96,9 +185,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
         <div className={styles.container}>
             <div className={styles.chat} ref={chatContainerRef}>
                 {messages.map((msg, i) => {
-                    console.log({ msg })
-                    console.log({ admin })
-
                     return (
                         <article
                             key={i}

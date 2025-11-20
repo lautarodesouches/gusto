@@ -50,15 +50,12 @@
 }
 
 .error {
-    position: absolute;
-    bottom: calc(100% + 5px);
+    display: block;
+    margin-top: 5px;
     left: 10px;
     text-align: start;
-    color: var(--primary);
+    color: #ff5757;
     font-size: 0.85rem;
     font-weight: 500;
-    z-index: 10;
-    background: var(--background);
     padding: 2px 5px;
-    border-radius: 3px;
 }

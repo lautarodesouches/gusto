@@ -48,9 +48,7 @@
 
 /* Panel de notificaciones */
 .panel {
-  position: absolute; 
-  right: 0; 
-  top: calc(100% + 10px);
+  position: fixed; 
   background-color: var(--background);
   border: 1px solid var(--grey);
   border-radius: 16px;
@@ -58,7 +56,7 @@
   width: 360px;
   max-height: 480px;
   overflow: hidden;
-  z-index: 9999; 
+  z-index: 10000; 
   animation: deslizar 0.3s ease-out;
   color: var(--white);
   display: flex;
@@ -153,8 +151,8 @@
   background: var(--background);
 }
 
-/* Indicador de no leída (círculo rojo) */
-.item::before {
+/* Indicador de no leída (círculo rojo) - REMOVIDO */
+/* .item::before {
   content: '';
   position: absolute;
   left: 8px;
@@ -168,10 +166,10 @@
   transition: opacity 0.2s;
 }
 
-/* Notificación leída */
+Notificación leída
 .leida::before {
   opacity: 0;
-}
+} */
 
 .leida {
   opacity: 0.7;
@@ -183,8 +181,73 @@
   font-weight: 600;
   font-size: 0.95rem;
   color: var(--white);
-  margin-bottom: 6px;
+  margin-bottom: 10px;
   line-height: 1.3;
+}
+
+/* Contenedor de información (foto + nombre) */
+.item__info {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.item__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--grey);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.item:hover .item__avatar {
+  transform: scale(1.05);
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(255, 80, 80, 0.3);
+}
+
+.item__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item__avatarIcon {
+  color: var(--light);
+  font-size: 1.2rem;
+}
+
+.item__details {
+  flex: 1;
+  min-width: 0;
+}
+
+.item__name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+/* Item con acciones (amistad o grupo) - ajustes de padding */
+.item_withActions .titulo,
+.item_withActions .hora,
+.item_withActions .acciones {
+  padding-left: 0;
+}
+
+.item_withActions .titulo {
+  margin-bottom: 8px;
 }
 
 /* Mensaje de la notificación */

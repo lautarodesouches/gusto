@@ -1,11 +1,18 @@
-.main {
-    flex: 1;
+.wrapper {
     display: flex;
-    height: 100dvh;
-    background: var(--black);
-    align-items: center;
     flex-direction: column;
-    padding: 20px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    background: var(--black);
+    align-items: stretch;
+    flex-direction: column;
+    padding: 0;
     overflow: hidden;
 }
 

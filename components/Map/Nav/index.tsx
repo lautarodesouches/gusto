@@ -8,12 +8,14 @@ import { FriendRequests } from '@/components'
 import { PremiumLimitFloatingCard } from '@/components'
 import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
 
 export default function Nav() {
     const [showPremiumCard, setShowPremiumCard] = useState(false)
     const { isPremium } = useAuth()
+    const { user: backendUser } = useCurrentUser()
 
     return (
         <>
@@ -62,7 +64,7 @@ export default function Nav() {
                         <NotificationBell />
                     </div>
                     <div className={styles.nav__div}>
-                        <Link href={`${ROUTES.PROFILE}lautarodesouches`}>
+                        <Link href={`${ROUTES.PROFILE}${backendUser?.idUsuario || 'usuario'}`}>
                             <FontAwesomeIcon
                                 icon={faUser}
                                 className={styles.nav__icon}

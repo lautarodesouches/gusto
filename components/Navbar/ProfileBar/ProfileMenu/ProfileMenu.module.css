@@ -1,0 +1,66 @@
+.menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: var(--background);
+    border: 1px solid var(--grey);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    min-width: 220px;
+    z-index: 1000;
+    overflow: hidden;
+    animation: aparecer 0.2s ease-in-out;
+    margin-top: 0;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: transparent;
+    border: none;
+    color: var(--light);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.item:hover {
+    background: var(--dark);
+    color: var(--white);
+}
+
+.item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--light);
+    flex-shrink: 0;
+}
+
+.item:hover svg {
+    color: var(--primary);
+}
+
+.item:last-child {
+    border-top: 1px solid var(--grey);
+    color: var(--primary);
+}
+
+.item:last-child:hover {
+    background: rgba(255, 80, 80, 0.1);
+}
+

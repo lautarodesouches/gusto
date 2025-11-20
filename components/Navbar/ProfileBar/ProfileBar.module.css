@@ -1,0 +1,37 @@
+/* Contenedor principal de la barra de perfil */
+.container {
+    display: flex;
+    align-items: center;
+}
+
+/* Contenedor unificado con glassmorphism */
+.wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* Efecto glassmorphism */
+    background: rgba(45, 45, 43, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.5rem;
+    border-radius: 3rem;
+    max-width: fit-content;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.loading {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        gap: 0.5rem;
+        padding: 0.375rem;
+    }
+}
+

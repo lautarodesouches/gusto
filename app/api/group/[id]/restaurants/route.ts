@@ -20,19 +20,17 @@ export async function GET(
     const { searchParams } = new URL(req.url)
     const nearLat = searchParams.get('near.lat')
     const nearLng = searchParams.get('near.lng')
-    const radius = searchParams.get('radiusMeters') ?? '2000'
-    const top = searchParams.get('top') ?? '30'
+    const radius = searchParams.get('radiusMeters') ?? '1000'
+    const top = searchParams.get('top') ?? '10'
 
-      const { id: grupoId } = await context.params
+    const { id: grupoId } = await context.params
 
-    const apiUrl = new URL(`${API_URL}/Grupo/Restaurantes/${grupoId}`)
+    const apiUrl = new URL(`${API_URL}/Grupo/restaurantes/${grupoId}`)
 
     apiUrl.searchParams.append('radiusMeters', radius)
     apiUrl.searchParams.append('top', top)
     if (nearLat) apiUrl.searchParams.append('near.lat', nearLat)
     if (nearLng) apiUrl.searchParams.append('near.lng', nearLng)
-
-    console.log('🔗 Llamando a backend:', apiUrl.href)
 
     const res = await fetch(apiUrl.toString(), {
       headers: {
@@ -51,7 +49,8 @@ export async function GET(
     }
 
     const data = await res.json()
-    return NextResponse.json(data)
+    // El backend devuelve directamente un array, no un objeto con recomendaciones
+    return NextResponse.json({ recomendaciones: data })
   } catch (error) {
     console.error('❌ Error en /api/group/[id]/restaurants:', error)
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })

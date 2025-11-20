@@ -19,8 +19,8 @@ interface UpgradePremiumModalProps {
 export default function UpgradePremiumModal({
     isOpen,
     onClose,
-    trigger = 'general',
-    limitInfo,
+    trigger: _trigger = 'general',
+    limitInfo: _limitInfo,
 }: UpgradePremiumModalProps) {
     const { user } = useAuth()
     const [loading, setLoading] = useState(false)

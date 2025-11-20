@@ -120,25 +120,33 @@ export function ProfileView({
                                 Lugares visitados
                             </h3>
                             <hr className={styles.container__line} />
-                            <ul className={styles.visited__list}>
-                                {profile.visitados.map(place => (
-                                    <li
-                                        className={styles.visited__item}
-                                        key={place.id}
-                                    >
-                                        <p className={styles.visited__text}>
-                                            {place.nombre}
-                                        </p>
-                                        <FontAwesomeIcon
-                                            className={styles.visited__icon}
-                                            icon={faLocationDot}
-                                            onClick={() =>
-                                                onGoPlace(place.lat, place.lng)
-                                            }
-                                        />
-                                    </li>
-                                ))}
-                            </ul>
+                            {!profile.visitados || profile.visitados.length === 0 ? (
+                                <div className={styles.visited__empty}>
+                                    <p className={styles.visited__empty_text}>
+                                        No visitaste ningún lugar, ¿querés ir a alguno?
+                                    </p>
+                                </div>
+                            ) : (
+                                <ul className={styles.visited__list}>
+                                    {profile.visitados.map(place => (
+                                        <li
+                                            className={styles.visited__item}
+                                            key={place.id}
+                                        >
+                                            <p className={styles.visited__text}>
+                                                {place.nombre}
+                                            </p>
+                                            <FontAwesomeIcon
+                                                className={styles.visited__icon}
+                                                icon={faLocationDot}
+                                                onClick={() =>
+                                                    onGoPlace(place.lat, place.lng)
+                                                }
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </section>
                     </>
                 )}

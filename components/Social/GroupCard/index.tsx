@@ -1,10 +1,11 @@
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
-import { faInfo, faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faUsers } from '@fortawesome/free-solid-svg-icons'
 import { Group } from '@/types'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 export default function GroupCard({ 
     group, 
@@ -53,8 +54,13 @@ export default function GroupCard({
             >
                 <div className={styles.group__img}>
                     {firstMemberPhoto ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={firstMemberPhoto} alt={group.nombre} />
+                        <Image
+                            src={firstMemberPhoto}
+                            alt={group.nombre}
+                            width={40}
+                            height={40}
+                            className={styles.group__img}
+                        />
                     ) : (
                         <FontAwesomeIcon icon={faUsers} />
                     )}
@@ -65,26 +71,28 @@ export default function GroupCard({
 
     return (
         <li className={styles.group}>
-            <div className={styles.group__img}>
-                {firstMemberPhoto ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={firstMemberPhoto} alt={group.nombre} />
-                ) : (
-                    <FontAwesomeIcon icon={faUsers} />
-                )}
-            </div>
-            <div className={styles.group__data}>
-                <p className={styles.group__name}>{group.nombre}</p>
-                <p className={styles.group__user}>{group.cantidadMiembros}</p>
-            </div>
-            <div className={styles.group__info}>
-                <Link href={`/group/${group.id}/`}>
-                    <FontAwesomeIcon
-                        icon={faInfo}
-                        className={styles.group__icon}
-                    />
-                </Link>
-            </div>
+            <Link
+                href={`/group/${group.id}/`}
+                className={styles.group__link}
+            >
+                <div className={styles.group__img}>
+                    {firstMemberPhoto ? (
+                        <Image
+                            src={firstMemberPhoto}
+                            alt={group.nombre}
+                            width={40}
+                            height={40}
+                            className={styles.group__img}
+                        />
+                    ) : (
+                        <FontAwesomeIcon icon={faUsers} />
+                    )}
+                </div>
+                <div className={styles.group__data}>
+                    <p className={styles.group__name}>{group.nombre}</p>
+                    <p className={styles.group__user}>{group.cantidadMiembros}</p>
+                </div>
+            </Link>
         </li>
     )
 }

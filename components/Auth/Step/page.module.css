@@ -81,8 +81,9 @@
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 15px;
     margin-top: 10px;
-    max-height: 200px;
-    overflow-y: scroll;
+    max-height: 500px;
+    overflow-y: auto;
+    padding: 5px 10px 5px 5px;
 }
 
 .gridContainer::-webkit-scrollbar {
@@ -105,15 +106,106 @@
     transition: all 0.3s ease;
     text-align: center;
     font-family: var(--font-plus);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.gridItem.withImage {
+    padding: 0;
+}
+
+.gridItemImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: 0;
+}
+
+.gridItem.withImage::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.7) 0%,
+        rgba(0, 0, 0, 0.5) 50%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.gridItem.withImage.selected::before {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+}
+
+.gridItemText {
+    position: relative;
+    z-index: 2;
+    font-weight: 600;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9),
+        -1px -1px 3px rgba(0, 0, 0, 0.9),
+        0 0 10px rgba(0, 0, 0, 0.5);
+    line-height: 1.3;
+    color: var(--white);
 }
 
 .gridItem:hover {
     border-color: var(--grey);
+    transform: translateY(-2px);
+}
+
+.gridItem.withImage {
+    border: none;
+}
+
+.gridItem.withImage:hover {
+    border: none;
+    transform: translateY(-2px);
+}
+
+.gridItem.withImage:hover::before {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
 }
 
 .gridItem.selected {
     border-color: var(--primary);
     background: rgba(255, 80, 80, 0.1);
+}
+
+.gridItem.withImage.selected {
+    border: none;
+    box-shadow: 0 0 0 2px rgba(255, 80, 80, 0.5);
+}
+
+.gridItem.withImage.selected::before {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
 }
 
 .actions {

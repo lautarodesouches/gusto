@@ -8,6 +8,7 @@ import { ROUTES } from '@/routes'
 import { Restaurant, Coordinates } from '@/types'
 import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
+import SearchZoneButton from '../SearchZoneButton'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -23,10 +24,9 @@ const INITIAL_STATE: MapState = {
     isLoading: true,
 }
 
-function buildRestaurantQuery(
-    center: Coordinates,
-    searchParams: URLSearchParams
-): URLSearchParams {
+
+
+function buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams) {
     const query = new URLSearchParams()
 
     query.append('near.lat', String(center.lat))
@@ -44,37 +44,38 @@ function buildRestaurantQuery(
     const radius = searchParams.get('radius')
     if (radius) query.append('radius', radius)
 
+    // Leer 'amigo' de la URL y enviarlo como 'amigoUsername' al backend
+    const amigo = searchParams.get('amigo')
+    if (amigo) query.append('amigoUsername', amigo)
+
     return query
 }
 
-function coordinatesChanged(
-    prev: Coordinates | null,
-    current: Coordinates
-): boolean {
+function coordinatesChanged(prev: Coordinates | null, current: Coordinates): boolean {
     if (!prev) return true
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
 
-export default function MapClient({
-    containerStyle,
-}: {
-    containerStyle: string
-}) {
-    const toast = useToast()
+
+
+export default function MapClient({ containerStyle }: { containerStyle: string }) {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const toast = useToast()
 
-    const {
-        coords,
-        error: locationError,
-        loading: locationLoading,
-    } = useUserLocation()
+    const { coords, error: locationError, loading: locationLoading } = useUserLocation()
 
-    const [state, setState] = useState<MapState>(INITIAL_STATE)
+    const [state, setState] = useState(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
 
-    // Ref prevent duplicate fetch
     const isFetchingRef = useRef(false)
+    const [shouldSearchButton, setShouldSearchButton] = useState(false)
+    const [initialLoaded, setInitialLoaded] = useState(false) // ⭐ para cargar solo una vez
+    const lastAmigoUsernameRef = useRef<string | null>(null)
+    const lastGustosRef = useRef<string | null>(null)
+    const lastRatingRef = useRef<string | null>(null)
+
+ 
 
     const updateCenter = useCallback((newCenter: Coordinates) => {
         setState(prev => ({
@@ -84,18 +85,16 @@ export default function MapClient({
     }, [])
 
     const setHoveredMarker = useCallback((markerId: number | null) => {
-        setState(prev => ({
-            ...prev,
-            hoveredMarker: markerId,
-        }))
+        setState(prev => ({ ...prev, hoveredMarker: markerId }))
     }, [])
+
+   
 
     const fetchRestaurants = useCallback(
         async (center: Coordinates) => {
-            // Evitar fetches duplicados
             if (isFetchingRef.current) return
-
             isFetchingRef.current = true
+
             setState(prev => ({ ...prev, isLoading: true }))
 
             try {
@@ -107,9 +106,7 @@ export default function MapClient({
                     return
                 }
 
-                if (!res.ok) {
-                    throw new Error('Error al cargar restaurantes')
-                }
+                if (!res.ok) throw new Error('Error al cargar restaurantes')
 
                 const data = await res.json()
 
@@ -118,15 +115,10 @@ export default function MapClient({
                     restaurants: data.recomendaciones || [],
                     isLoading: false,
                 }))
-            } catch (err) {
-                console.error('Error fetching restaurants:', err)
 
-                const errorMessage =
-                    err instanceof Error
-                        ? err.message
-                        : 'Error al cargar restaurantes'
-
-                toast.error(errorMessage)
+                setShouldSearchButton(false)
+            } catch {
+                toast.error('Error al cargar restaurantes')
 
                 setState(prev => ({
                     ...prev,
@@ -140,51 +132,72 @@ export default function MapClient({
         [searchParams, router, toast]
     )
 
+
+
     const handleMapIdle = useCallback(() => {
         if (!mapInstance) return
 
         const mapCenter = mapInstance.getCenter()
         if (!mapCenter) return
 
-        const newCenter: Coordinates = {
-            lat: mapCenter.lat(),
-            lng: mapCenter.lng(),
-        }
+        const newCenter = { lat: mapCenter.lat(), lng: mapCenter.lng() }
 
         if (!coordinatesChanged(state.center, newCenter)) return
 
         updateCenter(newCenter)
 
-        const query = new URLSearchParams(searchParams.toString())
-        query.set('near.lat', String(newCenter.lat))
-        query.set('near.lng', String(newCenter.lng))
+        // ⭐ SOLO mostramos botón — NADA MÁS.
+        if (initialLoaded) setShouldSearchButton(true)
 
-        const newUrl = `${window.location.pathname}?${query.toString()}`
-        router.replace(newUrl, { scroll: false })
-    }, [mapInstance, state.center, searchParams, router, updateCenter])
+    }, [mapInstance, state.center, updateCenter, initialLoaded])
 
-    // Update center when coords are available
+   
+
     useEffect(() => {
         if (!coords) return
         if (state.center) return
 
         updateCenter(coords)
-    }, [coords, state.center, updateCenter])
 
-    // Fetch restaurants when center or filters change
+     
+        setTimeout(() => {
+            fetchRestaurants(coords)
+            setInitialLoaded(true)
+        }, 100)
+    }, [coords, state.center, updateCenter, fetchRestaurants])
+
+    // Recargar restaurantes cuando cambie el amigo (parámetro de URL)
     useEffect(() => {
-        if (!state.center) return
+        if (!state.center || !initialLoaded) return
+        
+        const currentAmigo = searchParams.get('amigo')
+        if (currentAmigo !== lastAmigoUsernameRef.current) {
+            lastAmigoUsernameRef.current = currentAmigo
+            fetchRestaurants(state.center)
+        }
+    }, [searchParams, state.center, initialLoaded, fetchRestaurants])
 
-        fetchRestaurants(state.center)
-    }, [state.center, searchParams, fetchRestaurants])
+    // Recargar restaurantes cuando cambien los filtros (gustos o rating)
+    useEffect(() => {
+        if (!state.center || !initialLoaded) return
+        
+        const currentGustos = searchParams.get('gustos')
+        const currentRating = searchParams.get('rating')
+        
+        const gustosChanged = currentGustos !== lastGustosRef.current
+        const ratingChanged = currentRating !== lastRatingRef.current
+        
+        if (gustosChanged || ratingChanged) {
+            lastGustosRef.current = currentGustos
+            lastRatingRef.current = currentRating
+            fetchRestaurants(state.center)
+        }
+    }, [searchParams, state.center, initialLoaded, fetchRestaurants])
+
+
 
     if (locationError) {
-        return (
-            <ErrorComponent
-                message={locationError}
-                onRetry={() => window.location.reload()}
-            />
-        )
+        return <ErrorComponent message={locationError} onRetry={() => window.location.reload()} />
     }
 
     if (locationLoading || !coords || !state.center) {
@@ -194,6 +207,11 @@ export default function MapClient({
     return (
         <Suspense fallback={<Loading message="Cargando mapa..." />}>
             <MapProvider>
+                <SearchZoneButton
+                    isVisible={shouldSearchButton}
+                    onClick={() => fetchRestaurants(state.center!)}
+                />
+
                 <MapView
                     containerStyle={containerStyle}
                     coords={state.center}
