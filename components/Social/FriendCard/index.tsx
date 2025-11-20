@@ -14,6 +14,7 @@ import { ROUTES } from '@/routes'
 import Link from 'next/link'
 import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
 import { useToast } from '@/context/ToastContext'
+import Image from 'next/image'
 
 export default function FriendCard({
     friend,
@@ -88,8 +89,13 @@ export default function FriendCard({
             >
                 <div className={styles.user__img}>
                     {friend.fotoPerfilUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                        <Image
+                            src={friend.fotoPerfilUrl}
+                            alt={friend.nombre}
+                            width={40}
+                            height={40}
+                            className={styles.user__img}
+                        />
                     ) : (
                         <FontAwesomeIcon icon={faUser} />
                     )}
@@ -106,8 +112,13 @@ export default function FriendCard({
             >
                 <div className={styles.user__img}>
                     {friend.fotoPerfilUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                        <Image
+                            src={friend.fotoPerfilUrl}
+                            alt={friend.nombre}
+                            width={40}
+                            height={40}
+                            className={styles.user__img}
+                        />
                     ) : (
                         <FontAwesomeIcon icon={faUser} />
                     )}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -12,7 +11,7 @@ import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useToast } from '@/context/ToastContext'
-import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
+import { inviteUserToGroup } from '@/app/actions/groups'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
 
@@ -64,17 +63,6 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
         toast.success('Invitación enviada')
 
         setFilteredMembers(prev => [...prev])
-    }
-
-    const handleKick = async (member: GroupMember) => {
-        const result = await removeGroupMember(group.id, member.usuarioUsername)
-
-        if (!result.success)
-            return toast.error(result.error || 'Error al remover del grupo')
-
-        toast.success(`${member.usuarioNombre} fue eliminado del grupo`)
-
-        setFilteredMembers(prev => prev.filter(m => m.id !== member.id))
     }
 
     return (

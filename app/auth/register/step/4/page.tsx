@@ -11,7 +11,7 @@ import { saveSteps } from '@/app/actions/steps'
 
 export default function StepFour() {
     const router = useRouter()
-    const { data, setData, basePath } = useRegister()
+    const { data, basePath } = useRegister()
     const [loading, setLoading] = useState(true)
     const [displayData, setDisplayData] = useState<{
         step1?: RegisterItem[]

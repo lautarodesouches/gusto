@@ -174,7 +174,7 @@ function GroupErrorView({ error }: { error: GroupError }) {
 export default async function GroupDetail({ params }: Props) {
     const { id } = await params
 
-    const userId = await verifyAuthentication()
+    await verifyAuthentication()
 
     const headersList = await headers()
     const cookie = headersList.get('cookie') || ''
@@ -186,8 +186,6 @@ export default async function GroupDetail({ params }: Props) {
     }
 
     const group = result as Group
-
-    const isAdmin = group.administradorFirebaseUid === userId
 
     return (
         <div className={styles.wrapper}>

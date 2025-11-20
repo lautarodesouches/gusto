@@ -15,7 +15,7 @@ export default function ProfileConfigClient({ profile: initialProfile }: Props) 
     const { user } = useAuth()
     const toast = useToast()
     
-    const [profile, setProfile] = useState(initialProfile)
+    const [profile] = useState(initialProfile)
     const [username, setUsername] = useState(initialProfile.username || '')
     const [email, setEmail] = useState('')
     const [isPrivate, setIsPrivate] = useState(initialProfile.esPrivado || false)
