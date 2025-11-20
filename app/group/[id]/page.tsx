@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -11,11 +11,11 @@ import {
 import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
-import { LOCAL_URL } from '@/constants'
 import { GroupClient, FriendRequests } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import Navbar from '@/components/Navbar'
+import { getGroup } from '@/app/actions/groups'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,32 +31,33 @@ interface GroupError {
 //  1. Función para obtener datos del grupo (desde el servidor)
 async function fetchGroup({
     id,
-    cookie,
 }: {
     id: string
-    cookie: string
 }): Promise<Group | GroupError> {
     try {
-        const res = await fetch(`${LOCAL_URL}/api/group/${id}`, {
-            headers: { cookie },
-            cache: 'no-store',
-        })
+        const result = await getGroup(id)
 
-        if (res.status === 401) redirect(ROUTES.LOGIN)
+        if (!result.success) {
+            const errorMessage = result.error || 'Error desconocido'
+            
+            // Determinar el código de estado basado en el error
+            let status = 500
+            if (errorMessage.includes('No autorizado') || errorMessage.includes('401')) {
+                status = 401
+                redirect(ROUTES.LOGIN)
+            } else if (errorMessage.includes('no encontrado') || errorMessage.includes('404')) {
+                status = 404
+            } else if (errorMessage.includes('denegado') || errorMessage.includes('403')) {
+                status = 403
+            }
 
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}))
-            const errorMessage =
-                errorData.error || errorData.message || 'Error desconocido'
-
-            // Retornar información del error para manejo específico
             return {
-                status: res.status,
+                status,
                 message: errorMessage,
             } as GroupError
         }
 
-        return await res.json()
+        return result.data as Group
     } catch (error) {
         console.error(`Error fetching group ${id}:`, error)
         return {
@@ -92,7 +93,6 @@ function GroupErrorView({ error }: { error: GroupError }) {
                     title: 'Acceso denegado',
                     message:
                         'No eres miembro de este grupo. Debes ser invitado para acceder.',
-                    showRetry: false,
                 }
             case 400:
                 return {
@@ -100,7 +100,6 @@ function GroupErrorView({ error }: { error: GroupError }) {
                     title: 'ID de grupo inválido',
                     message:
                         error.message || 'El ID proporcionado no es válido.',
-                    showRetry: false,
                 }
             case 404:
                 return {
@@ -108,7 +107,6 @@ function GroupErrorView({ error }: { error: GroupError }) {
                     title: 'Grupo no encontrado',
                     message:
                         'El grupo que buscas no existe o ha sido eliminado.',
-                    showRetry: false,
                 }
             default:
                 return {
@@ -117,7 +115,6 @@ function GroupErrorView({ error }: { error: GroupError }) {
                     message:
                         error.message ||
                         'Ocurrió un error inesperado. Por favor, intenta más tarde.',
-                    showRetry: true,
                 }
         }
     }
@@ -178,10 +175,7 @@ export default async function GroupDetail({ params }: Props) {
 
     await verifyAuthentication()
 
-    const headersList = await headers()
-    const cookie = headersList.get('cookie') || ''
-
-    const result = await fetchGroup({ id, cookie })
+    const result = await fetchGroup({ id })
 
     if ('status' in result && 'message' in result) {
         return <GroupErrorView error={result} />

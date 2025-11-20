@@ -41,20 +41,32 @@ export async function getProfile(username: string): Promise<ApiResponse<User>> {
 }
 
 export async function updateProfile(
-    formData: FormData
+    data: { username?: string; esPrivado?: boolean; nombre?: string; apellido?: string; bio?: string } | FormData
 ): Promise<ApiResponse<User>> {
     try {
-        const data = {
-            nombre: formData.get('nombre') as string,
-            apellido: formData.get('apellido') as string,
-            bio: formData.get('bio') as string,
-            username: formData.get('username') as string,
+        let payload: any
+        
+        if (data instanceof FormData) {
+            payload = {
+                nombre: data.get('nombre') as string,
+                apellido: data.get('apellido') as string,
+                bio: data.get('bio') as string,
+                username: data.get('username') as string,
+            }
+        } else {
+            payload = {
+                username: data.username,
+                esPrivado: data.esPrivado,
+                nombre: data.nombre,
+                apellido: data.apellido,
+                bio: data.bio,
+            }
         }
 
         const res = await fetch(`${API_URL}/Usuario/actualizar`, {
             method: 'PUT',
             headers: await getAuthHeaders(),
-            body: JSON.stringify(data),
+            body: JSON.stringify(payload),
         })
 
         if (!res.ok) {

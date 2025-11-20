@@ -1,8 +1,8 @@
-
 import { useEffect} from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
 import { pasoToNumber } from '@/utils'
+import { getRegistrationStatus } from '@/app/actions/profile'
 
 export function usePreventCompletedUsers() {
     const router = useRouter()
@@ -13,12 +13,8 @@ export function usePreventCompletedUsers() {
 
         const verify = async () => {
             try {
-                const res = await fetch('/api/usuario/estado-registro')
-                if (!res.ok) return
-
-                const data = await res.json()
-
-                if (data.registroCompleto) {
+                const result = await getRegistrationStatus()
+                if (result.success && result.data?.registroCompleto) {
                     router.replace('/mapa')  
                 }
             } catch (e) {

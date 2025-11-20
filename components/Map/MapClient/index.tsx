@@ -9,6 +9,7 @@ import { Restaurant, Coordinates } from '@/types'
 import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
 import SearchZoneButton from '../SearchZoneButton'
+import { searchRestaurants } from '@/app/actions/restaurants'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -98,21 +99,28 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
             setState(prev => ({ ...prev, isLoading: true }))
 
             try {
-                const query = buildRestaurantQuery(center, searchParams)
-                const res = await fetch(`/api/restaurants?${query.toString()}`)
-
-                if (res.status === 401) {
-                    router.push(ROUTES.LOGIN)
-                    return
+                const params = {
+                    nearLat: String(center.lat),
+                    nearLng: String(center.lng),
+                    gustos: searchParams.get('gustos') || undefined,
+                    rating: searchParams.get('rating') || undefined,
+                    radius: searchParams.get('radius') || undefined,
+                    amigoUsername: searchParams.get('amigo') || undefined,
                 }
+                
+                const result = await searchRestaurants(params)
 
-                if (!res.ok) throw new Error('Error al cargar restaurantes')
-
-                const data = await res.json()
+                if (!result.success) {
+                    if (result.error?.includes('No autorizado') || result.error?.includes('401')) {
+                        router.push(ROUTES.LOGIN)
+                        return
+                    }
+                    throw new Error(result.error || 'Error al cargar restaurantes')
+                }
 
                 setState(prev => ({
                     ...prev,
-                    restaurants: data.recomendaciones || [],
+                    restaurants: result.data?.recomendaciones || [],
                     isLoading: false,
                 }))
 

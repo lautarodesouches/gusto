@@ -7,13 +7,6 @@ import { PremiumLimitFloatingCard } from '@/components'
 import { createGroup } from '@/app/actions/groups'
 import { useToast } from '@/context/ToastContext'
 
-interface LimitInfo {
-    tipoPlan?: string
-    limiteActual?: number
-    gruposActuales?: number
-    beneficiosPremium?: string[]
-}
-
 interface CreateGroupErrorResponse {
     error?: string
     needsPremium?: boolean

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import styles from './PremiumModal.module.css'
+import { createPayment } from '@/app/actions/payment'
 
 interface UpgradePremiumModalProps {
     isOpen: boolean
@@ -54,27 +55,19 @@ export default function UpgradePremiumModal({
             const nombreCompleto =
                 user.displayName || `${user.email.split('@')[0]}`
 
-            const response = await fetch('/api/payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: user.email,
-                    nombreCompleto,
-                }),
+            const result = await createPayment({
+                email: user.email,
+                nombreCompleto,
             })
 
-            const data = await response.json()
-
-            if (response.ok && data.initPoint) {
+            if (result.success && result.data?.initPoint) {
                 localStorage.setItem('pendingPayment', 'true')
                 localStorage.setItem('paymentEmail', user.email)
 
-                window.location.href = data.initPoint
+                window.location.href = result.data.initPoint
             } else {
                 setError(
-                    data.message || data.error || 'Error al procesar el pago'
+                    result.error || 'Error al procesar el pago'
                 )
             }
         } catch (error) {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { createPayment } from '@/app/actions/payment'
 
 interface PremiumLimitFloatingCardProps {
     isOpen: boolean
@@ -50,26 +51,18 @@ export default function PremiumLimitFloatingCard({
 
             const nombreCompleto = user.displayName || `${user.email.split('@')[0]}`
 
-            const response = await fetch('/api/payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: user.email,
-                    nombreCompleto
-                }),
+            const result = await createPayment({
+                email: user.email,
+                nombreCompleto,
             })
 
-            const data = await response.json()
-
-            if (response.ok && data.initPoint) {
+            if (result.success && result.data?.initPoint) {
                 localStorage.setItem('pendingPayment', 'true')
                 localStorage.setItem('paymentEmail', user.email)
                 
-                window.location.href = data.initPoint
+                window.location.href = result.data.initPoint
             } else {
-                setError(data.message || data.error || 'Error al procesar el pago')
+                setError(result.error || 'Error al procesar el pago')
             }
         } catch (error) {
             console.error('Error al crear pago:', error)

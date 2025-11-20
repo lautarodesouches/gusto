@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { BeneficiosPremium } from '@/types'
+import { getPaymentBenefits } from '@/app/actions/payment'
 
 interface PremiumBenefitsProps {
     benefits?: BeneficiosPremium
@@ -26,11 +27,10 @@ export default function PremiumBenefits({
     const fetchBenefits = async () => {
         try {
             setLoading(true)
-            const response = await fetch('/api/payment/benefits')
-            const data = await response.json()
+            const result = await getPaymentBenefits()
             
-            if (response.ok) {
-                setBeneficios(data)
+            if (result.success && result.data) {
+                setBeneficios(result.data as BeneficiosPremium)
             }
         } catch (error) {
             console.error('Error al cargar beneficios:', error)

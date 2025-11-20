@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { getRegistrationStatus } from '@/app/actions/profile'
 
 export function useRegistrationCheck() {
     const { token, loading, user } = useAuth()
@@ -15,20 +16,18 @@ export function useRegistrationCheck() {
 
         const verify = async () => {
             try {
-                const res = await fetch('/api/usuario/estado-registro')
-                if (!res.ok) {
-                    setEstado({ checking: false, incompleto: false, paso: 1, mostrarModal: false })
-                    return
-                }
-
-                const data = await res.json()
-                if (!data.registroCompleto) {
-                    setEstado({
-                        checking: false,
-                        incompleto: true,
-                        paso: 1,
-                        mostrarModal: true
-                    })
+                const result = await getRegistrationStatus()
+                if (result.success && result.data) {
+                    if (!result.data.registroCompleto) {
+                        setEstado({
+                            checking: false,
+                            incompleto: true,
+                            paso: 1,
+                            mostrarModal: true
+                        })
+                    } else {
+                        setEstado({ checking: false, incompleto: false, paso: 1, mostrarModal: false })
+                    }
                 } else {
                     setEstado({ checking: false, incompleto: false, paso: 1, mostrarModal: false })
                 }

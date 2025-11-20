@@ -240,3 +240,32 @@ export async function deactivateGroupMember(
         return { success: false, error: 'Error al desactivar miembro' }
     }
 }
+
+/**
+ * Obtiene un grupo por ID
+ */
+export async function getGroup(id: string): Promise<ApiResponse<Group>> {
+    try {
+        const res = await fetch(`${API_URL}/Grupo/${id}`, {
+            headers: await getAuthHeaders(),
+            cache: 'no-store',
+        })
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                success: false,
+                error: errorData.error || errorData.message || 'Error al obtener grupo',
+            }
+        }
+
+        const data = await res.json()
+        return { success: true, data }
+    } catch (error) {
+        console.error('Error getting group:', error)
+        return {
+            success: false,
+            error: 'Error al obtener grupo',
+        }
+    }
+}

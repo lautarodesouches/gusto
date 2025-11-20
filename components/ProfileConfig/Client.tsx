@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
 import { User } from '@/types'
 import ProfileConfigView from './View'
+import { updateProfile } from '@/app/perfil/actions'
 
 interface Props {
     profile: User
@@ -30,23 +31,19 @@ export default function ProfileConfigClient({ profile: initialProfile }: Props) 
 
     const handleSave = async () => {
         try {
-            const formData = new FormData()
-            formData.append('username', username)
-            formData.append('esPrivado', isPrivate.toString())
-
-            const res = await fetch('/api/user/update', {
-                method: 'PUT',
-                body: formData,
+            const result = await updateProfile({
+                username,
+                esPrivado: isPrivate,
             })
 
-            if (!res.ok) {
-                throw new Error('Error al actualizar perfil')
+            if (!result.success) {
+                throw new Error(result.error || 'Error al actualizar perfil')
             }
 
             toast.success('Perfil actualizado exitosamente')
         } catch (error) {
             console.error('Error updating profile:', error)
-            toast.error('Error al actualizar el perfil')
+            toast.error(error instanceof Error ? error.message : 'Error al actualizar el perfil')
         }
     }
 

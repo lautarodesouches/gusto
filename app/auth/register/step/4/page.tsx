@@ -8,6 +8,7 @@ import { PreventWrapper } from '../../PreventWrapper'
 import { useEffect, useState, useRef } from 'react'
 import { RegisterItem } from '@/types'
 import { saveSteps } from '@/app/actions/steps'
+import { getUserResumen } from '@/app/actions/profile'
 
 export default function StepFour() {
     const router = useRouter()
@@ -40,15 +41,14 @@ export default function StepFour() {
 
         const loadData = async () => {
             try {
-                const response = await fetch(
-                    '/api/usuario/resumen?modo=registro'
-                )
-                if (!response.ok) {
+                const result = await getUserResumen('registro')
+                
+                if (!result.success || !result.data) {
                     setLoading(false)
                     return
                 }
 
-                const resumen = await response.json()
+                const resumen = result.data
 
                 // Mapear los datos del backend al formato esperado
                 const step1Data =

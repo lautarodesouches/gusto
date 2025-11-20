@@ -8,6 +8,14 @@ import { useRouter } from 'next/navigation'
 import { RegisterItem } from '@/types'
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import {
+    saveRestricciones,
+    updateRestricciones,
+    saveCondiciones,
+    updateCondiciones,
+    saveGustos,
+    updateGustos,
+} from '@/app/actions/steps'
 
 interface Props {
     title: string
@@ -80,14 +88,14 @@ export default function Step({
         setSearchTerm('') // Limpiar búsqueda al cambiar de paso
     }, [content, step, stepKey, data, setData])
 
-    const getEndpoint = () => {
+    const getSaveAction = () => {
         switch (step) {
             case 1:
-                return '/api/usuario/restricciones'
+                return mode === 'edicion' ? updateRestricciones : saveRestricciones
             case 2:
-                return '/api/usuario/condiciones'
+                return mode === 'edicion' ? updateCondiciones : saveCondiciones
             case 3:
-                return '/api/usuario/gustos'
+                return mode === 'edicion' ? updateGustos : saveGustos
             default:
                 return null
         }
@@ -175,61 +183,34 @@ export default function Step({
             // Para step 3 no se puede saltar, para otros steps sí
             const skip = step === 3 ? false : current.length === 0
 
-            // Usar PUT en modo edición, POST en modo registro
-            const method = mode === 'edicion' ? 'PUT' : 'POST'
-            console.log(`[Step ${step}] Guardando (${method}):`, { 
+            const saveAction = getSaveAction()
+            if (!saveAction) {
+                setError('Error: acción no definida para este paso')
+                setSaving(false)
+                return
+            }
+
+            console.log(`[Step ${step}] Guardando (${mode}):`, { 
                 ids, 
                 idsLength: ids.length,
                 idsType: typeof ids[0],
                 selectedItems: current.map(i => ({ id: i.id, nombre: i.nombre })),
                 skip, 
-                endpoint, 
                 mode 
             })
 
-            const response = await fetch(endpoint, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ids,
-                    skip,
-                }),
-            })
+            const result = await saveAction(ids, skip)
 
-            if (!response.ok) {
-                // Intentar leer como texto primero para parsear después
-                const errorText = await response.text().catch(() => '')
-                console.error(`[Step ${step}] Error guardando en backend:`, errorText)
-                
-                // Extraer el mensaje de error del backend
-                let errorMessage = 'Error al guardar. Por favor intenta de nuevo.'
-                
-                // Intentar parsear como JSON
-                try {
-                    const errorData = errorText ? JSON.parse(errorText) : {}
-                    if (errorData.message) {
-                        errorMessage = errorData.message
-                    } else if (errorData.error) {
-                        errorMessage = errorData.error
-                    } else if (typeof errorData === 'string') {
-                        errorMessage = errorData
-                    }
-                } catch {
-                    // Si no es JSON, usar el texto directo
-                    if (errorText) {
-                        errorMessage = errorText
-                    }
-                }
-                
+            if (!result.success) {
+                console.error(`[Step ${step}] Error guardando en backend:`, result.error)
+                const errorMessage = result.error || 'Error al guardar. Por favor intenta de nuevo.'
                 setError(errorMessage)
-                return // No avanzar si falla
+                setSaving(false)
+                return
             }
 
-            const responseData = await response.json().catch(() => ({}))
-            console.log(`[Step ${step}] Guardado exitoso (${method}):`, {
-                responseData,
+            // Éxito
+            console.log(`[Step ${step}] Guardado exitoso (${mode}):`, {
                 idsEnviados: ids,
                 selectedCount: current.length,
                 mode

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { PremiumBenefits } from '@/components'
+import { verifyPayment } from '@/app/actions/payment'
 
 export default function PagoExitoPage() {
     const searchParams = useSearchParams()
@@ -14,18 +15,17 @@ export default function PagoExitoPage() {
         const pagoId = searchParams.get('payment_id')
         
         if (pagoId) {
-            verifyPayment(pagoId)
+            verifyPaymentHandler(pagoId)
         } else {
             setVerifying(false)
         }
     }, [searchParams])
 
-    const verifyPayment = async (pagoId: string) => {
+    const verifyPaymentHandler = async (pagoId: string) => {
         try {
-            const response = await fetch(`/api/payment/verify?pagoId=${pagoId}`)
-            const data = await response.json()
+            const result = await verifyPayment(pagoId)
             
-            if (response.ok && data.aprobado) {
+            if (result.success && result.data?.aprobado) {
                 setSuccess(true)
             }
         } catch (error) {

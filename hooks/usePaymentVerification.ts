@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { verifyRecentPayment } from '@/app/actions/payment'
 
 export function usePaymentVerification() {
     const router = useRouter()
@@ -11,10 +12,9 @@ export function usePaymentVerification() {
             if (hasPendingPayment === 'true') {                
                 try {
                     // Verificar si hay un pago reciente aprobado
-                    const response = await fetch('/api/payment/verify-recent')
-                    const data = await response.json()
+                    const result = await verifyRecentPayment()
                     
-                    if (response.ok && data.aprobado) {
+                    if (result.success && result.data?.aprobado) {
                         
                         // Limpiar localStorage
                         localStorage.removeItem('pendingPayment')
@@ -25,7 +25,6 @@ export function usePaymentVerification() {
                         
                         // Recargar la página para actualizar el estado
                         window.location.reload()
-                    } else {
                     }
                 } catch (error) {
                     console.error('Error verificando pago:', error)

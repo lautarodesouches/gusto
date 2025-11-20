@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { PaymentSuccess } from '@/components'
+import { upgradeToPremium } from '@/app/actions/payment'
 
 export default function PaymentVerification() {
     const router = useRouter()
@@ -28,51 +29,27 @@ export default function PaymentVerification() {
                     await new Promise(resolve => setTimeout(resolve, 3000))
 
                     // Forzar actualización a Premium (solo para desarrollo)
-                    const upgradeResponse = await fetch(
-                        '/api/payment/upgrade',
-                        {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    )
+                    const upgradeResult = await upgradeToPremium()
 
-                    console.log('📡 Response status:', upgradeResponse.status)
+                    console.log('📡 Upgrade result:', upgradeResult)
 
-                    if (upgradeResponse.ok) {
-                        const upgradeData = await upgradeResponse.json()
-                        console.log('📦 Response data:', upgradeData)
+                    if (upgradeResult.success && (upgradeResult.data?.isPremium || upgradeResult.data?.success)) {
+                        console.log('✅ Usuario actualizado a Premium')
 
-                        if (upgradeData.isPremium || upgradeData.success) {
-                            console.log('✅ Usuario actualizado a Premium')
+                        // Actualizar el estado Premium en el contexto
+                        await refreshPremiumStatus()
 
-                            // Actualizar el estado Premium en el contexto
-                            await refreshPremiumStatus()
+                        // Limpiar localStorage
+                        localStorage.removeItem('pendingPayment')
+                        localStorage.removeItem('paymentEmail')
 
-                            // Limpiar localStorage
-                            localStorage.removeItem('pendingPayment')
-                            localStorage.removeItem('paymentEmail')
-
-                            // Mostrar pantalla de éxito
-                            setShowSuccess(true)
-                            
-                            // El componente PaymentSuccess manejará la redirección automáticamente
-                        } else {
-                            console.log('⏳ No se pudo actualizar a Premium')
-                            localStorage.removeItem('pendingPayment')
-                            localStorage.removeItem('paymentEmail')
-                        }
+                        // Mostrar pantalla de éxito
+                        setShowSuccess(true)
+                        
+                        // El componente PaymentSuccess manejará la redirección automáticamente
                     } else {
-                        const errorData = await upgradeResponse
-                            .json()
-                            .catch(() => null)
-                        console.error(
-                            '❌ Error al actualizar:',
-                            upgradeResponse.status
-                        )
-                        console.error('❌ Error data:', errorData)
+                        console.log('⏳ No se pudo actualizar a Premium')
+                        console.error('❌ Error:', upgradeResult.error)
                         localStorage.removeItem('pendingPayment')
                         localStorage.removeItem('paymentEmail')
                     }

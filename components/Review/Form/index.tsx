@@ -7,6 +7,7 @@ import Image from 'next/image'
 import styles from './styles.module.css'
 import { Restaurant } from '@/types'
 import { useToast } from '@/context/ToastContext'
+import { submitRestaurantReview } from '@/app/actions/review'
 
 interface ReviewFormProps {
     restaurant: Restaurant
@@ -135,14 +136,10 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
 
         startTransition(async () => {
             try {
-                const res = await fetch('/api/opinion-restaurante', {
-                    method: 'POST',
-                    body: formData,
-                })
+                const result = await submitRestaurantReview(formData)
 
-                if (!res.ok) {
-                    const errorData = await res.json().catch(() => ({}))
-                    toast.error(errorData.error || 'Error al enviar opinión')
+                if (!result.success) {
+                    toast.error(result.error || 'Error al enviar opinión')
                     return
                 }
 

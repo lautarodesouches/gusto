@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { createGroup as createGroupAction } from '@/app/actions/groups'
 
 interface UseGroupLimitResult {
     createGroup: (nombre: string, descripcion: string) => Promise<{
@@ -21,27 +22,21 @@ export function useGroupLimit(): UseGroupLimitResult {
 
         setLoading(true)
         try {
-            const res = await fetch('/api/group', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ nombre, descripcion }),
-            })
+            const result = await createGroupAction({ name: nombre, description: descripcion })
 
-            const data = await res.json()
-
-            if (!res.ok) {
-                if (data.error === 'LIMITE_GRUPOS_ALCANZADO') {
+            if (!result.success) {
+                // Verificar si es error de límite de grupos
+                const errorLower = result.error?.toLowerCase() || ''
+                if (errorLower.includes('límite') || errorLower.includes('limite') || errorLower.includes('premium')) {
                     return { 
                         success: false, 
                         needsUpgrade: true,
-                        error: data.message 
+                        error: result.error 
                     }
                 }
                 return { 
                     success: false, 
-                    error: data.message || 'Error creando grupo' 
+                    error: result.error || 'Error creando grupo' 
                 }
             }
 

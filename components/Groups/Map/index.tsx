@@ -11,6 +11,7 @@ import { useUserLocation } from '@/hooks/useUserLocation'
 import { Coordinates, Restaurant, GroupMember } from '@/types'
 import { ROUTES } from '@/routes'
 import SearchZoneButton from '@/components/Map/SearchZoneButton'
+import { getGroupRestaurants } from '@/app/actions/restaurants'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -85,28 +86,27 @@ export default function GroupMap({ members }: GroupMapProps) {
                     return
                 }
 
-                const query = new URLSearchParams()
-                query.append('near.lat', String(center.lat))
-                query.append('near.lng', String(center.lng))
-                query.append('radiusMeters', searchParams.get('radius') || '1000')
-                query.append('top', '10')
-
-                const res = await fetch(`/api/group/${grupoId}/restaurants?${query.toString()}`)
-
-                if (res.status === 401) {
-                    router.push(ROUTES.LOGIN)
-                    return
+                const params = {
+                    grupoId,
+                    nearLat: String(center.lat),
+                    nearLng: String(center.lng),
+                    radiusMeters: searchParams.get('radius') || '1000',
+                    top: '10',
                 }
+                
+                const result = await getGroupRestaurants(params)
 
-                if (!res.ok) {
-                    throw new Error('Error al cargar restaurantes del grupo')
+                if (!result.success) {
+                    if (result.error?.includes('No autorizado') || result.error?.includes('401')) {
+                        router.push(ROUTES.LOGIN)
+                        return
+                    }
+                    throw new Error(result.error || 'Error al cargar restaurantes del grupo')
                 }
-
-                const data = await res.json()
 
                 setState(prev => ({
                     ...prev,
-                    restaurants: data.recomendaciones || [],
+                    restaurants: result.data?.recomendaciones || [],
                     isLoading: false,
                 }))
 

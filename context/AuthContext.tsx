@@ -8,6 +8,7 @@ import {
     signOut,
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import { verifyPremiumStatus } from '@/app/actions/payment'
 
 type AuthContextType = {
     user: User | null
@@ -39,16 +40,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         try {
-            const response = await fetch('/api/payment/upgrade', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            })
-
-            if (response.ok) {
-                const data = await response.json()
-                setIsPremium(data.isPremium || false)
+            const result = await verifyPremiumStatus()
+            
+            if (result.success && result.data) {
+                setIsPremium(result.data.isPremium || false)
             } else {
                 setIsPremium(false)
             }

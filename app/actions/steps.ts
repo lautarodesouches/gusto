@@ -281,3 +281,206 @@ export async function getGustos(): Promise<ApiResponse<RegisterItem[]>> {
         return (response as { gustos?: BackendItem[] }).gustos || []
     })
 }
+
+/**
+ * Guarda restricciones (POST - registro inicial)
+ */
+export async function saveRestricciones(ids: (string | number)[], skip: boolean = false): Promise<ApiResponse<never>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
+        
+        const res = await fetch(`${API_URL}/Usuario/restricciones`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            return { success: false, error: errorText || ERROR_MESSAGES.RESTRICCIONES_ERROR }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return handleFetchError(error, 'guardando restricciones')
+    }
+}
+
+/**
+ * Actualiza restricciones (PUT - edición)
+ */
+export async function updateRestricciones(ids: (string | number)[], skip: boolean = false): Promise<ApiResponse<never>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
+        
+        const res = await fetch(`${API_URL}/Restriccion/restricciones`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            return { success: false, error: errorText || ERROR_MESSAGES.RESTRICCIONES_ERROR }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return handleFetchError(error, 'actualizando restricciones')
+    }
+}
+
+/**
+ * Guarda condiciones médicas (POST - registro inicial)
+ */
+export async function saveCondiciones(ids: (string | number)[], skip: boolean = false): Promise<ApiResponse<never>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
+        
+        const res = await fetch(`${API_URL}/Usuario/condiciones`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            return { success: false, error: errorText || ERROR_MESSAGES.CONDICIONES_ERROR }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return handleFetchError(error, 'guardando condiciones')
+    }
+}
+
+/**
+ * Actualiza condiciones médicas (PUT - edición)
+ */
+export async function updateCondiciones(ids: (string | number)[], skip: boolean = false): Promise<ApiResponse<never>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
+        
+        const res = await fetch(`${API_URL}/CondicionMedica/condiciones`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            return { success: false, error: errorText || ERROR_MESSAGES.CONDICIONES_ERROR }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return handleFetchError(error, 'actualizando condiciones')
+    }
+}
+
+/**
+ * Guarda gustos (POST - registro inicial)
+ */
+export async function saveGustos(ids: (string | number)[], skip: boolean = false): Promise<ApiResponse<never>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
+        
+        const res = await fetch(`${API_URL}/Usuario/gustos`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            return { success: false, error: errorText || ERROR_MESSAGES.GUSTOS_ERROR }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return handleFetchError(error, 'guardando gustos')
+    }
+}
+
+/**
+ * Actualiza gustos (PUT - edición)
+ */
+export async function updateGustos(ids: (string | number)[], skip: boolean = false): Promise<ApiResponse<never>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        type IdInput = string | number | { id: string | number }
+        const safeIds: string[] = Array.isArray(ids)
+            ? ids
+                  .map((i: IdInput) => {
+                      if (typeof i === 'object' && i !== null && 'id' in i) {
+                          return i.id
+                      }
+                      return i
+                  })
+                  .map((id: string | number) => String(id))
+                  .filter((id: string) => id.trim().length > 0)
+            : []
+        
+        const res = await fetch(`${API_URL}/Gusto/gustos`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ ids: safeIds, skip }),
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            return { success: false, error: errorText || ERROR_MESSAGES.GUSTOS_ERROR }
+        }
+
+        return { success: true }
+    } catch (error) {
+        return handleFetchError(error, 'actualizando gustos')
+    }
+}
