@@ -30,18 +30,39 @@ export default function AdminPanel() {
     const loadSolicitudes = async (tipo?: SolicitudStatus) => {
         try {
             setIsLoading(true)
-            // Mapear el filtro del frontend al tipo del backend
-            // Si es 'Todos' o no se especifica, usar 'Pendiente' por defecto
             const tipoFiltro = tipo || activeFilter
-            const tipoBackend = tipoFiltro === 'Todos' ? 'Pendiente' : tipoFiltro
             
-            // Determinar el endpoint según el filtro
-            // Si el filtro original es 'Todos', usar el endpoint de pendientes
-            const endpoint = tipoFiltro === 'Todos' 
-                ? '/api/admin/pendientes' 
-                : `/api/admin/solicitudes?tipo=${tipoBackend}`
+            // Si es 'Todos', usar el endpoint con 'Todas' que el backend soporta
+            if (tipoFiltro === 'Todos') {
+                const response = await fetch('/api/admin/solicitudes?tipo=Todas')
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}))
+                    toast.error(errorData.error || 'Error al cargar solicitudes')
+                    return
+                }
+                
+                const data: SolicitudRestaurante[] = await response.json()
+                // El backend ya devuelve el status mapeado en cada objeto
+                const solicitudesConStatus: SolicitudRestaurante[] = Array.isArray(data) 
+                    ? data.map((s: SolicitudRestaurante) => ({
+                        ...s,
+                        status: s.status || 'Pendiente' as SolicitudStatus,
+                    }))
+                    : []
+                setSolicitudes(solicitudesConStatus)
+                return
+            }
             
-            const response = await fetch(endpoint)
+            // Para un tipo específico, usar el endpoint con el tipo correspondiente
+            // Mapear del frontend al backend: 'Aceptado' -> 'Aprobada', 'Rechazado' -> 'Rechazada'
+            const tipoMap: Record<string, string> = {
+                'Pendiente': 'Pendiente',
+                'Aceptado': 'Aprobada',
+                'Rechazado': 'Rechazada',
+            }
+            const tipoBackend = tipoMap[tipoFiltro] || tipoFiltro
+            const response = await fetch(`/api/admin/solicitudes?tipo=${tipoBackend}`)
             
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}))
@@ -50,13 +71,13 @@ export default function AdminPanel() {
             }
             
             const data: SolicitudRestaurante[] = await response.json()
-            // Mapear el status según el tipo
+            // Mapear el status según el tipo (usar los valores del frontend)
             const statusMap: Record<string, SolicitudStatus> = {
                 'Pendiente': 'Pendiente',
-                'Aceptado': 'Aceptado',
-                'Rechazado': 'Rechazado',
+                'Aprobada': 'Aceptado',  // Backend devuelve 'Aprobada', frontend usa 'Aceptado'
+                'Rechazada': 'Rechazado', // Backend devuelve 'Rechazada', frontend usa 'Rechazado'
             }
-            const status = statusMap[tipoBackend] || 'Pendiente'
+            const status = statusMap[tipoBackend] || tipoFiltro as SolicitudStatus
             
             const solicitudesConStatus: SolicitudRestaurante[] = Array.isArray(data) 
                 ? data.map((s: SolicitudRestaurante) => ({ ...s, status }))
@@ -133,7 +154,7 @@ export default function AdminPanel() {
         try {
             setLoadingId(solicitudToReject)
             const response = await fetch('/api/admin/rechazar', {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },

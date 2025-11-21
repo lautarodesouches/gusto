@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
 import { cookies } from 'next/headers'
-import type { SolicitudRestauranteBackend } from '@/types'
+import type { SolicitudRestauranteBackend, SolicitudStatus } from '@/types'
 
 export async function GET(req: NextRequest) {
     try {
@@ -16,8 +16,18 @@ export async function GET(req: NextRequest) {
         }
 
         // Obtener el parámetro tipo de la query string
+        // El backend usa: Pendiente=0, Aprobada=1, Rechazada=2, Todas=3
         const { searchParams } = new URL(req.url)
-        const tipo = searchParams.get('tipo') || 'Pendiente'
+        const tipoParam = searchParams.get('tipo') || 'Pendiente'
+        
+        // Mapear los valores del frontend a los del backend
+        const tipoMap: Record<string, string> = {
+            'Pendiente': 'Pendiente',
+            'Aceptado': 'Aprobada',  // Frontend usa 'Aceptado', backend usa 'Aprobada'
+            'Rechazado': 'Rechazada', // Frontend usa 'Rechazado', backend usa 'Rechazada'
+            'Todos': 'Todas',         // Frontend usa 'Todos', backend usa 'Todas'
+        }
+        const tipo = tipoMap[tipoParam] || tipoParam
 
         const response = await fetch(`${API_URL}/Admin/solicitudes?tipo=${tipo}`, {
             method: 'GET',
@@ -49,16 +59,42 @@ export async function GET(req: NextRequest) {
 
         const data: SolicitudRestauranteBackend[] = await response.json()
         
+        // Mapear el estado del backend al frontend
+        // Backend: Pendiente=0, Aprobada=1, Rechazada=2, Todas=3
+        // Frontend: 'Pendiente', 'Aceptado', 'Rechazado'
+        const mapEstadoToStatus = (estado: number | string | undefined): SolicitudStatus => {
+            if (estado === undefined || estado === null) return 'Pendiente'
+            
+            const estadoNum = typeof estado === 'string' ? parseInt(estado, 10) : estado
+            
+            switch (estadoNum) {
+                case 0: // Pendiente
+                    return 'Pendiente'
+                case 1: // Aprobada
+                    return 'Aceptado'
+                case 2: // Rechazada
+                    return 'Rechazado'
+                default:
+                    return 'Pendiente'
+            }
+        }
+        
         // Mapear la respuesta del backend al formato esperado
-        const mappedData = Array.isArray(data) ? data.map((item: SolicitudRestauranteBackend) => ({
-            id: item.Id || item.id || '',
-            nombreRestaurante: item.NombreRestaurante || item.nombreRestaurante || '',
-            direccion: item.Direccion || item.direccion || '',
-            usuarioNombre: item.UsuarioNombre || item.usuarioNombre || '',
-            usuarioEmail: item.UsuarioEmail || item.usuarioEmail || '',
-            imgLogo: item.imgLogo || '',
-            fechaCreacionUtc: item.FechaCreacionUtc || item.fechaCreacionUtc || '',
-        })) : []
+        const mappedData = Array.isArray(data) ? data.map((item: SolicitudRestauranteBackend) => {
+            const estadoBackend = item.Estado ?? item.estado ?? item.EstadoSolicitudRestaurante ?? item.estadoSolicitudRestaurante
+            const status = mapEstadoToStatus(estadoBackend)
+            
+            return {
+                id: item.Id || item.id || '',
+                nombreRestaurante: item.NombreRestaurante || item.nombreRestaurante || '',
+                direccion: item.Direccion || item.direccion || '',
+                usuarioNombre: item.UsuarioNombre || item.usuarioNombre || '',
+                usuarioEmail: item.UsuarioEmail || item.usuarioEmail || '',
+                imgLogo: item.imgLogo || '',
+                fechaCreacionUtc: item.FechaCreacionUtc || item.fechaCreacionUtc || '',
+                status,
+            }
+        }) : []
 
         return NextResponse.json(mappedData, { status: 200 })
     } catch (error) {

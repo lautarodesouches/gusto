@@ -284,6 +284,10 @@ export interface SolicitudRestauranteBackend {
     imgLogo?: string
     FechaCreacionUtc?: string
     fechaCreacionUtc?: string
+    Estado?: number | string
+    estado?: number | string
+    EstadoSolicitudRestaurante?: number | string
+    estadoSolicitudRestaurante?: number | string
 }
 
 export interface ItemSimpleBackend {

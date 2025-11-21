@@ -43,18 +43,18 @@ export async function GET() {
             )
         }
 
-        const data: SolicitudRestauranteBackend[] = await response.json()
+        const data = await response.json()
         
         // Mapear la respuesta del backend al formato esperado
         // Backend retorna: [{ Id, NombreRestaurante, Direccion, UsuarioNombre, UsuarioEmail, imgLogo, FechaCreacionUtc }]
-        const mappedData = Array.isArray(data) ? data.map((item: SolicitudRestauranteBackend) => ({
-            id: item.Id || item.id || '',
-            nombreRestaurante: item.NombreRestaurante || item.nombreRestaurante || '',
-            direccion: item.Direccion || item.direccion || '',
-            usuarioNombre: item.UsuarioNombre || item.usuarioNombre || '',
-            usuarioEmail: item.UsuarioEmail || item.usuarioEmail || '',
-            imgLogo: item.imgLogo || '',
-            fechaCreacionUtc: item.FechaCreacionUtc || item.fechaCreacionUtc || '',
+        const mappedData = Array.isArray(data) ? data.map((item: any) => ({
+            id: item.Id || item.id,
+            nombreRestaurante: item.NombreRestaurante || item.nombreRestaurante,
+            direccion: item.Direccion || item.direccion,
+            usuarioNombre: item.UsuarioNombre || item.usuarioNombre,
+            usuarioEmail: item.UsuarioEmail || item.usuarioEmail,
+            imgLogo: item.imgLogo || item.imgLogo || '',
+            fechaCreacionUtc: item.FechaCreacionUtc || item.fechaCreacionUtc,
         })) : []
 
         return NextResponse.json(mappedData, { status: 200 })

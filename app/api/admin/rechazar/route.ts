@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
 import { cookies } from 'next/headers'
 
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
     try {
         const cookieStore = await cookies()
         const token = cookieStore.get('token')?.value
@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
         }
 
         // El backend espera el motivo como string en el body (no JSON)
-        const response = await fetch(`${API_URL}/Admin/rechazar/${solicitudId}`, {
-            method: 'POST',
+        const response = await fetch(`${API_URL}/Admin/${solicitudId}`, {
+            method: 'DELETE',
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
