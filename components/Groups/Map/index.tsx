@@ -35,16 +35,8 @@ function coordinatesChanged(
 }
 
 interface GroupMapProps {
-
-    members: Array<{
-        id: string
-        checked: boolean
-        usuarioUsername: string
-        [key: string]: any
-    }>
-    onRestaurantsChange?: (restaurants: Restaurant[]) => void
-
     members: (GroupMember & { checked: boolean })[]
+    onRestaurantsChange?: (restaurants: Restaurant[]) => void
 }
 
 export default function GroupMap({ members, onRestaurantsChange }: GroupMapProps) {

@@ -65,7 +65,24 @@ export async function GET(req: NextRequest) {
         const mapEstadoToStatus = (estado: number | string | undefined): SolicitudStatus => {
             if (estado === undefined || estado === null) return 'Pendiente'
             
-            const estadoNum = typeof estado === 'string' ? parseInt(estado, 10) : estado
+            // Si viene como string, intentar parsearlo
+            let estadoNum: number
+            if (typeof estado === 'string') {
+                // Si es un string numérico, parsearlo
+                const parsed = parseInt(estado, 10)
+                if (!isNaN(parsed)) {
+                    estadoNum = parsed
+                } else {
+                    // Si es un string con el nombre del enum, mapearlo
+                    const estadoLower = estado.toLowerCase().trim()
+                    if (estadoLower === 'pendiente' || estadoLower === '0' || estadoLower === 'pendiente') estadoNum = 0
+                    else if (estadoLower === 'aprobada' || estadoLower === '1' || estadoLower === 'aprobado' || estadoLower === 'aceptado' || estadoLower === 'aceptada') estadoNum = 1
+                    else if (estadoLower === 'rechazada' || estadoLower === '2' || estadoLower === 'rechazado') estadoNum = 2
+                    else return 'Pendiente'
+                }
+            } else {
+                estadoNum = estado
+            }
             
             switch (estadoNum) {
                 case 0: // Pendiente
@@ -81,17 +98,52 @@ export async function GET(req: NextRequest) {
         
         // Mapear la respuesta del backend al formato esperado
         const mappedData = Array.isArray(data) ? data.map((item: SolicitudRestauranteBackend) => {
-            const estadoBackend = item.Estado ?? item.estado ?? item.EstadoSolicitudRestaurante ?? item.estadoSolicitudRestaurante
+            // El backend puede devolver los datos en PascalCase o camelCase dependiendo de la configuración
+            // Intentar leer ambos casos para mayor compatibilidad
+            const itemAny = item as unknown as Record<string, unknown>
+            
+            // Función helper para obtener un string de un campo (PascalCase o camelCase)
+            const getStringValue = (pascalKey: string, camelKey: string): string => {
+                const pascalValue = itemAny[pascalKey]
+                const camelValue = itemAny[camelKey]
+                
+                if (typeof pascalValue === 'string' && pascalValue) return pascalValue
+                if (typeof camelValue === 'string' && camelValue) return camelValue
+                return ''
+            }
+            
+            // Función helper para convertir unknown a number | string | undefined
+            const getEstadoValue = (value: unknown): number | string | undefined => {
+                if (value === null || value === undefined) return undefined
+                if (typeof value === 'number' || typeof value === 'string') return value
+                return undefined
+            }
+            
+            // Leer campos en ambos formatos (PascalCase y camelCase)
+            const id = getStringValue('Id', 'id')
+            const nombreRestaurante = getStringValue('NombreRestaurante', 'nombreRestaurante')
+            const direccion = getStringValue('Direccion', 'direccion')
+            const usuarioNombre = getStringValue('UsuarioNombre', 'usuarioNombre')
+            const usuarioEmail = getStringValue('UsuarioEmail', 'usuarioEmail')
+            const imgLogo = getStringValue('imgLogo', 'imgLogo')
+            const fechaCreacionUtc = getStringValue('FechaCreacionUtc', 'fechaCreacionUtc')
+            
+            // Leer Estado
+            const estadoBackend = item.Estado 
+                ?? item.EstadoSolicitudRestaurante 
+                ?? getEstadoValue(itemAny.estado)
+                ?? getEstadoValue(itemAny.estadoSolicitudRestaurante)
+            
             const status = mapEstadoToStatus(estadoBackend)
             
             return {
-                id: item.Id || item.id || '',
-                nombreRestaurante: item.NombreRestaurante || item.nombreRestaurante || '',
-                direccion: item.Direccion || item.direccion || '',
-                usuarioNombre: item.UsuarioNombre || item.usuarioNombre || '',
-                usuarioEmail: item.UsuarioEmail || item.usuarioEmail || '',
-                imgLogo: item.imgLogo || '',
-                fechaCreacionUtc: item.FechaCreacionUtc || item.fechaCreacionUtc || '',
+                id,
+                nombreRestaurante,
+                direccion,
+                usuarioNombre,
+                usuarioEmail,
+                imgLogo,
+                fechaCreacionUtc,
                 status,
             }
         }) : []

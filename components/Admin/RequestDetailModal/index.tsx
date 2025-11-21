@@ -69,10 +69,16 @@ export default function RequestDetailModal({
     }
 
     const formatHorario = (horario: { dia: string; cerrado: boolean; desde?: string | null; hasta?: string | null }) => {
+        const dia = horario.dia.trim()
         if (horario.cerrado) {
-            return `${horario.dia}: Cerrado`
+            return `${dia}: Cerrado`
         }
-        return `${horario.dia}: ${horario.desde || ''} - ${horario.hasta || ''}`
+        const desde = horario.desde || ''
+        const hasta = horario.hasta || ''
+        if (desde && hasta) {
+            return `${dia}: ${desde} - ${hasta}`
+        }
+        return `${dia}: Horario no especificado`
     }
 
     if (!isOpen) return null
@@ -165,8 +171,6 @@ export default function RequestDetailModal({
                                                 </li>
                                             ))}
                                         </ul>
-                                    ) : detalle.horariosJson ? (
-                                        <p className={styles.noData}>Horarios en formato JSON (sin parsear): {detalle.horariosJson}</p>
                                     ) : (
                                         <p className={styles.noData}>No hay horarios registrados</p>
                                     )}

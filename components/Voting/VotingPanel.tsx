@@ -186,7 +186,7 @@ export default function VotingPanel({
                                                     )}
                                                     <strong>{votante.usuarioNombre}</strong>
                                                 </div>
-                                                <p className={styles.comentarioTexto}>"{votante.comentario}"</p>
+                                                <p className={styles.comentarioTexto}>&quot;{votante.comentario}&quot;</p>
                                             </div>
                                         ))}
                                     </div>

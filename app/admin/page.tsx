@@ -7,7 +7,6 @@ import { useToast } from '@/context/ToastContext'
 import { useRouter } from 'next/navigation'
 import styles from './page.module.css'
 import { SolicitudRestaurante, SolicitudStatus } from '@/types'
-import type { SolicitudRestauranteBackend } from '@/types'
 import RequestDetailModal from '@/components/Admin/RequestDetailModal'
 import RejectModal from '@/components/Admin/RejectModal'
 
@@ -195,6 +194,10 @@ export default function AdminPanel() {
     }
 
     const handleVerDetalles = (id: string) => {
+        if (!id || id.trim() === '') {
+            toast.error('No se puede ver detalles: ID de solicitud inválido')
+            return
+        }
         setSelectedSolicitudId(id)
         setIsDetailModalOpen(true)
     }
@@ -288,9 +291,9 @@ export default function AdminPanel() {
                     </div>
                 ) : (
                     <div className={styles.grid}>
-                        {filteredSolicitudes.map(solicitud => (
+                        {filteredSolicitudes.map((solicitud, index) => (
                             <RequestCard
-                                key={solicitud.id}
+                                key={solicitud.id || `solicitud-${index}`}
                                 solicitud={solicitud}
                                 onAceptar={handleAceptar}
                                 onRechazar={handleRechazarClick}

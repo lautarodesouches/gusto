@@ -43,38 +43,39 @@ export async function GET() {
             )
         }
 
-        const data: DatosSolicitudRestauranteBackend = await response.json()
+        const rawData = await response.json()
         
-        // Debug: Log de la respuesta del backend
-        console.log('Respuesta del backend:', JSON.stringify(data, null, 2))
+        // El backend devuelve en camelCase: { gustos: [{ id, nombre }], restricciones: [{ id, nombre }] }
+        // Intentar ambos formatos por si el backend serializa diferente
+        const gustosRaw = (rawData as { Gustos?: unknown[]; gustos?: unknown[] }).Gustos || 
+                         (rawData as { Gustos?: unknown[]; gustos?: unknown[] }).gustos || 
+                         []
+        const restriccionesRaw = (rawData as { Restricciones?: unknown[]; restricciones?: unknown[] }).Restricciones || 
+                                (rawData as { Restricciones?: unknown[]; restricciones?: unknown[] }).restricciones || 
+                                []
         
-        // El backend puede devolver con diferentes formatos de nombres
-        // Intentar con diferentes variaciones: PascalCase, camelCase, etc.
-        // También manejar null/undefined
-        const gustos = (data.Gustos || data.gustos || []).filter((item: ItemSimpleBackend | null | undefined): item is ItemSimpleBackend => item !== null && item !== undefined)
-        const restricciones = (data.Restricciones || data.restricciones || []).filter((item: ItemSimpleBackend | null | undefined): item is ItemSimpleBackend => item !== null && item !== undefined)
-        
-        console.log('Gustos encontrados:', gustos.length)
-        console.log('Restricciones encontradas:', restricciones.length)
+        // Asegurarse de que sean arrays
+        const gustosArray = Array.isArray(gustosRaw) ? gustosRaw : []
+        const restriccionesArray = Array.isArray(restriccionesRaw) ? restriccionesRaw : []
         
         // Mapear la respuesta del backend al formato esperado
-        // Backend retorna: { Gustos: [{ Id, Nombre }], Restricciones: [{ Id, Nombre }] }
-        // O puede ser: { gustos: [{ id, nombre }], restricciones: [{ id, nombre }] }
+        // El backend devuelve { id, nombre } en camelCase
         const mappedData = {
-            gustos: gustos.map((g: ItemSimpleBackend) => ({
-                id: String(g.Id || g.id || ''),
-                nombre: g.Nombre || g.nombre || '',
-            })),
-            restricciones: restricciones.map((r: ItemSimpleBackend) => ({
-                id: String(r.Id || r.id || ''),
-                nombre: r.Nombre || r.nombre || '',
-            })),
+            gustos: gustosArray.map((item) => {
+                const typedItem = item as { id?: string | number; Id?: string | number; nombre?: string; Nombre?: string }
+                return {
+                    id: String(typedItem.id || typedItem.Id || ''),
+                    nombre: typedItem.nombre || typedItem.Nombre || '',
+                }
+            }),
+            restricciones: restriccionesArray.map((item) => {
+                const typedItem = item as { id?: string | number; Id?: string | number; nombre?: string; Nombre?: string }
+                return {
+                    id: String(typedItem.id || typedItem.Id || ''),
+                    nombre: typedItem.nombre || typedItem.Nombre || '',
+                }
+            }),
         }
-
-        console.log('Datos mapeados:', {
-            gustosCount: mappedData.gustos.length,
-            restriccionesCount: mappedData.restricciones.length,
-        })
 
         return NextResponse.json(mappedData, { status: 200 })
     } catch (error) {

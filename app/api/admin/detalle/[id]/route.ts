@@ -64,17 +64,10 @@ export async function GET(
 
         const data: SolicitudRestauranteDetalleBackend = await response.json()
         
-        // Debug: Log de la respuesta del backend
-        console.log('Respuesta del backend (raw):', JSON.stringify(data, null, 2))
-        console.log('ImagenesDestacadas:', data.ImagenesDestacadas || data.imagenesDestacadas)
-        console.log('ImagenesInterior:', data.ImagenesInterior || data.imagenesInterior)
-        console.log('ImagenesComida:', data.ImagenesComida || data.imagenesComida)
-        console.log('ImagenMenu:', data.ImagenMenu || data.imagenMenu)
-        console.log('Logo:', data.Logo || data.logo)
-        console.log('HorariosJson:', data.HorariosJson || data.horariosJson)
-        console.log('Horarios:', data.Horarios || data.horarios)
+        // El backend puede devolver los datos en PascalCase o camelCase
+        const dataAny = data as unknown as Record<string, unknown>
         
-        // Parsear horarios desde HorariosJson si Horarios está vacío o inválido
+        // Parsear horarios desde HorariosJson o Horarios
         let horariosParsed: Array<{
             dia: string
             cerrado: boolean
@@ -82,93 +75,114 @@ export async function GET(
             hasta?: string | null
         }> = []
 
-        // Verificar si Horarios tiene datos válidos (no vacíos y con dia no vacío)
-        const horariosValidos = (data.Horarios || data.horarios || []).filter((h: {
-            Dia?: string
-            dia?: string
-        }) => {
-            const dia = h.Dia || h.dia || ''
-            return dia.trim() !== ''
-        })
-
-        // Si hay horarios válidos, usarlos
-        if (horariosValidos.length > 0) {
-            horariosParsed = horariosValidos.map((h: {
-                Dia?: string
-                dia?: string
-                Cerrado?: boolean
-                cerrado?: boolean
-                Desde?: string | null
-                desde?: string | null
-                Hasta?: string | null
-                hasta?: string | null
-            }) => ({
-                dia: h.Dia || h.dia || '',
-                cerrado: h.Cerrado ?? h.cerrado ?? false,
-                desde: h.Desde ?? h.desde ?? null,
-                hasta: h.Hasta ?? h.hasta ?? null,
-            }))
-        } else {
-            // Si no hay Horarios válidos, intentar parsear desde HorariosJson
-            const horariosJson = data.HorariosJson || data.horariosJson
-            if (horariosJson && typeof horariosJson === 'string' && horariosJson.trim() !== '') {
-                try {
-                    const parsed = JSON.parse(horariosJson)
-                    if (Array.isArray(parsed)) {
-                        horariosParsed = parsed.map((h: {
-                            dia?: string
-                            Dia?: string
-                            cerrado?: boolean
-                            Cerrado?: boolean
-                            desde?: string | null
-                            Desde?: string | null
-                            hasta?: string | null
-                            Hasta?: string | null
-                        }) => ({
-                            dia: h.Dia || h.dia || '',
-                            cerrado: h.Cerrado ?? h.cerrado ?? false,
-                            desde: h.Desde ?? h.desde ?? null,
-                            hasta: h.Hasta ?? h.hasta ?? null,
-                        }))
-                    }
-                } catch (error) {
-                    console.error('Error al parsear horariosJson:', error)
-                    console.error('horariosJson recibido:', horariosJson)
+        // Primero intentar parsear desde HorariosJson (string JSON)
+        const horariosJson = data.HorariosJson ?? (dataAny.horariosJson as string | undefined)
+        if (horariosJson && typeof horariosJson === 'string' && horariosJson.trim() !== '') {
+            try {
+                const parsed = JSON.parse(horariosJson)
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    horariosParsed = parsed.map((h: {
+                        dia?: string
+                        Dia?: string
+                        cerrado?: boolean
+                        Cerrado?: boolean
+                        desde?: string | null
+                        Desde?: string | null
+                        hasta?: string | null
+                        Hasta?: string | null
+                    }) => ({
+                        dia: (h.Dia || h.dia || '').trim(),
+                        cerrado: h.Cerrado ?? h.cerrado ?? false,
+                        desde: (h.Desde ?? h.desde) || null,
+                        hasta: (h.Hasta ?? h.hasta) || null,
+                    })).filter(h => h.dia !== '') // Filtrar horarios sin día
                 }
+            } catch {
+                // Error al parsear horariosJson, intentar con Horarios array
+            }
+        }
+
+        // Si no se pudo parsear desde JSON, intentar desde el array Horarios
+        if (horariosParsed.length === 0) {
+            const horariosArray = data.Horarios ?? (dataAny.horarios as unknown)
+            if (Array.isArray(horariosArray) && horariosArray.length > 0) {
+                horariosParsed = horariosArray
+                    .map((h: {
+                        Dia?: string
+                        dia?: string
+                        Cerrado?: boolean
+                        cerrado?: boolean
+                        Desde?: string | null
+                        desde?: string | null
+                        Hasta?: string | null
+                        hasta?: string | null
+                    }) => ({
+                        dia: ((h.Dia || h.dia) || '').trim(),
+                        cerrado: h.Cerrado ?? h.cerrado ?? false,
+                        desde: (h.Desde ?? h.desde) || null,
+                        hasta: (h.Hasta ?? h.hasta) || null,
+                    }))
+                    .filter(h => h.dia !== '') // Filtrar horarios sin día
             }
         }
         
-        console.log('Horarios parseados:', horariosParsed)
+        // Función helper para obtener un string de un campo (PascalCase o camelCase)
+        const getStringValue = (pascalKey: string, camelKey: string): string => {
+            const pascalValue = dataAny[pascalKey]
+            const camelValue = dataAny[camelKey]
+            
+            if (typeof pascalValue === 'string' && pascalValue) return pascalValue
+            if (typeof camelValue === 'string' && camelValue) return camelValue
+            return ''
+        }
+        
+        // Función helper para obtener un número o null
+        const getNumberValue = (pascalKey: string, camelKey: string): number | null => {
+            const pascalValue = dataAny[pascalKey]
+            const camelValue = dataAny[camelKey]
+            
+            if (typeof pascalValue === 'number') return pascalValue
+            if (typeof camelValue === 'number') return camelValue
+            return null
+        }
+        
+        // Función helper para obtener un array
+        const getArrayValue = <T>(pascalKey: string, camelKey: string): T[] => {
+            const pascalValue = dataAny[pascalKey]
+            const camelValue = dataAny[camelKey]
+            
+            if (Array.isArray(pascalValue)) return pascalValue as T[]
+            if (Array.isArray(camelValue)) return camelValue as T[]
+            return []
+        }
         
         // Mapear la respuesta del backend al formato esperado
         const mappedData = {
-            id: data.Id || data.id || '',
-            usuarioId: data.UsuarioId || data.usuarioId || '',
-            usuarioNombre: data.UsuarioNombre || data.usuarioNombre || '',
-            usuarioEmail: data.UsuarioEmail || data.usuarioEmail || '',
-            nombreRestaurante: data.NombreRestaurante || data.nombreRestaurante || '',
-            direccion: data.Direccion || data.direccion || '',
-            latitud: data.Latitud ?? data.latitud ?? null,
-            longitud: data.Longitud ?? data.longitud ?? null,
-            primaryType: data.PrimaryType || data.primaryType || '',
-            types: data.Types || data.types || [],
-            horariosJson: data.HorariosJson ?? data.horariosJson ?? null,
-            gustos: (data.Gustos || data.gustos || []).map((g) => ({
-                id: String(g.Id || g.id || ''),
-                nombre: g.Nombre || g.nombre || '',
+            id: getStringValue('Id', 'id'),
+            usuarioId: getStringValue('UsuarioId', 'usuarioId'),
+            usuarioNombre: getStringValue('UsuarioNombre', 'usuarioNombre'),
+            usuarioEmail: getStringValue('UsuarioEmail', 'usuarioEmail'),
+            nombreRestaurante: getStringValue('NombreRestaurante', 'nombreRestaurante'),
+            direccion: getStringValue('Direccion', 'direccion'),
+            latitud: getNumberValue('Latitud', 'latitud'),
+            longitud: getNumberValue('Longitud', 'longitud'),
+            primaryType: getStringValue('PrimaryType', 'primaryType'),
+            types: getArrayValue<string>('Types', 'types'),
+            horariosJson: (data.HorariosJson ?? dataAny.horariosJson) as string | null,
+            gustos: getArrayValue<{ Id?: string; id?: string; Nombre?: string; nombre?: string }>('Gustos', 'gustos').map((g) => ({
+                id: String((g as { Id?: string; id?: string }).Id || (g as { id?: string }).id || ''),
+                nombre: String((g as { Nombre?: string; nombre?: string }).Nombre || (g as { nombre?: string }).nombre || ''),
             })),
-            restricciones: (data.Restricciones || data.restricciones || []).map((r) => ({
-                id: String(r.Id || r.id || ''),
-                nombre: r.Nombre || r.nombre || '',
+            restricciones: getArrayValue<{ Id?: string; id?: string; Nombre?: string; nombre?: string }>('Restricciones', 'restricciones').map((r) => ({
+                id: String((r as { Id?: string; id?: string }).Id || (r as { id?: string }).id || ''),
+                nombre: String((r as { Nombre?: string; nombre?: string }).Nombre || (r as { nombre?: string }).nombre || ''),
             })),
-            imagenesDestacadas: data.ImagenesDestacadas || data.imagenesDestacadas || '',
-            imagenesInterior: Array.isArray(data.ImagenesInterior) ? data.ImagenesInterior : 
-                            Array.isArray(data.imagenesInterior) ? data.imagenesInterior : [],
-            imagenesComida: Array.isArray(data.ImagenesComida) ? data.ImagenesComida : 
-                           Array.isArray(data.imagenesComida) ? data.imagenesComida : [],
-            imagenMenu: data.ImagenMenu ?? data.imagenMenu ?? null,
-            logo: data.Logo ?? data.logo ?? null,
-            fechaCreacionUtc: data.FechaCreacionUtc || data.fechaCreacionUtc || '',
+            imagenesDestacadas: getStringValue('ImagenesDestacadas', 'imagenesDestacadas'),
+            imagenesInterior: getArrayValue<string>('ImagenesInterior', 'imagenesInterior'),
+            imagenesComida: getArrayValue<string>('ImagenesComida', 'imagenesComida'),
+            imagenMenu: (data.ImagenMenu ?? dataAny.imagenMenu) as string | null,
+            logo: (data.Logo ?? dataAny.logo) as string | null,
+            fechaCreacionUtc: getStringValue('FechaCreacionUtc', 'fechaCreacionUtc'),
             horarios: horariosParsed,
         }
 
