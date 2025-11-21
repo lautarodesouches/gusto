@@ -9,8 +9,9 @@ import { useAuth } from '@/context/AuthContext'
 import Switch from '../Switch'
 import { activateGroupMember, deactivateGroupMember } from '@/app/actions/groups'
 import { useToast } from '@/context/ToastContext'
+import { Restaurant } from '@/types'
 
-export type ActiveView = 'home' | 'chat' | 'map'
+export type ActiveView = 'home' | 'chat' | 'map' | 'vote'
 
 interface Props {
     group: Group
@@ -22,10 +23,14 @@ export default function GroupClient({ group }: Props) {
 
     const [activeView, setActiveView] = useState<ActiveView>('home')
     const [mobileView, setMobileView] = useState<'social' | 'group'>('social')
+    const [currentRestaurants, setCurrentRestaurants] = useState<Restaurant[]>([])
 
     const [members, setMembers] = useState(
         group.miembros.map(m => ({ ...m, checked: true }))
     )
+    
+    // Verificar si el usuario actual es administrador
+    const isAdmin = auth.user?.uid === group.administradorFirebaseUid
 
     const handleToggleCheck = async (id: string) => {
         const member = members.find(m => m.id === id)
@@ -102,7 +107,10 @@ export default function GroupClient({ group }: Props) {
                         activeView={activeView}
                         groupId={group.id}
                         members={members}
+                        isAdmin={isAdmin}
                         onClick={handleChangeView}
+                        currentRestaurants={currentRestaurants}
+                        onRestaurantsChange={setCurrentRestaurants}
                     />
                 </div>
             </section>

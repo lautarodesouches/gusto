@@ -11,7 +11,6 @@ import {
 import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
-import { LOCAL_URL } from '@/constants'
 import { GroupClient, FriendRequests } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
@@ -37,17 +36,36 @@ async function fetchGroup({
     cookie: string
 }): Promise<Group | GroupError> {
     try {
-        const res = await fetch(`${LOCAL_URL}/api/group/${id}`, {
+        console.log(`[Page] Fetching group ${id}`)
+        
+        // En Server Components, construimos la URL base desde el servidor
+        const baseUrl = process.env.NEXT_PUBLIC_LOCAL_URL || 'http://localhost:3000'
+        const apiUrl = `${baseUrl}/api/group/${id}`
+        
+        console.log(`[Page] Fetching from: ${apiUrl}`)
+        
+        const res = await fetch(apiUrl, {
             headers: { cookie },
             cache: 'no-store',
         })
 
+        console.log(`[Page] API route response status: ${res.status}`)
+
         if (res.status === 401) redirect(ROUTES.LOGIN)
 
         if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}))
+            let errorData
+            try {
+                const text = await res.text()
+                console.log(`[Page] Error response body:`, text)
+                errorData = text ? JSON.parse(text) : {}
+            } catch {
+                errorData = {}
+            }
             const errorMessage =
                 errorData.error || errorData.message || 'Error desconocido'
+
+            console.log(`[Page] Error message:`, errorMessage)
 
             // Retornar información del error para manejo específico
             return {
@@ -56,9 +74,11 @@ async function fetchGroup({
             } as GroupError
         }
 
-        return await res.json()
+        const data = await res.json()
+        console.log(`[Page] Group data received:`, data)
+        return data
     } catch (error) {
-        console.error(`Error fetching group ${id}:`, error)
+        console.error(`[Page] Error fetching group ${id}:`, error)
         return {
             status: 500,
             message: 'Error al conectar con el servidor',

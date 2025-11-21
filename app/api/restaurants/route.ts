@@ -40,6 +40,8 @@ export async function GET(req: Request) {
         if (amigoUsername) apiUrl.searchParams.append('amigoUsername', amigoUsername)
 
         // Llamada a la API externa
+        console.log('🔍 Llamando al backend:', apiUrl.toString())
+        
         const res = await fetch(apiUrl.toString(), {
             headers: {
                 'Content-Type': 'application/json',
@@ -48,9 +50,10 @@ export async function GET(req: Request) {
         })
 
         if (!res.ok) {
-            console.error('Error al traer restaurantes:', await res.text())
+            const errorText = await res.text()
+            console.error(`❌ Error al traer restaurantes (${res.status}):`, errorText)
             return NextResponse.json(
-                { error: 'No se pudieron obtener los restaurantes' },
+                { error: 'No se pudieron obtener los restaurantes', details: errorText },
                 { status: res.status }
             )
         }

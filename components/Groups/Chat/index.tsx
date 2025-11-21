@@ -185,6 +185,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
         <div className={styles.container}>
             <div className={styles.chat} ref={chatContainerRef}>
                 {messages.map((msg, i) => {
+                    const { date, time } = formatChatDate(msg.fecha)
                     return (
                         <article
                             key={i}
@@ -198,15 +199,17 @@ export default function GroupsChat({ groupId, admin }: Props) {
                                     : ''
                             }`}
                         >
-                            <div className={styles.chat__top}>
+                            <div className={styles.chat__header}>
                                 <p className={styles.chat__sender}>
                                     {msg.usuario}
                                 </p>
-                                <p className={styles.chat__time}>
-                                    {formatChatDate(msg.fecha)}
-                                </p>
                             </div>
                             <p className={styles.chat__text}>{msg.mensaje}</p>
+                            <div className={styles.chat__footer}>
+                                <span className={styles.chat__date}>{date}</span>
+                                <span className={styles.chat__separator}>•</span>
+                                <span className={styles.chat__time}>{time}</span>
+                            </div>
                         </article>
                     )
                 })}

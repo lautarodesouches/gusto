@@ -35,7 +35,7 @@ export default function Footer({ activeView, onClick }: Props) {
                 className={
                     styles[
                         `footer__button${
-                            activeView === 'chat' || activeView === 'map'
+                            activeView === 'chat' || activeView === 'map' || activeView === 'vote'
                                 ? '--active'
                                 : ''
                         }`

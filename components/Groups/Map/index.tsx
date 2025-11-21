@@ -35,10 +35,19 @@ function coordinatesChanged(
 }
 
 interface GroupMapProps {
+
+    members: Array<{
+        id: string
+        checked: boolean
+        usuarioUsername: string
+        [key: string]: any
+    }>
+    onRestaurantsChange?: (restaurants: Restaurant[]) => void
+
     members: (GroupMember & { checked: boolean })[]
 }
 
-export default function GroupMap({ members }: GroupMapProps) {
+export default function GroupMap({ members, onRestaurantsChange }: GroupMapProps) {
     const toast = useToast()
 
     const router = useRouter()
@@ -104,11 +113,18 @@ export default function GroupMap({ members }: GroupMapProps) {
 
                 const data = await res.json()
 
+                const newRestaurants = data.recomendaciones || []
+
                 setState(prev => ({
                     ...prev,
-                    restaurants: data.recomendaciones || [],
+                    restaurants: newRestaurants,
                     isLoading: false,
                 }))
+
+                // Notificar al componente padre sobre los nuevos restaurantes
+                if (onRestaurantsChange) {
+                    onRestaurantsChange(newRestaurants)
+                }
 
                 setShouldSearchButton(false)
             } catch {

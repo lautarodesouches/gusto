@@ -17,6 +17,23 @@
     color: var(--beige);
 }
 
+.social__settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.social__settings:hover {
+    background: rgba(255, 238, 207, 0.1);
+}
+
+.social__settings:hover .social__icon {
+    color: var(--primary);
+}
+
 .search {
     width: 100%;
     margin-top: 20px;

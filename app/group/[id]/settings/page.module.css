@@ -1,0 +1,16 @@
+.wrapper {
+    min-height: 100vh;
+    background: var(--background);
+}
+
+.main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .main {
+        padding: 1rem;
+    }
+}
