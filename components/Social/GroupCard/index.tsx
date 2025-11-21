@@ -5,6 +5,7 @@ import { faUsers } from '@fortawesome/free-solid-svg-icons'
 import { Group } from '@/types'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 export default function GroupCard({ 
     group, 
@@ -53,7 +54,13 @@ export default function GroupCard({
             >
                 <div className={styles.group__img}>
                     {firstMemberPhoto ? (
-                        <img src={firstMemberPhoto} alt={group.nombre} />
+                        <Image
+                            src={firstMemberPhoto}
+                            alt={group.nombre}
+                            width={40}
+                            height={40}
+                            className={styles.group__img}
+                        />
                     ) : (
                         <FontAwesomeIcon icon={faUsers} />
                     )}
@@ -70,7 +77,13 @@ export default function GroupCard({
             >
                 <div className={styles.group__img}>
                     {firstMemberPhoto ? (
-                        <img src={firstMemberPhoto} alt={group.nombre} />
+                        <Image
+                            src={firstMemberPhoto}
+                            alt={group.nombre}
+                            width={40}
+                            height={40}
+                            className={styles.group__img}
+                        />
                     ) : (
                         <FontAwesomeIcon icon={faUsers} />
                     )}

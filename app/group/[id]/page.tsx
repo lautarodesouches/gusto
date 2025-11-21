@@ -16,6 +16,8 @@ import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import Navbar from '@/components/Navbar'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
     params: Promise<{ id: string }>
 }
@@ -194,7 +196,7 @@ function GroupErrorView({ error }: { error: GroupError }) {
 export default async function GroupDetail({ params }: Props) {
     const { id } = await params
 
-    const userId = await verifyAuthentication()
+    await verifyAuthentication()
 
     const headersList = await headers()
     const cookie = headersList.get('cookie') || ''
@@ -206,8 +208,6 @@ export default async function GroupDetail({ params }: Props) {
     }
 
     const group = result as Group
-
-    const isAdmin = group.administradorFirebaseUid === userId
 
     return (
         <div className={styles.wrapper}>

@@ -3,8 +3,7 @@
     padding: 1rem 2rem;
     background: var(--background);
     border-bottom: 1px solid var(--grey);
-    position: sticky;
-    top: 0;
+    position: relative;
     z-index: 100;
 }
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -7,6 +6,8 @@ import {
     faSearch,
     faUser,
     faUserPlus,
+    faX,
+    faUserMinus,
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
@@ -15,21 +16,32 @@ import { useToast } from '@/context/ToastContext'
 import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
+import { ConfirmModal } from '@/components/modal/ConfirmModal'
+import Image from 'next/image'
 
 interface Props {
     group: Group
     members: (GroupMember & { checked: boolean })[]
     onCheck: (id: string) => void
+    onMemberRemoved?: (memberId: string) => void
 }
 
-export default function GroupSocial({ group, members, onCheck }: Props) {
+export default function GroupSocial({ group, members, onCheck, onMemberRemoved }: Props) {
     const toast = useToast()
 
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
+    const [isEditing, setIsEditing] = useState(false)
+    const [memberToDelete, setMemberToDelete] = useState<GroupMember | null>(null)
 
     useEffect(() => {
-        setFilteredMembers(members)
-    }, [group])
+        // Ordenar miembros: administradores primero
+        const sortedMembers = [...members].sort((a, b) => {
+            const aIsAdmin = a.esAdministrador ? 1 : 0
+            const bIsAdmin = b.esAdministrador ? 1 : 0
+            return bIsAdmin - aIsAdmin // Administradores primero (1 - 0 = 1, 0 - 1 = -1)
+        })
+        setFilteredMembers(sortedMembers)
+    }, [group, members])
 
     const handleSearchMembers = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -42,7 +54,14 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                 m.usuarioEmail.toLowerCase().includes(value)
         )
 
-        setFilteredMembers(filtered)
+        // Ordenar: administradores primero
+        const sorted = filtered.sort((a, b) => {
+            const aIsAdmin = a.esAdministrador ? 1 : 0
+            const bIsAdmin = b.esAdministrador ? 1 : 0
+            return bIsAdmin - aIsAdmin
+        })
+
+        setFilteredMembers(sorted)
     }
 
     const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,23 +85,50 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
         setFilteredMembers(prev => [...prev])
     }
 
-    const handleKick = async (member: GroupMember) => {
-        const result = await removeGroupMember(group.id, member.usuarioUsername)
+    const handleKickClick = (member: GroupMember) => {
+        setMemberToDelete(member)
+    }
 
-        if (!result.success)
-            return toast.error(result.error || 'Error al remover del grupo')
+    const handleKickConfirm = async () => {
+        if (!memberToDelete) return
 
-        toast.success(`${member.usuarioNombre} fue eliminado del grupo`)
+        const result = await removeGroupMember(group.id, memberToDelete.usuarioUsername)
 
-        setFilteredMembers(prev => prev.filter(m => m.id !== member.id))
+        if (!result.success) {
+            toast.error(result.error || 'Error al remover del grupo')
+            setMemberToDelete(null)
+            return
+        }
+
+        toast.success(`${memberToDelete.usuarioNombre} fue eliminado del grupo`)
+
+        setFilteredMembers(prev => prev.filter(m => m.id !== memberToDelete.id))
+        
+        // Notificar al componente padre para actualizar el estado
+        if (onMemberRemoved) {
+            onMemberRemoved(memberToDelete.id)
+        }
+
+        setMemberToDelete(null)
     }
 
     return (
         <>
+            <ConfirmModal
+                isOpen={memberToDelete !== null}
+                onClose={() => setMemberToDelete(null)}
+                onConfirm={handleKickConfirm}
+                title="Eliminar miembro"
+                message={`¿Estás seguro de que deseas eliminar a ${memberToDelete?.usuarioNombre} del grupo?`}
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                confirmButtonStyle="danger"
+            />
             <nav className={styles.social__nav}>
                 <div className={styles.social__div}>
                     <h2 className={styles.social__title}>{group.nombre}</h2>
                 </div>
+
                 <div className={styles.social__div}>
                     <Link 
                         href={`${ROUTES.GROUP}${group.id}/settings`}
@@ -94,6 +140,15 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                             className={styles.social__icon}
                         />
                     </Link>
+                <div 
+                    className={styles.social__div}
+                    onClick={() => setIsEditing(!isEditing)}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <FontAwesomeIcon
+                        icon={isEditing ? faX : faGear}
+                        className={styles.social__icon}
+                    />
                 </div>
             </nav>
             <fieldset className={styles.search}>
@@ -124,18 +179,13 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                                 className={styles.member__link}
                             >
                                 <div className={styles.member__div}>
-                                    {[
-                                        'juanperez',
-                                        'carlossanchesz',
-                                        'luciagomez',
-                                        'mariasosa',
-                                    ].includes(m.usuarioUsername?.toLowerCase()) ? (
-                                        <img
-                                            src={`/users/${m.usuarioNombre
-                                                .split(' ')[0]
-                                                .toLowerCase()}.jpg`}
+                                    {m.fotoPerfilUrl ? (
+                                        <Image
+                                            src={m.fotoPerfilUrl}
                                             className={styles.member__img}
                                             alt={m.usuarioNombre}
+                                            width={40}
+                                            height={40}
                                         />
                                     ) : (
                                         <FontAwesomeIcon
@@ -157,15 +207,33 @@ export default function GroupSocial({ group, members, onCheck }: Props) {
                                 </div>
                             </Link>
                             <div className={styles.member__div}>
-                                <label className={styles.member__checkbox_label}>
-                                    <input
-                                        type="checkbox"
-                                        className={styles.filter__input}
-                                        checked={isChecked}
-                                        onChange={() => onCheck(m.id)}
-                                    />
-                                    <span className={styles.checkmark}></span>
-                                </label>
+                                {isEditing ? (
+                                    <button
+                                        className={styles.member__delete_btn}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            handleKickClick(m)
+                                        }}
+                                        disabled={m.esAdministrador}
+                                        title={m.esAdministrador ? 'No se puede eliminar al administrador' : 'Eliminar del grupo'}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faUserMinus}
+                                            className={styles.member__delete_icon}
+                                        />
+                                    </button>
+                                ) : (
+                                    <label className={styles.member__checkbox_label}>
+                                        <input
+                                            type="checkbox"
+                                            className={styles.filter__input}
+                                            checked={isChecked}
+                                            onChange={() => onCheck(m.id)}
+                                        />
+                                        <span className={styles.checkmark}></span>
+                                    </label>
+                                )}
                             </div>
                         </article>
                     )

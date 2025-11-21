@@ -205,8 +205,13 @@ useEffect(() => {
                     return friend ? (
                         <div className={styles.select__friend_avatar}>
                             {friend.fotoPerfilUrl ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={friend.fotoPerfilUrl} alt={friend.nombre} />
+                                <Image
+                                    src={friend.fotoPerfilUrl}
+                                    alt={friend.nombre}
+                                    width={28}
+                                    height={28}
+                                    className={styles.select__friend_icon}
+                                />
                             ) : (
                                 <FontAwesomeIcon icon={faUser} />
                             )}
@@ -261,8 +266,13 @@ useEffect(() => {
                     >
                         <div className={styles.select__friend_avatar}>
                             {amigo.fotoPerfilUrl ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={amigo.fotoPerfilUrl} alt={amigo.nombre} />
+                                <Image
+                                    src={amigo.fotoPerfilUrl}
+                                    alt={amigo.nombre}
+                                    width={28}
+                                    height={28}
+                                    className={styles.select__friend_icon}
+                                />
                             ) : (
                                 <FontAwesomeIcon icon={faUser} />
                             )}

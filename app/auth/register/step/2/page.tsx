@@ -2,6 +2,8 @@ import { AuthStep } from '@/components'
 import { getCondicionesMedicas } from '@/app/actions/steps'
 import { PreventWrapper } from '../../PreventWrapper'
 
+export const dynamic = 'force-dynamic'
+
 export default async function StepThree() {
     const result = await getCondicionesMedicas()
     const data = result.success && result.data ? result.data : []

@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 // Verificar si hay un pago reciente aprobado para el usuario
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
     try {
         const cookieStore = await cookies()
         const token = cookieStore.get('token')?.value

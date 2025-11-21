@@ -3,13 +3,17 @@ import GroupsChat from '../Chat'
 import { ActiveView } from '../Client'
 import GroupMap from '../Map'
 import Switch from '../Switch'
+
 import GroupVoting from '../Voting'
 import { Restaurant } from '@/types'
+
+import { GroupMember } from '@/types'
+
 
 interface Props {
     activeView: ActiveView
     groupId: string
-    members: unknown[]
+    members: (GroupMember & { checked: boolean })[]
     admin: string
     isAdmin?: boolean
     onClick: (view: ActiveView) => void

@@ -20,6 +20,7 @@ import ReviewList from '../Reviews'
 import { ROUTES } from '@/routes'
 import RestaurantMap from '../Map'
 import { MapProvider } from '@/components/Map/MapProvider'
+import { useEffect, useState, useRef } from 'react'
 
 interface Props {
     restaurant: Restaurant
@@ -34,6 +35,49 @@ export default function RestaurantView({
     isFavourite,
     onFavourite,
 }: Props) {
+    const [activeSection, setActiveSection] = useState<string>('descripcion')
+    const sectionsRef = useRef<{ [key: string]: HTMLElement | null }>({})
+
+    useEffect(() => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -60% 0px',
+            threshold: 0,
+        }
+
+        const observerCallback = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id || 'descripcion'
+                    setActiveSection(id)
+                }
+            })
+        }
+
+        const observer = new IntersectionObserver(
+            observerCallback,
+            observerOptions
+        )
+
+        // Observar todas las secciones
+        const sections = ['descripcion', 'horarios', 'ubicacion', 'opiniones']
+        sections.forEach(sectionId => {
+            const element = document.getElementById(sectionId)
+            if (element) {
+                sectionsRef.current[sectionId] = element
+                observer.observe(element)
+            }
+        })
+
+        return () => {
+            Object.values(sectionsRef.current).forEach(element => {
+                if (element) {
+                    observer.unobserve(element)
+                }
+            })
+        }
+    }, [])
+
     const days = [
         { day: 'Domingo', hours: 'De 12:00 a 01:00' },
         { day: 'Lunes', hours: 'De 12:00 a 01:00' },
@@ -184,38 +228,89 @@ export default function RestaurantView({
             </section>
             <nav className={styles.navbar}>
                 <ul className={styles.navbar__ul}>
-                    <li className={styles.navbar__li}>
-                        <Link className={styles.navbar__link} href={`#`}>
+                    <li
+                        className={`${styles.navbar__li} ${
+                            activeSection === 'descripcion'
+                                ? styles.navbar__li_active
+                                : ''
+                        }`}
+                    >
+                        <Link
+                            className={styles.navbar__link}
+                            href={`#descripcion`}
+                            onClick={e => {
+                                e.preventDefault()
+                                document
+                                    .getElementById('descripcion')
+                                    ?.scrollIntoView({ behavior: 'smooth' })
+                            }}
+                        >
                             Descripcion General
                         </Link>
                     </li>
-                    <li className={styles.navbar__li}>
+                    <li
+                        className={`${styles.navbar__li} ${
+                            activeSection === 'horarios'
+                                ? styles.navbar__li_active
+                                : ''
+                        }`}
+                    >
                         <Link
                             className={styles.navbar__link}
                             href={`#horarios`}
+                            onClick={e => {
+                                e.preventDefault()
+                                document
+                                    .getElementById('horarios')
+                                    ?.scrollIntoView({ behavior: 'smooth' })
+                            }}
                         >
                             Horarios
                         </Link>
                     </li>
-                    <li className={styles.navbar__li}>
+                    <li
+                        className={`${styles.navbar__li} ${
+                            activeSection === 'ubicacion'
+                                ? styles.navbar__li_active
+                                : ''
+                        }`}
+                    >
                         <Link
                             className={styles.navbar__link}
                             href={`#ubicacion`}
+                            onClick={e => {
+                                e.preventDefault()
+                                document
+                                    .getElementById('ubicacion')
+                                    ?.scrollIntoView({ behavior: 'smooth' })
+                            }}
                         >
                             Ubicación
                         </Link>
                     </li>
-                    <li className={styles.navbar__li}>
+                    <li
+                        className={`${styles.navbar__li} ${
+                            activeSection === 'opiniones'
+                                ? styles.navbar__li_active
+                                : ''
+                        }`}
+                    >
                         <Link
                             className={styles.navbar__link}
                             href={`#opiniones`}
+                            onClick={e => {
+                                e.preventDefault()
+                                document
+                                    .getElementById('opiniones')
+                                    ?.scrollIntoView({ behavior: 'smooth' })
+                            }}
                         >
                             Opiniones
                         </Link>
                     </li>
                 </ul>
             </nav>
-            <section className={styles.info}>
+            <section className={styles.info} id="descripcion">
                 <div className={styles.data}>
                     <h3 className={styles.data__title}>
                         Un vistazo al restuarante

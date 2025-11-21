@@ -12,7 +12,7 @@ export default function StepFour() {
     const params = useParams()
     const username = params.username as string
 
-    const { data, setData, mode, basePath } = useRegister()
+    const { data, mode, basePath } = useRegister()
 
     const [loading, setLoading] = useState(true)
     const [displayData, setDisplayData] = useState<{

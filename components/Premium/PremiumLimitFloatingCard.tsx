@@ -17,7 +17,7 @@ interface PremiumLimitFloatingCardProps {
 export default function PremiumLimitFloatingCard({
     isOpen,
     onClose,
-    onUpgrade,
+    onUpgrade: _onUpgrade,
     limitInfo
 }: PremiumLimitFloatingCardProps) {
     const { user } = useAuth()
