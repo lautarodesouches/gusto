@@ -140,6 +140,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                             className={styles.social__icon}
                         />
                     </Link>
+                </div>
                 <div 
                     className={styles.social__div}
                     onClick={() => setIsEditing(!isEditing)}

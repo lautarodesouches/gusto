@@ -150,10 +150,10 @@ export default function GroupSettings({ group, isAdmin, userId }: Props) {
                     {group.miembros.map((member) => (
                         <div key={member.id} className={styles.memberCard}>
                             <div className={styles.memberInfo}>
-                                {member.usuarioFoto ? (
+                                {member.fotoPerfilUrl ? (
                                     /* eslint-disable-next-line @next/next/no-img-element */
                                     <img
-                                        src={member.usuarioFoto}
+                                        src={member.fotoPerfilUrl}
                                         alt={member.usuarioNombre}
                                         className={styles.memberAvatar}
                                         width={48}

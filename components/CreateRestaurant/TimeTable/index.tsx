@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
@@ -24,7 +24,11 @@ const days = [
     { key: 'domingo', label: 'Domingo' },
 ]
 
-export default function TimeTable() {
+type TimeTableProps = {
+    onScheduleChange?: (schedule: ScheduleState) => void
+}
+
+export default function TimeTable({ onScheduleChange }: TimeTableProps) {
     const [schedule, setSchedule] = useState<ScheduleState>(
         Object.fromEntries(
             days.map(d => [
@@ -33,6 +37,11 @@ export default function TimeTable() {
             ])
         )
     )
+
+    // Notificar cambios al padre
+    useEffect(() => {
+        onScheduleChange?.(schedule)
+    }, [schedule, onScheduleChange])
 
     const handleTimeChange = (
         day: string,

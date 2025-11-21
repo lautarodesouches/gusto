@@ -112,7 +112,7 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
         if (!votacionActiva && !resultados) return
 
         // El backend puede devolver 'id' o 'votacionId' dependiendo del endpoint
-        const votacionId = votacionActiva?.id || (votacionActiva as any)?.votacionId || resultados?.votacionId
+        const votacionId = votacionActiva?.id || (votacionActiva as { votacionId?: string })?.votacionId || resultados?.votacionId
         if (!votacionId) {
             console.error('[GroupVoting] No votacion ID available')
             return
@@ -141,7 +141,7 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
     // Cerrar votación
     const handleCerrarVotacion = async (restauranteGanadorId?: string) => {
         // El backend puede devolver 'id' o 'votacionId' dependiendo del endpoint
-        const votacionId = votacionActiva?.id || (votacionActiva as any)?.votacionId || resultados?.votacionId
+        const votacionId = votacionActiva?.id || (votacionActiva as { votacionId?: string })?.votacionId || resultados?.votacionId
         if (!votacionId) {
             console.error('[GroupVoting] No votacion ID available for close')
             return
@@ -214,7 +214,7 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
                         resultado={resultados}
                         onCerrarVotacion={handleCerrarVotacion}
                         onActualizarResultados={() => {
-                            const votacionId = votacionActiva?.id || (votacionActiva as any)?.votacionId || resultados?.votacionId
+                            const votacionId = votacionActiva?.id || (votacionActiva as { votacionId?: string })?.votacionId || resultados?.votacionId
                             if (votacionId) {
                                 fetchResultados(votacionId)
                             }
