@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-regular-svg-icons'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -10,6 +10,7 @@ type ImageUploadProps = {
     multiple?: boolean
     maxImages?: number
     sublabel?: string
+    onFilesChange?: (files: File[]) => void
 }
 
 export default function ImageUpload({
@@ -17,31 +18,44 @@ export default function ImageUpload({
     multiple = false,
     maxImages = 1,
     sublabel,
+    onFilesChange,
 }: ImageUploadProps) {
     const [images, setImages] = useState<string[]>([])
+    const [files, setFiles] = useState<File[]>([])
     const [isDragging, setIsDragging] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const handleFileSelect = (files: FileList | null) => {
-        if (!files) return
+    // Notificar cambios de archivos al padre
+    useEffect(() => {
+        onFilesChange?.(files)
+    }, [files, onFilesChange])
+
+    const handleFileSelect = (fileList: FileList | null) => {
+        if (!fileList) return
 
         const remainingSlots = maxImages - images.length
         if (remainingSlots <= 0) return
 
-        const newImages: string[] = []
         const filesToProcess = multiple
-            ? Array.from(files).slice(0, remainingSlots)
-            : [files[0]]
+            ? Array.from(fileList).slice(0, remainingSlots)
+            : [fileList[0]]
+
+        const validFiles: File[] = []
+        const newImages: string[] = []
 
         filesToProcess.forEach(file => {
             if (file.type.startsWith('image/')) {
+                validFiles.push(file)
                 const reader = new FileReader()
                 reader.onload = e => {
                     if (e.target?.result) {
                         newImages.push(e.target.result as string)
-                        if (newImages.length === filesToProcess.length) {
+                        if (newImages.length === validFiles.length) {
                             setImages(prev =>
                                 multiple ? [...prev, ...newImages] : newImages
+                            )
+                            setFiles(prev =>
+                                multiple ? [...prev, ...validFiles] : validFiles
                             )
                         }
                     }
@@ -54,6 +68,7 @@ export default function ImageUpload({
     const handleRemoveImage = (index: number, e: React.MouseEvent) => {
         e.stopPropagation()
         setImages(prev => prev.filter((_, idx) => idx !== index))
+        setFiles(prev => prev.filter((_, idx) => idx !== index))
     }
 
     const handleClick = () => {

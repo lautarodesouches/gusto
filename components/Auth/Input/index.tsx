@@ -15,6 +15,7 @@ type InputFieldProps = {
     icon?: IconDefinition
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     isPassword?: boolean
+    required?: boolean
 }
 
 export default function InputField({
@@ -26,6 +27,7 @@ export default function InputField({
     icon,
     onChange,
     isPassword = false,
+    required = false,
 }: InputFieldProps) {
     const [showPassword, setShowPassword] = useState(false)
 
@@ -51,6 +53,7 @@ export default function InputField({
                     className={styles.form__input}
                     value={value}
                     onChange={onChange}
+                    required={required}
                 />
                 {isPassword && (
                     <FontAwesomeIcon

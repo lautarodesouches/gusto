@@ -255,3 +255,129 @@ export interface SolicitudAmistadResponse {
     fechaRespuesta?: string
     mensaje?: string
 }
+
+export interface SolicitudRestaurante {
+    id: string
+    nombreRestaurante: string
+    direccion: string
+    usuarioNombre: string
+    usuarioEmail: string
+    imgLogo?: string
+    fechaCreacionUtc: string
+    status?: SolicitudStatus
+}
+
+export type SolicitudStatus = 'Todos' | 'Pendiente' | 'Aceptado' | 'Rechazado'
+
+// Tipos para respuestas del backend (PascalCase)
+export interface SolicitudRestauranteBackend {
+    Id?: string
+    id?: string
+    NombreRestaurante?: string
+    nombreRestaurante?: string
+    Direccion?: string
+    direccion?: string
+    UsuarioNombre?: string
+    usuarioNombre?: string
+    UsuarioEmail?: string
+    usuarioEmail?: string
+    imgLogo?: string
+    FechaCreacionUtc?: string
+    fechaCreacionUtc?: string
+}
+
+export interface ItemSimpleBackend {
+    Id?: string | number
+    id?: string | number
+    Nombre?: string
+    nombre?: string
+}
+
+export interface DatosSolicitudRestauranteBackend {
+    Gustos?: ItemSimpleBackend[]
+    gustos?: ItemSimpleBackend[]
+    Restricciones?: ItemSimpleBackend[]
+    restricciones?: ItemSimpleBackend[]
+}
+
+export interface HorarioSimpleDto {
+    Dia: string
+    dia?: string
+    Cerrado: boolean
+    cerrado?: boolean
+    Desde?: string | null
+    desde?: string | null
+    Hasta?: string | null
+    hasta?: string | null
+}
+
+export interface SolicitudRestauranteDetalleBackend {
+    Id?: string
+    id?: string
+    UsuarioId?: string
+    usuarioId?: string
+    UsuarioNombre?: string
+    usuarioNombre?: string
+    UsuarioEmail?: string
+    usuarioEmail?: string
+    NombreRestaurante?: string
+    nombreRestaurante?: string
+    Direccion?: string
+    direccion?: string
+    Latitud?: number | null
+    latitud?: number | null
+    Longitud?: number | null
+    longitud?: number | null
+    PrimaryType?: string
+    primaryType?: string
+    Types?: string[]
+    types?: string[]
+    HorariosJson?: string | null
+    horariosJson?: string | null
+    Gustos?: ItemSimpleBackend[]
+    gustos?: ItemSimpleBackend[]
+    Restricciones?: ItemSimpleBackend[]
+    restricciones?: ItemSimpleBackend[]
+    ImagenesDestacadas?: string
+    imagenesDestacadas?: string
+    ImagenesInterior?: string[]
+    imagenesInterior?: string[]
+    ImagenesComida?: string[]
+    imagenesComida?: string[]
+    ImagenMenu?: string | null
+    imagenMenu?: string | null
+    Logo?: string | null
+    logo?: string | null
+    FechaCreacionUtc?: string
+    fechaCreacionUtc?: string
+    Horarios?: HorarioSimpleDto[]
+    horarios?: HorarioSimpleDto[]
+}
+
+export interface SolicitudRestauranteDetalle {
+    id: string
+    usuarioId: string
+    usuarioNombre: string
+    usuarioEmail: string
+    nombreRestaurante: string
+    direccion: string
+    latitud?: number | null
+    longitud?: number | null
+    primaryType: string
+    types: string[]
+    horariosJson?: string | null
+    gustos: Array<{ id: string; nombre: string }>
+    restricciones: Array<{ id: string; nombre: string }>
+    imagenesDestacadas: string
+    imagenesInterior: string[]
+    imagenesComida: string[]
+    imagenMenu?: string | null
+    logo?: string | null
+    fechaCreacionUtc: string
+    horarios: Array<{
+        dia: string
+        cerrado: boolean
+        desde?: string | null
+        hasta?: string | null
+    }>
+}

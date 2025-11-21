@@ -9,4 +9,5 @@ export const ROUTES = {
     GROUPS: '/grupos/',
     RESTAURANT: '/restaurante/',
     RESTAURANT__ADD: '/restaurante/agregar',
+    ADMIN: '/admin',
 }
