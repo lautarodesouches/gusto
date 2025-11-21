@@ -11,12 +11,24 @@ export default function Switch({ activeView, onClick, hideOnMobileHome = false }
     // En mobile, ocultar cuando está en home si hideOnMobileHome es true
     const shouldHide = hideOnMobileHome && activeView === 'home'
     
+    // Calcular posición del slider
+    const getSliderPosition = () => {
+        switch (activeView) {
+            case 'chat':
+                return styles['switch__slider--left']
+            case 'map':
+                return styles['switch__slider--center']
+            case 'vote':
+                return styles['switch__slider--right']
+            default:
+                return ''
+        }
+    }
+    
     return (
         <nav className={`${styles.switch} ${shouldHide ? styles['switch--hidden-mobile'] : ''}`}>
             <div
-                className={`${styles.switch__slider} ${
-                    activeView === 'map' ? styles['switch__slider--right'] : ''
-                }`}
+                className={`${styles.switch__slider} ${getSliderPosition()}`}
             ></div>
             <button
                 className={styles.switch__button}
@@ -29,6 +41,12 @@ export default function Switch({ activeView, onClick, hideOnMobileHome = false }
                 onClick={() => onClick('map')}
             >
                 MAPA
+            </button>
+            <button
+                className={styles.switch__button}
+                onClick={() => onClick('vote')}
+            >
+                VOTAR
             </button>
         </nav>
     )

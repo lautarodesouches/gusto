@@ -13,7 +13,7 @@
     position: absolute;
     top: 5px;
     left: 5px;
-    width: calc(50% - 5px);
+    width: calc(33.333% - 7px);
     height: calc(100% - 10px);
     background: var(--primary);
     border-radius: 5px;
@@ -21,8 +21,16 @@
     z-index: 0;
 }
 
-.switch__slider--right {
+.switch__slider--left {
+    transform: translateX(0);
+}
+
+.switch__slider--center {
     transform: translateX(100%);
+}
+
+.switch__slider--right {
+    transform: translateX(200%);
 }
 
 .switch__button {
@@ -48,7 +56,7 @@
 
 @media (min-width: 768px) {
     .switch {
-        max-width: 200px;
+        max-width: 300px;
         position: absolute;
         top: 20px;
         left: 20px;

@@ -8,6 +8,7 @@ import PaymentVerification from '@/components/PaymentVerification'
 import RegistrationCheck from '@/components/RegistrationCheck'
 
 import { ToastProvider } from '@/context/ToastContext'
+import { SignalRProvider } from '@/context/SignalRContext'
 
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -54,9 +55,11 @@ export default function RootLayout({
             >
                 <ToastProvider>
                     <AuthProvider>
-                        <PaymentVerification />
-                        <RegistrationCheck />
-                        {children}
+                        <SignalRProvider>
+                            <PaymentVerification />
+                            <RegistrationCheck />
+                            {children}
+                        </SignalRProvider>
                     </AuthProvider>
                 </ToastProvider>
             </body>

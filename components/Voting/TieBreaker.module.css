@@ -1,0 +1,184 @@
+.container {
+    text-align: center;
+    padding: 2rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.ruleta {
+    background: linear-gradient(135deg, #FFF5F5 0%, #FFE5E5 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.15);
+    border: 2px solid rgba(255, 107, 107, 0.2);
+}
+
+.ruletaInner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.opcion {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+    opacity: 0.4;
+    transform: scale(0.95);
+    border: 2px solid transparent;
+}
+
+.opcion.activo {
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(255, 107, 107, 0.3);
+    border: 3px solid #FF6B6B;
+    background: linear-gradient(to right, #FFF5F5, white);
+}
+
+.opcion.ganador {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    color: white;
+    transform: scale(1.1);
+    animation: pulse 0.6s ease-in-out infinite;
+    box-shadow: 0 15px 35px rgba(255, 107, 107, 0.5);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.1);
+        box-shadow: 0 15px 35px rgba(255, 107, 107, 0.5);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 20px 40px rgba(255, 107, 107, 0.6);
+    }
+}
+
+.emoji {
+    font-size: 3rem;
+    flex-shrink: 0;
+    transition: transform 0.3s;
+}
+
+.opcion.activo .emoji {
+    transform: rotate(360deg) scale(1.2);
+}
+
+.opcion.ganador .emoji {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.nombre {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: left;
+    flex: 1;
+    color: #333;
+}
+
+.opcion.ganador .nombre {
+    color: white;
+}
+
+.direccion {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: left;
+}
+
+.opcion.ganador .direccion {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.btnGirar {
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    color: white;
+    border: none;
+    padding: 1.5rem 4rem;
+    border-radius: 50px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btnGirar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.5);
+}
+
+.mensaje {
+    font-size: 1.2rem;
+    color: #667eea;
+    font-weight: 600;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.resultado {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    animation: slideIn 0.5s;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resultado h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.resultado p {
+    font-size: 1.3rem;
+    font-weight: 600;
+}

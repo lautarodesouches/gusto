@@ -26,58 +26,74 @@ export function formatPhoneAR(phone: string): string {
     return phone
 }
 
-export function formatChatDate(dateString: string): string {
+export function formatChatDate(dateString: string): { date: string; time: string } {
     const date = new Date(dateString)
     const now = new Date()
 
-    const diffTime = now.getTime() - date.getTime()
+    const argDate = new Date(date.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' }))
+    const argNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' }))
+
+    const diffTime = argNow.getTime() - argDate.getTime()
     const diffDays = diffTime / (1000 * 60 * 60 * 24)
 
     const sameDay =
-        date.getDate() === now.getDate() &&
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
+        argDate.getDate() === argNow.getDate() &&
+        argDate.getMonth() === argNow.getMonth() &&
+        argDate.getFullYear() === argNow.getFullYear()
 
     const yesterday =
-        date.getDate() === now.getDate() - 1 &&
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
+        argDate.getDate() === argNow.getDate() - 1 &&
+        argDate.getMonth() === argNow.getMonth() &&
+        argDate.getFullYear() === argNow.getFullYear()
+
+    const time = new Intl.DateTimeFormat('es-AR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'America/Argentina/Buenos_Aires',
+    }).format(date)
 
     if (sameDay) {
-        // Ej: "10:09 p. m."
-        return new Intl.DateTimeFormat('es-AR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-        }).format(date)
+        return { date: 'Hoy', time }
     }
 
-    if (yesterday) return 'ayer'
+    if (yesterday) {
+        return { date: 'Ayer', time }
+    }
 
     if (diffDays < 7) {
-        // Ej: "domingo"
-        return new Intl.DateTimeFormat('es-AR', { weekday: 'long' }).format(
-            date
-        )
+        const weekday = new Intl.DateTimeFormat('es-AR', { 
+            weekday: 'long',
+            timeZone: 'America/Argentina/Buenos_Aires',
+        }).format(date)
+        return { 
+            date: weekday.charAt(0).toUpperCase() + weekday.slice(1), 
+            time 
+        }
     }
 
-    if (date.getFullYear() === now.getFullYear()) {
+    if (argDate.getFullYear() === argNow.getFullYear()) {
         // Ej: "3 nov."
-        return new Intl.DateTimeFormat('es-AR', {
-            day: 'numeric',
-            month: 'short',
-        }).format(date)
+        return { 
+            date: new Intl.DateTimeFormat('es-AR', {
+                day: 'numeric',
+                month: 'short',
+                timeZone: 'America/Argentina/Buenos_Aires',
+            }).format(date),
+            time
+        }
     }
 
     // Ej: "3 nov. 2024"
-    return new Intl.DateTimeFormat('es-AR', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-    }).format(date)
-
-
-
+    return { 
+        date: new Intl.DateTimeFormat('es-AR', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            timeZone: 'America/Argentina/Buenos_Aires',
+        }).format(date),
+        time
+    }
 }
 
 export function pasoToNumber(paso: string) {
