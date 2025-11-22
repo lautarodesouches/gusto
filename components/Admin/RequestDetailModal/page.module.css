@@ -231,3 +231,13 @@
     text-align: center;
 }
 
+.link {
+    color: var(--primary, #d32f2f);
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+

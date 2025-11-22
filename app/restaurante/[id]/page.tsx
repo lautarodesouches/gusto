@@ -15,7 +15,12 @@ export default async function Restaurant({ params }: Props) {
     if (!result.success || !result.data) notFound()
 
     const restaurant = result.data
-    const reviews = Array.isArray(restaurant.reviews) ? restaurant.reviews : []
+    // Combinar reviews locales y de Google, o usar reviews antiguas como fallback
+    const reviews = [
+        ...(restaurant.reviewsLocales || []),
+        ...(restaurant.reviewsGoogle || []),
+        ...(restaurant.reviews && (!restaurant.reviewsLocales || restaurant.reviewsLocales.length === 0) && (!restaurant.reviewsGoogle || restaurant.reviewsGoogle.length === 0) ? restaurant.reviews : [])
+    ]
 
     return (
         <>

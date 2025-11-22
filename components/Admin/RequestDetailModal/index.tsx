@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes, faMapMarkerAlt, faClock, faUtensils, faBan, faImages, faFileImage } from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faMapMarkerAlt, faClock, faUtensils, faBan, faImages, faFileImage, faGlobe } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import type { SolicitudRestauranteDetalle } from '@/types'
 import Loading from '@/components/Loading'
@@ -138,6 +138,20 @@ export default function RequestDetailModal({
                                     {(detalle.latitud && detalle.longitud) && (
                                         <p>
                                             <strong>Coordenadas:</strong> {detalle.latitud.toFixed(6)}, {detalle.longitud.toFixed(6)}
+                                        </p>
+                                    )}
+                                    {detalle.websiteUrl && (
+                                        <p>
+                                            <FontAwesomeIcon icon={faGlobe} className={styles.icon} />
+                                            <strong>Sitio Web:</strong>{' '}
+                                            <a 
+                                                href={detalle.websiteUrl} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className={styles.link}
+                                            >
+                                                {detalle.websiteUrl}
+                                            </a>
                                         </p>
                                     )}
                                     {detalle.primaryType && (

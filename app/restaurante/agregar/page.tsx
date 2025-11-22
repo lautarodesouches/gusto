@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import styles from './page.module.css'
 import { AuthInput } from '@/components'
 import {
@@ -11,8 +11,6 @@ import {
     SuccessModal,
     ErrorAlert,
 } from '@/components/CreateRestaurant'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
 import { useRouter } from 'next/navigation'
@@ -60,47 +58,29 @@ export default function RestaurantRegister() {
     const [imagenDestacada, setImagenDestacada] = useState<File[]>([])
     const [imagenesInterior, setImagenesInterior] = useState<File[]>([])
     const [imagenesComidas, setImagenesComidas] = useState<File[]>([])
-    const [imagenMenu, setImagenMenu] = useState<File[]>([]) // Aunque el backend espera uno, mantenemos array para consistencia
+    const [imagenMenu, setImagenMenu] = useState<File[]>([])
     const [logo, setLogo] = useState<File[]>([])
 
-    /**
-     * Cargar gustos y restricciones del backend
-     * 
-     * Endpoint: GET /api/Restaurante/registro/datos
-     * Retorna: { gustos: [{ id, nombre }], restricciones: [{ id, nombre }] }
-     */
     useEffect(() => {
         const loadData = async () => {
             try {
                 const response = await fetch('/api/restaurante/datos')
                 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}))
-                    console.error('Error al cargar datos de registro:', errorData)
                     return
                 }
                 
                 const data = await response.json()
                 
-                console.log('Datos recibidos del API:', data)
-                console.log('Gustos:', data.gustos?.length || 0)
-                console.log('Restricciones:', data.restricciones?.length || 0)
-                
                 if (data.gustos && Array.isArray(data.gustos)) {
                     setGustos(data.gustos)
-                    console.log('Gustos establecidos:', data.gustos.length)
-                } else {
-                    console.warn('Gustos no es un array válido:', data.gustos)
                 }
                 
                 if (data.restricciones && Array.isArray(data.restricciones)) {
                     setRestricciones(data.restricciones)
-                    console.log('Restricciones establecidas:', data.restricciones.length)
-                } else {
-                    console.warn('Restricciones no es un array válido:', data.restricciones)
                 }
             } catch (error) {
-                console.error('Error al cargar datos:', error)
+                // Error silencioso
             }
         }
         
@@ -117,10 +97,28 @@ export default function RestaurantRegister() {
     }
 
     const handleLocationSelect = useCallback((lat: number, lng: number, address: string) => {
+        const latNum = Number(lat)
+        const lngNum = Number(lng)
+        
+        if (isNaN(latNum) || isNaN(lngNum)) {
+            return
+        }
+        
+        if (latNum < -90 || latNum > 90) {
+            return
+        }
+        
+        if (lngNum < -180 || lngNum > 180) {
+            return
+        }
+        
+        const latRounded = Math.round(latNum * 10000000) / 10000000
+        const lngRounded = Math.round(lngNum * 10000000) / 10000000
+        
         setFormData(prev => ({
             ...prev,
-            lat,
-            lng,
+            lat: latRounded,
+            lng: lngRounded,
             direccion: address || prev.direccion,
         }))
     }, [])
@@ -131,7 +129,6 @@ export default function RestaurantRegister() {
         setError('')
 
         try {
-            // Validaciones básicas
             if (!formData.nombre.trim()) {
                 setError('El nombre del restaurante es requerido')
                 setIsLoading(false)
@@ -144,23 +141,35 @@ export default function RestaurantRegister() {
                 return
             }
 
-            // Construir FormData
             const formDataToSend = new FormData()
             
-            // Campos básicos
             formDataToSend.append('nombre', formData.nombre.trim())
             formDataToSend.append('direccion', formData.direccion.trim())
             
-            if (formData.lat !== undefined) {
-                formDataToSend.append('lat', formData.lat.toString())
+            if (formData.website && formData.website.trim()) {
+                formDataToSend.append('WebsiteUrl', formData.website.trim())
             }
-            if (formData.lng !== undefined) {
-                formDataToSend.append('lng', formData.lng.toString())
+            
+            if (formData.lat !== undefined && formData.lat !== null) {
+                const latNum = Number(formData.lat)
+                
+                if (!isNaN(latNum) && latNum >= -90 && latNum <= 90) {
+                    let latFormatted = latNum.toFixed(7)
+                    latFormatted = latFormatted.replace(',', '.')
+                    formDataToSend.append('lat', latFormatted)
+                }
+            }
+            
+            if (formData.lng !== undefined && formData.lng !== null) {
+                const lngNum = Number(formData.lng)
+                
+                if (!isNaN(lngNum) && lngNum >= -180 && lngNum <= 180) {
+                    let lngFormatted = lngNum.toFixed(7)
+                    lngFormatted = lngFormatted.replace(',', '.')
+                    formDataToSend.append('lng', lngFormatted)
+                }
             }
 
-            // Horarios - convertir schedule a formato JSON
-            // Formato: [{ dia: "Lunes", cerrado: false, desde: "12:00", hasta: "22:00" }, ...]
-            // Si cerrado: true, no se incluyen desde/hasta
             const horariosArray = Object.entries(schedule).map(([key, value]) => {
                 const dayMap: Record<string, string> = {
                     lunes: 'Lunes',
@@ -180,10 +189,8 @@ export default function RestaurantRegister() {
             })
             
             const horariosJson = JSON.stringify(horariosArray)
-            console.log('Horarios a enviar:', horariosJson)
             formDataToSend.append('horarios', horariosJson)
 
-            // Mapear nombres de gustos a IDs
             const gustosIds = formData.tastes
                 .map(nombre => {
                     const gusto = gustos.find(g => 
@@ -197,7 +204,6 @@ export default function RestaurantRegister() {
                 formDataToSend.append('gustosQueSirveIds', id.toString())
             })
 
-            // Mapear nombres de restricciones a IDs
             const restriccionesIds = formData.restrictions
                 .map(nombre => {
                     const restriccion = restricciones.find(r => 
@@ -211,7 +217,6 @@ export default function RestaurantRegister() {
                 formDataToSend.append('restriccionesQueRespetaIds', id.toString())
             })
 
-            // Archivos
             if (imagenDestacada.length > 0) {
                 formDataToSend.append('imagenDestacada', imagenDestacada[0])
             }
@@ -232,25 +237,32 @@ export default function RestaurantRegister() {
                 formDataToSend.append('logo', logo[0])
             }
 
-            // Enviar al backend
             const response = await fetch('/api/restaurante/agregar', {
                 method: 'POST',
                 body: formDataToSend,
             })
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}))
-                const errorMessage = errorData.error || errorData.message || 'Error al crear la solicitud de restaurante'
+                let errorMessage = 'Error al crear la solicitud de restaurante'
+                
+                try {
+                    const errorData = await response.json()
+                    errorMessage = errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`
+                    console.error('❌ Error del servidor:', errorData)
+                } catch (e) {
+                    const errorText = await response.text().catch(() => '')
+                    errorMessage = errorText || `Error ${response.status}: ${response.statusText}`
+                    console.error('❌ Error del servidor (texto):', errorMessage)
+                }
+                
                 setError(errorMessage)
                 setIsLoading(false)
                 return
             }
 
-            // Éxito - mostrar modal de éxito
             setIsLoading(false)
             setShowSuccess(true)
         } catch (err) {
-            console.error('Error al enviar formulario:', err)
             const errorMessage = err instanceof Error 
                 ? err.message 
                 : 'Error inesperado. Por favor intenta de nuevo.'
