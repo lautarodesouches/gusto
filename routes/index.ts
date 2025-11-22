@@ -7,6 +7,8 @@ export const ROUTES = {
     MAP: '/mapa/',
     PROFILE: '/perfil/',
     GROUPS: '/grupos/',
+    GROUP: '/group/',
     RESTAURANT: '/restaurante/',
     RESTAURANT__ADD: '/restaurante/agregar',
+    ADMIN: '/admin',
 }

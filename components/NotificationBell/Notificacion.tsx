@@ -1,33 +1,11 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faUser, faUsers } from '@fortawesome/free-solid-svg-icons'
 import styles from './NotificationBell.module.css'
-import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
-import { SolicitudAmistadResponse } from '@/types'
-
-interface Notificacion {
-    id: string
-    titulo: string
-    mensaje: string
-    tipo: string
-    leida: boolean
-    fechaCreacion: string
-}
-
-interface UnifiedNotification {
-    id: string
-    tipo: 'notificacion' | 'solicitud_amistad'
-    titulo: string
-    mensaje: string
-    leida: boolean
-    fechaCreacion: string
-    tipoNotificacion?: string // Para guardar el tipo original de la notificación (ej: 'InvitacionGrupo')
-    solicitudAmistad?: SolicitudAmistadResponse
-}
+import { useSignalR } from '@/context/SignalRContext'
 
 interface NotificationBellProps {
     showPanel?: boolean
@@ -35,173 +13,27 @@ interface NotificationBellProps {
 }
 
 export default function NotificationBell({ showPanel = false, isActive = false }: NotificationBellProps) {
-    const [notificacionesConnection, setNotificacionesConnection] = useState<HubConnection | null>(null)
-    const [solicitudesConnection, setSolicitudesConnection] = useState<HubConnection | null>(null)
-    const [notificaciones, setNotificaciones] = useState<UnifiedNotification[]>([])
     const [mounted, setMounted] = useState(false)
     const bellRef = useRef<HTMLDivElement | null>(null)
     const panelRef = useRef<HTMLDivElement | null>(null)
     const toast = useToast()
+    
+    // Usar el context global de SignalR en lugar de crear nuevas conexiones
+    const {
+        notificaciones,
+        aceptarInvitacion: aceptarInvitacionContext,
+        rechazarInvitacion: rechazarInvitacionContext,
+        aceptarSolicitudAmistad,
+        rechazarSolicitudAmistad,
+        marcarComoLeida,
+        isConnected
+    } = useSignalR()
 
-    // Conexión con el Hub de Notificaciones
-    useEffect(() => {
-        let conn: HubConnection | null = null
-
-        const connectNotificaciones = async () => {
-            try {
-                conn = new HubConnectionBuilder()
-                    .withUrl(`${API_URL}/notificacionesHub`, {
-                        withCredentials: true,
-                    })
-                    .withAutomaticReconnect()
-                    .build()
-
-                // Cargar notificaciones iniciales al conectar
-                conn.on('CargarNotificaciones', (data: Notificacion[]) => {
-                    setNotificaciones(prev => {
-                        const existingIds = new Set(prev.map(n => n.id))
-                        const newNotifs = data
-                            .filter(n => !existingIds.has(n.id))
-                            .map(n => ({
-                                id: n.id,
-                                tipo: 'notificacion' as const,
-                                titulo: n.titulo,
-                                mensaje: n.mensaje,
-                                leida: n.leida,
-                                fechaCreacion: n.fechaCreacion,
-                                tipoNotificacion: n.tipo,
-                            }))
-                        return [...newNotifs, ...prev.filter(n => n.tipo === 'solicitud_amistad')]
-                            .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
-                    })
-                })
-
-                // Nueva notificación recibida en tiempo real
-                conn.on('RecibirNotificacion', (notif: Notificacion) => {
-                    setNotificaciones(prev => {
-                        const exists = prev.some(n => n.id === notif.id)
-                        if (exists) return prev
-                        const newNotif: UnifiedNotification = {
-                            id: notif.id,
-                            tipo: 'notificacion',
-                            titulo: notif.titulo,
-                            mensaje: notif.mensaje,
-                            leida: notif.leida,
-                            fechaCreacion: notif.fechaCreacion,
-                            tipoNotificacion: notif.tipo,
-                        }
-                        return [newNotif, ...prev].sort((a, b) => 
-                            new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime()
-                        )
-                    })
-                })
-
-                // Eliminar notificación si el servidor lo indica
-                conn.on('NotificacionEliminada', (id: string) => {
-                    setNotificaciones(prev => prev.filter(n => n.id !== id))
-                })
-
-                await conn.start()
-                setNotificacionesConnection(conn)
-            } catch (err) {
-                console.error('❌ Error conectando con NotificacionesHub:', err)
-            }
-        }
-
-        connectNotificaciones()
-
-        return () => {
-            if (conn) {
-                conn.stop()
-            }
-        }
-    }, [])
-
-    // Conexión con el Hub de Solicitudes de Amistad
-    useEffect(() => {
-        let conn: HubConnection | null = null
-
-        const connectSolicitudes = async () => {
-            try {
-                conn = new HubConnectionBuilder()
-                    .withUrl(`${API_URL}/solicitudesAmistadHub`, {
-                        withCredentials: true,
-                    })
-                    .withAutomaticReconnect()
-                    .build()
-
-                // Cargar solicitudes pendientes al conectar
-                conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
-                    setNotificaciones(prev => {
-                        const existingIds = new Set(prev.map(n => n.id))
-                        const newSolicitudes = data
-                            .filter(s => !existingIds.has(s.id))
-                            .map(s => ({
-                                id: s.id,
-                                tipo: 'solicitud_amistad' as const,
-                                titulo: 'Solicitud de amistad',
-                                mensaje: `${s.remitente.nombre} quiere ser tu amigo.`,
-                                leida: false,
-                                fechaCreacion: s.fechaEnvio,
-                                solicitudAmistad: s,
-                            }))
-                        return [...newSolicitudes, ...prev.filter(n => n.tipo === 'notificacion')]
-                            .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
-                    })
-                })
-
-                // Nueva solicitud recibida en tiempo real
-                conn.on('RecibirSolicitudAmistad', (solicitud: SolicitudAmistadResponse) => {
-                    setNotificaciones(prev => {
-                        const exists = prev.some(n => n.id === solicitud.id)
-                        if (exists) return prev
-                        const newSolicitud: UnifiedNotification = {
-                            id: solicitud.id,
-                            tipo: 'solicitud_amistad',
-                            titulo: 'Solicitud de amistad',
-                            mensaje: `${solicitud.remitente.nombre} quiere ser tu amigo.`,
-                            leida: false,
-                            fechaCreacion: solicitud.fechaEnvio,
-                            solicitudAmistad: solicitud,
-                        }
-                        return [newSolicitud, ...prev].sort((a, b) => 
-                            new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime()
-                        )
-                    })
-                })
-
-                // Solicitud eliminada (aceptada/rechazada)
-                conn.on('SolicitudEliminada', (id: string) => {
-                    setNotificaciones(prev => prev.filter(n => n.id !== id))
-                })
-
-                await conn.start()
-                setSolicitudesConnection(conn)
-            } catch (err) {
-                console.error('❌ Error conectando con SolicitudesAmistadHub (NotificationBell):', err)
-            }
-        }
-
-        connectSolicitudes()
-
-        return () => {
-            if (conn) {
-                conn.stop()
-            }
-        }
-    }, [])
-
-    // Ya no necesitamos cerrar el panel aquí, lo maneja ProfileBar
-
-    // Acciones disponibles
+    // Acciones disponibles con manejo de errores
     const aceptarInvitacion = async (id: string) => {
         try {
-            await notificacionesConnection?.invoke('AceptarInvitacion', id)
+            await aceptarInvitacionContext(id)
             toast.success('Invitación al grupo aceptada')
-            setNotificaciones(prev => prev.filter(n => n.id !== id))
-            if (typeof window !== 'undefined') {
-                window.dispatchEvent(new CustomEvent('groups:refresh'))
-            }
         } catch {
             toast.error('No se pudo aceptar la invitación')
         }
@@ -209,9 +41,8 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
     const rechazarInvitacion = async (id: string) => {
         try {
-            await notificacionesConnection?.invoke('RechazarInvitacion', id)
+            await rechazarInvitacionContext(id)
             toast.info('Invitación al grupo rechazada')
-            setNotificaciones(prev => prev.filter(n => n.id !== id))
         } catch {
             toast.error('No se pudo rechazar la invitación')
         }
@@ -219,9 +50,8 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
     const aceptarSolicitud = async (solicitudId: string) => {
         try {
-            await solicitudesConnection?.invoke('AceptarSolicitud', solicitudId)
+            await aceptarSolicitudAmistad(solicitudId)
             toast.success('Solicitud de amistad aceptada')
-            setNotificaciones(prev => prev.filter(n => n.id !== solicitudId))
             
             // Refrescar lista de amigos
             if (typeof window !== 'undefined') {
@@ -234,18 +64,11 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
     const rechazarSolicitud = async (solicitudId: string) => {
         try {
-            await solicitudesConnection?.invoke('RechazarSolicitud', solicitudId)
+            await rechazarSolicitudAmistad(solicitudId)
             toast.info('Solicitud de amistad rechazada')
-            setNotificaciones(prev => prev.filter(n => n.id !== solicitudId))
         } catch {
             toast.error('No se pudo rechazar la solicitud')
         }
-    }
-
-    const marcarComoLeida = (id: string) => {
-        setNotificaciones(prev =>
-            prev.map(n => (n.id === id ? { ...n, leida: true } : n))
-        )
     }
 
     useEffect(() => {

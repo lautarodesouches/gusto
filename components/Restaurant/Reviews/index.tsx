@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Review } from '@/types'
 import Image from 'next/image'
@@ -7,9 +7,10 @@ import Image from 'next/image'
 interface ReviewCardProps {
   review: Review
   showImages?: boolean
+  isLocal?: boolean
 }
 
-function ReviewCard({ review, showImages = true }: ReviewCardProps) {
+function ReviewCard({ review, showImages = true, isLocal = false }: ReviewCardProps) {
   const getDisplayName = () =>
     review.autor || review.userName || 'Anónimo'
 
@@ -40,7 +41,6 @@ function ReviewCard({ review, showImages = true }: ReviewCardProps) {
 
   return (
     <article className={styles['review-card']}>
-      {/* Header */}
       <header className={styles['review-card__header']}>
         <div className={styles['review-card__user']}>
           <div className={styles['review-card__avatar']}>
@@ -56,9 +56,17 @@ function ReviewCard({ review, showImages = true }: ReviewCardProps) {
               <span>{getDisplayName().charAt(0).toUpperCase()}</span>
             )}
           </div>
-          <span className={styles['review-card__username']}>
-            {getDisplayName()}
-          </span>
+          <div className={styles['review-card__user-info']}>
+            <span className={styles['review-card__username']}>
+              {getDisplayName()}
+            </span>
+            {isLocal && (
+              <div className={styles['review-card__badge']}>
+                <FontAwesomeIcon icon={faCheckCircle} className={styles['review-card__badge-icon']} />
+                <span className={styles['review-card__badge-text']}>Gusto!</span>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className={styles['review-card__rating']}>
@@ -107,11 +115,13 @@ function ReviewCard({ review, showImages = true }: ReviewCardProps) {
 interface ReviewListProps {
   reviews: Review[]
   showImages?: boolean
+  isLocal?: boolean
 }
 
 export default function ReviewList({
   reviews,
   showImages = true,
+  isLocal = false,
 }: ReviewListProps) {
   if (!reviews || reviews.length === 0) {
     return (
@@ -124,7 +134,7 @@ export default function ReviewList({
   return (
     <div className={styles['review-list']}>
       {reviews.map((r) => (
-        <ReviewCard key={r.id} review={r} showImages={showImages} />
+        <ReviewCard key={r.id} review={r} showImages={showImages} isLocal={isLocal} />
       ))}
     </div>
   )

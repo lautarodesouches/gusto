@@ -59,7 +59,7 @@ async function fetchGroup({
 
         return result.data as Group
     } catch (error) {
-        console.error(`Error fetching group ${id}:`, error)
+        console.error(`[Page] Error fetching group ${id}:`, error)
         return {
             status: 500,
             message: 'Error al conectar con el servidor',

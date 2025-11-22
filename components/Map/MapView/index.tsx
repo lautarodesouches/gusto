@@ -118,6 +118,7 @@ export default function MapView({
                         >
                             <div className={styles.info}>
                                 <h3 className={styles.info__title}>{place.nombre}</h3>
+                                {place.rating !== undefined && (
                                 <div className={styles.info__rating}>
                                     <span className={styles.info__rating_number}>
                                         {place.rating.toFixed(1)}
@@ -130,11 +131,22 @@ export default function MapView({
                                         className={styles.info__icon}
                                     />
                                 </div>
-                                <Link href={`${ROUTES.RESTAURANT}${place.id}`}>
-                                    <button className={styles.info__button}>
-                                        Ver más
-                                    </button>
-                                </Link>
+                                )}
+                                <div className={styles.info__buttons}>
+                                    <Link href={`${ROUTES.RESTAURANT}${place.id}`}>
+                                        <button className={styles.info__button}>
+                                            Ver más
+                                        </button>
+                                    </Link>
+                                    <a
+                                        href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.direccion)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.info__directions}
+                                    >
+                                        📍 Cómo llegar
+                                    </a>
+                                </div>
                             </div>
                         </InfoWindow>
                     )}

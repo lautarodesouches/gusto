@@ -128,6 +128,19 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                 <div className={styles.social__div}>
                     <h2 className={styles.social__title}>{group.nombre}</h2>
                 </div>
+
+                <div className={styles.social__div}>
+                    <Link 
+                        href={`${ROUTES.GROUP}${group.id}/settings`}
+                        className={styles.social__settings}
+                        aria-label="Configuración del grupo"
+                    >
+                        <FontAwesomeIcon
+                            icon={faGear}
+                            className={styles.social__icon}
+                        />
+                    </Link>
+                </div>
                 <div 
                     className={styles.social__div}
                     onClick={() => setIsEditing(!isEditing)}

@@ -1,0 +1,370 @@
+.container {
+    padding: 2rem 0;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.backButton {
+    background: transparent;
+    color: #ffeecf;
+    border: 2px solid #5b5b5b;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.backButton:hover {
+    background: #3e3e3c;
+    border-color: #ff5050;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffeecf;
+    margin: 0;
+}
+
+.section {
+    background: #2d2d2b;
+    border: 2px solid #5b5b5b;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffeecf;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #5b5b5b;
+}
+
+.nameEditor {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.input {
+    flex: 1;
+    background: #3e3e3c;
+    color: #ffeecf;
+    border: 2px solid #5b5b5b;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #ff5050;
+    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.3);
+}
+
+.btnPrimary {
+    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    color: #ffeecf;
+    border: 2px solid rgba(255, 238, 207, 0.3);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.4);
+}
+
+.btnPrimary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8585 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.5);
+}
+
+.btnPrimary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.memberList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.memberCard {
+    background: #3e3e3c;
+    border: 2px solid #5b5b5b;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.memberCard:hover {
+    border-color: #969696;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.memberInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.memberAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid #ff5050;
+    object-fit: cover;
+}
+
+.memberAvatarPlaceholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    color: #ffeecf;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    border: 3px solid rgba(255, 238, 207, 0.3);
+}
+
+.memberDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.memberName {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #ffeecf;
+}
+
+.adminBadge {
+    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    color: #ffeecf;
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
+}
+
+.btnDanger {
+    background: transparent;
+    color: #ff5050;
+    border: 2px solid #ff5050;
+    padding: 0.6rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btnDanger:hover:not(:disabled) {
+    background: rgba(255, 80, 80, 0.1);
+    border-color: #ff6b6b;
+}
+
+.btnDanger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.dangerZone {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.dangerAction {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: rgba(255, 80, 80, 0.05);
+    border: 2px solid rgba(255, 80, 80, 0.3);
+    border-radius: 12px;
+    gap: 2rem;
+}
+
+.dangerTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff5050;
+    margin: 0 0 0.5rem 0;
+}
+
+.dangerDescription {
+    font-size: 0.9rem;
+    color: #969696;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.btnDangerOutline {
+    background: transparent;
+    color: #ff5050;
+    border: 2px solid #ff5050;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btnDangerOutline:hover:not(:disabled) {
+    background: rgba(255, 80, 80, 0.1);
+    border-color: #ff6b6b;
+}
+
+.btnDangerSolid {
+    background: linear-gradient(135deg, #ff5050 0%, #d32f2f 100%);
+    color: #ffeecf;
+    border: 2px solid rgba(255, 238, 207, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.4);
+}
+
+.btnDangerSolid:hover:not(:disabled) {
+    background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.5);
+}
+
+.btnDangerSolid:disabled,
+.btnDangerOutline:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modalContent {
+    background: #2d2d2b;
+    border: 2px solid #5b5b5b;
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.modalTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffeecf;
+    margin: 0 0 1rem 0;
+}
+
+.modalDescription {
+    font-size: 1rem;
+    color: #969696;
+    margin: 0 0 2rem 0;
+    line-height: 1.6;
+}
+
+.modalActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btnSecondary {
+    background: #3e3e3c;
+    color: #ffeecf;
+    border: 2px solid #5b5b5b;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btnSecondary:hover:not(:disabled) {
+    background: #5b5b5b;
+    border-color: #969696;
+}
+
+.btnSecondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem 0;
+    }
+
+    .section {
+        padding: 1.5rem;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .nameEditor {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dangerAction {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .modalActions {
+        flex-direction: column;
+    }
+
+    .btnDangerOutline,
+    .btnDangerSolid {
+        width: 100%;
+    }
+}
