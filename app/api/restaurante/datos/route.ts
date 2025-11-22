@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { API_URL } from '@/constants'
 import { cookies } from 'next/headers'
-import type { DatosSolicitudRestauranteBackend, ItemSimpleBackend } from '@/types'
+// Types imported but not used in this file - kept for future use
+// import type { DatosSolicitudRestauranteBackend, ItemSimpleBackend } from '@/types'
 
 export async function GET() {
     try {
@@ -45,21 +46,18 @@ export async function GET() {
 
         const rawData = await response.json()
         
-        // El backend devuelve en camelCase: { gustos: [{ id, nombre }], restricciones: [{ id, nombre }] }
-        // Intentar ambos formatos por si el backend serializa diferente
+     
         const gustosRaw = (rawData as { Gustos?: unknown[]; gustos?: unknown[] }).Gustos || 
                          (rawData as { Gustos?: unknown[]; gustos?: unknown[] }).gustos || 
                          []
         const restriccionesRaw = (rawData as { Restricciones?: unknown[]; restricciones?: unknown[] }).Restricciones || 
                                 (rawData as { Restricciones?: unknown[]; restricciones?: unknown[] }).restricciones || 
                                 []
-        
-        // Asegurarse de que sean arrays
+          // Asegurarse de que sean arrays
         const gustosArray = Array.isArray(gustosRaw) ? gustosRaw : []
         const restriccionesArray = Array.isArray(restriccionesRaw) ? restriccionesRaw : []
         
-        // Mapear la respuesta del backend al formato esperado
-        // El backend devuelve { id, nombre } en camelCase
+       
         const mappedData = {
             gustos: gustosArray.map((item) => {
                 const typedItem = item as { id?: string | number; Id?: string | number; nombre?: string; Nombre?: string }

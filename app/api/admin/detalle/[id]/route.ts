@@ -184,6 +184,7 @@ export async function GET(
             logo: (data.Logo ?? dataAny.logo) as string | null,
             fechaCreacionUtc: getStringValue('FechaCreacionUtc', 'fechaCreacionUtc'),
             horarios: horariosParsed,
+            websiteUrl: getStringValue('WebsiteUrl', 'websiteUrl') || null,
         }
 
         return NextResponse.json(mappedData, { status: 200 })

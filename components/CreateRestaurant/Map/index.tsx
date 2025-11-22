@@ -29,26 +29,23 @@ export default function RestaurantMap({
         libraries,
     })
 
-    // Centro por defecto (Buenos Aires)
     const defaultCenter = {
         lat: -34.603722,
         lng: -58.381592,
     }
 
-    // Guardar onLocationSelect en un ref para evitar recrear el listener
     const onLocationSelectRef = useRef(onLocationSelect)
     useEffect(() => {
         onLocationSelectRef.current = onLocationSelect
     }, [onLocationSelect])
 
-    // Inicializar autocomplete cuando el mapa esté cargado
     useEffect(() => {
         if (isLoaded && autocompleteRef.current && !autocompleteInstanceRef.current) {
             const autocomplete = new google.maps.places.Autocomplete(
                 autocompleteRef.current,
                 {
                     types: ['address'],
-                    componentRestrictions: { country: 'ar' }, // Restringir a Argentina
+                    componentRestrictions: { country: 'ar' },
                 }
             )
 
@@ -56,15 +53,29 @@ export default function RestaurantMap({
                 const place = autocomplete.getPlace()
                 
                 if (place.geometry?.location) {
-                    const lat = place.geometry.location.lat()
-                    const lng = place.geometry.location.lng()
+                    const latValue = typeof place.geometry.location.lat === 'function' 
+                        ? place.geometry.location.lat() 
+                        : place.geometry.location.lat
+                    const lngValue = typeof place.geometry.location.lng === 'function' 
+                        ? place.geometry.location.lng() 
+                        : place.geometry.location.lng
+                    
+                    const lat = parseFloat(latValue.toString())
+                    const lng = parseFloat(lngValue.toString())
+                    
+                    if (isNaN(lat) || isNaN(lng)) {
+                        return
+                    }
+                    
+                    const latRounded = Math.round(lat * 10000000) / 10000000
+                    const lngRounded = Math.round(lng * 10000000) / 10000000
+                    
                     const address = place.formatted_address || place.name || ''
                     
-                    setMarkerPosition({ lat, lng })
+                    setMarkerPosition({ lat: latRounded, lng: lngRounded })
                     setSelectedAddress(address)
-                    onLocationSelectRef.current(lat, lng, address)
+                    onLocationSelectRef.current(latRounded, lngRounded, address)
                     
-                    // Centrar el mapa en la ubicación seleccionada
                     if (map) {
                         map.setCenter({ lat, lng })
                         map.setZoom(17)
@@ -76,38 +87,43 @@ export default function RestaurantMap({
         }
     }, [isLoaded, map])
 
-    // Manejar clic en el mapa
     const handleMapClick = (e: google.maps.MapMouseEvent) => {
         if (e.latLng) {
-            const lat = e.latLng.lat()
-            const lng = e.latLng.lng()
+            const latValue = typeof e.latLng.lat === 'function' ? e.latLng.lat() : e.latLng.lat
+            const lngValue = typeof e.latLng.lng === 'function' ? e.latLng.lng() : e.latLng.lng
             
-            setMarkerPosition({ lat, lng })
+            const lat = parseFloat(latValue.toString())
+            const lng = parseFloat(lngValue.toString())
             
-            // Geocodificación inversa para obtener la dirección
+            if (isNaN(lat) || isNaN(lng)) {
+                return
+            }
+            
+            const latRounded = Math.round(lat * 10000000) / 10000000
+            const lngRounded = Math.round(lng * 10000000) / 10000000
+            
+            setMarkerPosition({ lat: latRounded, lng: lngRounded })
+            
             const geocoder = new google.maps.Geocoder()
-            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            geocoder.geocode({ location: { lat: latRounded, lng: lngRounded } }, (results, status) => {
                 if (status === 'OK' && results && results[0]) {
                     const address = results[0].formatted_address
                     setSelectedAddress(address)
-                    onLocationSelectRef.current(lat, lng, address)
+                    onLocationSelectRef.current(latRounded, lngRounded, address)
                 } else {
-                    onLocationSelectRef.current(lat, lng, '')
+                    onLocationSelectRef.current(latRounded, lngRounded, '')
                 }
             })
         }
     }
 
-    // Actualizar dirección cuando cambia desde el padre (solo si está vacío o diferente)
     useEffect(() => {
         if (address && address !== selectedAddress) {
             setSelectedAddress(address)
-            // Si hay un autocomplete, actualizar su valor
             if (autocompleteRef.current) {
                 autocompleteRef.current.value = address
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
     if (loadError) {
@@ -154,21 +170,31 @@ export default function RestaurantMap({
                             draggable={true}
                             onDragEnd={(e) => {
                                 if (e.latLng) {
-                                    const lat = e.latLng.lat()
-                                    const lng = e.latLng.lng()
-                                    setMarkerPosition({ lat, lng })
+                                    const latValue = typeof e.latLng.lat === 'function' ? e.latLng.lat() : e.latLng.lat
+                                    const lngValue = typeof e.latLng.lng === 'function' ? e.latLng.lng() : e.latLng.lng
                                     
-                                    // Geocodificación inversa
+                                    const lat = parseFloat(latValue.toString())
+                                    const lng = parseFloat(lngValue.toString())
+                                    
+                                    if (isNaN(lat) || isNaN(lng)) {
+                                        return
+                                    }
+                                    
+                                    const latRounded = Math.round(lat * 10000000) / 10000000
+                                    const lngRounded = Math.round(lng * 10000000) / 10000000
+                                    
+                                    setMarkerPosition({ lat: latRounded, lng: lngRounded })
+                                    
                                     const geocoder = new google.maps.Geocoder()
                                     geocoder.geocode(
-                                        { location: { lat, lng } },
+                                        { location: { lat: latRounded, lng: lngRounded } },
                                         (results, status) => {
                                             if (status === 'OK' && results && results[0]) {
                                                 const address = results[0].formatted_address
                                                 setSelectedAddress(address)
-                                                onLocationSelectRef.current(lat, lng, address)
+                                                onLocationSelectRef.current(latRounded, lngRounded, address)
                                             } else {
-                                                onLocationSelectRef.current(lat, lng, '')
+                                                onLocationSelectRef.current(latRounded, lngRounded, '')
                                             }
                                         }
                                     )

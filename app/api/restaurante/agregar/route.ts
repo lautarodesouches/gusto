@@ -27,12 +27,14 @@ export async function POST(req: NextRequest) {
         const lng = formData.get('lng')
         const primaryType = formData.get('primaryType') as string
         const horariosJson = formData.get('horarios') as string
+        const websiteUrl = formData.get('WebsiteUrl') as string
 
         if (nombre) backendFormData.append('Nombre', nombre)
         if (direccion) backendFormData.append('Direccion', direccion)
         if (lat) backendFormData.append('lat', lat.toString())
         if (lng) backendFormData.append('lng', lng.toString())
         if (primaryType) backendFormData.append('primaryType', primaryType)
+        if (websiteUrl) backendFormData.append('WebsiteUrl', websiteUrl)
         // El handler recibe horariosJson como string directamente
         // El DTO debería tener: public string? HorariosJson { get; set; }
         // O con [FromForm(Name = "horariosJson")] si el nombre es diferente
@@ -111,9 +113,30 @@ export async function POST(req: NextRequest) {
             const errorText = await response.text().catch(() => '')
             let errorMessage = 'Error al crear la solicitud de restaurante'
             
+            console.error('❌ Error del backend:', {
+                status: response.status,
+                statusText: response.statusText,
+                errorText: errorText
+            })
+            
             try {
                 const errorData = errorText ? JSON.parse(errorText) : {}
-                errorMessage = errorData.message || errorData.error || errorMessage
+                errorMessage = errorData.message || errorData.error || errorData.title || errorMessage
+                
+                // Si hay errores de validación, agregarlos al mensaje
+                if (errorData.errors) {
+                    const validationErrors = Object.entries(errorData.errors)
+                        .map(([key, value]: [string, unknown]) => {
+                            if (Array.isArray(value)) {
+                                return `${key}: ${value.join(', ')}`
+                            }
+                            return `${key}: ${String(value)}`
+                        })
+                        .join('; ')
+                    if (validationErrors) {
+                        errorMessage = `${errorMessage} - ${validationErrors}`
+                    }
+                }
             } catch {
                 if (errorText) {
                     errorMessage = errorText
