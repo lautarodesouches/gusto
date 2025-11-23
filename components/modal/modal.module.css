@@ -9,6 +9,24 @@
     backdrop-filter: blur(4px);
 }
 
+/* Overlay no bloqueante - permite interacción con el fondo */
+.overlayNonBlocking {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+    pointer-events: none;
+    padding: 2rem;
+}
+
+.overlayNonBlocking > * {
+    pointer-events: auto;
+}
+
 .modal {
     background: var(--background);
     border: 1px solid var(--dark);
@@ -21,41 +39,77 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
+/* Modal moderno y no bloqueante */
+.modalModern {
+    background: rgba(45, 45, 43, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .modal__close {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.05);
     border: none;
     color: var(--grey);
     cursor: pointer;
-    font-size: 1.2rem;
-    width: 30px;
-    height: 30px;
+    font-size: 1rem;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .modal__close:hover {
-    background: var(--dark);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--white);
+    transform: rotate(90deg);
+}
+
+.modal__icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
 }
 
 .modal__title {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     color: var(--white);
-    margin-bottom: 1rem;
-    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .modal__text {
-    font-size: 1rem;
-    color: var(--grey);
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
+    font-size: 0.95rem;
+    color: var(--light);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    opacity: 0.9;
 }
 
 .modal__actions {
@@ -67,34 +121,44 @@
 .modal__button_primary {
     background: var(--primary);
     color: var(--white);
-    padding: 12px 24px;
-    border-radius: 10px;
+    padding: 14px 28px;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
 }
 
 .modal__button_primary:hover {
-    opacity: 0.9;
+    background: #d32f2f;
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(229, 57, 53, 0.4);
+}
+
+.modal__button_primary:active {
+    transform: translateY(0);
 }
 
 .modal__button_secondary {
     background: transparent;
-    color: var(--grey);
-    padding: 10px 24px;
-    border-radius: 10px;
-    border: 1px solid var(--dark);
+    color: var(--light);
+    padding: 12px 28px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-top: 0.5rem;
 }
 
 .modal__button_secondary:hover {
-    background: var(--dark);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--white);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .modal__button_danger {

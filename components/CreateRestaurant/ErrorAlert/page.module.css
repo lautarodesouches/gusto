@@ -1,7 +1,14 @@
 .alert {
-    margin: 1.5rem auto;
-    max-width: 600px;
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+    width: 600px;
+    max-height: 80vh;
+    z-index: 10000;
     animation: slideDown 0.3s ease-out;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes slideDown {
@@ -24,6 +31,8 @@
     align-items: flex-start;
     gap: 1rem;
     box-shadow: 0 4px 12px rgba(255, 87, 87, 0.15);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .alert__icon {
@@ -48,8 +57,66 @@
 .alert__message {
     color: #666;
     font-size: 0.95rem;
-    margin: 0;
+    margin: 0 0 1rem 0;
     line-height: 1.5;
+}
+
+.alert__errors {
+    margin-top: 1rem;
+}
+
+.alert__errorsTitle {
+    color: #c33;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+}
+
+.alert__errorsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.alert__errorItem {
+    background: rgba(255, 87, 87, 0.05);
+    border-left: 3px solid #ff5757;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.alert__errorField {
+    display: block;
+    color: #c33;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.alert__errorMessages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-left: 1rem;
+}
+
+.alert__errorMessage {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.alert__errorMessage::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #ff5757;
+    font-weight: bold;
 }
 
 .alert__close {
@@ -73,7 +140,12 @@
 
 @media (max-width: 640px) {
     .alert {
-        margin: 1rem;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        transform: none;
+        width: auto;
+        max-width: calc(100% - 20px);
     }
     
     .alert__content {

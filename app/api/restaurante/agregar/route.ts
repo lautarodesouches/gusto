@@ -111,35 +111,27 @@ export async function POST(req: NextRequest) {
 
         if (!response.ok) {
             const errorText = await response.text().catch(() => '')
-            let errorMessage = 'Error al crear la solicitud de restaurante'
-            
-            console.error('❌ Error del backend:', {
-                status: response.status,
-                statusText: response.statusText,
-                errorText: errorText
-            })
+            let errorMessage = ''
+            let errorData: { errors?: Record<string, string[]>; message?: string; error?: string; title?: string } = {}
             
             try {
-                const errorData = errorText ? JSON.parse(errorText) : {}
-                errorMessage = errorData.message || errorData.error || errorData.title || errorMessage
+                errorData = errorText ? JSON.parse(errorText) : {}
                 
-                // Si hay errores de validación, agregarlos al mensaje
+                // Si hay errores de validación, solo devolverlos sin mensaje general
                 if (errorData.errors) {
-                    const validationErrors = Object.entries(errorData.errors)
-                        .map(([key, value]: [string, unknown]) => {
-                            if (Array.isArray(value)) {
-                                return `${key}: ${value.join(', ')}`
-                            }
-                            return `${key}: ${String(value)}`
-                        })
-                        .join('; ')
-                    if (validationErrors) {
-                        errorMessage = `${errorMessage} - ${validationErrors}`
-                    }
+                    return NextResponse.json(
+                        { errors: errorData.errors },
+                        { status: response.status }
+                    )
                 }
+                
+                // Si no hay errores de validación, devolver mensaje general
+                errorMessage = errorData.message || errorData.error || errorData.title || 'Error al crear la solicitud de restaurante'
             } catch {
                 if (errorText) {
                     errorMessage = errorText
+                } else {
+                    errorMessage = 'Error al crear la solicitud de restaurante'
                 }
             }
 

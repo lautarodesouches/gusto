@@ -33,11 +33,24 @@ export default function Client({ socialData, filters }: Props) {
     const [activeSocialPanel, setActiveSocialPanel] =
         useState<SocialPanel>(null)
 
+    // Mostrar modal cuando el registro está incompleto y estamos en el mapa
+    // El modal aparecerá cada vez que el usuario entre al mapa si el registro está incompleto
     useEffect(() => {
-        if (mostrarModal) {
+        if (incompleto && mostrarModal && !checking) {
+            // Mostrar el modal cada vez que se entra al mapa
+            // El usuario puede cerrarlo y seguir usando la app normalmente
             setShowModal(true)
+        } else {
+            setShowModal(false)
         }
-    }, [mostrarModal])
+    }, [incompleto, mostrarModal, checking])
+
+    const handleCloseModal = () => {
+        setShowModal(false)
+        // Guardar en sessionStorage que el usuario cerró el modal
+        // Esto permite que aparezca de nuevo la próxima vez que entre al mapa
+        sessionStorage.setItem('registrationModalDismissed', 'true')
+    }
 
     const togglePanel = (panel: ActivePanel) => {
         setActivePanel(prev => (prev === panel ? null : panel))
@@ -53,15 +66,14 @@ export default function Client({ socialData, filters }: Props) {
 
     return (
         <main className={styles.main}>
-            {showModal && (
+            {showModal && incompleto && (
                 <IncompleteRegistrationModal 
                     paso={paso} 
-                    onClose={() => setShowModal(false)} 
+                    onClose={handleCloseModal} 
                 />
             )}
 
-            {!incompleto && (
-                <>
+            <>
                     {/* MOBILE */}
                     <section className={styles.mobile__map_container}>
                         {/* Navbar mobile fijo en la parte superior - solo selectores y profile bar */}
@@ -206,7 +218,6 @@ export default function Client({ socialData, filters }: Props) {
                         </div>
                     </section>
                 </>
-            )}
         </main>
     )
 }

@@ -27,10 +27,10 @@ export default function FiltersClient({
     const isUpdatingFromUrlRef = useRef(false)
 
     const [dishes, setDishes] = useState<FilterItem[]>(
-        filters.dishes.map(f => ({ ...f, checked: false }))
+        (filters.dishes || []).filter(f => f != null).map(f => ({ ...f, checked: false }))
     )
     const [ratings, setRatings] = useState<FilterItem[]>(
-        filters.ratings.map(f => ({ ...f, checked: false }))
+        (filters.ratings || []).filter(f => f != null).map(f => ({ ...f, checked: false }))
     )
 
     // Solo marcar los seleccionados desde la URL al montar
@@ -39,7 +39,7 @@ export default function FiltersClient({
         const rating = searchParams.get('rating') || ''
 
         const markSelected = (items: FilterItem[], selectedValue: string) =>
-            items.map(item => ({
+            items.filter(item => item != null).map(item => ({
                 ...item,
                 checked: item.value === selectedValue,
             }))
@@ -69,8 +69,9 @@ export default function FiltersClient({
     // Sincronizar cambios de estado con la URL (solo si no viene de la URL)
     useEffect(() => {
         if (isUpdatingFromUrlRef.current) return
+        if (!dishes || dishes.length === 0) return
         
-        const selectedGusto = dishes.find(item => item.checked)?.value || ''
+        const selectedGusto = dishes.find(item => item && item.checked)?.value || ''
         const currentGusto = searchParams.get('gustos') || ''
         if (selectedGusto !== currentGusto) {
             updateUrlParam('gustos', selectedGusto || null)
@@ -79,8 +80,9 @@ export default function FiltersClient({
 
     useEffect(() => {
         if (isUpdatingFromUrlRef.current) return
+        if (!ratings || ratings.length === 0) return
         
-        const selectedRating = ratings.find(item => item.checked)?.value || ''
+        const selectedRating = ratings.find(item => item && item.checked)?.value || ''
         const currentRating = searchParams.get('rating') || ''
         if (selectedRating !== currentRating) {
             updateUrlParam('rating', selectedRating || null)
