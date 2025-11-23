@@ -95,22 +95,26 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
         return review.fecha || review.fechaCreacion || review.fechaVisita || ''
     }
 
-    const getReviewImage = (review: Review): string | undefined => {
+        const getReviewImage = (review: Review): string | undefined => {
         if (review.foto) return review.foto
         if (review.images && review.images.length > 0) return review.images[0]
 
-        const anyReview = review as any
-        const fotos = anyReview.fotos as any[] | undefined
+    
+        const fotos = (review as { fotos?: unknown }).fotos
         if (Array.isArray(fotos) && fotos.length > 0) {
             const f0 = fotos[0]
+
             if (typeof f0 === 'string') return f0
-            if (f0 && typeof f0 === 'object' && 'url' in f0 && f0.url) {
-                return f0.url as string
+
+            if (f0 && typeof f0 === 'object' && 'url' in f0) {
+                const url = (f0 as { url?: unknown }).url
+                if (typeof url === 'string') return url
             }
         }
 
         return undefined
     }
+
 
 
 
@@ -211,6 +215,13 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
             const parsed = JSON.parse(raw)
             if (!Array.isArray(parsed)) return null
 
+            type RawScheduleItem = {
+                dia?: string
+                cerrado?: boolean
+                desde?: string
+                hasta?: string
+            }
+
             const reverseDayMap: Record<string, string> = {
                 Lunes: 'lunes',
                 Martes: 'martes',
@@ -231,7 +242,7 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
                 domingo: { from: '12:00', to: '22:00', locked: false },
             }
 
-            for (const item of parsed as any[]) {
+            for (const item of parsed as RawScheduleItem[]) {
                 const diaRaw = item.dia as string | undefined
                 if (!diaRaw) continue
 
@@ -256,7 +267,6 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
         }
     })()
 
-    // Si cambia el restaurante (por las dudas)
     useEffect(() => {
         setDireccion(restaurant.direccion ?? '')
         setWebUrl(restaurant.webUrl ?? '')
@@ -333,7 +343,17 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
                 return
             }
 
-            const payload: any = {
+            type UpdateRestaurantPayload = {
+                direccion: string
+                lat: number
+                lng: number
+                webUrl?: string | null
+                horariosJson?: string
+                gustosQueSirveIds?: string[]
+                restriccionesQueRespetaIds?: string[]
+            }
+
+            const payload: UpdateRestaurantPayload = {
                 direccion: direccion.trim(),
                 lat,
                 lng,
