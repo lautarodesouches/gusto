@@ -64,3 +64,4 @@ export interface RegistrarVotoRequest {
     comentario?: string
 }
 
+

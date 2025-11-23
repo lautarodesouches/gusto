@@ -116,3 +116,12 @@ export interface PrecioMenu {
     monto: number
 }
 
+export interface RestauranteMetricasDashboard {
+    restauranteId: string
+    totalTop3Individual: number
+    totalTop3Grupo: number
+    totalVisitasPerfil: number
+    totalFavoritosHistorico: number
+    totalFavoritosActual: number
+}
+

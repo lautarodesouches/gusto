@@ -98,3 +98,4 @@ export interface SolicitudRestauranteDetalle {
     websiteUrl?: string | null
 }
 
+

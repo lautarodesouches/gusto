@@ -20,7 +20,8 @@ export type {
     RestauranteMenu,
     CategoriaMenu,
     ItemMenu,
-    PrecioMenu
+    PrecioMenu,
+    RestauranteMetricasDashboard
 } from './restaurant'
 
 // Tipos de grupos

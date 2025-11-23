@@ -31,10 +31,10 @@ export default function FiltersClient({
     const lastRatingStateRef = useRef<string | null>(null)
 
     const [dishes, setDishes] = useState<FilterItem[]>(
-        filters.dishes.map(f => ({ ...f, checked: false }))
+        (filters.dishes || []).filter(f => f != null).map(f => ({ ...f, checked: false }))
     )
     const [ratings, setRatings] = useState<FilterItem[]>(
-        filters.ratings.map(f => ({ ...f, checked: false }))
+        (filters.ratings || []).filter(f => f != null).map(f => ({ ...f, checked: false }))
     )
 
     // Sincronizar estado desde la URL cuando cambia
@@ -54,7 +54,7 @@ export default function FiltersClient({
         lastRatingUrlRef.current = rating
 
         const markSelected = (items: FilterItem[], selectedValue: string) =>
-            items.map(item => ({
+            items.filter(item => item != null).map(item => ({
                 ...item,
                 checked: item.value === selectedValue,
             }))
@@ -90,8 +90,9 @@ export default function FiltersClient({
     // Sincronizar cambios de estado con la URL (solo si no viene de la URL)
     useEffect(() => {
         if (isUpdatingFromUrlRef.current) return
-
-        const selectedGusto = dishes.find(item => item.checked)?.value || ''
+        if (!dishes || dishes.length === 0) return
+        
+        const selectedGusto = dishes.find(item => item && item.checked)?.value || ''
         const currentGusto = searchParams.get('gustos') || ''
         
         // Solo actualizar si el estado cambió y es diferente a lo que está en la URL
@@ -103,8 +104,9 @@ export default function FiltersClient({
 
     useEffect(() => {
         if (isUpdatingFromUrlRef.current) return
+        if (!ratings || ratings.length === 0) return
         
-        const selectedRating = ratings.find(item => item.checked)?.value || ''
+        const selectedRating = ratings.find(item => item && item.checked)?.value || ''
         const currentRating = searchParams.get('rating') || ''
         
         // Solo actualizar si el estado cambió y es diferente a lo que está en la URL

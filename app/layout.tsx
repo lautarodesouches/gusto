@@ -6,6 +6,7 @@ import { AuthProvider } from '@/context/AuthContext'
 
 import PaymentVerification from '@/components/PaymentVerification'
 import RegistrationCheck from '@/components/RegistrationCheck'
+import RoleProtection from '@/app/layouts/RoleProtection'
 
 import { ToastProvider } from '@/context/ToastContext'
 import { SignalRProvider } from '@/context/SignalRContext'
@@ -56,9 +57,11 @@ export default function RootLayout({
                 <ToastProvider>
                     <AuthProvider>
                         <SignalRProvider>
-                            <PaymentVerification />
-                            <RegistrationCheck />
-                            {children}
+                            <RoleProtection>
+                                <PaymentVerification />
+                                <RegistrationCheck />
+                                {children}
+                            </RoleProtection>
                         </SignalRProvider>
                     </AuthProvider>
                 </ToastProvider>
