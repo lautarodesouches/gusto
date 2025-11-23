@@ -10,5 +10,6 @@ export const ROUTES = {
     GROUP: '/group/',
     RESTAURANT: '/restaurante/',
     RESTAURANT__ADD: '/restaurante/agregar',
+    RESTAURANT__DASHBOARD: '/restaurante/', // Se completa con el ID: /restaurante/[id]/dashboard
     ADMIN: '/admin',
 }
