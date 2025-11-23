@@ -1,6 +1,6 @@
 'use server'
 import { API_URL } from '@/constants'
-import { ApiResponse, Restaurant, Review } from '@/types'
+import { ApiResponse, Restaurant, Review, RestauranteMetricasDashboard } from '@/types'
 import { cookies } from 'next/headers'
 
 async function getAuthHeaders(): Promise<HeadersInit> {
@@ -236,4 +236,42 @@ export async function getRecomendacion(
         }
     }
 }
+
+export async function getRestaurantMetrics(
+    id: string
+): Promise<ApiResponse<RestauranteMetricasDashboard>> {
+    try {
+        const headers = await getAuthHeaders()
+
+        const res = await fetch(`${API_URL}/api/Restaurantes/${id}/metricas`, {
+            method: 'GET',
+            headers,
+            cache: 'no-store',
+        })
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                success: false,
+                error:
+                    errorData?.error ||
+                    'Error al obtener las métricas del restaurante',
+            }
+        }
+
+        const data = (await res.json()) as RestauranteMetricasDashboard
+
+        return {
+            success: true,
+            data,
+        }
+    } catch (error) {
+        console.error('Error getting restaurant metrics:', error)
+        return {
+            success: false,
+            error: 'Error al obtener las métricas del restaurante',
+        }
+    }
+}
+
 
