@@ -26,17 +26,36 @@ const days = [
 
 type TimeTableProps = {
     onScheduleChange?: (schedule: ScheduleState) => void
+    
+    initialSchedule?: Partial<ScheduleState> | null
 }
 
-export default function TimeTable({ onScheduleChange }: TimeTableProps) {
-    const [schedule, setSchedule] = useState<ScheduleState>(
-        Object.fromEntries(
+export type { ScheduleState, DaySchedule, TimeTableProps }
+
+export default function TimeTable({ onScheduleChange, initialSchedule }: TimeTableProps) {
+    const [schedule, setSchedule] = useState<ScheduleState>(() => {
+        const base: ScheduleState = Object.fromEntries(
             days.map(d => [
                 d.key,
                 { from: '12:00', to: '22:00', locked: false },
             ])
-        )
-    )
+        ) as ScheduleState
+
+        if (!initialSchedule) return base
+
+        const result: ScheduleState = { ...base }
+
+        for (const [key, value] of Object.entries(initialSchedule)) {
+            if (!value || !result[key]) continue
+            result[key] = {
+                from: value.from ?? result[key].from,
+                to: value.to ?? result[key].to,
+                locked: value.locked ?? result[key].locked,
+            }
+        }
+
+        return result
+    })
 
     // Notificar cambios al padre
     useEffect(() => {
@@ -92,11 +111,7 @@ export default function TimeTable({ onScheduleChange }: TimeTableProps) {
                     />
                     <button
                         type="button"
-                        className={`${styles.timetable__lock} ${
-                            schedule[key].locked
-                                ? styles['timetable__lock--active']
-                                : ''
-                        }`}
+                        className={styles.timetable__lockBtn}
                         onClick={() => toggleLock(key)}
                     >
                         <FontAwesomeIcon
