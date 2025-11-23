@@ -18,14 +18,17 @@ export function IncompleteRegistrationModal({ paso, onClose }: IncompleteRegistr
     }
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                <button className={styles.modal__close} onClick={onClose}>
+        <div className={styles.overlayNonBlocking} onClick={onClose}>
+            <div className={styles.modalModern} onClick={(e) => e.stopPropagation()}>
+                <button className={styles.modal__close} onClick={onClose} aria-label="Cerrar">
                     <FontAwesomeIcon icon={faX} />
                 </button>
-                <h2 className={styles.modal__title}>Completa tu registro 🍽️</h2>
+                <div className={styles.modal__icon}>
+                    🍽️
+                </div>
+                <h2 className={styles.modal__title}>Completa tu registro</h2>
                 <p className={styles.modal__text}>
-                    Para aprovechar al máximo GustosApp, te recomendamos completar tus preferencias.
+                    Para aprovechar al máximo GustosApp, te recomendamos completar tus preferencias de comida.
                 </p>
 
                 <div className={styles.modal__actions}>

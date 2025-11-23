@@ -26,6 +26,8 @@
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 3rem;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .reviewForm__card {
@@ -56,6 +58,7 @@
     font-size: 1.25rem;
     font-weight: 700;
     margin: 0 0 0.5rem 0;
+    color: #ffffff;
 }
 
 .reviewForm__cardLocation {
@@ -86,6 +89,7 @@
 .reviewForm__label {
     font-size: 1.125rem;
     font-weight: 600;
+    color: #ffffff;
 }
 
 .reviewForm__labelRow {

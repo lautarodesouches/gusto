@@ -52,6 +52,7 @@ export default function RestaurantRegister() {
     const [restricciones, setRestricciones] = useState<RegisterItem[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string>('')
+    const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({})
     const [showSuccess, setShowSuccess] = useState(false)
     
     // Archivos
@@ -127,6 +128,7 @@ export default function RestaurantRegister() {
         e.preventDefault()
         setIsLoading(true)
         setError('')
+        setValidationErrors({})
 
         try {
             if (!formData.nombre.trim()) {
@@ -243,19 +245,33 @@ export default function RestaurantRegister() {
             })
 
             if (!response.ok) {
-                let errorMessage = 'Error al crear la solicitud de restaurante'
+                let errorMessage = ''
+                let errors: Record<string, string[]> = {}
                 
                 try {
                     const errorData = await response.json()
-                    errorMessage = errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`
-                    console.error('❌ Error del servidor:', errorData)
+                    
+                    // Si hay errores de validación estructurados, guardarlos
+                    if (errorData.errors && typeof errorData.errors === 'object') {
+                        errors = errorData.errors as Record<string, string[]>
+                        // Si hay errores de validación, no mostrar mensaje general
+                        errorMessage = ''
+                    } else {
+                        // Solo mostrar mensaje si no hay errores de validación
+                        errorMessage = errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`
+                    }
                 } catch (e) {
+                    // Si no se puede parsear JSON, intentar leer como texto
                     const errorText = await response.text().catch(() => '')
-                    errorMessage = errorText || `Error ${response.status}: ${response.statusText}`
-                    console.error('❌ Error del servidor (texto):', errorMessage)
+                    if (errorText) {
+                        errorMessage = errorText
+                    } else {
+                        errorMessage = `Error ${response.status}: ${response.statusText}`
+                    }
                 }
                 
                 setError(errorMessage)
+                setValidationErrors(errors)
                 setIsLoading(false)
                 return
             }
@@ -408,11 +424,34 @@ export default function RestaurantRegister() {
                     </section>
                 </div>
                 
-                {error && (
-                    <ErrorAlert 
-                        message={error} 
-                        onClose={() => setError('')} 
-                    />
+                {(error || Object.keys(validationErrors).length > 0) && (
+                    <>
+                        <ErrorAlert 
+                            message={error} 
+                            errors={Object.keys(validationErrors).length > 0 ? validationErrors : undefined}
+                            onClose={() => {
+                                setError('')
+                                setValidationErrors({})
+                            }} 
+                        />
+                        {/* Overlay para oscurecer el fondo */}
+                        <div 
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                background: 'rgba(0, 0, 0, 0.5)',
+                                zIndex: 9999,
+                                pointerEvents: 'none',
+                            }}
+                            onClick={() => {
+                                setError('')
+                                setValidationErrors({})
+                            }}
+                        />
+                    </>
                 )}
                 
                 <div style={{ padding: '2rem', textAlign: 'center' }}>

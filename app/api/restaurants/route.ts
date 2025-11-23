@@ -39,9 +39,6 @@ export async function GET(req: Request) {
         if (rating) apiUrl.searchParams.append('rating', rating)
         if (amigoUsername) apiUrl.searchParams.append('amigoUsername', amigoUsername)
 
-        // Llamada a la API externa
-        console.log('🔍 Llamando al backend:', apiUrl.toString())
-        
         const res = await fetch(apiUrl.toString(), {
             headers: {
                 'Content-Type': 'application/json',
@@ -60,7 +57,11 @@ export async function GET(req: Request) {
 
         const data = await res.json()
 
-        return NextResponse.json(data)
+        // El backend puede devolver un array directamente o un objeto con recomendaciones
+        // Normalizar la respuesta
+        const restaurants = Array.isArray(data) ? data : (data.recomendaciones || data.restaurants || [])
+
+        return NextResponse.json({ recomendaciones: restaurants })
     } catch (error) {
         console.error('Error en /api/restaurants:', error)
         return NextResponse.json({ error: 'Error interno' }, { status: 500 })
