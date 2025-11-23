@@ -4,17 +4,12 @@ import { cookies } from 'next/headers'
 // Usar valor directo temporalmente para debugging
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5174'
 
-console.log('[ROUTE LOADED] /api/votacion/iniciar - API_URL:', API_URL)
-
 export async function POST(request: NextRequest) {
     try {
-        console.log('[API] POST /api/votacion/iniciar - Inicio')
-        
         const cookieStore = await cookies()
         const token = cookieStore.get('token')?.value
 
         if (!token) {
-            console.log('[API] No token found')
             return NextResponse.json(
                 { message: 'No autorizado' },
                 { status: 401 }
@@ -23,10 +18,8 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json()
         const { grupoId } = body
-        console.log('[API] grupoId:', grupoId)
 
         const backendUrl = `${API_URL}/Votacion/iniciar`
-        console.log('[API] Calling backend:', backendUrl)
         
         const response = await fetch(backendUrl, {
             method: 'POST',
@@ -36,8 +29,6 @@ export async function POST(request: NextRequest) {
             },
             body: JSON.stringify({ grupoId }),
         })
-
-        console.log('[API] Backend response status:', response.status)
         
         if (!response.ok) {
             const errorText = await response.text()

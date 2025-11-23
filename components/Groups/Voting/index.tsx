@@ -13,7 +13,7 @@ interface Props {
     currentRestaurants: Restaurant[]
 }
 
-export default function GroupVoting({ groupId, members, isAdmin = false, currentRestaurants }: Props) {
+export default function GroupVoting({ groupId, members: _members, isAdmin = false, currentRestaurants }: Props) {
     const auth = useAuth()
     const toast = useToast()
     
@@ -28,32 +28,21 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
     // Obtener votación activa
     const fetchVotacionActiva = async () => {
         try {
-            console.log('[GroupVoting] Fetching votacion activa for group:', groupId)
             const res = await fetch(`/api/votacion/grupo/${groupId}/activa`)
-            console.log('[GroupVoting] Response status:', res.status)
             
             if (res.ok) {
                 const data = await res.json()
-                console.log('[GroupVoting] Votacion activa data:', data)
                 setVotacionActiva(data)
                 
                 // Si hay votación activa, obtener resultados
                 // El backend devuelve 'votacionId' en lugar de 'id'
                 const votacionId = data?.id || data?.votacionId
                 if (votacionId) {
-                    console.log('[GroupVoting] Fetching resultados for votacion:', votacionId)
                     await fetchResultados(votacionId)
-                } else {
-                    console.log('[GroupVoting] No votacion ID in response')
                 }
             } else if (res.status === 404) {
-                console.log('[GroupVoting] No votacion activa (404)')
                 setVotacionActiva(null)
                 setResultados(undefined)
-            } else {
-                console.log('[GroupVoting] Unexpected status:', res.status)
-                const errorText = await res.text()
-                console.log('[GroupVoting] Error response:', errorText)
             }
         } catch (err) {
             console.error('[GroupVoting] Error fetching votacion activa:', err)
@@ -65,17 +54,11 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
     // Obtener resultados de votación
     const fetchResultados = async (votacionId: string) => {
         try {
-            console.log('[GroupVoting] Fetching resultados for votacion:', votacionId)
             const res = await fetch(`/api/votacion/${votacionId}/resultados`)
-            console.log('[GroupVoting] Resultados response status:', res.status)
             
             if (res.ok) {
                 const data = await res.json()
-                console.log('[GroupVoting] Resultados data:', data)
                 setResultados(data)
-            } else {
-                const errorText = await res.text()
-                console.log('[GroupVoting] Error fetching resultados:', errorText)
             }
         } catch (err) {
             console.error('[GroupVoting] Error fetching resultados:', err)
@@ -83,7 +66,7 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
     }
 
     // Iniciar votación
-    const handleIniciarVotacion = async () => {
+    const _handleIniciarVotacion = async () => {
         try {
             const res = await fetch('/api/votacion/iniciar', {
                 method: 'POST',
@@ -108,7 +91,7 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
     }
 
     // Registrar voto
-    const handleVotar = async (restauranteId: string, comentario?: string) => {
+    const _handleVotar = async (restauranteId: string, comentario?: string) => {
         if (!votacionActiva && !resultados) return
 
         // El backend puede devolver 'id' o 'votacionId' dependiendo del endpoint
@@ -148,7 +131,6 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
         }
 
         try {
-            console.log('[GroupVoting] Cerrando votación:', votacionId)
             const res = await fetch(`/api/votacion/${votacionId}/cerrar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

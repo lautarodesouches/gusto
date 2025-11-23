@@ -48,7 +48,6 @@ export default function VotingPanel({
                 
                 // Si ya existe una votación activa, recargar los datos
                 if (res.status === 409) {
-                    console.log('[VotingPanel] Votación ya existe, recargando datos...')
                     onVotar()
                     return
                 }
@@ -171,7 +170,6 @@ export default function VotingPanel({
                                             <div key={votante.usuarioId} className={styles.comentarioItem}>
                                                 <div className={styles.comentarioHeader}>
                                                     {votante.usuarioFoto ? (
-                                                        /* eslint-disable-next-line @next/next/no-img-element */
                                                         <img
                                                             src={votante.usuarioFoto}
                                                             alt={votante.usuarioNombre}

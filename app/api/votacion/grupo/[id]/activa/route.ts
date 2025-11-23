@@ -10,7 +10,6 @@ export async function GET(
 ) {
     try {
         const { id } = await params
-        console.log('[API] GET /api/votacion/grupo/[id]/activa - grupoId:', id)
         
         const cookieStore = await cookies()
         const token = cookieStore.get('token')?.value
@@ -23,7 +22,6 @@ export async function GET(
         }
 
         const backendUrl = `${API_URL}/Votacion/grupo/${id}/activa`
-        console.log('[API] Calling backend:', backendUrl)
         
         const response = await fetch(backendUrl, {
             method: 'GET',
@@ -31,8 +29,6 @@ export async function GET(
                 Authorization: `Bearer ${token}`,
             },
         })
-
-        console.log('[API] Backend response status:', response.status)
         
         if (!response.ok) {
             if (response.status === 404) {

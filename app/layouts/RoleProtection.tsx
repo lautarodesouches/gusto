@@ -9,10 +9,10 @@ import { logout as logoutAction } from '@/app/actions/login'
 import PendienteRestauranteBlocked from '@/components/BlockedView/PendienteRestaurante'
 import { ROUTES } from '@/routes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 
 // Rutas permitidas para dueños de restaurante - SOLO su dashboard
-const DUENO_RESTAURANTE_ALLOWED_ROUTES = [
+const _DUENO_RESTAURANTE_ALLOWED_ROUTES = [
     '/restaurante/', // Solo para acceder a su dashboard específico
     '/api/restaurantes/mio',
     '/api/restaurantes/dashboard',
@@ -31,7 +31,7 @@ const PUBLIC_ROUTES = [
  * Componente que protege las rutas según el rol del usuario
  */
 export default function RoleProtection({ children }: { children: React.ReactNode }) {
-    const { rol, isLoading, isPendienteRestaurante, isDuenoRestaurante } = useUserRole()
+    const { isLoading, isPendienteRestaurante, isDuenoRestaurante } = useUserRole()
     const { restaurantId, isLoading: isLoadingRestaurant } = useMyRestaurant()
     const { logout } = useAuth()
     const router = useRouter()
@@ -221,9 +221,6 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         // Verificar si está en el dashboard correcto
         const dashboardPath = `${ROUTES.RESTAURANT}${restaurantId}/dashboard`
         const isDashboardRoute = pathname === dashboardPath || pathname?.startsWith(`${ROUTES.RESTAURANT}${restaurantId}/dashboard`)
-        const isAllowed = DUENO_RESTAURANTE_ALLOWED_ROUTES.some(route => 
-            pathname?.startsWith(route)
-        ) || isDashboardRoute
         
         // Si no está en el dashboard y ya intentamos redirigir, mostrar loading
         if (!isDashboardRoute && hasRedirected) {

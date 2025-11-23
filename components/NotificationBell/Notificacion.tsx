@@ -25,8 +25,7 @@ export default function NotificationBell({ showPanel = false, isActive = false }
         rechazarInvitacion: rechazarInvitacionContext,
         aceptarSolicitudAmistad,
         rechazarSolicitudAmistad,
-        marcarComoLeida,
-        isConnected
+        marcarComoLeida
     } = useSignalR()
 
     // Acciones disponibles con manejo de errores

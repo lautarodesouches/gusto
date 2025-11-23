@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
         // El DTO debería tener: public string? HorariosJson { get; set; }
         // O con [FromForm(Name = "horariosJson")] si el nombre es diferente
         if (horariosJson) {
-            console.log('Enviando horarios al backend como horariosJson (string):', horariosJson)
             backendFormData.append('horariosJson', horariosJson)
         } else {
             console.warn('No se encontró horarios en el FormData')

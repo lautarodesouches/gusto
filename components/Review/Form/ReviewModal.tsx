@@ -155,7 +155,7 @@ export default function ReviewModal({ restaurant, isOpen, onClose }: ReviewModal
                         } else {
                             errorMessage = errorData.error || errorData.message || 'Error al enviar opinión'
                         }
-                    } catch (e) {
+                    } catch {
                         const errorText = await res.text().catch(() => '')
                         errorMessage = errorText || 'Error al enviar opinión'
                     }

@@ -21,7 +21,6 @@ import Link from 'next/link'
 import { formatPhoneAR } from '@/utils'
 import RatingDistribution from '../Rating'
 import ReviewList from '../Reviews'
-import { ROUTES } from '@/routes'
 import RestaurantMap from '../Map'
 import { MapProvider } from '@/components/Map/MapProvider'
 import { useEffect, useState, useRef } from 'react'
@@ -288,7 +287,7 @@ export default function RestaurantView({
     // Para restaurantes de la app, mostrar imágenes organizadas
     // Para restaurantes de Google Places, mantener la estructura anterior
     // Calcular índices para el lightbox
-    const getImageIndex = (type: string, index: number) => {
+    const _getImageIndex = (type: string, index: number) => {
         if (type === 'interior') return index
         if (type === 'comida') return interiorCount + index
         return interiorCount + comidaCount
@@ -393,7 +392,7 @@ export default function RestaurantView({
 
                     {/* Columna lateral */}
                     <div className={styles['gallery__side']}>
-                        {sideItems.map((item, itemIdx) => {
+                        {sideItems.map((item, _itemIdx) => {
                             // Para restaurantes de la app, usar imágenes reales; para Google Places, usar placeholders
                             let rawImageUrl = ''
                             let isClickable = false

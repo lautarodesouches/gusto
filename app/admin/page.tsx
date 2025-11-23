@@ -207,15 +207,13 @@ export default function AdminPanel() {
         setSelectedSolicitudId(null)
     }
 
-    const handleDarBaja = async (id: string) => {
+    const handleDarBaja = async (_id: string) => {
         // TODO: Implementar dar de baja
-        console.log('Dar de baja:', id)
         toast.info('Función de dar de baja próximamente')
     }
 
-    const handleRemover = async (id: string) => {
+    const handleRemover = async (_id: string) => {
         // TODO: Implementar remover
-        console.log('Remover:', id)
         toast.info('Función de remover próximamente')
     }
 

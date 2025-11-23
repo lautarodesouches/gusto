@@ -78,16 +78,12 @@ export default function VotingResults({
         }
     }
 
-    const cerrarVotacionSinGanador = () => {
+    const _cerrarVotacionSinGanador = () => {
         if (onCerrarVotacion) {
             onCerrarVotacion()
         }
     }
 
-    console.log('[VotingResults] esAdministrador:', esAdministrador)
-    console.log('[VotingResults] resultado.estado:', resultado.estado)
-    console.log('[VotingResults] resultado:', resultado)
-    console.log('[VotingResults] Mostrar botón:', esAdministrador && resultado.estado === 'Activa')
 
     if (resultado.hayEmpate && !ganador && mostrarRuleta) {
         const restaurantesEmpatados = resultado.restaurantesVotados.filter((r) =>
@@ -190,7 +186,6 @@ export default function VotingResults({
                                                 <div key={votante.usuarioId} className={styles.comentario}>
                                                     <div className={styles.comentarioHeader}>
                                                         {votante.usuarioFoto ? (
-                                                            /* eslint-disable-next-line @next/next/no-img-element */
                                                             <img
                                                                 src={votante.usuarioFoto}
                                                                 alt={votante.usuarioNombre}
@@ -238,7 +233,6 @@ export default function VotingResults({
                                                     className={styles.votante}
                                                 >
                                                     {votante.usuarioFoto ? (
-                                                        /* eslint-disable-next-line @next/next/no-img-element */
                                                         <img
                                                             src={votante.usuarioFoto}
                                                             alt={votante.usuarioNombre}

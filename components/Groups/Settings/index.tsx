@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { Group } from '@/types'
 import { useToast } from '@/context/ToastContext'
 import { ROUTES } from '@/routes'
@@ -14,7 +13,7 @@ interface Props {
     userId: string
 }
 
-export default function GroupSettings({ group, isAdmin, userId }: Props) {
+export default function GroupSettings({ group, isAdmin, userId: _userId }: Props) {
     const router = useRouter()
     const toast = useToast()
     const [loading, setLoading] = useState(false)
@@ -38,7 +37,7 @@ export default function GroupSettings({ group, isAdmin, userId }: Props) {
 
             toast.success('Nombre del grupo actualizado')
             router.refresh()
-        } catch (error) {
+        } catch {
             toast.error('Error al actualizar el nombre del grupo')
             setGroupName(group.nombre)
         } finally {
@@ -60,7 +59,7 @@ export default function GroupSettings({ group, isAdmin, userId }: Props) {
             toast.success('Miembro eliminado del grupo')
             setMemberToRemove(null)
             router.refresh()
-        } catch (error) {
+        } catch {
             toast.error('Error al eliminar miembro del grupo')
         } finally {
             setLoading(false)
@@ -78,7 +77,7 @@ export default function GroupSettings({ group, isAdmin, userId }: Props) {
 
             toast.success('Grupo eliminado exitosamente')
             router.push(ROUTES.MAP)
-        } catch (error) {
+        } catch {
             toast.error('Error al eliminar el grupo')
         } finally {
             setLoading(false)
@@ -97,7 +96,7 @@ export default function GroupSettings({ group, isAdmin, userId }: Props) {
 
             toast.success('Has abandonado el grupo')
             router.push(ROUTES.MAP)
-        } catch (error) {
+        } catch {
             toast.error('Error al abandonar el grupo')
         } finally {
             setLoading(false)
@@ -151,7 +150,6 @@ export default function GroupSettings({ group, isAdmin, userId }: Props) {
                         <div key={member.id} className={styles.memberCard}>
                             <div className={styles.memberInfo}>
                                 {member.fotoPerfilUrl ? (
-                                    /* eslint-disable-next-line @next/next/no-img-element */
                                     <img
                                         src={member.fotoPerfilUrl}
                                         alt={member.usuarioNombre}

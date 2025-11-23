@@ -74,7 +74,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
 
         conn.on('CargarNotificaciones', (data: Notificacion[]) => {
           if (!isMounted) return
-          console.log('🔔 Notificaciones cargadas:', data)
           setNotificaciones(prev => {
             const existingIds = new Set(prev.map(n => n.id))
             const newNotifs = data
@@ -95,7 +94,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
 
         conn.on('RecibirNotificacion', (notif: Notificacion) => {
           if (!isMounted) return
-          console.log('📩 Nueva notificación recibida:', notif)
           setNotificaciones(prev => {
             const exists = prev.some(n => n.id === notif.id)
             if (exists) return prev
@@ -116,27 +114,22 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
 
         conn.on('NotificacionEliminada', (id: string) => {
           if (!isMounted) return
-          console.log('🗑️ Notificación eliminada:', id)
           setNotificaciones(prev => prev.filter(n => n.id !== id))
         })
 
         conn.onreconnecting(() => {
-          console.log('🔄 Reconectando NotificacionesHub...')
           setIsConnected(false)
         })
 
         conn.onreconnected(() => {
-          console.log('✅ NotificacionesHub reconectado')
           setIsConnected(true)
         })
 
         conn.onclose(() => {
-          console.log('🔴 NotificacionesHub desconectado')
           setIsConnected(false)
         })
 
         await conn.start()
-        console.log('✅ Conectado a NotificacionesHub')
         if (isMounted) {
           setNotificacionesConnection(conn)
           setIsConnected(true)
@@ -153,7 +146,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       isMounted = false
       if (conn) {
         conn.stop()
-        console.log('🔴 Conexión NotificacionesHub cerrada')
       }
     }
   }, [])
@@ -175,7 +167,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
 
         conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
           if (!isMounted) return
-          console.log('🔁 Solicitudes pendientes:', data)
           setNotificaciones(prev => {
             const existingIds = new Set(prev.map(n => n.id))
             const newSolicitudes = data
@@ -196,7 +187,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
 
         conn.on('RecibirSolicitudAmistad', (solicitud: SolicitudAmistadResponse) => {
           if (!isMounted) return
-          console.log('📩 Nueva solicitud recibida:', solicitud)
           setNotificaciones(prev => {
             const exists = prev.some(n => n.id === solicitud.id)
             if (exists) return prev
@@ -217,20 +207,16 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
 
         conn.on('SolicitudEliminada', (id: string) => {
           if (!isMounted) return
-          console.log('🗑️ Solicitud eliminada:', id)
           setNotificaciones(prev => prev.filter(n => n.id !== id))
         })
 
         conn.onreconnecting(() => {
-          console.log('🔄 Reconectando SolicitudesAmistadHub...')
         })
 
         conn.onreconnected(() => {
-          console.log('✅ SolicitudesAmistadHub reconectado')
         })
 
         await conn.start()
-        console.log('✅ Conectado a SolicitudesAmistadHub')
         if (isMounted) {
           setSolicitudesConnection(conn)
         }
@@ -245,7 +231,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       isMounted = false
       if (conn) {
         conn.stop()
-        console.log('🔴 Conexión SolicitudesAmistadHub cerrada')
       }
     }
   }, [])

@@ -9,7 +9,6 @@ export async function POST(
 ) {
     try {
         const { id } = await params
-        console.log('[API] Seleccionar ganador - votacionId:', id)
         
         const cookieStore = await cookies()
         const token = cookieStore.get('token')?.value
@@ -19,7 +18,6 @@ export async function POST(
         }
         
         const body = await request.json()
-        console.log('[API] Request body:', body)
 
         const res = await fetch(
             `${API_URL}/votacion/${id}/seleccionar-ganador`,
@@ -33,16 +31,12 @@ export async function POST(
             }
         )
 
-        console.log('[API] Backend response status:', res.status)
-
         if (!res.ok) {
             const error = await res.json()
-            console.error('[API] Backend error:', error)
             return NextResponse.json(error, { status: res.status })
         }
 
         const data = await res.json()
-        console.log('[API] Success response:', data)
         return NextResponse.json(data)
     } catch (error) {
         console.error('[API] Error:', error)

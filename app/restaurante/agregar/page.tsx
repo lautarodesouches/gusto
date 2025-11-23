@@ -80,7 +80,7 @@ export default function RestaurantRegister() {
                 if (data.restricciones && Array.isArray(data.restricciones)) {
                     setRestricciones(data.restricciones)
                 }
-            } catch (error) {
+            } catch {
                 // Error silencioso
             }
         }
@@ -260,7 +260,7 @@ export default function RestaurantRegister() {
                         // Solo mostrar mensaje si no hay errores de validación
                         errorMessage = errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`
                     }
-                } catch (e) {
+                } catch {
                     // Si no se puede parsear JSON, intentar leer como texto
                     const errorText = await response.text().catch(() => '')
                     if (errorText) {

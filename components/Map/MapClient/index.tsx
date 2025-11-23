@@ -133,7 +133,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                 // Normalizar la respuesta (puede venir como array o como objeto con recomendaciones)
                 const restaurants = Array.isArray(data) 
                     ? data 
-                    : (data.recomendaciones || data.restaurants || [])
+                    : (data.recomendaciones || [])
 
                 // Filtrar restaurantes con coordenadas válidas
                 // NO filtrar por PlaceId, foto, rating, ni ningún otro campo - solo coordenadas válidas
@@ -180,23 +180,27 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                         return null
                     }
                     
-                    const mapped = {
+                    const mapped: Restaurant = {
                         id: String(rawId),
                         nombre: String(r.nombre || r.Nombre || 'Sin nombre'),
                         direccion: String(r.direccion || r.Direccion || ''),
                         latitud: typeof lat === 'number' ? lat : parseFloat(String(lat)) || 0,
                         longitud: typeof lng === 'number' ? lng : parseFloat(String(lng)) || 0,
-                        rating: r.rating ?? r.Rating ?? r.valoracion ?? r.Valoracion ?? null,
-                        categoria: r.categoria || r.Categoria || null,
-                        imagenUrl: r.imagenUrl || r.ImagenUrl || null,
+                        rating: (r.rating ?? r.Rating ?? r.valoracion ?? r.Valoracion) as number | undefined,
+                        categoria: (r.categoria || r.Categoria || undefined) as string | undefined,
+                        imagenUrl: (r.imagenUrl || r.ImagenUrl || undefined) as string | undefined,
                         esDeLaApp: esDeLaApp,
-                        placeId: placeId || null,
-                        googlePlaceId: googlePlaceId || null,
+                        placeId: (placeId ? String(placeId) : null) as string | null,
+                        googlePlaceId: (googlePlaceId ? String(googlePlaceId) : null) as string | null,
+                        imagenesInterior: Array.isArray(r.imagenesInterior) ? r.imagenesInterior : [],
+                        imagenesComida: Array.isArray(r.imagenesComida) ? r.imagenesComida : [],
+                        reviewsLocales: Array.isArray(r.reviewsLocales) ? r.reviewsLocales : [],
+                        reviewsGoogle: Array.isArray(r.reviewsGoogle) ? r.reviewsGoogle : [],
                     }
                     
                     return mapped
                 })
-                .filter((r: Restaurant | null): r is Restaurant => r !== null) // Filtrar los null
+                .filter((r): r is Restaurant => r !== null) // Filtrar los null
 
                 setState(prev => ({
                     ...prev,
