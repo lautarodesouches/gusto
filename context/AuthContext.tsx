@@ -59,17 +59,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         */
     }
 
+    // Función para refrescar los claims de Firebase después del login
+    const refreshFirebaseClaims = async (token: string) => {
+        try {
+            // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
+            await fetch('/api/auth/refresh-claims', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Incluir cookies
+            })
+            
+            // Después de refrescar claims, forzar la renovación del token para obtener los nuevos claims
+            const currentUser = auth.currentUser
+            if (currentUser) {
+                await currentUser.getIdToken(true) // true = force refresh
+            }
+        } catch (error) {
+            console.error('Error al refrescar claims de Firebase:', error)
+            // No lanzar error, solo loguear - no es crítico si falla
+        }
+    }
+
     //  Maneja cambios de autenticación (login/logout)
     useEffect(() => {
+        let isFirstLogin = true // Track si es el primer login en esta sesión
+        
         const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
             if (firebaseUser) {
                 setUser(firebaseUser)
                 const freshToken = await firebaseUser.getIdToken()
                 setToken(freshToken)
+                
+                // Refrescar claims automáticamente después del primer login
+                // Solo la primera vez que se detecta un usuario (login)
+                if (isFirstLogin) {
+                    isFirstLogin = false
+                    // Esperar un poco para asegurar que la cookie esté establecida
+                    setTimeout(() => {
+                        refreshFirebaseClaims(freshToken)
+                    }, 500)
+                }
             } else {
                 setUser(null)
                 setToken(null)
                 setIsPremium(false)
+                isFirstLogin = true // Reset para el próximo login
             }
             setLoading(false)
         })
