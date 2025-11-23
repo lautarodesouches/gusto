@@ -67,6 +67,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
 
     const [state, setState] = useState(INITIAL_STATE)
     const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null)
+    const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null)
 
     const isFetchingRef = useRef(false)
     const [shouldSearchButton, setShouldSearchButton] = useState(false)
@@ -91,7 +92,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
    
 
     const fetchRestaurants = useCallback(
-        async (center: Coordinates) => {
+        async (center: Coordinates, onComplete?: () => void) => {
             if (isFetchingRef.current) return
             isFetchingRef.current = true
 
@@ -110,13 +111,86 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
 
                 const data = await res.json()
 
+                // Normalizar la respuesta (puede venir como array o como objeto con recomendaciones)
+                const restaurants = Array.isArray(data) 
+                    ? data 
+                    : (data.recomendaciones || data.restaurants || [])
+
+                // Filtrar restaurantes con coordenadas válidas
+                // NO filtrar por PlaceId, foto, rating, ni ningún otro campo - solo coordenadas válidas
+                const validRestaurants = restaurants.filter((r: Record<string, unknown>) => {
+                    const lat = r.latitud ?? r.Latitud
+                    const lng = r.longitud ?? r.Longitud
+                    
+                    // Validar que las coordenadas sean números válidos y estén en rangos geográficos
+                    const isValidLat = typeof lat === 'number' && !isNaN(lat) && lat >= -90 && lat <= 90
+                    const isValidLng = typeof lng === 'number' && !isNaN(lng) && lng >= -180 && lng <= 180
+                    
+                    if (!isValidLat || !isValidLng) {
+                        return false
+                    }
+                    
+                    // Aceptar todos los restaurantes con coordenadas válidas, sin importar PlaceId, foto, rating, etc.
+                    return true
+                })
+
+                // Mapear restaurantes para normalizar campos (PascalCase a camelCase)
+                // Aceptar TODOS los restaurantes con coordenadas válidas, sin importar PlaceId, foto, etc.
+                const mappedRestaurants = validRestaurants
+                    .map((r: Record<string, unknown>) => {
+                    const lat = r.latitud ?? r.Latitud ?? 0
+                    const lng = r.longitud ?? r.Longitud ?? 0
+                    
+                    // El backend envía GooglePlaceId (no PlaceId)
+                    const googlePlaceId = r.googlePlaceId || r.GooglePlaceId || ''
+                    const placeId = r.placeId || r.PlaceId || googlePlaceId
+                    
+                    // LÓGICA: Si NO tiene GooglePlaceId, entonces es de la app (sin importar EsDeLaApp del backend)
+                    // Si tiene GooglePlaceId, entonces NO es de la app
+                    // Esto corrige el caso donde el backend envía EsDeLaApp=false pero no tiene GooglePlaceId
+                    const tieneGooglePlaceId = googlePlaceId && googlePlaceId !== null && googlePlaceId !== '' && String(googlePlaceId).trim() !== ''
+                    const esDeLaApp = !tieneGooglePlaceId
+                    
+                    // Asegurar que el ID sea válido (no puede estar vacío)
+                    const rawId = r.id || r.Id
+                    if (!rawId || String(rawId).trim() === '') {
+                        console.warn('⚠️ Restaurante sin ID válido omitido:', {
+                            nombre: r.nombre || r.Nombre,
+                            datos: r
+                        })
+                        return null
+                    }
+                    
+                    const mapped = {
+                        id: String(rawId),
+                        nombre: String(r.nombre || r.Nombre || 'Sin nombre'),
+                        direccion: String(r.direccion || r.Direccion || ''),
+                        latitud: typeof lat === 'number' ? lat : parseFloat(String(lat)) || 0,
+                        longitud: typeof lng === 'number' ? lng : parseFloat(String(lng)) || 0,
+                        rating: r.rating ?? r.Rating ?? r.valoracion ?? r.Valoracion ?? null,
+                        categoria: r.categoria || r.Categoria || null,
+                        imagenUrl: r.imagenUrl || r.ImagenUrl || null,
+                        esDeLaApp: esDeLaApp,
+                        placeId: placeId || null,
+                        googlePlaceId: googlePlaceId || null,
+                    }
+                    
+                    return mapped
+                })
+                .filter((r: Restaurant | null): r is Restaurant => r !== null) // Filtrar los null
+
                 setState(prev => ({
                     ...prev,
-                    restaurants: data.recomendaciones || [],
+                    restaurants: mappedRestaurants,
                     isLoading: false,
                 }))
 
                 setShouldSearchButton(false)
+                
+                // Ejecutar callback si existe
+                if (onComplete) {
+                    onComplete()
+                }
             } catch {
                 toast.error('Error al cargar restaurantes')
 
@@ -194,7 +268,57 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         }
     }, [searchParams, state.center, initialLoaded, fetchRestaurants])
 
+    // Escuchar evento para mover el mapa cuando se selecciona un restaurante desde la búsqueda
+    useEffect(() => {
+        const handleMapPanTo = (event: CustomEvent<{ lat: number; lng: number; restaurantId: string }>) => {
+            if (!mapInstance) return
 
+            const { lat, lng, restaurantId } = event.detail
+            
+            // Validar coordenadas
+            if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                console.warn('Coordenadas inválidas:', { lat, lng })
+                return
+            }
+
+            const targetPosition = new google.maps.LatLng(lat, lng)
+            
+            // Mover el mapa con animación
+            mapInstance.panTo(targetPosition)
+            
+            // Ajustar zoom para una mejor vista
+            mapInstance.setZoom(16)
+            
+            // Actualizar el centro del estado
+            updateCenter({ lat, lng })
+            
+            // Guardar el ID del restaurante seleccionado para resaltarlo
+            setSelectedRestaurantId(restaurantId)
+            
+            // Buscar restaurantes en la nueva ubicación y luego abrir el InfoWindow del restaurante seleccionado
+            fetchRestaurants({ lat, lng }, () => {
+                // Callback que se ejecuta después de cargar los restaurantes
+                setTimeout(() => {
+                    setState(prev => {
+                        const restaurantIndex = prev.restaurants.findIndex(r => r.id === restaurantId)
+                        if (restaurantIndex !== -1) {
+                            return {
+                                ...prev,
+                                hoveredMarker: restaurantIndex
+                            }
+                        }
+                        return prev
+                    })
+                }, 300) // Pequeño delay para asegurar que el estado se haya actualizado
+            })
+        }
+
+        window.addEventListener('mapPanTo', handleMapPanTo as EventListener)
+        
+        return () => {
+            window.removeEventListener('mapPanTo', handleMapPanTo as EventListener)
+        }
+    }, [mapInstance, updateCenter, fetchRestaurants])
 
     if (locationError) {
         return <ErrorComponent message={locationError} onRetry={() => window.location.reload()} />
@@ -221,6 +345,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                     setMapInstance={setMapInstance}
                     setHoveredMarker={setHoveredMarker}
                     onIdle={handleMapIdle}
+                    selectedRestaurantId={selectedRestaurantId}
                 />
             </MapProvider>
         </Suspense>

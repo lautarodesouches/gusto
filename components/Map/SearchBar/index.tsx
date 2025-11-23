@@ -3,20 +3,33 @@ import styles from './styles.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faChevronDown, faChevronUp, faUser } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect, useRef } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
 import Image from 'next/image'
 import { Friend } from '@/types'
 import { getFriends } from '@/app/actions/friends'
+import { ROUTES } from '@/routes'
 
 interface SearchBarProps {
     showSearchField?: boolean
     showSelectors?: boolean
 }
 
+interface RestaurantSearchResult {
+    id: string
+    nombre: string
+    categoria?: string
+    rating?: number
+    direccion: string
+    imagenUrl?: string
+    latitud?: number
+    longitud?: number
+}
+
 export default function SearchBar({ showSearchField = true, showSelectors = true }: SearchBarProps) {
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
+    const router = useRouter()
     
     const [kmOpen, setKmOpen] = useState(false)
     const kmRef = useRef<HTMLDivElement>(null)
@@ -26,6 +39,14 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
     const [selectedFriend, setSelectedFriend] = useState<string>('Tus Gustos')
     const [selectedFriendUsername, setSelectedFriendUsername] = useState<string | null>(null)
     const friendsRef = useRef<HTMLDivElement>(null)
+    
+    // Estados para búsqueda de restaurantes
+    const [searchText, setSearchText] = useState('')
+    const [searchResults, setSearchResults] = useState<RestaurantSearchResult[]>([])
+    const [isSearching, setIsSearching] = useState(false)
+    const [showResults, setShowResults] = useState(false)
+    const searchRef = useRef<HTMLDivElement>(null)
+    const searchInputRef = useRef<HTMLInputElement>(null)
 
     const kmOptions = ['3k', '6k', '10k', 'Max']
 
@@ -117,6 +138,62 @@ const getSelectedFriendColor = () => {
     return colors[index % colors.length]
 }
 
+// --- BÚSQUEDA DE RESTAURANTES ---
+useEffect(() => {
+    const searchRestaurants = async () => {
+        if (!searchText || searchText.trim().length < 2) {
+            setSearchResults([])
+            setShowResults(false)
+            return
+        }
+
+        setIsSearching(true)
+        try {
+            const response = await fetch(`/api/restaurante/buscar?texto=${encodeURIComponent(searchText.trim())}`)
+            if (response.ok) {
+                const data = await response.json()
+                setSearchResults(data || [])
+                setShowResults(true)
+            } else {
+                setSearchResults([])
+                setShowResults(false)
+            }
+        } catch (error) {
+            console.error('Error al buscar restaurantes:', error)
+            setSearchResults([])
+            setShowResults(false)
+        } finally {
+            setIsSearching(false)
+        }
+    }
+
+    const debounceTimer = setTimeout(() => {
+        searchRestaurants()
+    }, 300) // Debounce de 300ms
+
+    return () => clearTimeout(debounceTimer)
+}, [searchText])
+
+const handleRestaurantSelect = (restaurant: RestaurantSearchResult) => {
+    setSearchText('')
+    setShowResults(false)
+    
+    // Si tiene coordenadas, mover el mapa a esa ubicación
+    if (restaurant.latitud !== undefined && restaurant.longitud !== undefined) {
+        // Disparar evento personalizado para que MapClient lo escuche
+        window.dispatchEvent(new CustomEvent('mapPanTo', {
+            detail: {
+                lat: restaurant.latitud,
+                lng: restaurant.longitud,
+                restaurantId: restaurant.id
+            }
+        }))
+    } else {
+        // Si no tiene coordenadas, ir directo a detalles
+        router.push(`${ROUTES.RESTAURANT}${restaurant.id}`)
+    }
+}
+
 // --- CERRAR DROPDOWN ---
 useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -125,6 +202,9 @@ useEffect(() => {
         }
         if (friendsRef.current && !friendsRef.current.contains(event.target as Node)) {
             setFriendsOpen(false)
+        }
+        if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+            setShowResults(false)
         }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -135,14 +215,59 @@ useEffect(() => {
         <div className={styles.buscador}>
             {/* Campo de búsqueda */}
             {showSearchField && (
-                <div className={styles.buscador__campo}>
+                <div className={styles.buscador__campo} ref={searchRef}>
                     <FontAwesomeIcon icon={faSearch} className={styles.buscador__icono} />
                     <input
+                        ref={searchInputRef}
                         type="text"
-                        placeholder="Escribe un lugar"
+                        placeholder="Buscar restaurante..."
                         name="search"
                         className={styles.buscador__input}
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        onFocus={() => {
+                            if (searchResults.length > 0) {
+                                setShowResults(true)
+                            }
+                        }}
                     />
+                    {showResults && searchResults.length > 0 && (
+                        <div className={styles.buscador__results}>
+                            {isSearching && (
+                                <div className={styles.buscador__loading}>
+                                    Buscando...
+                                </div>
+                            )}
+                            {!isSearching && searchResults.map((restaurant) => (
+                                <button
+                                    key={restaurant.id}
+                                    className={styles.buscador__resultItem}
+                                    onClick={() => handleRestaurantSelect(restaurant)}
+                                >
+                                    {restaurant.imagenUrl && (
+                                        <Image
+                                            src={restaurant.imagenUrl}
+                                            alt={restaurant.nombre}
+                                            width={40}
+                                            height={40}
+                                            className={styles.buscador__resultImage}
+                                        />
+                                    )}
+                                    <div className={styles.buscador__resultInfo}>
+                                        <span className={styles.buscador__resultName}>{restaurant.nombre}</span>
+                                        {restaurant.direccion && (
+                                            <span className={styles.buscador__resultAddress}>{restaurant.direccion}</span>
+                                        )}
+                                    </div>
+                                    {restaurant.rating !== undefined && restaurant.rating !== null && typeof restaurant.rating === 'number' && (
+                                        <span className={styles.buscador__resultRating}>
+                                            ⭐ {restaurant.rating.toFixed(1)}
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
 

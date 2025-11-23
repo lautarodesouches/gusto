@@ -111,15 +111,6 @@ export async function getRestaurant(
 
         const data = await res.json()
         
-        // Log para ver qué datos trae el restaurante del backend
-        console.log('🔍 Datos del restaurante desde el backend:', JSON.stringify(data, null, 2))
-        console.log('📸 imagenUrl:', data.imagenUrl || data.ImagenUrl)
-        console.log('📸 imagenDestacada:', data.imagenDestacada || data.ImagenDestacada)
-        console.log('📸 logoUrl:', data.logoUrl || data.LogoUrl)
-        console.log('🏪 esDeLaApp:', data.esDeLaApp ?? data.EsDeLaApp)
-        console.log('📍 latitud:', data.latitud || data.Latitud)
-        console.log('📍 longitud:', data.longitud || data.Longitud)
-        
         // Mapear el restaurante con los nuevos campos
         const restaurant: Restaurant = {
             id: data.id || data.Id || '',

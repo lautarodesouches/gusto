@@ -55,6 +55,7 @@ interface Props {
     setMapInstance: Dispatch<SetStateAction<google.maps.Map | null>>
     onIdle: () => void
     setHoveredMarker: (markerId: number | null) => void
+    selectedRestaurantId?: string | null
 }
 
 export default function MapView({
@@ -65,6 +66,7 @@ export default function MapView({
     setMapInstance,
     onIdle,
     setHoveredMarker,
+    selectedRestaurantId,
 }: Props) {
     return (
         <GoogleMap
@@ -75,17 +77,33 @@ export default function MapView({
             onLoad={map => setMapInstance(map)}
             onIdle={onIdle}
         >
-            {restaurants.map((place, index) => (
+            {restaurants.length === 0 && (
+                <div style={{ display: 'none' }}>
+                    No hay restaurantes para mostrar
+                </div>
+            )}
+            {restaurants.map((place, index) => {
+                // Validar que tenga coordenadas válidas antes de renderizar
+                if (!place.latitud || !place.longitud || 
+                    isNaN(place.latitud) || isNaN(place.longitud) ||
+                    place.latitud === 0 || place.longitud === 0) {
+                    return null
+                }
+                
+                const isSelected = selectedRestaurantId && place.id === selectedRestaurantId
+                return (
                 <Marker
-                    key={index}
+                    key={place.id || `restaurant-${index}`}
                     position={{
                         lat: place.latitud,
                         lng: place.longitud,
                     }}
-                    title={place.nombre}
+                    title={place.nombre || 'Restaurante'}
                     icon={{
                         url:
-                            index === 0
+                            isSelected
+                                ? '/markers/markerOne.svg'
+                                : index === 0
                                 ? '/markers/markerOne.svg'
                                 : index === 1
                                 ? '/markers/markerTwo.svg'
@@ -93,15 +111,19 @@ export default function MapView({
                                 ? '/markers/markerThree.svg'
                                 : '/markers/marker.svg',
                         scaledSize:
-                            index > 2
+                            isSelected
+                                ? new google.maps.Size(48, 60)
+                                : index > 2
                                 ? new google.maps.Size(30, 38)
                                 : new google.maps.Size(48, 60),
                         anchor:
-                            index > 2
+                            isSelected
+                                ? new google.maps.Point(24, 60)
+                                : index > 2
                                 ? new google.maps.Point(15, 38)
                                 : new google.maps.Point(24, 60),
                     }}
-                    animation={google.maps.Animation.DROP}
+                    animation={isSelected ? google.maps.Animation.BOUNCE : google.maps.Animation.DROP}
                     onClick={() => setHoveredMarker(index)}
                 >
                     {hoveredMarker === index && (
@@ -151,7 +173,8 @@ export default function MapView({
                         </InfoWindow>
                     )}
                 </Marker>
-            ))}
+                )
+            })}
         </GoogleMap>
     )
 }
