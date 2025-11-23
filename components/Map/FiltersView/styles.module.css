@@ -290,6 +290,7 @@
 
 @media (min-width: 768px) {
     .filter {
+        bottom: 100px;
         position: relative;
         padding: 0;
         transform: translateY(0);
