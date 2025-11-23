@@ -1,0 +1,534 @@
+.main {
+    background: var(--background);
+    min-height: 100vh;
+    padding: 20px 0 40px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.header {
+    margin-bottom: 16px;
+}
+
+.restaurantName {
+    font-family: var(--font-plus);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.content {
+    display: grid;
+    grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: flex-start;
+}
+
+
+
+.leftPanel {
+    background: #242423;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+.metricsCard {
+    background: #31312f;
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+}
+
+.metricsLoading,
+.metricsLocked {
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.highlight {
+    color: var(--primary);
+}
+
+.metricsGrid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+
+.metricCard {
+    background: #272725;
+    border-radius: 14px;
+    border: 1px solid #444;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 0 1 180px;   
+    max-width: 220px;  
+}
+
+
+.metricTitle {
+    font-size: 14px;
+    color: var(--white);
+    text-align: center;
+}
+
+.metricCircleWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.metricCircle {
+    width: 72px;
+    height: 72px;
+    border-radius: 999px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.metricValue {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+}
+
+
+.infoPanel {
+    background: #31312f;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.infoHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 12px;
+}
+
+.infoHeader h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.08em;
+}
+
+.saveButton {
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: none;
+    background: #444;
+    color: #888;
+    font-size: 13px;
+    cursor: not-allowed;
+}
+
+.infoContent {
+    min-height: 180px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    color: #ddd;
+    font-size: 13px;
+    text-align: left;
+}
+
+
+
+.rightPanel {
+    background: #242423;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.reviewsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.reviewsHeader h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.reviewsCount {
+    color: var(--white);
+    font-size: 14px;
+}
+
+.reviewsList {
+    flex: 0 0 auto;          
+    border-radius: 12px;
+    background: #31312f;
+    padding: 16px;
+    min-height: 560px;
+}
+
+.reviewsPlaceholder {
+    color: #858585;
+    font-size: 13px;
+}
+
+
+@media (max-width: 900px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.infoForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.infoRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.infoRowGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.infoLabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: #aaa;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.infoInput {
+    background: #242423;
+    border-radius: 8px;
+    border: 1px solid #444;
+    padding: 8px 10px;
+    color: var(--white);
+    font-size: 14px;
+}
+
+.infoInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.infoError {
+    color: #ff6b6b;
+    font-size: 12px;
+}
+
+.infoSuccess {
+    color: #4caf50;
+    font-size: 12px;
+}
+
+.infoDivider {
+    margin: 12px 0;
+    border-top: 1px solid #3a3a37;
+}
+
+.imagesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.imageGroup {
+    background: #242423;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #383836;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.imageTitle {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b0b0b0;
+}
+
+.imagePreview {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+.imageMultiPreview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.imagePreviewSmall {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #444;
+}
+
+.imageEmpty {
+    font-size: 12px;
+    color: #888;
+}
+
+.imageActions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.imageButton {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    background: #4c6fff;
+    color: #fff;
+}
+
+.imageButtonSecondary {
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid #555;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    color: #ddd;
+}
+
+.imageButton:disabled,
+.imageButtonSecondary:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.imageFileInput {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.imageErrorMessage {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.imageSuccessMessage {
+    color: #4caf50;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.reviewsItems {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reviewItem {
+    background: #242423;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.reviewAuthor {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--white);
+}
+
+.reviewRating {
+    font-weight: 600;
+    font-size: 13px;
+    color: #f5c518; /* dorado tipo rating */
+}
+
+.reviewMeta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 11px;
+    color: #b0b0b0;
+}
+
+.reviewDate {
+    opacity: 0.9;
+}
+
+.reviewBadge {
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #3a3a38;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.reviewText {
+    font-size: 12px;
+    color: #e0e0e0;
+    line-height: 1.4;
+}
+
+.mapWrapper {
+    width: 100%;
+    height: 260px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #444;
+}
+
+.reviewsItems {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reviewItem {
+    background: #242423;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.reviewHeaderMain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.reviewAuthor {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--white);
+}
+
+.reviewDate {
+    font-size: 11px;
+    color: #b0b0b0;
+}
+
+.reviewRatingWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.reviewStars {
+    font-size: 13px;
+    line-height: 1;
+}
+
+.starFilled {
+    color: #f5c518;
+}
+
+.starEmpty {
+    color: #555;
+}
+
+.reviewRatingValue {
+    font-size: 11px;
+    color: #ddd;
+}
+
+.reviewImageWrapper {
+    width: 100%;
+    max-height: 140px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+
+.reviewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.reviewText {
+    font-size: 12px;
+    color: #e0e0e0;
+    line-height: 1.4;
+}

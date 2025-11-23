@@ -110,10 +110,13 @@ export interface Review {
         username?: string
         fotoPerfilUrl?: string
     }
-    fotos?: Array<{
-        url?: string
-        id?: string
-    }>
+     fotos?: Array<
+        | {
+              url?: string
+              id?: string
+          }
+        | string
+    >
 }
 
 export interface Gusto {
@@ -487,4 +490,13 @@ export interface IniciarVotacionRequest {
 export interface RegistrarVotoRequest {
     restauranteId: string
     comentario?: string
+}
+
+export interface RestauranteMetricasDashboard {
+    restauranteId: string
+    totalTop3Individual: number
+    totalTop3Grupo: number
+    totalVisitasPerfil: number
+    totalFavoritosHistorico: number
+    totalFavoritosActual: number
 }
