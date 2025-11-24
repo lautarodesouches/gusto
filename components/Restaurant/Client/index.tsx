@@ -11,13 +11,22 @@ interface Props {
 }
 
 export default function RestaurantClient({ restaurant, reviews }: Props) {
-    const [isFavourite, setIsFavourite] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
+    // Inicializar con el valor del servidor si está disponible, o false por defecto
+    const [isFavourite, setIsFavourite] = useState(restaurant.esFavorito ?? false)
+    const [isLoading, setIsLoading] = useState(false)
     const toast = useToast()
 
-    // Verificar si el restaurante ya es favorito al cargar
+    // Solo verificar si no viene del servidor (fallback)
     useEffect(() => {
+        // Si el restaurante ya tiene esFavorito del servidor, no necesitamos verificar
+        if (restaurant.esFavorito !== undefined) {
+            setIsFavourite(restaurant.esFavorito)
+            return
+        }
+
+        // Si no viene del servidor, verificar en el cliente
         const checkFavourite = async () => {
+            setIsLoading(true)
             try {
                 const result = await checkFavoriteRestaurant(restaurant.id)
                 if (result.success && result.data) {
@@ -30,7 +39,7 @@ export default function RestaurantClient({ restaurant, reviews }: Props) {
             }
         }
         checkFavourite()
-    }, [restaurant.id])
+    }, [restaurant.id, restaurant.esFavorito])
 
     const handleFavourite = async () => {
         if (isLoading) return
