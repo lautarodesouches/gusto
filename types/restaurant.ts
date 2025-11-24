@@ -40,6 +40,8 @@ export type Restaurant = {
     // Reviews separadas
     reviewsLocales: Review[]
     reviewsGoogle: Review[]
+    // Estado de favorito (opcional, puede venir del backend o calcularse en el servidor)
+    esFavorito?: boolean
 }
 
 export type Review = {

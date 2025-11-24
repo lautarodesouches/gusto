@@ -183,6 +183,9 @@ export async function getRestaurant(
                 ...((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
                 ...((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string))
             ],
+            
+            // Estado de favorito (viene directamente del backend)
+            esFavorito: data.esFavorito ?? data.EsFavorito ?? false,
         }
         
         return { success: true, data: restaurant }

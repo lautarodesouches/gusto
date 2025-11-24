@@ -32,10 +32,21 @@ export async function POST(req: Request) {
             )
         }
 
+        // Validar que la valoración esté en el rango correcto (0.5 a 5.0, en incrementos de 0.5)
+        if (valoracion < 0.5 || valoracion > 5.0) {
+            return NextResponse.json(
+                { error: 'La valoración debe estar entre 0.5 y 5.0' },
+                { status: 400 }
+            )
+        }
+
         const backendFormData = new FormData()
         backendFormData.append('restauranteId', restauranteId)
-        // Enviar como string pero el backend lo parseará como double
-        backendFormData.append('valoracion', valoracion.toString())
+        // Enviar como string con formato de punto decimal estándar
+        // Asegurar que siempre use punto (.) como separador decimal, no coma
+        // El backend espera un double, así que enviamos el string formateado correctamente
+        const valoracionFormateada = valoracion.toFixed(1).replace(',', '.') // Asegurar punto decimal
+        backendFormData.append('valoracion', valoracionFormateada)
         if (opinion) backendFormData.append('opinion', opinion)
         if (titulo) backendFormData.append('titulo', titulo)
         if (fechaVisita) backendFormData.append('fechaVisita', fechaVisita)
