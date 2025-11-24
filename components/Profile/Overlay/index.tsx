@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { getProfile } from '@/app/perfil/actions'
+import { getProfile } from '@/app/actions/profile'
 import { User } from '@/types'
 import { ProfileClient } from '@/components'
 import styles from './styles.module.css'

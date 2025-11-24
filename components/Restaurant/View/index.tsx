@@ -24,7 +24,7 @@ import ReviewList from '../Reviews'
 import RestaurantMap from '../Map'
 import { MapProvider } from '@/components/Map/MapProvider'
 import { useEffect, useState, useRef } from 'react'
-import { getRecomendacion } from '@/app/restaurante/actions'
+import { getRecomendacion } from '@/app/actions/restaurant'
 
 interface Props {
     restaurant: Restaurant

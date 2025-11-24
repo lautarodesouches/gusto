@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Restaurant } from '@/types'
-import { getFavoriteRestaurants } from '@/app/configuracion/actions'
+import { getFavoriteRestaurants } from '@/app/actions/settings'
 import { ROUTES } from '@/routes'
 import styles from './styles.module.css'
 

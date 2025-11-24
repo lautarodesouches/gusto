@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/context/ToastContext'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
-import { updateUserProfile } from '@/app/configuracion/actions'
+import { updateUserProfile } from '@/app/actions/settings'
 import styles from './styles.module.css'
 
 export default function ProfileTab() {
