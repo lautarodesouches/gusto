@@ -16,6 +16,7 @@ import { useToast } from '@/context/ToastContext'
 import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
 import Image from 'next/image'
 
@@ -28,6 +29,9 @@ interface Props {
 
 export default function GroupSocial({ group, members, onCheck, onMemberRemoved }: Props) {
     const toast = useToast()
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
 
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
     const [isEditing, setIsEditing] = useState(false)
@@ -175,8 +179,14 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                     const isChecked = realMember?.checked ?? false
                     return (
                         <article className={styles.member} key={m.id}>
-                            <Link
-                                href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
+                            <a
+                                href={`${pathname}?profile=${m.usuarioUsername}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    const params = new URLSearchParams(searchParams.toString())
+                                    params.set('profile', m.usuarioUsername)
+                                    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+                                }}
                                 className={styles.member__link}
                             >
                                 <div className={styles.member__div}>
@@ -206,7 +216,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                                         )}
                                     </h3>
                                 </div>
-                            </Link>
+                            </a>
                             <div className={styles.member__div}>
                                 {isEditing ? (
                                     <button
