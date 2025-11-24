@@ -35,8 +35,7 @@ export default function SocialAuth({}: Props) {
                     break
             }
 
-            // @ts-ignore
-            const result = await signInWithPopup(auth, provider)
+            const result = await signInWithPopup(auth, provider!)
             const token = await result.user.getIdToken()
             const user = result.user
 

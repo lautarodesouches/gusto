@@ -17,7 +17,7 @@ export default function AdminPanel() {
     const toast = useToast()
     const [solicitudes, setSolicitudes] = useState<SolicitudRestaurante[]>([])
     const [filteredSolicitudes, setFilteredSolicitudes] = useState<SolicitudRestaurante[]>([])
-    const [activeFilter, setActiveFilter] = useState<SolicitudStatus>('Todos')
+    const [activeFilter, setActiveFilter] = useState<SolicitudStatus | 'Todos'>('Todos')
     const [isLoading, setIsLoading] = useState(true)
     const [loadingId, setLoadingId] = useState<string | null>(null)
     const [selectedSolicitudId, setSelectedSolicitudId] = useState<string | null>(null)
@@ -26,7 +26,7 @@ export default function AdminPanel() {
     const [solicitudToReject, setSolicitudToReject] = useState<string | null>(null)
 
     // Función para cargar solicitudes según el filtro activo
-    const loadSolicitudes = async (tipo?: SolicitudStatus) => {
+    const loadSolicitudes = async (tipo?: SolicitudStatus | 'Todos') => {
         try {
             setIsLoading(true)
             const tipoFiltro = tipo || activeFilter

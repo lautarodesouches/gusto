@@ -177,8 +177,8 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
             
             {(() => {
                 // Verificar si el usuario actual ya votó
-                const usuarioYaVoto = resultados?.restaurantesVotados.some(r =>
-                    r.votantes.some(v => v.usuarioId === auth.user?.uid)
+                const usuarioYaVoto = resultados?.restaurantesVotados.some((r: ResultadoVotacion['restaurantesVotados'][0]) =>
+                    r.votantes.some((v: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => v.usuarioId === auth.user?.uid)
                 ) || false
 
                 // Mostrar resultados si:

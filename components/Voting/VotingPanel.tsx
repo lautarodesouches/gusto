@@ -137,11 +137,11 @@ export default function VotingPanel({
             <div className={styles.restaurantGrid}>
                 {restaurantes.slice(0, 10).map((restaurante) => {
                     const votosRestaurante = votacionActual.restaurantesVotados.find(
-                        (r) => r.restauranteId === restaurante.id
+                        (r: ResultadoVotacion['restaurantesVotados'][0]) => r.restauranteId === restaurante.id
                     )
                     const cantidadVotos = votosRestaurante?.cantidadVotos || 0
                     const votantes = votosRestaurante?.votantes || []
-                    const comentarios = votantes.filter(v => v.comentario)
+                    const comentarios = votantes.filter((v: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => v.comentario)
 
                     return (
                         <div
@@ -166,7 +166,7 @@ export default function VotingPanel({
                                 {comentarios.length > 0 && (
                                     <div className={styles.comentariosSection}>
                                         <div className={styles.comentariosDivider}></div>
-                                        {comentarios.map((votante) => (
+                                        {comentarios.map((votante: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => (
                                             <div key={votante.usuarioId} className={styles.comentarioItem}>
                                                 <div className={styles.comentarioHeader}>
                                                     {votante.usuarioFoto ? (

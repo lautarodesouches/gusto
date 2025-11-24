@@ -11,7 +11,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { ROUTES } from '@/routes'
-import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
 import { useToast } from '@/context/ToastContext'

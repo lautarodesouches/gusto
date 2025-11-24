@@ -1,7 +1,6 @@
 'use client'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faArrowLeft,
     faLocationDot,
     faLock,
     faPlus,
@@ -30,7 +29,6 @@ export function ProfileView({
     onAddFriend,
     onEditTastes,
     onGoPlace,
-    onGoBack,
 }: ProfileViewProps) {
     return (
         <article className={styles.profile}>

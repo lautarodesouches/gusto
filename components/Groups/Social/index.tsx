@@ -8,7 +8,6 @@ import {
     faUserPlus,
     faX,
     faUserMinus,
-    faPen,
     faTrash,
     faRightFromBracket,
     faFloppyDisk,
@@ -18,7 +17,6 @@ import { Group, GroupMember } from '@/types'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useToast } from '@/context/ToastContext'
 import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
-import Link from 'next/link'
 import { ROUTES } from '@/routes'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
@@ -33,7 +31,7 @@ interface Props {
     currentUserId: string
 }
 
-export default function GroupSocial({ group, members, onCheck, onMemberRemoved, isAdmin, currentUserId }: Props) {
+export default function GroupSocial({ group, members, onCheck, onMemberRemoved, isAdmin }: Props) {
     const toast = useToast()
     const router = useRouter()
     const pathname = usePathname()
@@ -65,7 +63,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
             toast.success('Nombre del grupo actualizado')
             router.refresh()
             setIsEditing(false)
-        } catch (error) {
+        } catch {
             toast.error('Error al actualizar el nombre del grupo')
             setGroupName(group.nombre)
         } finally {
@@ -84,7 +82,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
             toast.success('Grupo eliminado exitosamente')
             router.push(ROUTES.MAP)
-        } catch (error) {
+        } catch {
             toast.error('Error al eliminar el grupo')
         } finally {
             setLoading(false)
@@ -103,7 +101,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
             toast.success('Has abandonado el grupo')
             router.push(ROUTES.MAP)
-        } catch (error) {
+        } catch {
             toast.error('Error al abandonar el grupo')
         } finally {
             setLoading(false)

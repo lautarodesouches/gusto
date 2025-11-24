@@ -44,7 +44,7 @@ export default function VotingResults({
 
     
     const ganador = resultado.ganadorId
-        ? resultado.restaurantesVotados.find((r) => r.restauranteId === resultado.ganadorId)
+        ? resultado.restaurantesVotados.find((r: ResultadoVotacion['restaurantesVotados'][0]) => r.restauranteId === resultado.ganadorId)
         : null
 
     const handleGanadorRuleta = async (restauranteId: string) => {
@@ -86,7 +86,7 @@ export default function VotingResults({
 
 
     if (resultado.hayEmpate && !ganador && mostrarRuleta) {
-        const restaurantesEmpatados = resultado.restaurantesVotados.filter((r) =>
+        const restaurantesEmpatados = resultado.restaurantesVotados.filter((r: ResultadoVotacion['restaurantesVotados'][0]) =>
             resultado.restaurantesEmpatados.includes(r.restauranteId)
         )
 
@@ -178,11 +178,11 @@ export default function VotingResults({
                                 <p>{restaurante.restauranteDireccion}</p>
                                 
                                 {/* Comentarios visibles */}
-                                {restaurante.votantes.some(v => v.comentario) && (
+                                {restaurante.votantes.some((v: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => v.comentario) && (
                                     <div className={styles.comentarios}>
                                         {restaurante.votantes
-                                            .filter(v => v.comentario)
-                                            .map((votante) => (
+                                            .filter((v: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => v.comentario)
+                                            .map((votante: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => (
                                                 <div key={votante.usuarioId} className={styles.comentario}>
                                                     <div className={styles.comentarioHeader}>
                                                         {votante.usuarioFoto ? (
@@ -227,7 +227,7 @@ export default function VotingResults({
                                 {votantesExpandidos[restaurante.restauranteId] && (
                                     <div className={styles.votantesContainer}>
                                         <div className={styles.votantes}>
-                                            {restaurante.votantes.map((votante) => (
+                                            {restaurante.votantes.map((votante: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => (
                                                 <div
                                                     key={votante.usuarioId}
                                                     className={styles.votante}

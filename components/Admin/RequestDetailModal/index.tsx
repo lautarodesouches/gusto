@@ -161,7 +161,7 @@ export default function RequestDetailModal({
                                         <div>
                                             <strong>Tipos:</strong>
                                             <ul className={styles.list}>
-                                                {detalle.types.map((type, idx) => (
+                                                {detalle.types.map((type: string, idx: number) => (
                                                     <li key={idx}>{type}</li>
                                                 ))}
                                             </ul>
@@ -179,7 +179,7 @@ export default function RequestDetailModal({
                                 <div className={styles.section__content}>
                                     {detalle.horarios.length > 0 ? (
                                         <ul className={styles.horariosList}>
-                                            {detalle.horarios.map((horario, idx) => (
+                                            {detalle.horarios.map((horario: SolicitudRestauranteDetalle['horarios'][0], idx: number) => (
                                                 <li key={idx} className={horario.cerrado ? styles.horarioCerrado : ''}>
                                                     {formatHorario(horario)}
                                                 </li>
@@ -200,7 +200,7 @@ export default function RequestDetailModal({
                                     </h3>
                                     <div className={styles.section__content}>
                                         <div className={styles.tags}>
-                                            {detalle.gustos.map((gusto) => (
+                                            {detalle.gustos.map((gusto: SolicitudRestauranteDetalle['gustos'][0]) => (
                                                 <span key={gusto.id} className={styles.tag}>
                                                     {gusto.nombre}
                                                 </span>
@@ -219,7 +219,7 @@ export default function RequestDetailModal({
                                     </h3>
                                     <div className={styles.section__content}>
                                         <div className={styles.tags}>
-                                            {detalle.restricciones.map((restriccion) => (
+                                            {detalle.restricciones.map((restriccion: SolicitudRestauranteDetalle['restricciones'][0]) => (
                                                 <span key={restriccion.id} className={styles.tag}>
                                                     {restriccion.nombre}
                                                 </span>
@@ -269,8 +269,8 @@ export default function RequestDetailModal({
                                             <h4 className={styles.imageGroup__title}>Imágenes del Interior ({detalle.imagenesInterior.length})</h4>
                                             <div className={styles.imageGrid}>
                                                 {detalle.imagenesInterior
-                                                    .filter(img => img && img.trim() !== '')
-                                                    .map((img, idx) => (
+                                                    .filter((img: string) => img && img.trim() !== '')
+                                                    .map((img: string, idx: number) => (
                                                         <img
                                                             key={idx}
                                                             src={img}
@@ -290,8 +290,8 @@ export default function RequestDetailModal({
                                             <h4 className={styles.imageGroup__title}>Imágenes de Comidas ({detalle.imagenesComida.length})</h4>
                                             <div className={styles.imageGrid}>
                                                 {detalle.imagenesComida
-                                                    .filter(img => img && img.trim() !== '')
-                                                    .map((img, idx) => (
+                                                    .filter((img: string) => img && img.trim() !== '')
+                                                    .map((img: string, idx: number) => (
                                                         <img
                                                             key={idx}
                                                             src={img}
