@@ -309,3 +309,69 @@
         border: 1px solid var(--light);
     }
 }
+
+/* Settings Styles */
+.nameEditor {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+}
+
+.nameInput {
+    background: var(--black);
+    border: 1px solid var(--grey);
+    color: var(--white);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    width: 100%;
+}
+
+.saveButton {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.dangerZone {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--grey);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dangerButton {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.dangerButton:hover {
+    background: rgba(255, 59, 48, 0.1);
+}
+
+.dangerButton.delete {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.dangerButton.delete:hover {
+    background: #ff1a1a;
+}
