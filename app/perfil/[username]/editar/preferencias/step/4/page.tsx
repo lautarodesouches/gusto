@@ -6,7 +6,7 @@ import { useRegister } from '@/context/RegisterContext'
 import { useEffect, useState, useRef } from 'react'
 import { RegisterItem } from '@/types'
 import { saveSteps } from '@/app/actions/steps'
-import { getUserResumen } from '@/app/actions/profile'
+import { getUserResumen } from '@/app/actions/steps'
 
 export default function StepFour() {
     const router = useRouter()

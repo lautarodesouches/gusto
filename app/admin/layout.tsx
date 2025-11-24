@@ -1,4 +1,4 @@
-import { requireAdmin } from './actions'
+import { requireAdmin } from '@/app/actions/admin'
 
 export default async function AdminLayout({
     children,

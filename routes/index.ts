@@ -12,4 +12,5 @@ export const ROUTES = {
     RESTAURANT__ADD: '/restaurante/agregar',
     RESTAURANT__DASHBOARD: '/restaurante/', // Se completa con el ID: /restaurante/[id]/dashboard
     ADMIN: '/admin',
+    SETTINGS: '/configuracion',
 }

@@ -3,43 +3,24 @@ import { Restaurant, Review } from '@/types'
 import RestaurantView from '../View'
 import { useState, useEffect } from 'react'
 import { useToast } from '@/context/ToastContext'
-import { addFavoriteRestaurant, removeFavoriteRestaurant, checkFavoriteRestaurant } from '@/app/actions/favorites'
+import { addFavoriteRestaurant, removeFavoriteRestaurant } from '@/app/actions/favorites'
 
 interface Props {
     restaurant: Restaurant
     reviews: Review[]
+    initialIsFavorite?: boolean
 }
 
-export default function RestaurantClient({ restaurant, reviews }: Props) {
-    // Inicializar con el valor del servidor si está disponible, o false por defecto
-    const [isFavourite, setIsFavourite] = useState(restaurant.esFavorito ?? false)
+export default function RestaurantClient({ restaurant, reviews, initialIsFavorite = false }: Props) {
+    const [isFavourite, setIsFavourite] = useState(initialIsFavorite)
     const [isLoading, setIsLoading] = useState(false)
     const toast = useToast()
 
-    // Solo verificar si no viene del servidor (fallback)
+    // Ya no necesitamos verificar en el useEffect porque viene del servidor
+    // Solo actualizamos si cambia el restaurante
     useEffect(() => {
-        // Si el restaurante ya tiene esFavorito del servidor, no necesitamos verificar
-        if (restaurant.esFavorito !== undefined) {
-            setIsFavourite(restaurant.esFavorito)
-            return
-        }
-
-        // Si no viene del servidor, verificar en el cliente
-        const checkFavourite = async () => {
-            setIsLoading(true)
-            try {
-                const result = await checkFavoriteRestaurant(restaurant.id)
-                if (result.success && result.data) {
-                    setIsFavourite(result.data.isFavourite)
-                }
-            } catch (error) {
-                console.error('Error al verificar favorito:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        checkFavourite()
-    }, [restaurant.id, restaurant.esFavorito])
+        setIsFavourite(initialIsFavorite)
+    }, [restaurant.id, initialIsFavorite])
 
     const handleFavourite = async () => {
         if (isLoading) return

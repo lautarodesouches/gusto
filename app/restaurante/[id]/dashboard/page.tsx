@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar'
 import { notFound } from 'next/navigation'
-import { getRestaurant, getRestaurantMetrics } from '../../actions'
+import { getRestaurant, getRestaurantMetrics } from '@/app/actions/restaurant'
 import { RestaurantDashboard } from '@/components'
 
 interface Props {
