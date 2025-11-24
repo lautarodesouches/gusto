@@ -3,6 +3,7 @@ import { Restaurant, Review } from '@/types'
 import RestaurantView from '../View'
 import { useState, useEffect } from 'react'
 import { useToast } from '@/context/ToastContext'
+import { addFavoriteRestaurant, removeFavoriteRestaurant, checkFavoriteRestaurant } from '@/app/actions/favorites'
 
 interface Props {
     restaurant: Restaurant
@@ -18,10 +19,9 @@ export default function RestaurantClient({ restaurant, reviews }: Props) {
     useEffect(() => {
         const checkFavourite = async () => {
             try {
-                const response = await fetch(`/api/restaurante/favorito/verificar/${restaurant.id}`)
-                if (response.ok) {
-                    const data = await response.json()
-                    setIsFavourite(data.isFavourite || false)
+                const result = await checkFavoriteRestaurant(restaurant.id)
+                if (result.success && result.data) {
+                    setIsFavourite(result.data.isFavourite)
                 }
             } catch (error) {
                 console.error('Error al verificar favorito:', error)
@@ -39,26 +39,20 @@ export default function RestaurantClient({ restaurant, reviews }: Props) {
         try {
             if (isFavourite) {
                 // Quitar de favoritos
-                const response = await fetch(`/api/restaurante/favorito/${restaurant.id}`, {
-                    method: 'DELETE',
-                })
+                const result = await removeFavoriteRestaurant(restaurant.id)
 
-                if (!response.ok) {
-                    const error = await response.json()
-                    throw new Error(error.error || 'Error al quitar de favoritos')
+                if (!result.success) {
+                    throw new Error(result.error || 'Error al quitar de favoritos')
                 }
 
                 setIsFavourite(false)
                 toast.success('Restaurante eliminado de guardados')
             } else {
                 // Agregar a favoritos
-                const response = await fetch(`/api/restaurante/favorito/${restaurant.id}`, {
-                    method: 'POST',
-                })
+                const result = await addFavoriteRestaurant(restaurant.id)
 
-                if (!response.ok) {
-                    const error = await response.json()
-                    throw new Error(error.error || 'Error al guardar restaurante')
+                if (!result.success) {
+                    throw new Error(result.error || 'Error al guardar restaurante')
                 }
 
                 setIsFavourite(true)
