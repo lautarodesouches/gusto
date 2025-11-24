@@ -1,5 +1,6 @@
 import { RestaurantClient } from '@/components'
 import { getRestaurant } from '../actions'
+import { checkFavoriteRestaurant } from '@/app/actions/favorites'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 
@@ -22,10 +23,18 @@ export default async function Restaurant({ params }: Props) {
         ...(restaurant.reviews && (!restaurant.reviewsLocales || restaurant.reviewsLocales.length === 0) && (!restaurant.reviewsGoogle || restaurant.reviewsGoogle.length === 0) ? restaurant.reviews : [])
     ]
 
+    // Verificar si el restaurante es favorito en el servidor
+    const favoriteResult = await checkFavoriteRestaurant(restaurant.id)
+    const initialIsFavorite = favoriteResult.success && favoriteResult.data ? favoriteResult.data.isFavourite : false
+
     return (
         <>
             <Navbar />
-            <RestaurantClient restaurant={restaurant} reviews={reviews} />
+            <RestaurantClient 
+                restaurant={restaurant} 
+                reviews={reviews} 
+                initialIsFavorite={initialIsFavorite}
+            />
         </>
     )
 }

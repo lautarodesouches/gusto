@@ -3,34 +3,24 @@ import { Restaurant, Review } from '@/types'
 import RestaurantView from '../View'
 import { useState, useEffect } from 'react'
 import { useToast } from '@/context/ToastContext'
-import { addFavoriteRestaurant, removeFavoriteRestaurant, checkFavoriteRestaurant } from '@/app/actions/favorites'
+import { addFavoriteRestaurant, removeFavoriteRestaurant } from '@/app/actions/favorites'
 
 interface Props {
     restaurant: Restaurant
     reviews: Review[]
+    initialIsFavorite?: boolean
 }
 
-export default function RestaurantClient({ restaurant, reviews }: Props) {
-    const [isFavourite, setIsFavourite] = useState(false)
-    const [isLoading, setIsLoading] = useState(true)
+export default function RestaurantClient({ restaurant, reviews, initialIsFavorite = false }: Props) {
+    const [isFavourite, setIsFavourite] = useState(initialIsFavorite)
+    const [isLoading, setIsLoading] = useState(false)
     const toast = useToast()
 
-    // Verificar si el restaurante ya es favorito al cargar
+    // Ya no necesitamos verificar en el useEffect porque viene del servidor
+    // Solo actualizamos si cambia el restaurante
     useEffect(() => {
-        const checkFavourite = async () => {
-            try {
-                const result = await checkFavoriteRestaurant(restaurant.id)
-                if (result.success && result.data) {
-                    setIsFavourite(result.data.isFavourite)
-                }
-            } catch (error) {
-                console.error('Error al verificar favorito:', error)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        checkFavourite()
-    }, [restaurant.id])
+        setIsFavourite(initialIsFavorite)
+    }, [restaurant.id, initialIsFavorite])
 
     const handleFavourite = async () => {
         if (isLoading) return

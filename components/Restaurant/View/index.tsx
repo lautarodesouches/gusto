@@ -390,100 +390,107 @@ export default function RestaurantView({
                         </div>
                     </div>
 
-                    {/* Columna lateral */}
+                    {/* Fila de 3 imágenes debajo */}
                     <div className={styles['gallery__side']}>
-                        {sideItems.map((item, _itemIdx) => {
-                            // Para restaurantes de la app, usar imágenes reales; para Google Places, usar placeholders
-                            let rawImageUrl = ''
-                            let isClickable = false
-                            
-                            if (restaurant.esDeLaApp && item.images && item.images.length > 0) {
-                                rawImageUrl = item.images[0]
-                                isClickable = true
-                            } else if (item.type === 'menu' && restaurant.menu) {
-                                // Para el menú, usar placeholder o imagen del menú
-                                rawImageUrl = `/images/restaurant/interior.png`
-                            } else {
-                                rawImageUrl = `/images/restaurant/${item.title.toLowerCase()}.png`
-                            }
-                            
-                            const imageUrl = getSafeImageUrl(
-                                rawImageUrl,
-                                `/images/restaurant/${item.title.toLowerCase()}.png`
-                            )
-                            
-                            const handleClick = () => {
-                                if (isClickable && item.images && item.images.length > 0) {
-                                    // Encontrar el índice en allImages
-                                    const firstImageIndex = item.type === 'interior' 
-                                        ? 0 
-                                        : item.type === 'comida' 
-                                            ? interiorCount 
-                                            : 0
-                                    if (firstImageIndex < allImages.length) {
-                                        setSelectedImageIndex(firstImageIndex)
-                                    }
-                                }
-                                // El menú no es clickeable, solo se muestra el contenido
-                            }
-                            
-                            return (
-                                <div
-                                    key={item.title}
-                                    className={`${styles['gallery__side-item']} ${isClickable || item.type === 'menu' ? styles['gallery__side-item--clickable'] : ''}`}
-                                    onClick={isClickable ? handleClick : undefined}
-                                >
-                                    {item.type === 'menu' && restaurant.menu ? (
-                                        <div 
-                                            className={styles['gallery__menu-preview']}
-                                            onClick={() => setShowMenuModal(true)}
-                                        >
-                                            <Image
-                                                className={styles['gallery__side-image']}
-                                                src={imageUrl}
-                                                alt="Menú"
-                                                width={200}
-                                                height={200}
-                                                onError={(e) => {
-                                                    const target = e.target as HTMLImageElement
-                                                    target.src = `/images/restaurant/interior.png`
-                                                }}
-                                            />
-                                            <div className={styles['gallery__side-info']}>
-                                                <span className={styles['gallery__side-title']}>
-                                                    {item.title}
-                                                </span>
-                                                <span className={styles['gallery__side-count']}>
-                                                    {item.count}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <Image
-                                                className={styles['gallery__side-image']}
-                                                src={imageUrl}
-                                                alt={item.title}
-                                                width={200}
-                                                height={200}
-                                                onError={(e) => {
-                                                    const target = e.target as HTMLImageElement
-                                                    target.src = `/images/restaurant/${item.title.toLowerCase()}.png`
-                                                }}
-                                            />
-                                            <div className={styles['gallery__side-info']}>
-                                                <span className={styles['gallery__side-title']}>
-                                                    {item.title}
-                                                </span>
-                                                <span className={styles['gallery__side-count']}>
-                                                    {item.count}
-                                                </span>
-                                            </div>
-                                        </>
-                                    )}
+                        {/* Primera imagen de interior */}
+                        {restaurant.imagenesInterior && restaurant.imagenesInterior.length > 0 && (
+                            <div
+                                className={`${styles['gallery__side-item']} ${styles['gallery__side-item--clickable']}`}
+                                onClick={() => setSelectedImageIndex(0)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <Image
+                                    className={styles['gallery__side-image']}
+                                    src={getSafeImageUrl(restaurant.imagenesInterior[0], '/images/restaurant/interior.png')}
+                                    alt="Interior"
+                                    width={400}
+                                    height={300}
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement
+                                        target.src = '/images/restaurant/interior.png'
+                                    }}
+                                />
+                                <div className={styles['gallery__side-info']}>
+                                    <span className={styles['gallery__side-title']}>Interior</span>
                                 </div>
-                            )
-                        })}
+                            </div>
+                        )}
+                        
+                        {/* Primera imagen de comida */}
+                        {restaurant.imagenesComida && restaurant.imagenesComida.length > 0 && (
+                            <div
+                                className={`${styles['gallery__side-item']} ${styles['gallery__side-item--clickable']}`}
+                                onClick={() => {
+                                    const comidaIndex = interiorCount
+                                    if (comidaIndex < allImages.length) {
+                                        setSelectedImageIndex(comidaIndex)
+                                    }
+                                }}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <Image
+                                    className={styles['gallery__side-image']}
+                                    src={getSafeImageUrl(restaurant.imagenesComida[0], '/images/restaurant/comida.png')}
+                                    alt="Comida"
+                                    width={400}
+                                    height={300}
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement
+                                        target.src = '/images/restaurant/comida.png'
+                                    }}
+                                />
+                                <div className={styles['gallery__side-info']}>
+                                    <span className={styles['gallery__side-title']}>Comida</span>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Menú */}
+                        {restaurant.menu && (
+                            <div
+                                className={`${styles['gallery__side-item']} ${styles['gallery__side-item--clickable']}`}
+                                onClick={() => setShowMenuModal(true)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <Image
+                                    className={styles['gallery__side-image']}
+                                    src="/images/restaurant/menu.png"
+                                    alt="Menú"
+                                    width={400}
+                                    height={300}
+                                />
+                                <div className={styles['gallery__side-info']}>
+                                    <span className={styles['gallery__side-title']}>Menú</span>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Fallback si no hay imágenes */}
+                        {(!restaurant.imagenesInterior || restaurant.imagenesInterior.length === 0) && 
+                         (!restaurant.imagenesComida || restaurant.imagenesComida.length === 0) && 
+                         !restaurant.menu && (
+                            <>
+                                {[1, 2, 3].map((i) => (
+                                    <div
+                                        key={i}
+                                        className={styles['gallery__side-item']}
+                                    >
+                                        <Image
+                                            className={styles['gallery__side-image']}
+                                            src={`/images/restaurant/${i === 1 ? 'interior' : i === 2 ? 'comida' : 'menu'}.png`}
+                                            alt={`Imagen ${i}`}
+                                            width={400}
+                                            height={300}
+                                        />
+                                        <div className={styles['gallery__side-info']}>
+                                            <span className={styles['gallery__side-title']}>
+                                                {i === 1 ? 'Interior' : i === 2 ? 'Comida' : 'Menú'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
                 </div>
             </section>
