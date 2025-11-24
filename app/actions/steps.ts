@@ -1,5 +1,4 @@
 'use server'
-
 import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
 import { ApiResponse, RegisterItem } from '@/types'
@@ -293,7 +292,7 @@ export async function saveRestricciones(ids: (string | number)[], skip: boolean 
         }
 
         const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
-        
+
         const res = await fetch(`${API_URL}/Usuario/restricciones`, {
             method: 'POST',
             headers: {
@@ -325,7 +324,7 @@ export async function updateRestricciones(ids: (string | number)[], skip: boolea
         }
 
         const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
-        
+
         const res = await fetch(`${API_URL}/Restriccion/restricciones`, {
             method: 'PUT',
             headers: {
@@ -357,7 +356,7 @@ export async function saveCondiciones(ids: (string | number)[], skip: boolean = 
         }
 
         const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
-        
+
         const res = await fetch(`${API_URL}/Usuario/condiciones`, {
             method: 'POST',
             headers: {
@@ -389,7 +388,7 @@ export async function updateCondiciones(ids: (string | number)[], skip: boolean 
         }
 
         const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
-        
+
         const res = await fetch(`${API_URL}/CondicionMedica/condiciones`, {
             method: 'PUT',
             headers: {
@@ -421,7 +420,7 @@ export async function saveGustos(ids: (string | number)[], skip: boolean = false
         }
 
         const safeIds = Array.isArray(ids) ? ids.map(id => String(id)) : []
-        
+
         const res = await fetch(`${API_URL}/Usuario/gustos`, {
             method: 'POST',
             headers: {
@@ -455,16 +454,16 @@ export async function updateGustos(ids: (string | number)[], skip: boolean = fal
         type IdInput = string | number | { id: string | number }
         const safeIds: string[] = Array.isArray(ids)
             ? ids
-                  .map((i: IdInput) => {
-                      if (typeof i === 'object' && i !== null && 'id' in i) {
-                          return i.id
-                      }
-                      return i
-                  })
-                  .map((id: string | number) => String(id))
-                  .filter((id: string) => id.trim().length > 0)
+                .map((i: IdInput) => {
+                    if (typeof i === 'object' && i !== null && 'id' in i) {
+                        return i.id
+                    }
+                    return i
+                })
+                .map((id: string | number) => String(id))
+                .filter((id: string) => id.trim().length > 0)
             : []
-        
+
         const res = await fetch(`${API_URL}/Gusto/gustos`, {
             method: 'PUT',
             headers: {
@@ -482,5 +481,49 @@ export async function updateGustos(ids: (string | number)[], skip: boolean = fal
         return { success: true }
     } catch (error) {
         return handleFetchError(error, 'actualizando gustos')
+    }
+}
+
+/**
+ * Obtiene el resumen del usuario (restricciones, condiciones médicas y gustos)
+ * @param mode - Modo de operación ('edicion' o 'registro')
+ * @returns ApiResponse con el resumen del usuario
+ */
+export async function getUserResumen(mode?: string): Promise<ApiResponse<{
+    restricciones?: Array<{ id: string | number; nombre: string }>
+    condicionesMedicas?: Array<{ id: string | number; nombre: string }>
+    gustos?: Array<{ id: string | number; nombre: string }>
+}>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const endpoint = mode === 'edicion' ? '/PerfilUsuario/resumen' : '/Usuario/resumen'
+
+        const res = await fetch(`${API_URL}${endpoint}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text().catch(() => '')
+            console.error('Error obteniendo resumen:', res.status, errorText)
+            return {
+                success: false,
+                error: ERROR_MESSAGES.FETCH_ERROR,
+            }
+        }
+
+        const data = await res.json()
+        return {
+            success: true,
+            data,
+        }
+    } catch (error) {
+        return handleFetchError(error, 'obteniendo resumen de usuario')
     }
 }

@@ -1,5 +1,5 @@
 import { RestaurantClient } from '@/components'
-import { getRestaurant } from '../actions'
+import { getRestaurant } from '@/app/actions/restaurant'
 import { checkFavoriteRestaurant } from '@/app/actions/favorites'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
