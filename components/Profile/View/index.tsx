@@ -180,15 +180,6 @@ export function ProfileView({
                     </>
                 )}
             </footer>
-            <aside className={styles.aside}>
-                <button className={styles.aside__button}>
-                    <FontAwesomeIcon
-                        className={styles.aside__icon}
-                        icon={faArrowLeft}
-                        onClick={onGoBack}
-                    />
-                </button>
-            </aside>
         </article>
     )
 }

@@ -12,6 +12,7 @@ import {
 import { useState } from 'react'
 import { ROUTES } from '@/routes'
 import Link from 'next/link'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
 import { useToast } from '@/context/ToastContext'
 import Image from 'next/image'
@@ -80,11 +81,32 @@ export default function FriendCard({
         }
     }
 
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
+    const handleProfileClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        
+        // Check if we are on a page that supports overlay
+        const isMapOrGroups = pathname?.startsWith(ROUTES.MAP) || pathname?.startsWith(ROUTES.GROUPS) || pathname?.startsWith(ROUTES.GROUP)
+        
+        if (isMapOrGroups) {
+            const params = new URLSearchParams(searchParams.toString())
+            params.set('profile', friend.username)
+            router.push(`${pathname}?${params.toString()}`, { scroll: false })
+        } else {
+            // Redirect to map with profile param
+            router.push(`${ROUTES.MAP}?profile=${friend.username}`)
+        }
+    }
+
     // Si solo se muestra la imagen (modo compacto)
     if (showOnlyImage) {
         return (
-            <Link
-                href={`${ROUTES.PROFILE}${friend.username}`}
+            <a
+                href={`${ROUTES.MAP}?profile=${friend.username}`}
+                onClick={handleProfileClick}
                 className={styles.user__image_only}
             >
                 <div className={styles.user__img}>
@@ -100,14 +122,15 @@ export default function FriendCard({
                         <FontAwesomeIcon icon={faUser} />
                     )}
                 </div>
-            </Link>
+            </a>
         )
     }
 
     return (
         <li className={`${styles.user} ${loading ? styles.loading : ''}`}>
-            <Link
-                href={`${ROUTES.PROFILE}${friend.username}`}
+            <a
+                href={`${ROUTES.MAP}?profile=${friend.username}`}
+                onClick={handleProfileClick}
                 className={styles.user__link}
             >
                 <div className={styles.user__img}>
@@ -127,7 +150,7 @@ export default function FriendCard({
                     <p className={styles.user__name}>{friend.nombre}</p>
                     <p className={styles.user__user}>{friend.username}</p>
                 </div>
-            </Link>
+            </a>
             {isSearching && (
                 <div className={styles.user__info}>
                     <FontAwesomeIcon

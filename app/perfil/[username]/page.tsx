@@ -1,7 +1,5 @@
-import styles from './styles.module.css'
-import { getProfile } from '@/app/perfil/actions'
-import { ProfileClient } from '@/components'
-import { notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
+import { ROUTES } from '@/routes'
 
 interface Props {
     params: Promise<{ username: string }>
@@ -12,18 +10,9 @@ export default async function Profile({ params }: Props) {
     
     // Si el username es "configuracion", no procesar aquí (debe ir a la ruta estática)
     if (username === 'configuracion') {
-        notFound()
+        // O manejarlo como sea necesario
+        return null
     }
     
-    const result = await getProfile(username)
-
-    if (!result.success || !result.data) {
-        notFound()
-    }
-
-    return (
-        <main className={styles.main}>
-            <ProfileClient profile={result.data} />
-        </main>
-    )
+    redirect(`${ROUTES.MAP}?profile=${username}`)
 }

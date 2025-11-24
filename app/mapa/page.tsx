@@ -1,4 +1,5 @@
 import MapClient from '@/components/Map/Client'
+import { ProfileOverlay } from '@/components'
 import { getFriendsData } from '../actions/friends'
 import { getGroupsData } from '../actions/groups'
 import { getFilters } from '../actions/filters'
@@ -25,5 +26,10 @@ export default async function Map() {
         ratings: filtersData.data?.ratings ?? [],
     }
 
-    return <MapClient socialData={socialData} filters={filters} />
+    return (
+        <>
+            <ProfileOverlay />
+            <MapClient socialData={socialData} filters={filters} />
+        </>
+    )
 }
