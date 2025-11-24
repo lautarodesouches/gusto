@@ -46,7 +46,7 @@ export async function updateProfile(
 ): Promise<ApiResponse<User>> {
     try {
         let payload: UpdateProfilePayload
-        
+
         if (data instanceof FormData) {
             payload = {
                 nombre: data.get('nombre') as string,
@@ -135,6 +135,84 @@ export async function checkFriendshipStatus(
         return {
             success: false,
             error: 'Error al verificar amistad',
+        }
+    }
+}
+
+export async function getCurrentUser(): Promise<ApiResponse<User>> {
+    try {
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
+
+        if (!token) {
+            return {
+                success: false,
+                error: 'No autenticado',
+            }
+        }
+
+        const res = await fetch(`${API_URL}/Usuario/me`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        })
+
+        if (!res.ok) {
+            return {
+                success: false,
+                error: 'Error al obtener usuario actual',
+            }
+        }
+
+        const data = await res.json()
+
+        return { success: true, data }
+    } catch (error) {
+        console.error('Error fetching current user:', error)
+        return {
+            success: false,
+            error: 'Error al cargar el usuario',
+        }
+    }
+}
+
+export async function getRegistrationStatus(): Promise<ApiResponse<{ registroCompleto: boolean }>> {
+    try {
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
+
+        if (!token) {
+            return {
+                success: false,
+                error: 'No autenticado',
+            }
+        }
+
+        const res = await fetch(`${API_URL}/Usuario/estado-registro`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        })
+
+        if (!res.ok) {
+            return {
+                success: false,
+                error: 'Error al verificar estado de registro',
+            }
+        }
+
+        const data = await res.json()
+
+        return { success: true, data }
+    } catch (error) {
+        console.error('Error checking registration status:', error)
+        return {
+            success: false,
+            error: 'Error al verificar registro',
         }
     }
 }
