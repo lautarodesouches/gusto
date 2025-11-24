@@ -9,10 +9,12 @@ import { useToast } from '@/context/ToastContext'
 
 interface ProfileClientProps {
     profile: User
+    onGoBack?: () => void
 }
 
 export default function ProfileClient({
     profile,
+    onGoBack,
 }: ProfileClientProps) {
     const toast = useToast()
 
@@ -26,7 +28,7 @@ export default function ProfileClient({
         router.push(`${ROUTES.MAP}?near.lat=${lat}&near.lng=${lng}`)
     }
 
-    const handleGoBack = () => {
+    const handleDefaultGoBack = () => {
         router.push(ROUTES.MAP)
     }
 
@@ -82,7 +84,7 @@ export default function ProfileClient({
             isPending={isPending}
             onEditTastes={handleEditTastes}
             onGoPlace={handleGoPlace}
-            onGoBack={handleGoBack}
+            onGoBack={onGoBack || handleDefaultGoBack}
         />
     )
 }

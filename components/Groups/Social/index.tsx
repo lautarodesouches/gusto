@@ -8,6 +8,10 @@ import {
     faUserPlus,
     faX,
     faUserMinus,
+    faPen,
+    faTrash,
+    faRightFromBracket,
+    faFloppyDisk,
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
@@ -16,6 +20,7 @@ import { useToast } from '@/context/ToastContext'
 import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
 import Image from 'next/image'
 
@@ -24,14 +29,87 @@ interface Props {
     members: (GroupMember & { checked: boolean })[]
     onCheck: (id: string) => void
     onMemberRemoved?: (memberId: string) => void
+    isAdmin: boolean
+    currentUserId: string
 }
 
-export default function GroupSocial({ group, members, onCheck, onMemberRemoved }: Props) {
+export default function GroupSocial({ group, members, onCheck, onMemberRemoved, isAdmin, currentUserId }: Props) {
     const toast = useToast()
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
 
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
     const [isEditing, setIsEditing] = useState(false)
     const [memberToDelete, setMemberToDelete] = useState<GroupMember | null>(null)
+    
+    // Settings State
+    const [loading, setLoading] = useState(false)
+    const [groupName, setGroupName] = useState(group.nombre)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
+
+    const handleUpdateGroupName = async () => {
+        if (!groupName.trim() || groupName === group.nombre) return
+        
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/group/${group.id}/update-name`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre: groupName.trim() })
+            })
+
+            if (!res.ok) throw new Error('Error al actualizar el nombre')
+
+            toast.success('Nombre del grupo actualizado')
+            router.refresh()
+            setIsEditing(false)
+        } catch (error) {
+            toast.error('Error al actualizar el nombre del grupo')
+            setGroupName(group.nombre)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleDeleteGroup = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/group/${group.id}`, {
+                method: 'DELETE'
+            })
+
+            if (!res.ok) throw new Error('Error al eliminar grupo')
+
+            toast.success('Grupo eliminado exitosamente')
+            router.push(ROUTES.MAP)
+        } catch (error) {
+            toast.error('Error al eliminar el grupo')
+        } finally {
+            setLoading(false)
+            setShowDeleteConfirm(false)
+        }
+    }
+
+    const handleLeaveGroup = async () => {
+        setLoading(true)
+        try {
+            const res = await fetch(`/api/group/${group.id}/leave`, {
+                method: 'POST'
+            })
+
+            if (!res.ok) throw new Error('Error al abandonar grupo')
+
+            toast.success('Has abandonado el grupo')
+            router.push(ROUTES.MAP)
+        } catch (error) {
+            toast.error('Error al abandonar el grupo')
+        } finally {
+            setLoading(false)
+            setShowLeaveConfirm(false)
+        }
+    }
 
     useEffect(() => {
         // Ordenar miembros: administradores primero
@@ -126,21 +204,28 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
             />
             <nav className={styles.social__nav}>
                 <div className={styles.social__div}>
-                    <h2 className={styles.social__title}>{group.nombre}</h2>
+                    {isEditing && isAdmin ? (
+                        <div className={styles.nameEditor}>
+                            <input
+                                type="text"
+                                value={groupName}
+                                onChange={(e) => setGroupName(e.target.value)}
+                                className={styles.nameInput}
+                                maxLength={50}
+                            />
+                            <button
+                                onClick={handleUpdateGroupName}
+                                disabled={loading || !groupName.trim() || groupName === group.nombre}
+                                className={styles.saveButton}
+                            >
+                                <FontAwesomeIcon icon={faFloppyDisk} />
+                            </button>
+                        </div>
+                    ) : (
+                        <h2 className={styles.social__title}>{group.nombre}</h2>
+                    )}
                 </div>
 
-                <div className={styles.social__div}>
-                    <Link 
-                        href={`${ROUTES.GROUP}${group.id}/settings`}
-                        className={styles.social__settings}
-                        aria-label="Configuración del grupo"
-                    >
-                        <FontAwesomeIcon
-                            icon={faGear}
-                            className={styles.social__icon}
-                        />
-                    </Link>
-                </div>
                 <div 
                     className={styles.social__div}
                     onClick={() => setIsEditing(!isEditing)}
@@ -175,8 +260,14 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                     const isChecked = realMember?.checked ?? false
                     return (
                         <article className={styles.member} key={m.id}>
-                            <Link
-                                href={`${ROUTES.PROFILE}${m.usuarioUsername}`}
+                            <a
+                                href={`${pathname}?profile=${m.usuarioUsername}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    const params = new URLSearchParams(searchParams.toString())
+                                    params.set('profile', m.usuarioUsername)
+                                    router.push(`${pathname}?${params.toString()}`, { scroll: false })
+                                }}
                                 className={styles.member__link}
                             >
                                 <div className={styles.member__div}>
@@ -206,7 +297,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                                         )}
                                     </h3>
                                 </div>
-                            </Link>
+                            </a>
                             <div className={styles.member__div}>
                                 {isEditing ? (
                                     <button
@@ -258,6 +349,54 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved }
                     <button className={styles.invite__button}>Agregar</button>
                 </div>
             </form>
+
+            {isEditing && (
+                <div className={styles.dangerZone}>
+                    {!isAdmin && (
+                        <button
+                            onClick={() => setShowLeaveConfirm(true)}
+                            className={styles.dangerButton}
+                            disabled={loading}
+                        >
+                            <FontAwesomeIcon icon={faRightFromBracket} />
+                            Abandonar Grupo
+                        </button>
+                    )}
+                    {isAdmin && (
+                        <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            className={`${styles.dangerButton} ${styles.delete}`}
+                            disabled={loading}
+                        >
+                            <FontAwesomeIcon icon={faTrash} />
+                            Eliminar Grupo
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {/* Modals */}
+            <ConfirmModal
+                isOpen={showDeleteConfirm}
+                onClose={() => setShowDeleteConfirm(false)}
+                onConfirm={handleDeleteGroup}
+                title="¿Eliminar grupo?"
+                message="Esta acción es permanente. Se eliminará todo el contenido del grupo y todos los miembros perderán acceso."
+                confirmText={loading ? 'Eliminando...' : 'Eliminar Grupo'}
+                cancelText="Cancelar"
+                confirmButtonStyle="danger"
+            />
+
+            <ConfirmModal
+                isOpen={showLeaveConfirm}
+                onClose={() => setShowLeaveConfirm(false)}
+                onConfirm={handleLeaveGroup}
+                title="¿Abandonar grupo?"
+                message="Perderás acceso a todo el contenido del grupo. Necesitarás una nueva invitación para volver a unirte."
+                confirmText={loading ? 'Abandonando...' : 'Abandonar'}
+                cancelText="Cancelar"
+                confirmButtonStyle="danger"
+            />
         </>
     )
 }

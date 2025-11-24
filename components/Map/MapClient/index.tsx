@@ -76,6 +76,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     const lastAmigoUsernameRef = useRef<string | null>(null)
     const lastGustosRef = useRef<string | null>(null)
     const lastRatingRef = useRef<string | null>(null)
+    const lastRadiusRef = useRef<string | null>(null)
 
  
 
@@ -287,6 +288,17 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         if (gustosChanged || ratingChanged) {
             lastGustosRef.current = currentGustos
             lastRatingRef.current = currentRating
+            fetchRestaurants(state.center)
+        }
+    }, [searchParams, state.center, initialLoaded, fetchRestaurants])
+
+    // Recargar restaurantes cuando cambie el radio de búsqueda
+    useEffect(() => {
+        if (!state.center || !initialLoaded) return
+        
+        const currentRadius = searchParams.get('radius')
+        if (currentRadius !== lastRadiusRef.current) {
+            lastRadiusRef.current = currentRadius
             fetchRestaurants(state.center)
         }
     }, [searchParams, state.center, initialLoaded, fetchRestaurants])

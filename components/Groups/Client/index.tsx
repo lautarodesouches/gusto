@@ -95,6 +95,8 @@ export default function GroupClient({ group }: Props) {
                         group={group}
                         onCheck={handleToggleCheck}
                         onMemberRemoved={handleMemberRemoved}
+                        isAdmin={isAdmin}
+                        currentUserId={auth.user?.uid || ''}
                     />
                 </div>
                 <div

@@ -61,7 +61,8 @@ export default function ProfileBar() {
     const handleViewProfile = () => {
         // Usar idUsuario (username) del backend para la ruta
         const username = backendUser?.idUsuario || user?.displayName || 'usuario'
-        router.push(`${ROUTES.PROFILE}${username}`)
+        // Redirigir al mapa con el parámetro profile para abrir el overlay
+        router.push(`${ROUTES.MAP}?profile=${username}`)
         setShowProfileMenu(false)
     }
 

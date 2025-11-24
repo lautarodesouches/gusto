@@ -11,7 +11,7 @@ import {
 import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
-import { GroupClient, FriendRequests } from '@/components'
+import { GroupClient, FriendRequests, ProfileOverlay } from '@/components'
 import admin from '@/lib/firebaseAdmin'
 import NotificationBell from '@/components/NotificationBell/Notificacion'
 import Navbar from '@/components/Navbar'
@@ -185,6 +185,7 @@ export default async function GroupDetail({ params }: Props) {
 
     return (
         <div className={styles.wrapper}>
+            <ProfileOverlay />
             <Navbar />
             <main className={styles.main}>
                 <GroupClient group={group} />
