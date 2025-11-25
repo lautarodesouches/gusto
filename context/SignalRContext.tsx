@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, ReactNode, useCallback 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { SolicitudAmistadResponse } from '@/types'
+import { useAuth } from './AuthContext'
 
 interface Notificacion {
   id: string
@@ -51,6 +52,7 @@ interface SignalRProviderProps {
 }
 
 export function SignalRProvider({ children }: SignalRProviderProps) {
+  const { token } = useAuth()
   const [notificacionesConnection, setNotificacionesConnection] = useState<HubConnection | null>(null)
   const [solicitudesConnection, setSolicitudesConnection] = useState<HubConnection | null>(null)
   const [notificaciones, setNotificaciones] = useState<UnifiedNotification[]>([])
@@ -62,10 +64,20 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
     let isMounted = true
 
     const connectNotificaciones = async () => {
+      // No conectar si no hay token
+      if (!token) {
+        console.log('[SignalR] ⏳ Esperando token para conectar notificaciones...')
+        return
+      }
+
       try {
         conn = new HubConnectionBuilder()
           .withUrl(`${API_URL}/notificacionesHub`, {
             withCredentials: true,
+            accessTokenFactory: () => {
+              // Retornar el token para que se incluya en la negociación y conexión
+              return token || ''
+            }
           })
           .withAutomaticReconnect({
             nextRetryDelayInMilliseconds: () => 3000
@@ -140,7 +152,10 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       }
     }
 
-    connectNotificaciones()
+    // Solo conectar si hay token
+    if (token) {
+      connectNotificaciones()
+    }
 
     return () => {
       isMounted = false
@@ -148,17 +163,27 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [])
+  }, [token])
 
   useEffect(() => {
     let conn: HubConnection | null = null
     let isMounted = true
 
     const connectSolicitudes = async () => {
+      // No conectar si no hay token
+      if (!token) {
+        console.log('[SignalR] ⏳ Esperando token para conectar solicitudes...')
+        return
+      }
+
       try {
         conn = new HubConnectionBuilder()
           .withUrl(`${API_URL}/solicitudesAmistadHub`, {
             withCredentials: true,
+            accessTokenFactory: () => {
+              // Retornar el token para que se incluya en la negociación y conexión
+              return token || ''
+            }
           })
           .withAutomaticReconnect({
             nextRetryDelayInMilliseconds: () => 3000
@@ -225,7 +250,10 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       }
     }
 
-    connectSolicitudes()
+    // Solo conectar si hay token
+    if (token) {
+      connectSolicitudes()
+    }
 
     return () => {
       isMounted = false
@@ -233,7 +261,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [])
+  }, [token])
 
   const aceptarInvitacion = useCallback(async (id: string) => {
     if (!notificacionesConnection) {
