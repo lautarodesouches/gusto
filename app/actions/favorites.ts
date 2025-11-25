@@ -73,7 +73,7 @@ export async function removeFavoriteRestaurant(
             return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
         }
 
-        const response = await fetch(`${API_URL}/api/Restaurantes/${restauranteId}/favorito`, {
+        const response = await fetch(`${API_URL}/api/Restaurantes/favorito/${restauranteId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
