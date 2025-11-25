@@ -419,9 +419,6 @@ export default function ReviewModal({ restaurant, isOpen, onClose }: ReviewModal
                                     <label className={styles.reviewForm__label}>
                                         Agrega algunas fotos
                                     </label>
-                                    <span className={styles.reviewForm__optional}>
-                                        Opcional
-                                    </span>
                                 </div>
 
                                 <div className={styles.reviewForm__upload}>
