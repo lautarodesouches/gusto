@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react'
 import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
+import { useAuth } from '@/context/AuthContext'
 import { formatChatDate } from '../../../utils/index'
 
 interface Props {
@@ -21,6 +22,7 @@ interface ChatMessage {
 
 export default function GroupsChat({ groupId, admin }: Props) {
     const toast = useToast()
+    const { token } = useAuth()
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const chatContainerRef = useRef<HTMLDivElement>(null)
 
@@ -38,9 +40,14 @@ export default function GroupsChat({ groupId, admin }: Props) {
     }, [messages])
 
     useEffect(() => {
+        // No intentar conectar si no hay token
+        if (!token) {
+            console.log('[Chat] ⏳ Esperando token para conectar...')
+            return
+        }
+
         let isMounted = true
         let conn: HubConnection | null = null
-        let startPromise: Promise<void> | null = null
 
         const connect = async () => {
             try {
@@ -54,9 +61,21 @@ export default function GroupsChat({ groupId, admin }: Props) {
                     connectionRef.current = null
                 }
 
+                // Usar accessTokenFactory para enviar el token en la negociación y conexión
                 conn = new HubConnectionBuilder()
                     .withUrl(`${API_URL}/chatHub`, {
                         skipNegotiation: false,
+                        withCredentials: true, // Enviar cookies también
+                        accessTokenFactory: () => {
+                            // Retornar el token para que se incluya en la negociación y conexión
+                            const currentToken = token || ''
+                            if (currentToken) {
+                                console.log('[Chat] 🔑 Token enviado en accessTokenFactory:', currentToken.substring(0, 20) + '...')
+                            } else {
+                                console.warn('[Chat] ⚠️ No hay token disponible para enviar')
+                            }
+                            return currentToken
+                        }
                     })
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: (retryContext) => {
@@ -87,30 +106,41 @@ export default function GroupsChat({ groupId, admin }: Props) {
 
                 conn.on('LoadChatHistory', mensajes => {
                     if (!isMounted) return
+                    console.log('[Chat] ✅ Historial cargado:', mensajes.length, 'mensajes')
                     setMessages(mensajes)
                     setTimeout(() => scrollToBottom('auto'), 100)
                 })
 
                 // Verificar estado antes de iniciar
                 if (conn.state === HubConnectionState.Disconnected) {
-                    startPromise = conn.start()
-                    
-                    startPromise = startPromise.catch((err: unknown) => {
+                    try {
+                        console.log('[Chat] Intentando conectar con token:', token ? 'Token presente' : 'Sin token')
+                        await conn.start()
+                        console.log('[Chat] ✅ Conexión establecida correctamente')
+                    } catch (err: unknown) {
                         const error = err as Error
                         const errorMsg = error?.message || String(err)
                         const errorName = (error as { name?: string })?.name || ''
                         
-                        // Silenciar errores de aborto y negociación
+                        // Silenciar errores de aborto y negociación (comunes en desarrollo con Strict Mode)
                         if (errorName === 'AbortError' || 
                             errorMsg.includes('stopped during negotiation') ||
-                            errorMsg.includes('The connection was stopped')) {
-                            return Promise.resolve()
+                            errorMsg.includes('The connection was stopped') ||
+                            errorMsg.includes('Connection stopped during negotiation')) {
+                            // Error silenciado - común en desarrollo, no es un error real
+                            if (isMounted) {
+                                console.log('[Chat] ℹ️ Conexión interrumpida durante negociación (normal en desarrollo)')
+                            }
+                            return
                         }
                         
-                        throw err
-                    })
-                    
-                    await startPromise
+                        // Solo loggear errores reales
+                        if (isMounted) {
+                            console.error('[Chat] ❌ Error real al conectar:', err)
+                            toast.error('Error al conectar con el chat')
+                        }
+                        return
+                    }
                     
                     if (isMounted && conn) {
                         setConnection(conn)
@@ -126,19 +156,27 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 const errorMsg = error?.message || String(err)
                 const errorName = (error as { name?: string })?.name || ''
                 
+                // Silenciar errores de negociación - NO loggear en consola
                 if (errorName === 'AbortError' || 
                     errorMsg.includes('stopped during negotiation') ||
-                    errorMsg.includes('The connection was stopped')) {
+                    errorMsg.includes('The connection was stopped') ||
+                    errorMsg.includes('Connection stopped during negotiation')) {
+                    // Error silenciado - no hacer nada
                     return
                 }
                 
+                // Solo loggear errores reales
                 if (isMounted) {
+                    console.error('[Chat] Error al conectar:', err)
                     toast.error('Error al conectar con el chat')
                 }
             }
         }
 
-        connect()
+        // Solo conectar si hay token
+        if (token) {
+            connect()
+        }
 
         return () => {
             isMounted = false
@@ -161,15 +199,18 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 setConnection(null)
             }
         }
-    }, [groupId, toast])
+    }, [groupId, token, toast])
 
     const handleSend = async () => {
         if (!input.trim() || !connection) return
 
         try {
+            console.log('[Chat] Enviando mensaje al grupo:', groupId)
             await connection.invoke('SendMessageToGroup', groupId, input)
+            console.log('[Chat] ✅ Mensaje enviado correctamente')
             setInput('')
-        } catch {
+        } catch (error) {
+            console.error('[Chat] ❌ Error al enviar mensaje:', error)
             toast.error(`Hubo un error al enviar el mensaje`)
         }
     }

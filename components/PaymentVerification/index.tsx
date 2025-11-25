@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { PaymentSuccess } from '@/components'
-import { upgradeToPremium } from '@/app/actions/payment'
+import { verifyRecentPayment } from '@/app/actions/payment'
 
 export default function PaymentVerification() {
     const router = useRouter()
@@ -21,14 +21,14 @@ export default function PaymentVerification() {
             // Verificar que hay un pago pendiente y el usuario está autenticado
             if (pendingPayment === 'true' && paymentEmail && token) {
                 try {
-                    // Esperar 3 segundos para dar tiempo a procesar
+                    // Esperar 3 segundos para dar tiempo a que MercadoPago procese el pago
                     await new Promise(resolve => setTimeout(resolve, 3000))
 
-                    // Forzar actualización a Premium (solo para desarrollo)
-                    const upgradeResult = await upgradeToPremium()
+                    // VERIFICAR el pago real con el backend (NO forzar upgrade)
+                    const verificationResult = await verifyRecentPayment()
 
-                    if (upgradeResult.success && upgradeResult.data?.isPremium) {
-
+                    // Solo actualizar a Premium si el pago fue realmente aprobado
+                    if (verificationResult.success && verificationResult.data?.aprobado) {
                         // Actualizar el estado Premium en el contexto
                         await refreshPremiumStatus()
 
@@ -41,6 +41,7 @@ export default function PaymentVerification() {
                         
                         // El componente PaymentSuccess manejará la redirección automáticamente
                     } else {
+                        // Si no hay pago aprobado, limpiar localStorage y no hacer nada
                         localStorage.removeItem('pendingPayment')
                         localStorage.removeItem('paymentEmail')
                     }
