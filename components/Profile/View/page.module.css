@@ -166,7 +166,6 @@
     width: 15px;
     height: 15px;
     color: var(--white);
-    cursor: pointer;
 }
 
 .visited__empty {

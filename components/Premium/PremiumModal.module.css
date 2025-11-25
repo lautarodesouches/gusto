@@ -306,11 +306,19 @@
 
 /* Placeholder imagen */
 .imagen_placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--dark);
     opacity: 0.3;
+}
+
+.imagen {
+    width: 100%;
+    height: auto;
 }
 
 /* Responsive */

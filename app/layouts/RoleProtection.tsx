@@ -14,9 +14,7 @@ import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 // Rutas permitidas para dueños de restaurante - SOLO su dashboard
 const _DUENO_RESTAURANTE_ALLOWED_ROUTES = [
     '/restaurante/', // Solo para acceder a su dashboard específico
-    '/api/restaurantes/mio',
     '/api/restaurantes/dashboard',
-    '/api/auth/refresh-claims', // Para refrescar claims
 ]
 
 // Rutas públicas que siempre están permitidas

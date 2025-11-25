@@ -62,7 +62,7 @@ export default function SocialAuth({}: Props) {
                 if (loginResult.data.isNewUser) {
                     router.push(`${ROUTES.STEPS}/1`)
                 } else {
-                    router.push(ROUTES.MAP)
+                    window.location.href = ROUTES.MAP
                 }
             } else {
                 console.error('Error en login social:', loginResult.error)

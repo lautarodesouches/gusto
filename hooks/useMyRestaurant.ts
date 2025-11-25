@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { getMyRestaurant } from '@/app/actions/restaurants'
 
 interface MyRestaurantResult {
     restaurantId: string | null
@@ -36,18 +37,15 @@ export function useMyRestaurant(): MyRestaurantResult {
             try {
                 setIsLoading(true)
                 setError(null)
-                
-                const response = await fetch('/api/restaurantes/mio', {
-                    cache: 'no-store',
-                    credentials: 'include',
-                })
-                
-                if (response.ok) {
-                    const data = await response.json()
+
+                const response = await getMyRestaurant()
+
+                if (response.success) {
+                    const data = response.data
                     // El backend devuelve directamente el ID (GUID como string)
                     // Puede venir como string directo o como objeto con id/Id
                     let id: string | null = null
-                    
+
                     if (typeof data === 'string') {
                         // Si es un string directo (el ID)
                         id = data
@@ -55,10 +53,10 @@ export function useMyRestaurant(): MyRestaurantResult {
                         // Si es un objeto, buscar id o Id
                         id = data.id || data.Id || null
                     }
-                    
+
                     setRestaurantId(id ? String(id) : null)
                 } else {
-                    setError('No se pudo obtener el restaurante')
+                    setError(response.error || 'No se pudo obtener el restaurante')
                     setRestaurantId(null)
                 }
             } catch (err) {

@@ -135,9 +135,6 @@ export function ProfileView({
                                             <FontAwesomeIcon
                                                 className={styles.visited__icon}
                                                 icon={faLocationDot}
-                                                onClick={() =>
-                                                    onGoPlace(place.lat, place.lng)
-                                                }
                                             />
                                         </li>
                                     ))}
