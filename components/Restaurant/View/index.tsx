@@ -8,17 +8,13 @@ import {
     faBookmark,
     faImage,
     faGlobe,
-    faBuilding,
     faPen,
-    faPhone,
-    faEnvelope,
     faTimes,
     faChevronLeft,
     faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark as faBookmarkEmpty } from '@fortawesome/free-regular-svg-icons'
 import Link from 'next/link'
-import { formatPhoneAR } from '@/utils'
 import RatingDistribution from '../Rating'
 import ReviewList from '../Reviews'
 import RestaurantMap from '../Map'
@@ -323,8 +319,6 @@ export default function RestaurantView({
     // Calcular conteos de imágenes
     const interiorCount = restaurant.imagenesInterior?.length || 0
     const comidaCount = restaurant.imagenesComida?.length || 0
-    const menuCount = restaurant.menu ? 
-        restaurant.menu.categorias.reduce((acc, cat) => acc + cat.items.length, 0) : 0
     
     // Para restaurantes de la app, mostrar imágenes organizadas
     // Para restaurantes de Google Places, mantener la estructura anterior
@@ -335,15 +329,7 @@ export default function RestaurantView({
         return interiorCount + comidaCount
     }
     
-    const sideItems = restaurant.esDeLaApp ? [
-        { title: 'Interior', count: interiorCount, images: restaurant.imagenesInterior || [], type: 'interior' },
-        { title: 'Comida', count: comidaCount, images: restaurant.imagenesComida || [], type: 'comida' },
-        ...(restaurant.menu ? [{ title: 'Menú', count: menuCount, type: 'menu' }] : []),
-    ].filter(item => item.count > 0 || item.title === 'Menú') : [
-        { title: 'Interior', count: 8, type: 'interior' },
-        { title: 'Comida', count: 12, type: 'comida' },
-        { title: 'Menú', count: 15, type: 'menu' },
-    ]
+
 
     return (
         <main className={styles.main}>
@@ -766,30 +752,7 @@ export default function RestaurantView({
                                 </Link>
                             </li>
                         )}
-                        <li className={styles.data__item}>
-                            <FontAwesomeIcon
-                                className={styles.data__icon}
-                                icon={faPhone}
-                            />
-                            <Link
-                                className={styles.data__link}
-                                href={`tel:541112345678`}
-                            >
-                                {formatPhoneAR(`+541112345678`)}
-                            </Link>
-                        </li>
-                        <li className={styles.data__item}>
-                            <FontAwesomeIcon
-                                className={styles.data__icon}
-                                icon={faEnvelope}
-                            />
-                            <Link
-                                className={styles.data__link}
-                                href={`mailto:contacto@empresa.com`}
-                            >
-                                contacto@empresa.com
-                            </Link>
-                        </li>
+
                     </ul>
                     <h3 className={styles.data__subtitle}>Acerca de</h3>
                     {restaurant.categoria && (
