@@ -156,7 +156,7 @@ export default function ProfileTab() {
                     <button 
                         onClick={() => handleUpdate('nombre', nombre)}
                         className={styles.saveButton}
-                        disabled={loadingNombre || nombre === backendUser?.nombre}
+                        disabled={loadingNombre}
                     >
                         {loadingNombre ? 'Guardando...' : 'Guardar'}
                     </button>
@@ -179,7 +179,7 @@ export default function ProfileTab() {
                     <button 
                         onClick={() => handleUpdate('apellido', apellido)}
                         className={styles.saveButton}
-                        disabled={loadingApellido || apellido === backendUser?.apellido}
+                        disabled={loadingApellido}
                     >
                         {loadingApellido ? 'Guardando...' : 'Guardar'}
                     </button>
@@ -202,7 +202,7 @@ export default function ProfileTab() {
                     <button 
                         onClick={() => handleUpdate('email', email)}
                         className={styles.saveButton}
-                        disabled={loadingEmail || email === backendUser?.email}
+                        disabled={loadingEmail}
                     >
                         {loadingEmail ? 'Guardando...' : 'Guardar'}
                     </button>

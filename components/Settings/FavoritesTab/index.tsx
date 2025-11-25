@@ -6,12 +6,15 @@ import Image from 'next/image'
 import { Restaurant } from '@/types'
 import { getFavoriteRestaurants } from '@/app/actions/settings'
 import { ROUTES } from '@/routes'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUtensils } from '@fortawesome/free-solid-svg-icons'
 import styles from './styles.module.css'
 
 export default function FavoritesTab() {
     const router = useRouter()
     const [favorites, setFavorites] = useState<Restaurant[]>([])
     const [loading, setLoading] = useState(true)
+    const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
 
     useEffect(() => {
         const loadFavorites = async () => {
@@ -154,17 +157,25 @@ export default function FavoritesTab() {
                         onClick={() => router.push(`${ROUTES.RESTAURANT}${restaurant.id}`)}
                     >
                         <div className={styles.logoContainer}>
-                            <Image
-                                src={restaurant.logoUrl || restaurant.imagenUrl || '/images/restaurant/logo.png'}
-                                alt={restaurant.nombre}
-                                width={80}
-                                height={80}
-                                className={styles.logo}
-                                onError={(e) => {
-                                    const target = e.target as HTMLImageElement
-                                    target.src = '/images/restaurant/logo.png'
-                                }}
-                            />
+                            {imageErrors[restaurant.id] || (!restaurant.logoUrl && !restaurant.imagenUrl) ? (
+                                <div className={styles.fallbackIcon}>
+                                    <FontAwesomeIcon icon={faUtensils} />
+                                </div>
+                            ) : (
+                                <Image
+                                    src={restaurant.logoUrl || restaurant.imagenUrl || '/images/restaurant/logo.png'}
+                                    alt={restaurant.nombre}
+                                    width={80}
+                                    height={80}
+                                    className={styles.logo}
+                                    onError={() => {
+                                        setImageErrors(prev => ({
+                                            ...prev,
+                                            [restaurant.id]: true
+                                        }))
+                                    }}
+                                />
+                            )}
                         </div>
                         <div className={styles.info}>
                             <h3 className={styles.name}>{restaurant.nombre}</h3>
