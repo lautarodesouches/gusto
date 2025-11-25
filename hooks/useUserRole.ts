@@ -24,14 +24,14 @@ interface UserRoleResult {
  * Decodifica un JWT token (solo la parte del payload, sin verificación)
  * Útil para leer claims del token de Firebase en el cliente
  */
-function decodeJWT(token: string): { rol?: string; [key: string]: unknown } | null {
+function decodeJWT(token: string): { rol?: string | number; [key: string]: unknown } | null {
     try {
         const parts = token.split('.')
         if (parts.length !== 3) return null
         
         const payload = parts[1]
         const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
-        return JSON.parse(decoded) as { rol?: string; [key: string]: unknown }
+        return JSON.parse(decoded) as { rol?: string | number; [key: string]: unknown }
     } catch {
         return null
     }
@@ -71,11 +71,11 @@ export function useUserRole(): UserRoleResult {
         console.log('[useUserRole] 🔍 Todos los claims del token:', Object.keys(tokenPayload || {}))
         
         if (tokenPayload?.rol !== undefined && tokenPayload?.rol !== null) {
-            const rolValue = tokenPayload.rol
+            const rolValue: string | number = tokenPayload.rol
             const rolString = String(rolValue).trim()
             let mappedRol: RolUsuario
             
-            console.log('[useUserRole] 🔍 Procesando rol:', rolString, 'valor original:', rolValue)
+            console.log('[useUserRole] 🔍 Procesando rol:', rolString, 'valor original:', rolValue, 'tipo:', typeof rolValue)
             
             // Mapear tanto strings como números - manejar todos los casos posibles
             // Caso 1: String "Admin", "DuenoRestaurante", etc.
@@ -89,18 +89,18 @@ export function useUserRole(): UserRoleResult {
                 mappedRol = RolUsuario.PendienteRestaurante
                 console.log('[useUserRole] ✅ Rol PendienteRestaurante detectado (string)')
             } 
-            // Caso 2: Número como string "3", "2", "1"
-            else if (rolString === '3' || rolValue === 3) {
+            // Caso 2: Número como string "3", "2", "1" o número directo 3, 2, 1
+            else if (rolString === '3' || (typeof rolValue === 'number' && rolValue === 3)) {
                 mappedRol = RolUsuario.Admin
                 console.log('[useUserRole] ✅ Rol Admin detectado (número 3)')
-            } else if (rolString === '2' || rolValue === 2) {
+            } else if (rolString === '2' || (typeof rolValue === 'number' && rolValue === 2)) {
                 mappedRol = RolUsuario.DuenoRestaurante
                 console.log('[useUserRole] ✅ Rol DuenoRestaurante detectado (número 2)')
-            } else if (rolString === '1' || rolValue === 1) {
+            } else if (rolString === '1' || (typeof rolValue === 'number' && rolValue === 1)) {
                 mappedRol = RolUsuario.PendienteRestaurante
                 console.log('[useUserRole] ✅ Rol PendienteRestaurante detectado (número 1)')
             } 
-            // Caso 3: Número directo (sin convertir a string)
+            // Caso 3: Número directo (sin convertir a string) - ya manejado arriba, pero por si acaso
             else if (typeof rolValue === 'number') {
                 if (rolValue === 3) {
                     mappedRol = RolUsuario.Admin
@@ -194,13 +194,14 @@ export function useUserRole(): UserRoleResult {
                 const tokenPayload = decodeJWT(token)
                 if (tokenPayload?.rol) {
                     const rolString = String(tokenPayload.rol)
+                    const rolValue = tokenPayload.rol
                     let mappedRol: RolUsuario
                     
-                    if (rolString === 'PendienteRestaurante' || rolString === '1' || tokenPayload.rol === 1) {
+                    if (rolString === 'PendienteRestaurante' || rolString === '1' || (typeof rolValue === 'number' && rolValue === 1)) {
                         mappedRol = RolUsuario.PendienteRestaurante
-                    } else if (rolString === 'DuenoRestaurante' || rolString === '2' || tokenPayload.rol === 2) {
+                    } else if (rolString === 'DuenoRestaurante' || rolString === '2' || (typeof rolValue === 'number' && rolValue === 2)) {
                         mappedRol = RolUsuario.DuenoRestaurante
-                    } else if (rolString === 'Admin' || rolString === '3' || tokenPayload.rol === 3 || tokenPayload.rol === '3') {
+                    } else if (rolString === 'Admin' || rolString === '3' || (typeof rolValue === 'number' && rolValue === 3) || tokenPayload.rol === '3') {
                         mappedRol = RolUsuario.Admin
                         console.log('[useUserRole] ✅ Rol Admin detectado después de refresh')
                     } else {
