@@ -52,17 +52,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Función para refrescar los claims de Firebase después del login
     const refreshFirebaseClaims = async (token: string) => {
         try {
+            console.log('[Auth] 🔄 Refrescando claims de Firebase...')
+            
             // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
-            // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
-            await refreshClaims()
+            const result = await refreshClaims()
+            
+            if (!result.success) {
+                console.error('[Auth] ❌ Error al refrescar claims:', result.error)
+                return
+            }
+            
+            console.log('[Auth] ✅ Claims refrescados en Firebase')
+            
+            // Esperar un poco para que Firebase procese los nuevos claims
+            await new Promise(resolve => setTimeout(resolve, 1000))
             
             // Después de refrescar claims, forzar la renovación del token para obtener los nuevos claims
             const currentUser = auth.currentUser
             if (currentUser) {
-                await currentUser.getIdToken(true) // true = force refresh
+                console.log('[Auth] 🔄 Forzando renovación del token para obtener nuevos claims...')
+                const newToken = await currentUser.getIdToken(true) // true = force refresh
+                
+                // Actualizar el token en el estado inmediatamente
+                setToken(newToken)
+                
+                // Actualizar la cookie en el backend con el nuevo token
+                try {
+                    await fetch('/api/refresh-token', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${newToken}`,
+                        },
+                    })
+                    console.log('[Auth] ✅ Token actualizado en cookie')
+                } catch (error) {
+                    console.error('[Auth] ❌ Error al actualizar cookie:', error)
+                }
             }
         } catch (error) {
-            console.error('Error al refrescar claims de Firebase:', error)
+            console.error('[Auth] ❌ Error al refrescar claims de Firebase:', error)
             // No lanzar error, solo loguear - no es crítico si falla
         }
     }
@@ -81,10 +109,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 // Solo la primera vez que se detecta un usuario (login)
                 if (isFirstLogin) {
                     isFirstLogin = false
-                    // Esperar un poco para asegurar que la cookie esté establecida
+                    // Esperar más tiempo en producción para asegurar que la cookie esté establecida
+                    // y que el backend esté listo (puede haber latencia de red)
+                    const delay = process.env.NODE_ENV === 'production' ? 1500 : 500
                     setTimeout(() => {
                         refreshFirebaseClaims(freshToken)
-                    }, 500)
+                    }, delay)
                 }
             } else {
                 setUser(null)
