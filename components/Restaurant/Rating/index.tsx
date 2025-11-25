@@ -46,39 +46,41 @@ export default function RatingDistribution({
                 </div>
             </div>
 
-            {/* Barras de distribución */}
-            <div className={styles['rating-distribution__bars']}>
-                {ratings.map((item) => {
-                    const percentage = calculatePercentage(item.value)
-                    
-                    return (
-                        <div 
-                            key={item.label} 
-                            className={styles['rating-distribution__row']}
-                        >
-                            <span className={styles['rating-distribution__row-label']}>
-                                {item.label}
-                            </span>
-                            
-                            <div className={styles['rating-distribution__bar']}>
-                                <div 
-                                    className={`${styles['rating-distribution__bar-fill']} ${styles[`rating-distribution__bar-fill--${item.modifier}`]}`}
-                                    style={{ width: `${percentage}%` }}
-                                    role="progressbar"
-                                    aria-valuenow={item.value}
-                                    aria-valuemin={0}
-                                    aria-valuemax={total}
-                                    aria-label={`${item.label}: ${item.value} opiniones`}
-                                />
+            {/* Barras de distribución - Solo mostrar si hay opiniones */}
+            {total > 0 && (
+                <div className={styles['rating-distribution__bars']}>
+                    {ratings.map((item) => {
+                        const percentage = calculatePercentage(item.value)
+                        
+                        return (
+                            <div 
+                                key={item.label} 
+                                className={styles['rating-distribution__row']}
+                            >
+                                <span className={styles['rating-distribution__row-label']}>
+                                    {item.label}
+                                </span>
+                                
+                                <div className={styles['rating-distribution__bar']}>
+                                    <div 
+                                        className={`${styles['rating-distribution__bar-fill']} ${styles[`rating-distribution__bar-fill--${item.modifier}`]}`}
+                                        style={{ width: `${percentage}%` }}
+                                        role="progressbar"
+                                        aria-valuenow={item.value}
+                                        aria-valuemin={0}
+                                        aria-valuemax={total}
+                                        aria-label={`${item.label}: ${item.value} opiniones`}
+                                    />
+                                </div>
+                                
+                                <span className={styles['rating-distribution__row-value']}>
+                                    {item.value.toLocaleString('es-ES')}
+                                </span>
                             </div>
-                            
-                            <span className={styles['rating-distribution__row-value']}>
-                                {item.value.toLocaleString('es-ES')}
-                            </span>
-                        </div>
-                    )
-                })}
-            </div>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     )
 }

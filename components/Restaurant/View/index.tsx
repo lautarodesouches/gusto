@@ -240,6 +240,47 @@ export default function RestaurantView({
     // Obtener el rating, usando valoracion como fallback si rating es null/undefined
     const rating = restaurant.rating ?? restaurant.valoracion ?? 0
 
+    // Calcular distribución de ratings
+    const getRatingDistribution = () => {
+        const distribution = {
+            excelente: 0,
+            bueno: 0,
+            promedio: 0,
+            malo: 0,
+            horrible: 0
+        }
+
+        // Usar reviews locales o de Google si existen, o el array general
+        const reviewsToUse = (restaurant.reviewsLocales && restaurant.reviewsLocales.length > 0) 
+            ? restaurant.reviewsLocales 
+            : (restaurant.reviewsGoogle && restaurant.reviewsGoogle.length > 0)
+                ? restaurant.reviewsGoogle
+                : reviews
+
+        if (!reviewsToUse || reviewsToUse.length === 0) return distribution
+
+        reviewsToUse.forEach(review => {
+            const rating = review.rating || review.valoracion || 0
+            if (rating >= 4.5) distribution.excelente++
+            else if (rating >= 3.5) distribution.bueno++
+            else if (rating >= 2.5) distribution.promedio++
+            else if (rating >= 1.5) distribution.malo++
+            else distribution.horrible++
+        })
+
+        return distribution
+    }
+
+    const ratingDistribution = getRatingDistribution()
+
+    const getRatingLabel = (rating: number) => {
+        if (rating >= 4.5) return 'Excelente'
+        if (rating >= 3.5) return 'Muy Bueno'
+        if (rating >= 2.5) return 'Bueno'
+        if (rating >= 1.5) return 'Regular'
+        return 'Malo'
+    }
+
     const stars = []
 
     for (let i = 1; i <= 5; i++) {
@@ -852,14 +893,9 @@ export default function RestaurantView({
             </section>
             <section className={styles.rating} id="opiniones">
                 <RatingDistribution
-                    data={{
-                        excelente: 10,
-                        bueno: 7,
-                        promedio: 5,
-                        malo: 2,
-                        horrible: 1,
-                    }}
+                    data={ratingDistribution}
                     rating={rating}
+                    ratingLabel={getRatingLabel(rating)}
                 />
                 <div className={styles.rating__div}>
                     <h4 className={styles.rating__title}>Opinión</h4>
