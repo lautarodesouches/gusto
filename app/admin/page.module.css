@@ -45,6 +45,12 @@
     margin: 0;
 }
 
+.header__actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
 .header__button {
     background: #ff5757;
     color: white;
@@ -59,6 +65,28 @@
 
 .header__button:hover {
     background: #e04a4a;
+}
+
+.header__recommendButton {
+    background: #4caf50;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.header__recommendButton:hover:not(:disabled) {
+    background: #45a049;
+}
+
+.header__recommendButton:disabled {
+    background: #666;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .main {
@@ -151,7 +179,14 @@
         font-size: 1.75rem;
     }
 
-    .header__button {
+    .header__actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+    }
+
+    .header__button,
+    .header__recommendButton {
         width: 100%;
     }
 

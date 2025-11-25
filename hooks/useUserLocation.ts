@@ -21,39 +21,46 @@ export function useUserLocation() {
             return
         }
 
-        // Timeout para evitar que se quede cargando indefinidamente
+        let isMounted = true
+
+        // Timeout extendido para dar más tiempo a obtener la ubicación
         const timeoutId = setTimeout(() => {
-            if (loading) {
-                // Si después de 10 segundos no se obtuvo la ubicación, usar la por defecto
+            if (isMounted) {
+                // Si después de 20 segundos no se obtuvo la ubicación, usar la por defecto
                 setCoords(DEFAULT_LOCATION)
                 setLoading(false)
             }
-        }, 10000)
+        }, 20000)
 
         navigator.geolocation.getCurrentPosition(
             position => {
                 clearTimeout(timeoutId)
-                setCoords({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                })
-                setLoading(false)
+                if (isMounted) {
+                    setCoords({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    })
+                    setLoading(false)
+                }
             },
             err => {
                 clearTimeout(timeoutId)
-                // Si hay error, usar ubicación por defecto en lugar de mostrar error
-                console.warn('No se pudo obtener la ubicación:', err.message)
-                setCoords(DEFAULT_LOCATION)
-                setLoading(false)
+                if (isMounted) {
+                    // Si hay error, usar ubicación por defecto en lugar de mostrar error
+                    console.warn('No se pudo obtener la ubicación:', err.message)
+                    setCoords(DEFAULT_LOCATION)
+                    setLoading(false)
+                }
             },
             { 
-                enableHighAccuracy: false, // Cambiar a false para que sea más rápido
-                timeout: 8000, // Timeout de 8 segundos
+                enableHighAccuracy: true, // Mejor precisión
+                timeout: 15000, // Timeout extendido a 15 segundos
                 maximumAge: 300000 // Aceptar ubicación cacheada de hasta 5 minutos
             }
         )
 
         return () => {
+            isMounted = false
             clearTimeout(timeoutId)
         }
     }, [])
