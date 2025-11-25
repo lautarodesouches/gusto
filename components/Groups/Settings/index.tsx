@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Group } from '@/types'
 import { useToast } from '@/context/ToastContext'
 import { ROUTES } from '@/routes'
+import { deleteGroup } from '@/app/actions/groups'
 import styles from './styles.module.css'
 
 interface Props {
@@ -69,16 +70,16 @@ export default function GroupSettings({ group, isAdmin, userId: _userId }: Props
     const handleDeleteGroup = async () => {
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}`, {
-                method: 'DELETE'
-            })
+            const result = await deleteGroup(group.id)
 
-            if (!res.ok) throw new Error('Error al eliminar grupo')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Grupo eliminado exitosamente')
             router.push(ROUTES.MAP)
-        } catch {
-            toast.error('Error al eliminar el grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al eliminar el grupo'
+            )
         } finally {
             setLoading(false)
             setShowDeleteConfirm(false)

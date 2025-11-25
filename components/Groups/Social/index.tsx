@@ -16,7 +16,7 @@ import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useToast } from '@/context/ToastContext'
-import { inviteUserToGroup, removeGroupMember } from '@/app/actions/groups'
+import { inviteUserToGroup, removeGroupMember, deleteGroup } from '@/app/actions/groups'
 import { ROUTES } from '@/routes'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
@@ -74,16 +74,16 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const handleDeleteGroup = async () => {
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}`, {
-                method: 'DELETE'
-            })
+            const result = await deleteGroup(group.id)
 
-            if (!res.ok) throw new Error('Error al eliminar grupo')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Grupo eliminado exitosamente')
             router.push(ROUTES.MAP)
-        } catch {
-            toast.error('Error al eliminar el grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al eliminar el grupo'
+            )
         } finally {
             setLoading(false)
             setShowDeleteConfirm(false)

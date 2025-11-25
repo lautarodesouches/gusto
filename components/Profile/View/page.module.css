@@ -73,6 +73,9 @@
     border-radius: 30px;
     border: 1px solid var(--dark);
     margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .container__line {
@@ -134,10 +137,6 @@
 .tastes__edit:hover {
     background: var(--dark);
     color: var(--light);
-}
-
-.visited {
-    margin-top: 80px;
 }
 
 .visited__title {
