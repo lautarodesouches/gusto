@@ -5,6 +5,19 @@ import { useState, useEffect } from 'react'
 import { useToast } from '@/context/ToastContext'
 import { addFavoriteRestaurant, removeFavoriteRestaurant, checkFavoriteRestaurant } from '@/app/actions/favorites'
 
+// Tipo para la respuesta con información de límite
+type FavoriteLimitResponse = {
+    success: false
+    error: 'LIMITE_FAVORITOS_ALCANZADO'
+    tipoPlan?: string
+    limiteActual?: number
+    favoritosActuales?: number
+    beneficios?: unknown
+    linkPago?: string
+    message?: string
+}
+import FavoriteLimitFloatingCard from '@/components/Premium/FavoriteLimitFloatingCard'
+
 interface Props {
     restaurant: Restaurant
     reviews: Review[]
@@ -14,6 +27,12 @@ export default function RestaurantClient({ restaurant, reviews }: Props) {
     // Inicializar con el valor del servidor si está disponible, o false por defecto
     const [isFavourite, setIsFavourite] = useState(restaurant.esFavorito ?? false)
     const [isLoading, setIsLoading] = useState(false)
+    const [showLimitCard, setShowLimitCard] = useState(false)
+    const [limitInfo, setLimitInfo] = useState<{
+        tipoPlan?: string
+        limiteActual?: number
+        favoritosActuales?: number
+    } | undefined>(undefined)
     const toast = useToast()
 
     // Solo verificar si no viene del servidor (fallback)
@@ -61,6 +80,17 @@ export default function RestaurantClient({ restaurant, reviews }: Props) {
                 const result = await addFavoriteRestaurant(restaurant.id)
 
                 if (!result.success) {
+                    // Verificar si es error de límite de favoritos
+                    const limitResult = result as FavoriteLimitResponse
+                    if (result.error === 'LIMITE_FAVORITOS_ALCANZADO' || limitResult.tipoPlan) {
+                        setLimitInfo({
+                            tipoPlan: limitResult.tipoPlan,
+                            limiteActual: limitResult.limiteActual,
+                            favoritosActuales: limitResult.favoritosActuales,
+                        })
+                        setShowLimitCard(true)
+                        return
+                    }
                     throw new Error(result.error || 'Error al guardar restaurante')
                 }
 
@@ -76,11 +106,18 @@ export default function RestaurantClient({ restaurant, reviews }: Props) {
     }
 
     return (
-        <RestaurantView
-            restaurant={restaurant}
-            reviews={reviews}
-            isFavourite={isFavourite}
-            onFavourite={handleFavourite}
-        />
+        <>
+            <RestaurantView
+                restaurant={restaurant}
+                reviews={reviews}
+                isFavourite={isFavourite}
+                onFavourite={handleFavourite}
+            />
+            <FavoriteLimitFloatingCard
+                isOpen={showLimitCard}
+                onClose={() => setShowLimitCard(false)}
+                limitInfo={limitInfo}
+            />
+        </>
     )
 }

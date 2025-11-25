@@ -74,7 +74,13 @@ export default function RoleProtection({ children }: { children: React.ReactNode
 
         // Si es DuenoRestaurante, redirigir automáticamente a su dashboard
         if (isDuenoRestaurante) {
-            // Si no tiene restaurante aún, esperar
+            // Si aún está cargando el restaurante, esperar
+            if (isLoadingRestaurant) {
+                setIsChecking(true)
+                return
+            }
+            
+            // Si no tiene restaurante después de cargar, mostrar error
             if (!restaurantId) {
                 setIsChecking(false)
                 return

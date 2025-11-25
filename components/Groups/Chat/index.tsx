@@ -40,7 +40,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
     useEffect(() => {
         let isMounted = true
         let conn: HubConnection | null = null
-        let startPromise: Promise<void> | null = null
 
         const connect = async () => {
             try {
@@ -93,24 +92,29 @@ export default function GroupsChat({ groupId, admin }: Props) {
 
                 // Verificar estado antes de iniciar
                 if (conn.state === HubConnectionState.Disconnected) {
-                    startPromise = conn.start()
-                    
-                    startPromise = startPromise.catch((err: unknown) => {
+                    try {
+                        await conn.start()
+                    } catch (err: unknown) {
                         const error = err as Error
                         const errorMsg = error?.message || String(err)
                         const errorName = (error as { name?: string })?.name || ''
                         
-                        // Silenciar errores de aborto y negociación
+                        // Silenciar errores de aborto y negociación - NO loggear en consola
                         if (errorName === 'AbortError' || 
                             errorMsg.includes('stopped during negotiation') ||
-                            errorMsg.includes('The connection was stopped')) {
-                            return Promise.resolve()
+                            errorMsg.includes('The connection was stopped') ||
+                            errorMsg.includes('Connection stopped during negotiation')) {
+                            // Error silenciado - no hacer nada
+                            return
                         }
                         
-                        throw err
-                    })
-                    
-                    await startPromise
+                        // Solo loggear errores reales
+                        if (isMounted) {
+                            console.error('[Chat] Error al conectar:', err)
+                            toast.error('Error al conectar con el chat')
+                        }
+                        return
+                    }
                     
                     if (isMounted && conn) {
                         setConnection(conn)
@@ -126,13 +130,18 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 const errorMsg = error?.message || String(err)
                 const errorName = (error as { name?: string })?.name || ''
                 
+                // Silenciar errores de negociación - NO loggear en consola
                 if (errorName === 'AbortError' || 
                     errorMsg.includes('stopped during negotiation') ||
-                    errorMsg.includes('The connection was stopped')) {
+                    errorMsg.includes('The connection was stopped') ||
+                    errorMsg.includes('Connection stopped during negotiation')) {
+                    // Error silenciado - no hacer nada
                     return
                 }
                 
+                // Solo loggear errores reales
                 if (isMounted) {
+                    console.error('[Chat] Error al conectar:', err)
                     toast.error('Error al conectar con el chat')
                 }
             }

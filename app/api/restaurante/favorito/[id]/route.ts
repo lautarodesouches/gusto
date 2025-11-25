@@ -35,12 +35,68 @@ export async function POST(
         })
 
         if (!res.ok) {
-            const errorText = await res.text()
-            console.error(`Error al agregar favorito (${res.status}):`, errorText)
-            return NextResponse.json(
-                { error: 'No se pudo agregar el favorito', details: errorText },
-                { status: res.status }
-            )
+            try {
+                const errorData = await res.json()
+                const errorMessage = errorData.message || errorData.error || ''
+                
+                // Detectar si es error de límite de favoritos (puede venir como 402 o 500)
+                const isLimitError = res.status === 402 || 
+                    res.status === 500 && (
+                        errorMessage.toLowerCase().includes('límite') ||
+                        errorMessage.toLowerCase().includes('limite') ||
+                        errorMessage.toLowerCase().includes('alcanzado') ||
+                        errorMessage.toLowerCase().includes('suscribite')
+                    )
+                
+                if (isLimitError) {
+                    // Intentar extraer información del error si está disponible
+                    return NextResponse.json(
+                        {
+                            error: 'LIMITE_FAVORITOS_ALCANZADO',
+                            tipoPlan: errorData.plan || errorData.tipoPlan || 'Free',
+                            limiteActual: errorData.limite || errorData.limiteActual || 3,
+                            favoritosActuales: errorData.actuales || errorData.favoritosActuales || 3,
+                            beneficios: errorData.beneficios,
+                            linkPago: errorData.linkPago,
+                            message: errorMessage,
+                        },
+                        { status: res.status }
+                    )
+                }
+                
+                // Si no es error de límite, devolver error genérico
+                return NextResponse.json(
+                    { error: errorMessage || 'No se pudo agregar el favorito', details: errorData },
+                    { status: res.status }
+                )
+            } catch {
+                // Si no se puede parsear JSON, intentar como texto
+                const errorText = await res.text().catch(() => 'Error desconocido')
+                console.error(`Error al agregar favorito (${res.status}):`, errorText)
+                
+                // Verificar si el texto contiene indicadores de límite
+                const isLimitError = errorText.toLowerCase().includes('límite') ||
+                    errorText.toLowerCase().includes('limite') ||
+                    errorText.toLowerCase().includes('alcanzado')
+                
+                if (isLimitError) {
+                    return NextResponse.json(
+                        {
+                            error: 'LIMITE_FAVORITOS_ALCANZADO',
+                            tipoPlan: 'Free',
+                            limiteActual: 3,
+                            favoritosActuales: 3,
+                            message: errorText,
+                        },
+                        { status: res.status }
+                    )
+                }
+                
+                return NextResponse.json(
+                    { error: 'No se pudo agregar el favorito', details: errorText },
+                    { status: res.status }
+                )
+            }
         }
 
         return NextResponse.json({ success: true })

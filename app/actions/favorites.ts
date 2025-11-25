@@ -4,6 +4,16 @@ import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
 import { ApiResponse } from '@/types'
 
+// Tipo extendido para respuestas con información de límite
+type FavoriteLimitResponse = ApiResponse<null> & {
+    tipoPlan?: string
+    limiteActual?: number
+    favoritosActuales?: number
+    beneficios?: unknown
+    linkPago?: string
+    message?: string
+}
+
 const ERROR_MESSAGES = {
     MISSING_TOKEN: 'No autorizado: falta token',
     MISSING_ID: 'ID del restaurante es requerido',
@@ -18,7 +28,7 @@ const ERROR_MESSAGES = {
  */
 export async function addFavoriteRestaurant(
     restauranteId: string
-): Promise<ApiResponse<null>> {
+): Promise<ApiResponse<null> | FavoriteLimitResponse> {
     try {
         if (!restauranteId) {
             return { success: false, error: ERROR_MESSAGES.MISSING_ID }
@@ -40,11 +50,62 @@ export async function addFavoriteRestaurant(
         })
 
         if (!response.ok) {
-            const errorText = await response.text().catch(() => '')
-            console.error(`Error al agregar favorito (${response.status}):`, errorText)
-            return {
-                success: false,
-                error: ERROR_MESSAGES.ADD_FAILED
+            try {
+                const errorData = await response.json()
+                const errorMessage = errorData.message || errorData.error || ''
+                
+                // Detectar si es error de límite de favoritos (puede venir como 402 o 500)
+                const isLimitError = response.status === 402 || 
+                    (response.status === 500 && (
+                        errorMessage.toLowerCase().includes('límite') ||
+                        errorMessage.toLowerCase().includes('limite') ||
+                        errorMessage.toLowerCase().includes('alcanzado') ||
+                        errorMessage.toLowerCase().includes('suscribite')
+                    ))
+                
+                if (isLimitError) {
+                    return {
+                        success: false,
+                        error: 'LIMITE_FAVORITOS_ALCANZADO',
+                        tipoPlan: errorData.tipoPlan || errorData.plan || 'Free',
+                        limiteActual: errorData.limiteActual || errorData.limite || 3,
+                        favoritosActuales: errorData.favoritosActuales || errorData.actuales || 3,
+                        beneficios: errorData.beneficios,
+                        linkPago: errorData.linkPago,
+                        message: errorMessage,
+                    }
+                }
+                
+                // Si no es error de límite, devolver error genérico
+                return {
+                    success: false,
+                    error: errorMessage || ERROR_MESSAGES.ADD_FAILED
+                }
+            } catch {
+                // Si no se puede parsear JSON, intentar como texto
+                const errorText = await response.text().catch(() => '')
+                console.error(`Error al agregar favorito (${response.status}):`, errorText)
+                
+                // Verificar si el texto contiene indicadores de límite
+                const isLimitError = errorText.toLowerCase().includes('límite') ||
+                    errorText.toLowerCase().includes('limite') ||
+                    errorText.toLowerCase().includes('alcanzado')
+                
+                if (isLimitError) {
+                    return {
+                        success: false,
+                        error: 'LIMITE_FAVORITOS_ALCANZADO',
+                        tipoPlan: 'Free',
+                        limiteActual: 3,
+                        favoritosActuales: 3,
+                        message: errorText,
+                    }
+                }
+                
+                return {
+                    success: false,
+                    error: ERROR_MESSAGES.ADD_FAILED
+                }
             }
         }
 

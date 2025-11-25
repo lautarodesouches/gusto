@@ -24,6 +24,7 @@ export default function AdminPanel() {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
     const [rejectModalOpen, setRejectModalOpen] = useState(false)
     const [solicitudToReject, setSolicitudToReject] = useState<string | null>(null)
+    const [isRecommendationLoading, setIsRecommendationLoading] = useState(false)
 
     // Función para cargar solicitudes según el filtro activo
     const loadSolicitudes = async (tipo?: SolicitudStatus | 'Todos') => {
@@ -221,6 +222,38 @@ export default function AdminPanel() {
         router.push(ROUTES.HOME)
     }
 
+    const handleEnviarRecomendaciones = async () => {
+        if (isRecommendationLoading) return
+
+        try {
+            setIsRecommendationLoading(true)
+            const response = await fetch('/api/admin/recomendar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}))
+                toast.error(errorData.error || 'Error al enviar recomendaciones')
+                return
+            }
+
+            const data = await response.json()
+            if (data.funciono || data.success) {
+                toast.success('¡Recomendaciones enviadas exitosamente a todos los usuarios!')
+            } else {
+                toast.warning('Las recomendaciones se procesaron pero hubo algunos problemas')
+            }
+        } catch (error) {
+            console.error('Error al enviar recomendaciones:', error)
+            toast.error('Error al enviar recomendaciones')
+        } finally {
+            setIsRecommendationLoading(false)
+        }
+    }
+
     return (
         <div className={styles.page}>
             <header className={styles.header}>
@@ -233,9 +266,18 @@ export default function AdminPanel() {
                     </Link>
                     <h1 className={styles.header__title}>Panel de Moderador</h1>
                 </div>
-                <button className={styles.header__button} onClick={handleSalir}>
-                    Salir del Panel
-                </button>
+                <div className={styles.header__actions}>
+                    <button 
+                        className={styles.header__recommendButton} 
+                        onClick={handleEnviarRecomendaciones}
+                        disabled={isRecommendationLoading}
+                    >
+                        {isRecommendationLoading ? 'Enviando...' : '📧 Enviar Recomendaciones'}
+                    </button>
+                    <button className={styles.header__button} onClick={handleSalir}>
+                        Salir del Panel
+                    </button>
+                </div>
             </header>
 
             <main className={styles.main}>
