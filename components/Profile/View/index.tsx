@@ -18,7 +18,6 @@ interface ProfileViewProps {
     onAddFriend?: () => void
     onDeleteFriend?: () => void
     onEditTastes: () => void
-    onGoPlace: (lat: number, lng: number) => void
     onGoBack: () => void
 }
 
@@ -28,7 +27,6 @@ export function ProfileView({
     onDeleteFriend,
     onAddFriend,
     onEditTastes,
-    onGoPlace,
 }: ProfileViewProps) {
     return (
         <article className={styles.profile}>
