@@ -24,10 +24,6 @@ export default function ProfileClient({
         router.push(`/perfil/${profile.username}/editar/preferencias/step/1`)
     }
 
-    const handleGoPlace = (lat: number, lng: number) => {
-        router.push(`${ROUTES.MAP}?near.lat=${lat}&near.lng=${lng}`)
-    }
-
     const handleDefaultGoBack = () => {
         router.push(ROUTES.MAP)
     }
@@ -83,7 +79,6 @@ export default function ProfileClient({
             onAddFriend={handleAddFriend}
             isPending={isPending}
             onEditTastes={handleEditTastes}
-            onGoPlace={handleGoPlace}
             onGoBack={onGoBack || handleDefaultGoBack}
         />
     )

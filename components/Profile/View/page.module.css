@@ -73,6 +73,9 @@
     border-radius: 30px;
     border: 1px solid var(--dark);
     margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .container__line {
@@ -136,10 +139,6 @@
     color: var(--light);
 }
 
-.visited {
-    margin-top: 80px;
-}
-
 .visited__title {
     font-size: 1.4rem;
     color: var(--white);
@@ -167,7 +166,6 @@
     width: 15px;
     height: 15px;
     color: var(--white);
-    cursor: pointer;
 }
 
 .visited__empty {

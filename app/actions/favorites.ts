@@ -178,7 +178,7 @@ export async function checkFavoriteRestaurant(
         }
 
         // Obtener la lista de favoritos y verificar si el restaurante está en ella
-        const response = await fetch(`${API_URL}/api/Restaurantes/favoritos`, {
+        const response = await fetch(`${API_URL}/PerfilUsuario/favoritos`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,

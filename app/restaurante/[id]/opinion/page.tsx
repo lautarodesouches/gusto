@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getRestaurant } from '../../actions'
+import { getRestaurant } from '@/app/actions/restaurant'
 import ReviewForm from '@/components/Review/Form'
 import Navbar from '@/components/Navbar'
 

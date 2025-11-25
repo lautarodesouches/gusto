@@ -241,9 +241,6 @@ export async function deactivateGroupMember(
     }
 }
 
-/**
- * Obtiene un grupo por ID
- */
 export async function getGroup(id: string): Promise<ApiResponse<Group>> {
     try {
         const res = await fetch(`${API_URL}/Grupo/${id}`, {
@@ -266,6 +263,32 @@ export async function getGroup(id: string): Promise<ApiResponse<Group>> {
         return {
             success: false,
             error: 'Error al obtener grupo',
+        }
+    }
+}
+
+export async function deleteGroup(groupId: string): Promise<ApiResponse<null>> {
+    try {
+        const res = await fetch(`${API_URL}/Grupo/${groupId}`, {
+            method: 'DELETE',
+            headers: await getAuthHeaders(),
+        })
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                success: false,
+                error: errorData?.message || 'Error al eliminar grupo',
+            }
+        }
+
+        revalidateTag('groups')
+        return { success: true, data: null }
+    } catch (error) {
+        console.error('Error deleting group:', error)
+        return {
+            success: false,
+            error: 'Error al eliminar el grupo',
         }
     }
 }

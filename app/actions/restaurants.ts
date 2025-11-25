@@ -1,8 +1,9 @@
 'use server'
 
 import { API_URL } from '@/constants'
-import { Restaurant } from '@/types'
+import { ApiResponse, Restaurant } from '@/types'
 import { getAuthHeaders } from './common'
+import { cookies } from 'next/headers'
 
 export interface RestaurantSearchParams {
     nearLat?: string
@@ -126,6 +127,58 @@ export async function getGroupRestaurants(
         return { success: true, data: { recomendaciones: data } }
     } catch (error) {
         console.error('Error getting group restaurants:', error)
+        return {
+            success: false,
+            error: 'Error interno del servidor',
+        }
+    }
+}
+
+type MyRestaurantResponse = string | { id?: string; Id?: string }
+
+/**
+ * Acción para obtener el restaurante del dueño actual
+ */
+export async function getMyRestaurant(): Promise<ApiResponse<MyRestaurantResponse>> {
+    try {
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
+
+        if (!token) {
+            return {
+                success: false,
+                error: 'No autorizado: falta token',
+            }
+        }
+
+        if (!API_URL) {
+            return {
+                success: false,
+                error: 'Error de configuración: API_URL no definida',
+            }
+        }
+
+        // Llamar al backend para obtener el restaurante del dueño
+        const response = await fetch(`${API_URL}/api/Restaurantes/mio`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}))
+            return {
+                success: false,
+                error: errorData.message || 'Error al obtener restaurante',
+            }
+        }
+
+        const data = await response.json()
+        return { success: true, data }
+    } catch (error) {
+        console.error('Error en getMyRestaurant:', error)
         return {
             success: false,
             error: 'Error interno del servidor',

@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { verifyPremiumStatus } from '@/app/actions/payment'
+import { refreshClaims } from '@/app/actions/auth'
 
 type AuthContextType = {
     user: User | null
@@ -25,15 +26,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [token, setToken] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
-    const [isPremium, setIsPremium] = useState(false) // TODO: Cambiar a false en producción
+    const [isPremium, setIsPremium] = useState(false)
 
     // Función para verificar el estado Premium
     const refreshPremiumStatus = async () => {
-        // 🔧 MODO TESTEO: Forzar isPremium a false
-        setIsPremium(false)
-        return
-        
-        /* // Descomentarizar en producción
         if (!token) {
             setIsPremium(false)
             return
@@ -51,20 +47,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Error al verificar estado premium:', error)
             setIsPremium(false)
         }
-        */
     }
 
     // Función para refrescar los claims de Firebase después del login
     const refreshFirebaseClaims = async (token: string) => {
         try {
             // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
-            await fetch('/api/auth/refresh-claims', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include', // Incluir cookies
-            })
+            // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
+            await refreshClaims()
             
             // Después de refrescar claims, forzar la renovación del token para obtener los nuevos claims
             const currentUser = auth.currentUser

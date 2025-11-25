@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { useUserRole, RolUsuario } from './useUserRole'
+import { getMyRestaurant } from '@/app/actions/restaurants'
 
 interface MyRestaurantResult {
     restaurantId: string | null
@@ -12,11 +12,9 @@ interface MyRestaurantResult {
 
 /**
  * Hook para obtener el ID del restaurante del dueño actual
- * SOLO se ejecuta si el usuario tiene rol DuenoRestaurante
  */
 export function useMyRestaurant(): MyRestaurantResult {
     const { token, loading: authLoading } = useAuth()
-    const { rol, isLoading: roleLoading } = useUserRole()
     const [restaurantId, setRestaurantId] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -35,36 +33,19 @@ export function useMyRestaurant(): MyRestaurantResult {
             return
         }
 
-        // Si el rol aún está cargando, esperar
-        if (roleLoading) {
-            setIsLoading(true)
-            return
-        }
-
-        // SOLO ejecutar si el rol es DuenoRestaurante
-        if (rol !== RolUsuario.DuenoRestaurante) {
-            setRestaurantId(null)
-            setIsLoading(false)
-            return
-        }
-
-        // El rol es DuenoRestaurante, obtener el restaurante
         const fetchMyRestaurant = async () => {
             try {
                 setIsLoading(true)
                 setError(null)
-                
-                const response = await fetch('/api/restaurantes/mio', {
-                    cache: 'no-store',
-                    credentials: 'include',
-                })
-                
-                if (response.ok) {
-                    const data = await response.json()
+
+                const response = await getMyRestaurant()
+
+                if (response.success) {
+                    const data = response.data
                     // El backend devuelve directamente el ID (GUID como string)
                     // Puede venir como string directo o como objeto con id/Id
                     let id: string | null = null
-                    
+
                     if (typeof data === 'string') {
                         // Si es un string directo (el ID)
                         id = data
@@ -72,23 +53,10 @@ export function useMyRestaurant(): MyRestaurantResult {
                         // Si es un objeto, buscar id o Id
                         id = data.id || data.Id || null
                     }
-                    
-                    if (id) {
-                        setRestaurantId(String(id))
-                        setError(null)
-                    } else {
-                        console.warn('[useMyRestaurant] No se encontró ID en la respuesta:', data)
-                        setError('No se encontró ID del restaurante en la respuesta')
-                        setRestaurantId(null)
-                    }
+
+                    setRestaurantId(id ? String(id) : null)
                 } else {
-                    // Si es 403, puede ser que el usuario no tenga restaurante asignado aún
-                    if (response.status === 403) {
-                        console.warn('[useMyRestaurant] 403 Forbidden - Usuario puede no tener restaurante asignado')
-                        setError('No se encontró restaurante para este usuario')
-                    } else {
-                        setError('No se pudo obtener el restaurante')
-                    }
+                    setError(response.error || 'No se pudo obtener el restaurante')
                     setRestaurantId(null)
                 }
             } catch (err) {
@@ -101,7 +69,7 @@ export function useMyRestaurant(): MyRestaurantResult {
         }
 
         fetchMyRestaurant()
-    }, [token, authLoading, rol, roleLoading])
+    }, [token, authLoading])
 
     return {
         restaurantId,

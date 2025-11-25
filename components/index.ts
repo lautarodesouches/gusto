@@ -30,3 +30,4 @@ export { default as PremiumLimitFloatingCard } from './Premium/PremiumLimitFloat
 export { ConfirmModal } from './modal/ConfirmModal'
 export { default as RestaurantDashboard } from './Restaurant/Dashboard'
 export { default as ProfileOverlay } from './Profile/Overlay'
+export { default as Settings } from './Settings'

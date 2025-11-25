@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
 import { User } from '@/types'
 import ProfileConfigView from './View'
-import { updateProfile } from '@/app/perfil/actions'
+import { updateProfile } from '@/app/actions/profile'
 
 interface Props {
     profile: User

@@ -67,6 +67,7 @@ export default function ProfileBar() {
     }
 
     const handleConfiguration = () => {
+        router.push(ROUTES.SETTINGS)
         setShowProfileMenu(false)
     }
 
