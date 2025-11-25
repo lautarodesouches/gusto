@@ -304,9 +304,6 @@ export default function RestaurantRegister() {
                     </Link>
                     <span className={styles.page__title}>Restaurante</span>
                 </div>
-                <button className={styles.page__button}>
-                    Registrar Restaurante
-                </button>
             </header>
 
             <form className={styles.page__form} onSubmit={handleSubmit}>
