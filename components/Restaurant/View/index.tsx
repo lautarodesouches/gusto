@@ -25,6 +25,7 @@ import RestaurantMap from '../Map'
 import { MapProvider } from '@/components/Map/MapProvider'
 import { useEffect, useState, useRef } from 'react'
 import { getRecomendacion } from '@/app/actions/restaurant'
+import { formatCategory } from '@/utils/categories'
 
 interface Props {
     restaurant: Restaurant
@@ -752,7 +753,7 @@ export default function RestaurantView({
                     <h3 className={styles.data__subtitle}>Acerca de</h3>
                     {restaurant.categoria && (
                         <p className={styles.data__info}>
-                            <strong>Categoría:</strong> {restaurant.categoria}
+                            <strong>Categoría:</strong> {formatCategory(restaurant.categoria)}
                         </p>
                     )}
                     {loadingExplicacion ? (
@@ -796,18 +797,9 @@ export default function RestaurantView({
                 )}
             </section>
             <section className={styles.location} id="ubicacion">
-                <header className={styles.location__header}>
                     <div className={styles.location__div}>
                         <h3 className={styles.location__title}>Ubicación</h3>
                     </div>
-                    <div className={styles.location__div}>
-                        <FontAwesomeIcon
-                            className={styles.location__icon}
-                            icon={faBuilding}
-                        />
-                        <span className={styles.location__span}>Localidad</span>
-                    </div>
-                </header>
                 <div className={styles.location__map}>
                     {(() => {
                         // Validar que las coordenadas estén en rangos válidos
