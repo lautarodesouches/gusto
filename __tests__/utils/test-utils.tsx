@@ -1,10 +1,10 @@
-import React, { ReactElement } from 'react'
+import { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
-import { AuthProvider } from '@/context/AuthContext'
+// import { AuthProvider } from '@/context/AuthContext' // Unused
 
 // Mock AuthContext for testing
 interface MockAuthContextProps {
-  user?: any
+  user?: unknown // Changed from any
   token?: string | null
   loading?: boolean
   isPremium?: boolean
@@ -38,6 +38,7 @@ export function renderWithProviders(
   // Mock the AuthContext
   const mockAuthValue = createMockAuthContext(authContext)
   
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   jest.spyOn(require('@/context/AuthContext'), 'useAuth').mockReturnValue(mockAuthValue)
 
   return render(ui, renderOptions)

@@ -32,7 +32,7 @@ describe('useUserLocation', () => {
             },
         }
 
-            ; (global.navigator.geolocation.getCurrentPosition as jest.Mock).mockImplementation((success: any) => {
+            ; (global.navigator.geolocation.getCurrentPosition as jest.Mock).mockImplementation((success: (pos: unknown) => void) => {
                 success(mockPosition)
             })
 
@@ -51,7 +51,7 @@ describe('useUserLocation', () => {
             message: 'User denied Geolocation',
         }
 
-            ; (global.navigator.geolocation.getCurrentPosition as jest.Mock).mockImplementation((_: any, error: any) => {
+            ; (global.navigator.geolocation.getCurrentPosition as jest.Mock).mockImplementation((_: unknown, error: (err: unknown) => void) => {
                 error(mockError)
             })
 
