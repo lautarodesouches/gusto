@@ -48,7 +48,9 @@
 
 /* Panel de notificaciones */
 .panel {
-  position: fixed; 
+  position: absolute; 
+  top: calc(100% + 10px);
+  right: 0;
   background-color: var(--background);
   border: 1px solid var(--grey);
   border-radius: 16px;
@@ -322,10 +324,13 @@ Notificación leída
 /* Responsive para pantallas pequeñas */
 @media (max-width: 480px) {
   .panel {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    width: auto;
-    max-width: calc(100vw - 20px);
+    position: fixed !important;
+    top: 80px !important; /* Altura aproximada del navbar */
+    left: 1rem !important;
+    right: 1rem !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    margin: 0 !important;
   }
 }
