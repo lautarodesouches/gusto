@@ -123,9 +123,15 @@ export default function UpgradePremiumModal({
                         </div>
                     </div>
 
-                    {/* Próximamente */}
-                    <div className={styles.proximamente}>
-                        <h3>Más Próximamente</h3>
+                    <div className={styles.beneficio_principal}>
+                        <img 
+                            src="/images/all/mas_favoritos.svg" 
+                            alt="Grupos ilimitados" 
+                            className={styles.grupos_svg}
+                        />
+                        <div className={styles.beneficio_texto}>
+                            <p>Poder guardar en favoritos más de <span className={styles.destacado_numero}>3 RESTAURANTES</span></p>
+                        </div>
                     </div>
 
                     {/* Precio */}
@@ -184,7 +190,7 @@ export default function UpgradePremiumModal({
                     {/* Placeholder para imagen */}
                     <div className={styles.imagen_placeholder}>
                             <img 
-                            src="/images/all/beneficios.svg" 
+                            src="/images/all/premium.jpg" 
                             alt="Beneficios" 
                             className={styles.imagen}
                         />
