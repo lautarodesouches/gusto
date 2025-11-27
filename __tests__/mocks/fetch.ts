@@ -1,5 +1,5 @@
 // Global fetch mock
-export const mockFetch = (response: any, ok = true, status = 200) => {
+export const mockFetch = (response: unknown, ok = true, status = 200) => {
     global.fetch = jest.fn().mockResolvedValue({
         ok,
         status,

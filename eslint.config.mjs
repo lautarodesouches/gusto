@@ -22,12 +22,7 @@ const rules = {
 }
 
 const eslintConfig = [
-    ...compat.extends('next/core-web-vitals', 'next/typescript'),
     {
-        rules: {
-            ...rules,
-            '@next/next/no-img-element': 'off',
-        },
         ignores: [
             'node_modules/**',
             '.next/**',
@@ -35,6 +30,13 @@ const eslintConfig = [
             'build/**',
             'next-env.d.ts',
         ],
+    },
+    ...compat.extends('next/core-web-vitals', 'next/typescript'),
+    {
+        rules: {
+            ...rules,
+            '@next/next/no-img-element': 'off',
+        },
     },
 ]
 

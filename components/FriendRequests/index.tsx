@@ -7,6 +7,7 @@ import { faUserFriends, faUser } from '@fortawesome/free-solid-svg-icons'
 import styles from './FriendRequests.module.css'
 import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
+import { useAuth } from '@/context/AuthContext'
 import { SolicitudAmistadResponse } from '@/types'
 
 export default function FriendRequests() {
@@ -15,14 +16,19 @@ export default function FriendRequests() {
     const [showPanel, setShowPanel] = useState(false)
     const panelRef = useRef<HTMLDivElement | null>(null)
     const toast = useToast()
+    const { token } = useAuth()
 
-    // Conexión con el Hub de SignalR
     useEffect(() => {
+        if (!token) return
+
         const connect = async () => {
             try {
                 const conn = new HubConnectionBuilder()
                     .withUrl(`${API_URL}/solicitudesAmistadHub`, {
                         withCredentials: true,
+                        accessTokenFactory: () => {
+                            return token || ''
+                        }
                     })
                     .withAutomaticReconnect()
                     .build()
@@ -62,7 +68,7 @@ export default function FriendRequests() {
                 connection.stop()
             }
         }
-    }, [])
+    }, [token])
 
     // Cerrar panel si se hace click fuera de él
     useEffect(() => {

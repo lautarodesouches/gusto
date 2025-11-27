@@ -22,6 +22,9 @@ export type User = {
         lat: number
         lng: number
     }[]
+    id?: string
+    idUsuario?: string
+    email?: string
 }
 
 export type UsuarioSimpleResponse = {

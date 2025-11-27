@@ -76,6 +76,10 @@ export default function ProfileTab() {
                 if (field === 'foto') {
                     setNewPhoto(null)
                     setPreviewUrl(null)
+                    // Refrescar amigos para que se actualicen las fotos
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('friends:refresh'))
+                    }
                 }
                 router.refresh()
             } else {
