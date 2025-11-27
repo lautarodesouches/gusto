@@ -4,11 +4,18 @@ export function useUpdateUrlParam() {
     const router = useRouter()
     const searchParams = useSearchParams()
 
-    const updateUrlParam = (key: string, value: string | null) => {
+    const updateUrlParam = (key: string, value: string | string[] | null) => {
         const params = new URLSearchParams(searchParams.toString())
 
+        // Primero eliminamos la clave existente para evitar duplicados o mezclas
+        params.delete(key)
+
         if (value) {
-            params.set(key, value)
+            if (Array.isArray(value)) {
+                params.set(key, value.join(' '))
+            } else {
+                params.set(key, value)
+            }
         } else {
             params.delete(key)
         }

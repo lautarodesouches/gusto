@@ -103,7 +103,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                     radius: searchParams.get('radius') || undefined,
                     amigoUsername: searchParams.get('amigo') || undefined,
                 }
-                
+
                 const result = await searchRestaurants(params)
 
                 if (!result.success) {
@@ -141,7 +141,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                 }))
 
                 setShouldSearchButton(false)
-                
+
                 // Ejecutar callback si existe
                 if (onComplete) {
                     onComplete()
@@ -178,7 +178,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                 mapInstance.panTo(targetPosition)
                 mapInstance.setZoom(16)
                 updateCenter(newCoords)
-                
+
                 // Buscar restaurantes en la nueva ubicación
                 fetchRestaurants(newCoords)
             },
@@ -226,7 +226,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     // Recargar restaurantes cuando cambie el amigo (parámetro de URL)
     useEffect(() => {
         if (!state.center || !initialLoaded) return
-        
+
         const currentAmigo = searchParams.get('amigo')
         if (currentAmigo !== lastAmigoUsernameRef.current) {
             lastAmigoUsernameRef.current = currentAmigo
@@ -237,13 +237,13 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     // Recargar restaurantes cuando cambien los filtros (gustos o rating)
     useEffect(() => {
         if (!state.center || !initialLoaded) return
-        
+
         const currentGustos = searchParams.get('gustos')
         const currentRating = searchParams.get('rating')
-        
+
         const gustosChanged = currentGustos !== lastGustosRef.current
         const ratingChanged = currentRating !== lastRatingRef.current
-        
+
         if (gustosChanged || ratingChanged) {
             lastGustosRef.current = currentGustos
             lastRatingRef.current = currentRating
@@ -254,7 +254,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     // Recargar restaurantes cuando cambie el radio de búsqueda
     useEffect(() => {
         if (!state.center || !initialLoaded) return
-        
+
         const currentRadius = searchParams.get('radius')
         if (currentRadius !== lastRadiusRef.current) {
             lastRadiusRef.current = currentRadius
@@ -268,7 +268,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
             if (!mapInstance) return
 
             const { lat, lng, restaurantId } = event.detail
-            
+
             // Validar coordenadas
             if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
                 console.warn('Coordenadas inválidas:', { lat, lng })
@@ -276,19 +276,19 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
             }
 
             const targetPosition = new google.maps.LatLng(lat, lng)
-            
+
             // Mover el mapa con animación
             mapInstance.panTo(targetPosition)
-            
+
             // Ajustar zoom para una mejor vista
             mapInstance.setZoom(16)
-            
+
             // Actualizar el centro del estado
             updateCenter({ lat, lng })
-            
+
             // Guardar el ID del restaurante seleccionado para resaltarlo
             setSelectedRestaurantId(restaurantId)
-            
+
             // Buscar restaurantes en la nueva ubicación y luego abrir el InfoWindow del restaurante seleccionado
             fetchRestaurants({ lat, lng }, () => {
                 // Callback que se ejecuta después de cargar los restaurantes
@@ -308,7 +308,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         }
 
         window.addEventListener('mapPanTo', handleMapPanTo as EventListener)
-        
+
         return () => {
             window.removeEventListener('mapPanTo', handleMapPanTo as EventListener)
         }

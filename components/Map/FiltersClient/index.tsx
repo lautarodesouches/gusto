@@ -19,7 +19,7 @@ interface Props {
 
 export default function FiltersClient({
     isVisible = true,
-    onClose = () => {},
+    onClose = () => { },
     filters,
 }: Props) {
     const searchParams = useSearchParams()
@@ -39,34 +39,41 @@ export default function FiltersClient({
 
     // Sincronizar estado desde la URL cuando cambia
     useEffect(() => {
-        const gustos = searchParams.get('gustos') || ''
-        const rating = searchParams.get('rating') || ''
+        const gustosParam = searchParams.get('gustos')
+        const ratingParam = searchParams.get('rating')
+
+        const gustos = gustosParam ? gustosParam.split(' ') : []
+        const rating = ratingParam ? ratingParam.split(' ') : []
+
+        // Convertir a string para comparar arrays fácilmente
+        const gustosStr = JSON.stringify(gustos.sort())
+        const ratingStr = JSON.stringify(rating.sort())
 
         // Solo actualizar si el valor en la URL realmente cambió
-        const gustosChanged = gustos !== lastGustosUrlRef.current
-        const ratingChanged = rating !== lastRatingUrlRef.current
+        const gustosChanged = gustosStr !== lastGustosUrlRef.current
+        const ratingChanged = ratingStr !== lastRatingUrlRef.current
 
         if (!gustosChanged && !ratingChanged) {
             return
         }
 
-        lastGustosUrlRef.current = gustos
-        lastRatingUrlRef.current = rating
+        lastGustosUrlRef.current = gustosStr
+        lastRatingUrlRef.current = ratingStr
 
-        const markSelected = (items: FilterItem[], selectedValue: string) =>
+        const markSelected = (items: FilterItem[], selectedValues: string[]) =>
             items.filter(item => item != null).map(item => ({
                 ...item,
-                checked: item.value === selectedValue,
+                checked: selectedValues.includes(item.value),
             }))
 
         isUpdatingFromUrlRef.current = true
         if (gustosChanged) {
             setDishes(prev => markSelected(prev, gustos))
-            lastGustosStateRef.current = gustos
+            lastGustosStateRef.current = gustosStr
         }
         if (ratingChanged) {
             setRatings(prev => markSelected(prev, rating))
-            lastRatingStateRef.current = rating
+            lastRatingStateRef.current = ratingStr
         }
         // Resetear la bandera después de un pequeño delay
         setTimeout(() => {
@@ -74,15 +81,17 @@ export default function FiltersClient({
         }, 0)
     }, [searchParams])
 
-    // Función genérica para seleccionar un solo item
-    const handleSingleSelect = (
+    // Función genérica para seleccionar múltiples items
+    const handleMultiSelect = (
         value: string,
         setItems: React.Dispatch<React.SetStateAction<FilterItem[]>>
     ) => {
         setItems(prev => {
             return prev.map(item => {
-                const isSelected = item.value === value ? !item.checked : false
-                return { ...item, checked: isSelected }
+                if (item.value === value) {
+                    return { ...item, checked: !item.checked }
+                }
+                return item
             })
         })
     }
@@ -91,35 +100,35 @@ export default function FiltersClient({
     useEffect(() => {
         if (isUpdatingFromUrlRef.current) return
         if (!dishes || dishes.length === 0) return
-        
-        const selectedGusto = dishes.find(item => item && item.checked)?.value || ''
-        const currentGusto = searchParams.get('gustos') || ''
-        
+
+        const selectedGustos = dishes.filter(item => item && item.checked).map(item => item.value)
+        const selectedGustosStr = JSON.stringify(selectedGustos.sort())
+
         // Solo actualizar si el estado cambió y es diferente a lo que está en la URL
-        if (selectedGusto !== lastGustosStateRef.current && selectedGusto !== currentGusto) {
-            lastGustosStateRef.current = selectedGusto
-            updateUrlParam('gustos', selectedGusto || null)
+        if (selectedGustosStr !== lastGustosStateRef.current) {
+            lastGustosStateRef.current = selectedGustosStr
+            updateUrlParam('gustos', selectedGustos.length > 0 ? selectedGustos : null)
         }
-    }, [dishes, searchParams, updateUrlParam])
+    }, [dishes, updateUrlParam])
 
     useEffect(() => {
         if (isUpdatingFromUrlRef.current) return
         if (!ratings || ratings.length === 0) return
-        
-        const selectedRating = ratings.find(item => item && item.checked)?.value || ''
-        const currentRating = searchParams.get('rating') || ''
-        
+
+        const selectedRatings = ratings.filter(item => item && item.checked).map(item => item.value)
+        const selectedRatingsStr = JSON.stringify(selectedRatings.sort())
+
         // Solo actualizar si el estado cambió y es diferente a lo que está en la URL
-        if (selectedRating !== lastRatingStateRef.current && selectedRating !== currentRating) {
-            lastRatingStateRef.current = selectedRating
-            updateUrlParam('rating', selectedRating || null)
+        if (selectedRatingsStr !== lastRatingStateRef.current) {
+            lastRatingStateRef.current = selectedRatingsStr
+            updateUrlParam('rating', selectedRatings.length > 0 ? selectedRatings : null)
         }
-    }, [ratings, searchParams, updateUrlParam])
+    }, [ratings, updateUrlParam])
 
     const handleDishClick = (value: string) =>
-        handleSingleSelect(value, setDishes)
+        handleMultiSelect(value, setDishes)
     const handleRatingClick = (value: string) =>
-        handleSingleSelect(value, setRatings)
+        handleMultiSelect(value, setRatings)
 
     return (
         <FiltersView
