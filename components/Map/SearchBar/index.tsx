@@ -14,6 +14,7 @@ import { ROUTES } from '@/routes'
 interface SearchBarProps {
     showSearchField?: boolean
     showSelectors?: boolean
+    placement?: 'top' | 'bottom'
 }
 
 interface RestaurantSearchResult {
@@ -27,7 +28,7 @@ interface RestaurantSearchResult {
     longitud?: number
 }
 
-export default function SearchBar({ showSearchField = true, showSelectors = true }: SearchBarProps) {
+export default function SearchBar({ showSearchField = true, showSelectors = true, placement = 'bottom' }: SearchBarProps) {
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
     const router = useRouter()
@@ -253,7 +254,7 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
                         }}
                     />
                     {showResults && (searchResults.length > 0 || isSearching || (searchText.length > 0 && searchText.length < 2) || (searchText.length >= 2 && !isSearching && searchResults.length === 0)) && (
-                        <div className={styles.buscador__results}>
+                        <div className={`${styles.buscador__results} ${placement === 'top' ? styles.buscador__results_top : ''}`}>
                             {searchText.length > 0 && searchText.length < 2 ? (
                                 <div className={styles.buscador__loading}>
                                     Ingresa al menos 2 letras

@@ -85,6 +85,32 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    
+    /* Scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--grey) transparent;
+}
+
+.buscador__results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.buscador__results::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.buscador__results::-webkit-scrollbar-thumb {
+    background: var(--grey);
+    border-radius: 3px;
+}
+
+.buscador__results::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+.buscador__results_top {
+    top: auto;
+    bottom: calc(100% + 0.5rem);
 }
 
 .buscador__loading {
