@@ -10,6 +10,7 @@ import {
 import { auth } from '@/lib/firebase'
 import { verifyPremiumStatus } from '@/app/actions/payment'
 import { refreshClaims } from '@/app/actions/auth'
+import { logout as logoutAction } from '@/app/actions/login'
 
 type AuthContextType = {
     user: User | null
@@ -130,7 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const logout = async () => {
-        await signOut(auth)
+        try {
+            await signOut(auth)
+            await logoutAction()
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error)
+        }
         setUser(null)
         setToken(null)
         setIsPremium(false)
