@@ -267,6 +267,8 @@ export async function getGroup(id: string): Promise<ApiResponse<Group>> {
     }
 }
 
+
+
 export async function deleteGroup(groupId: string): Promise<ApiResponse<null>> {
     try {
         const res = await fetch(`${API_URL}/Grupo/${groupId}`, {
@@ -289,6 +291,65 @@ export async function deleteGroup(groupId: string): Promise<ApiResponse<null>> {
         return {
             success: false,
             error: 'Error al eliminar el grupo',
+        }
+    }
+}
+
+export async function leaveGroup(groupId: string): Promise<ApiResponse<null>> {
+    try {
+        const res = await fetch(`${API_URL}/Grupo/${groupId}/abandonar`, {
+            method: 'POST',
+            headers: await getAuthHeaders(),
+        })
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                success: false,
+                error: errorData?.message || 'Error al abandonar grupo',
+            }
+        }
+
+        revalidateTag('groups')
+        return { success: true, data: null }
+    } catch (error) {
+        console.error('Error leaving group:', error)
+        return {
+            success: false,
+            error: 'Error al abandonar el grupo',
+        }
+    }
+}
+
+export async function updateGroupName(
+    groupId: string,
+    name: string
+): Promise<ApiResponse<null>> {
+    try {
+        const res = await fetch(`${API_URL}/Grupo/${groupId}/nombre`, {
+            method: 'PUT',
+            headers: {
+                ...(await getAuthHeaders()),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nombre: name }),
+        })
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}))
+            return {
+                success: false,
+                error: errorData?.message || 'Error al actualizar nombre',
+            }
+        }
+
+        revalidateTag('groups')
+        return { success: true, data: null }
+    } catch (error) {
+        console.error('Error updating group name:', error)
+        return {
+            success: false,
+            error: 'Error al actualizar el nombre del grupo',
         }
     }
 }

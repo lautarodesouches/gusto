@@ -5,37 +5,14 @@ import { Group } from '@/types'
 import admin from '@/lib/firebaseAdmin'
 import Navbar from '@/components/Navbar'
 import GroupSettings from '@/components/Groups/Settings'
+import { getGroup } from '@/app/actions/groups'
 import styles from './page.module.css'
 
 interface Props {
     params: Promise<{ id: string }>
 }
 
-async function fetchGroup({
-    id,
-    cookie,
-}: {
-    id: string
-    cookie: string
-}): Promise<Group | null> {
-    try {
-        const baseUrl = process.env.NEXT_PUBLIC_LOCAL_URL || 'http://localhost:3000'
-        const apiUrl = `${baseUrl}/api/group/${id}`
-        
-        const res = await fetch(apiUrl, {
-            headers: { cookie },
-            cache: 'no-store',
-        })
 
-        if (res.status === 401) redirect(ROUTES.LOGIN)
-        if (!res.ok) return null
-
-        return await res.json()
-    } catch (error) {
-        console.error(`Error fetching group ${id}:`, error)
-        return null
-    }
-}
 
 async function verifyAuthentication(): Promise<string> {
     const cookieStore = await cookies()
@@ -59,7 +36,8 @@ export default async function GroupSettingsPage({ params }: Props) {
     const headersList = await headers()
     const cookie = headersList.get('cookie') || ''
 
-    const group = await fetchGroup({ id, cookie })
+    const groupResponse = await getGroup(id)
+    const group = groupResponse.success ? groupResponse.data : null
 
     if (!group) {
         redirect(`${ROUTES.GROUP}${id}`)
