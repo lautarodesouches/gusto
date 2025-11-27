@@ -31,7 +31,7 @@ const cleanMapStyle: google.maps.MapTypeStyle[] = [
 
 // Map options
 const defaultMapOptions = {
-    zoomControl: true,
+    zoomControl: false,
     tilt: 0,
     gestureHandling: 'auto',
     mapTypeId: 'roadmap',
