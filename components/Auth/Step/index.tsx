@@ -315,7 +315,7 @@ export default function Step({
                             disabled={saving || (step === 3 && selected.length < 3)}
                         >
                             {saving
-                                ? 'GUARDANDO...'
+                                ? 'GUARDANDO..'
                                 : isLastStep
                                 ? 'FINALIZAR'
                                 : step === 3 && selected.length < 3
