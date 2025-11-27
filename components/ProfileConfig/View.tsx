@@ -4,7 +4,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ROUTES } from '@/routes'
-import NotificationBell from '@/components/NotificationBell/Notificacion'
+import NotificationBell from '@/components/NotificationBell'
 import { User } from '@/types'
 import styles from './styles.module.css'
 

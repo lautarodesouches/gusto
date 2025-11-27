@@ -13,7 +13,7 @@ import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { GroupClient, FriendRequests, ProfileOverlay } from '@/components'
 import admin from '@/lib/firebaseAdmin'
-import NotificationBell from '@/components/NotificationBell/Notificacion'
+import NotificationBell from '@/components/NotificationBell'
 import Navbar from '@/components/Navbar'
 import { getGroup } from '@/app/actions/groups'
 

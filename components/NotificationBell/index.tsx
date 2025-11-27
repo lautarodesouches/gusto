@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faUser, faUsers } from '@fortawesome/free-solid-svg-icons'
-import styles from './NotificationBell.module.css'
+import styles from './styles.module.css'
 import { useToast } from '@/context/ToastContext'
 import { useSignalR } from '@/context/SignalRContext'
 
