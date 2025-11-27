@@ -64,9 +64,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
     let isMounted = true
 
     const connectNotificaciones = async () => {
-      // No conectar si no hay token
       if (!token) {
-        console.log('[SignalR] ⏳ Esperando token para conectar notificaciones...')
         return
       }
 
@@ -75,7 +73,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
           .withUrl(`${API_URL}/notificacionesHub`, {
             withCredentials: true,
             accessTokenFactory: () => {
-              // Retornar el token para que se incluya en la negociación y conexión
               return token || ''
             }
           })
@@ -87,19 +84,19 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.on('CargarNotificaciones', (data: Notificacion[]) => {
           if (!isMounted) return
           setNotificaciones(prev => {
-            const existingIds = new Set(prev.map(n => n.id))
-            const newNotifs = data
-              .filter(n => !existingIds.has(n.id))
-              .map(n => ({
-                id: n.id,
-                tipo: 'notificacion' as const,
-                titulo: n.titulo,
-                mensaje: n.mensaje,
-                leida: n.leida,
-                fechaCreacion: n.fechaCreacion,
-                tipoNotificacion: n.tipo,
-              }))
-            return [...newNotifs, ...prev.filter(n => n.tipo === 'solicitud_amistad')]
+            const backendNotifs = data.map(n => ({
+              id: n.id,
+              tipo: 'notificacion' as const,
+              titulo: n.titulo,
+              mensaje: n.mensaje,
+              leida: n.leida,
+              fechaCreacion: n.fechaCreacion,
+              tipoNotificacion: n.tipo,
+            }))
+            
+            const solicitudesAmistad = prev.filter(n => n.tipo === 'solicitud_amistad')
+            
+            return [...backendNotifs, ...solicitudesAmistad]
               .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
           })
         })
@@ -152,7 +149,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       }
     }
 
-    // Solo conectar si hay token
     if (token) {
       connectNotificaciones()
     }
@@ -170,9 +166,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
     let isMounted = true
 
     const connectSolicitudes = async () => {
-      // No conectar si no hay token
       if (!token) {
-        console.log('[SignalR] ⏳ Esperando token para conectar solicitudes...')
         return
       }
 
@@ -181,7 +175,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
           .withUrl(`${API_URL}/solicitudesAmistadHub`, {
             withCredentials: true,
             accessTokenFactory: () => {
-              // Retornar el token para que se incluya en la negociación y conexión
               return token || ''
             }
           })
@@ -250,7 +243,6 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       }
     }
 
-    // Solo conectar si hay token
     if (token) {
       connectSolicitudes()
     }

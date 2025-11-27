@@ -18,17 +18,16 @@ export default function NotificationBell({ showPanel = false, isActive = false }
     const panelRef = useRef<HTMLDivElement | null>(null)
     const toast = useToast()
     
-    // Usar el context global de SignalR en lugar de crear nuevas conexiones
     const {
         notificaciones,
         aceptarInvitacion: aceptarInvitacionContext,
         rechazarInvitacion: rechazarInvitacionContext,
         aceptarSolicitudAmistad,
         rechazarSolicitudAmistad,
-        marcarComoLeida
+        marcarComoLeida,
+        isConnected
     } = useSignalR()
 
-    // Acciones disponibles con manejo de errores
     const aceptarInvitacion = async (id: string) => {
         try {
             await aceptarInvitacionContext(id)
@@ -52,7 +51,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
             await aceptarSolicitudAmistad(solicitudId)
             toast.success('Solicitud de amistad aceptada')
             
-            // Refrescar lista de amigos
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('friends:refresh'))
             }
@@ -74,7 +72,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
         setMounted(true)
     }, [])
 
-    // Calcular posición del panel
     useEffect(() => {
         if (!showPanel || !bellRef.current || !panelRef.current) return
 
@@ -84,7 +81,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
             const bellRect = bellRef.current.getBoundingClientRect()
             const panel = panelRef.current
 
-            // Posicionar el panel debajo del botón de notificaciones
             panel.style.top = `${bellRect.bottom + 10}px`
             panel.style.right = `${window.innerWidth - bellRect.right}px`
         }
@@ -101,7 +97,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
     const unreadCount = notificaciones.filter(n => !n.leida).length
 
-    // 🔹 Render
     return (
         <>
             <div className={styles.contenedor} ref={bellRef}>
@@ -128,6 +123,16 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                                 {' '}({unreadCount} nueva{unreadCount !== 1 ? 's' : ''})
                             </span>
                         )}
+                        {!isConnected && (
+                            <span style={{ 
+                                fontSize: '0.75rem', 
+                                color: '#ff6b6b', 
+                                fontWeight: 'normal',
+                                marginLeft: '8px'
+                            }} title="Desconectado - Las notificaciones pueden no llegar en tiempo real">
+                                ⚠️ Desconectado
+                            </span>
+                        )}
                     </h4>
                     <div className={styles.contenido}>
                         {notificaciones.length === 0 && (
@@ -136,12 +141,21 @@ export default function NotificationBell({ showPanel = false, isActive = false }
 
                         {notificaciones.map(n => {
                             const isAmistad = n.tipo === 'solicitud_amistad'
-                            // Detectar notificaciones de grupos (case-insensitive)
-                            const isGrupo = n.tipo === 'notificacion' && 
-                                n.tipoNotificacion && 
-                                n.tipoNotificacion.toLowerCase().includes('grupo')
-                            const hasActions = isAmistad || isGrupo
+                            const tipoNotifLower = n.tipoNotificacion?.toLowerCase() || ''
+                            const tituloLower = n.titulo?.toLowerCase() || ''
+                            const mensajeLower = n.mensaje?.toLowerCase() || ''
                             
+                            const isGrupo = n.tipo === 'notificacion' && (
+                                tipoNotifLower.includes('grupo') ||
+                                tipoNotifLower.includes('invitacion') ||
+                                tituloLower.includes('grupo') ||
+                                tituloLower.includes('invitación') ||
+                                tituloLower.includes('invitacion') ||
+                                mensajeLower.includes('grupo') ||
+                                mensajeLower.includes('invitación') ||
+                                mensajeLower.includes('invitacion')
+                            )
+                            const hasActions = isAmistad || isGrupo
 
                             return (
                                 <div
@@ -151,12 +165,10 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                                         n.leida ? styles.leida : ''
                                     } ${hasActions ? styles.item_withActions : ''}`}
                                 >
-                                    {/* Título primero */}
                                     <strong className={styles.titulo}>
                                         {n.titulo}
                                     </strong>
 
-                                    {/* Información de la persona/grupo */}
                                     {isAmistad && n.solicitudAmistad && (
                                         <div className={styles.item__info}>
                                             <div className={styles.item__avatar}>
@@ -190,14 +202,12 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                                         </div>
                                     )}
 
-                                    {/* Mensaje (solo si no es amistad o grupo, o si hay mensaje adicional) */}
                                     {!isAmistad && !isGrupo && (
                                         <p className={styles.mensaje}>
                                             {n.mensaje}
                                         </p>
                                     )}
 
-                                    {/* Hora */}
                                     <small className={styles.hora}>
                                         {new Date(
                                             n.fechaCreacion
@@ -209,7 +219,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                                         })}
                                     </small>
 
-                                    {/* Botones para invitaciones de grupo */}
                                     {isGrupo && (
                                         <div className={styles.acciones}>
                                             <button
@@ -233,7 +242,6 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                                         </div>
                                     )}
 
-                                    {/* Botones para solicitudes de amistad */}
                                     {isAmistad && (
                                         <div className={styles.acciones}>
                                             <button
