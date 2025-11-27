@@ -23,10 +23,13 @@ export interface UnifiedNotification {
     solicitudAmistad?: SolicitudAmistadResponse
 }
 
-export function createHubConnection(hubPath: string): HubConnection {
+export function createHubConnection(hubPath: string, token: string | null): HubConnection {
     return new HubConnectionBuilder()
         .withUrl(`${API_URL}/${hubPath}`, {
             withCredentials: true,
+            accessTokenFactory: () => {
+                return token || ''
+            }
         })
         .withAutomaticReconnect({
             nextRetryDelayInMilliseconds: () => 3000
@@ -38,20 +41,22 @@ export function mergeNewNotifications(
     prev: UnifiedNotification[],
     data: Notificacion[]
 ): UnifiedNotification[] {
-    const existingIds = new Set(prev.map(n => n.id))
-    const newNotifs = data
-        .filter(n => !existingIds.has(n.id))
-        .map(n => ({
-            id: n.id,
-            tipo: 'notificacion' as const,
-            titulo: n.titulo,
-            mensaje: n.mensaje,
-            leida: n.leida,
-            fechaCreacion: n.fechaCreacion,
-            tipoNotificacion: n.tipo,
-        }))
-
-    return [...newNotifs, ...prev.filter(n => n.tipo === 'solicitud_amistad')]
+    // Procesar todas las notificaciones del backend (reemplazar, no solo agregar)
+    const backendNotifs = data.map(n => ({
+        id: n.id,
+        tipo: 'notificacion' as const,
+        titulo: n.titulo,
+        mensaje: n.mensaje,
+        leida: n.leida,
+        fechaCreacion: n.fechaCreacion,
+        tipoNotificacion: n.tipo,
+    }))
+    
+    // Mantener las solicitudes de amistad que no vienen del backend
+    const solicitudesAmistad = prev.filter(n => n.tipo === 'solicitud_amistad')
+    
+    // Combinar: notificaciones del backend + solicitudes de amistad
+    return [...backendNotifs, ...solicitudesAmistad]
         .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
 }
 
@@ -81,20 +86,22 @@ export function mergeFriendRequests(
     prev: UnifiedNotification[],
     data: SolicitudAmistadResponse[]
 ): UnifiedNotification[] {
-    const existingIds = new Set(prev.map(n => n.id))
-    const newSolicitudes = data
-        .filter(s => !existingIds.has(s.id))
-        .map(s => ({
-            id: s.id,
-            tipo: 'solicitud_amistad' as const,
-            titulo: 'Solicitud de amistad',
-            mensaje: `${s.remitente.nombre} quiere ser tu amigo.`,
-            leida: false,
-            fechaCreacion: s.fechaEnvio,
-            solicitudAmistad: s,
-        }))
-
-    return [...newSolicitudes, ...prev.filter(n => n.tipo === 'notificacion')]
+    // Procesar todas las solicitudes del backend (reemplazar, no solo agregar)
+    const backendSolicitudes = data.map(s => ({
+        id: s.id,
+        tipo: 'solicitud_amistad' as const,
+        titulo: 'Solicitud de amistad',
+        mensaje: `${s.remitente.nombre} quiere ser tu amigo.`,
+        leida: false,
+        fechaCreacion: s.fechaEnvio,
+        solicitudAmistad: s,
+    }))
+    
+    // Mantener las notificaciones que no vienen del backend de solicitudes
+    const notificaciones = prev.filter(n => n.tipo === 'notificacion')
+    
+    // Combinar: solicitudes del backend + notificaciones
+    return [...backendSolicitudes, ...notificaciones]
         .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
 }
 

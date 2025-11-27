@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
 import { HubConnection } from '@microsoft/signalr'
 import { SolicitudAmistadResponse } from '@/types'
+import { useAuth } from './AuthContext'
 import { 
   createHubConnection, 
   mergeNewNotifications, 
@@ -39,19 +40,21 @@ interface SignalRProviderProps {
 }
 
 export function SignalRProvider({ children }: SignalRProviderProps) {
+  const { token } = useAuth()
   const [notificacionesConnection, setNotificacionesConnection] = useState<HubConnection | null>(null)
   const [solicitudesConnection, setSolicitudesConnection] = useState<HubConnection | null>(null)
   const [notificaciones, setNotificaciones] = useState<UnifiedNotification[]>([])
   const [isConnected, setIsConnected] = useState(false)
 
-
   useEffect(() => {
+    if (!token) return
+
     let conn: HubConnection | null = null
     let isMounted = true
 
     const connectNotificaciones = async () => {
       try {
-        conn = createHubConnection('notificacionesHub')
+        conn = createHubConnection('notificacionesHub', token)
 
         conn.on('CargarNotificaciones', (data: Notificacion[]) => {
           if (!isMounted) return
@@ -91,15 +94,17 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [])
+  }, [token])
 
   useEffect(() => {
+    if (!token) return
+
     let conn: HubConnection | null = null
     let isMounted = true
 
     const connectSolicitudes = async () => {
       try {
-        conn = createHubConnection('solicitudesAmistadHub')
+        conn = createHubConnection('solicitudesAmistadHub', token)
 
         conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
           if (!isMounted) return
@@ -133,7 +138,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [])
+  }, [token])
 
   const aceptarInvitacion = useCallback(async (id: string) => {
     if (!notificacionesConnection) {

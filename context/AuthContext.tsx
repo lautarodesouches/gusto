@@ -53,17 +53,103 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Función para refrescar los claims de Firebase después del login
     const refreshFirebaseClaims = async (token: string) => {
         try {
+            console.log('[Auth] 🔄 Refrescando claims de Firebase...')
+            
             // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
-            // Llamar al endpoint para refrescar claims (actualiza el rol en Firebase)
-            await refreshClaims()
+            const result = await refreshClaims()
+            
+            if (!result.success) {
+                console.error('[Auth] ❌ Error al refrescar claims:', result.error)
+                return
+            }
+            
+            console.log('[Auth] ✅ Claims refrescados en Firebase')
+            
+            // Esperar más tiempo en producción para que Firebase procese los nuevos claims
+            // Firebase puede tardar unos segundos en propagar los custom claims
+            const waitTime = process.env.NODE_ENV === 'production' ? 2000 : 1000
+            console.log('[Auth] ⏳ Esperando', waitTime, 'ms para que Firebase procese los claims...')
+            await new Promise(resolve => setTimeout(resolve, waitTime))
             
             // Después de refrescar claims, forzar la renovación del token para obtener los nuevos claims
             const currentUser = auth.currentUser
             if (currentUser) {
-                await currentUser.getIdToken(true) // true = force refresh
+                console.log('[Auth] 🔄 Forzando renovación del token para obtener nuevos claims...')
+                
+                // Intentar renovar el token hasta 3 veces si no tiene el claim
+                let newToken = await currentUser.getIdToken(true) // true = force refresh
+                let attempts = 0
+                const maxAttempts = 3
+                
+                while (attempts < maxAttempts) {
+                    // Decodificar el token para verificar que tiene el rol
+                    try {
+                        const parts = newToken.split('.')
+                        if (parts.length === 3) {
+                            const payload = parts[1]
+                            const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')))
+                            const hasRol = decoded.rol !== undefined && decoded.rol !== null
+                            
+                            console.log(`[Auth] 🔍 Intento ${attempts + 1}: Token tiene claim "rol":`, hasRol, 'valor:', decoded.rol)
+                            
+                            if (hasRol) {
+                                console.log('[Auth] ✅ Token renovado con claim de rol')
+                                break
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('[Auth] ⚠️ Error decodificando token:', e)
+                    }
+                    
+                    // Si no tiene el claim, esperar y reintentar
+                    if (attempts < maxAttempts - 1) {
+                        console.log(`[Auth] ⏳ Token sin claim de rol, esperando 1s y reintentando... (intento ${attempts + 2}/${maxAttempts})`)
+                        await new Promise(resolve => setTimeout(resolve, 1000))
+                        newToken = await currentUser.getIdToken(true)
+                    }
+                    attempts++
+                }
+                
+                // Actualizar el token en el estado inmediatamente
+                setToken(newToken)
+                
+                // Decodificar el nuevo token para verificar que tiene el rol actualizado
+                try {
+                    const parts = newToken.split('.')
+                    if (parts.length === 3) {
+                        const payload = parts[1]
+                        const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')))
+                        console.log('[Auth] 🔍 Nuevo token decodificado:', decoded)
+                        console.log('[Auth] 🔍 Claim "rol" en nuevo token:', decoded.rol, 'tipo:', typeof decoded.rol)
+                        
+                        if (!decoded.rol && attempts >= maxAttempts) {
+                            console.warn('[Auth] ⚠️ Token renovado pero aún no tiene claim de rol. Puede tardar unos segundos más.')
+                        }
+                    }
+                } catch (e) {
+                    console.warn('[Auth] ⚠️ No se pudo decodificar el token para verificar:', e)
+                }
+                
+                // Actualizar la cookie en el backend con el nuevo token
+                try {
+                    await fetch('/api/refresh-token', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${newToken}`,
+                        },
+                    })
+                    console.log('[Auth] ✅ Token actualizado en cookie')
+                } catch (error) {
+                    console.error('[Auth] ❌ Error al actualizar cookie:', error)
+                }
+                
+                // Forzar actualización del rol disparando un evento personalizado
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('token:refreshed'))
+                }
             }
         } catch (error) {
-            console.error('Error al refrescar claims de Firebase:', error)
+            console.error('[Auth] ❌ Error al refrescar claims de Firebase:', error)
             // No lanzar error, solo loguear - no es crítico si falla
         }
     }
@@ -82,10 +168,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 // Solo la primera vez que se detecta un usuario (login)
                 if (isFirstLogin) {
                     isFirstLogin = false
-                    // Esperar un poco para asegurar que la cookie esté establecida
+                    // Esperar más tiempo en producción para asegurar que la cookie esté establecida
+                    // y que el backend esté listo (puede haber latencia de red)
+                    const delay = process.env.NODE_ENV === 'production' ? 1500 : 500
                     setTimeout(() => {
                         refreshFirebaseClaims(freshToken)
-                    }, 500)
+                    }, delay)
                 }
             } else {
                 setUser(null)
