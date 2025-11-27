@@ -31,16 +31,17 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
     const router = useRouter()
-    
+
     const [kmOpen, setKmOpen] = useState(false)
     const kmRef = useRef<HTMLDivElement>(null)
     const [selectedKm, setSelectedKm] = useState('3k')
     const [friendsOpen, setFriendsOpen] = useState(false)
     const [friends, setFriends] = useState<Friend[]>([])
+    const [loadingFriends, setLoadingFriends] = useState(true)
     const [selectedFriend, setSelectedFriend] = useState<string>('Tus Gustos')
     const [selectedFriendUsername, setSelectedFriendUsername] = useState<string | null>(null)
     const friendsRef = useRef<HTMLDivElement>(null)
-    
+
     // Estados para búsqueda de restaurantes
     const [searchText, setSearchText] = useState('')
     const [searchResults, setSearchResults] = useState<RestaurantSearchResult[]>([])
@@ -82,7 +83,7 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
     const handleKmSelect = (option: string) => {
         setSelectedKm(option)
         setKmOpen(false)
-        
+
         // Convertir opción a metros y guardar en URL
         let radiusMeters: string | null = null
         switch (option) {
@@ -99,123 +100,129 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
                 radiusMeters = '50000' // o un valor muy grande
                 break
         }
-        
+
         updateUrlParam('radius', radiusMeters)
     }
 
-useEffect(() => {
-    async function loadFriends() {
-        const res = await getFriends()
-        if (res.success && res.data) {
-            setFriends(res.data)
-        }
-    }
-    loadFriends()
-}, [])
-
-// --- SELECCIONAR AMIGO ---
-const handleFriendSelect = (friendUsername: string | null) => {
-    if (!friendUsername) {
-        setSelectedFriend('Tus Gustos')
-        setSelectedFriendUsername(null)
-        updateUrlParam('amigo', null)
-    } else {
-        const friend = friends.find(f => f.username === friendUsername)
-        if (friend) {
-            setSelectedFriend(friend.nombre)
-            setSelectedFriendUsername(friend.username)
-            updateUrlParam('amigo', friendUsername)
-        }
-    }
-    setFriendsOpen(false)
-}
-
-// Función para obtener el color del amigo seleccionado
-const getSelectedFriendColor = () => {
-    if (!selectedFriendUsername) return '#ff5050'
-    const index = friends.findIndex(f => f.username === selectedFriendUsername)
-    if (index === -1) return '#ff5050'
-    const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0']
-    return colors[index % colors.length]
-}
-
-// --- BÚSQUEDA DE RESTAURANTES ---
-useEffect(() => {
-    const searchRestaurants = async () => {
-        if (!searchText || searchText.trim().length < 2) {
-            setSearchResults([])
-            if (searchText.trim().length > 0) {
-                setShowResults(true)
-            } else {
-                setShowResults(false)
+    useEffect(() => {
+        async function loadFriends() {
+            try {
+                const res = await getFriends()
+                if (res.success && res.data) {
+                    setFriends(res.data)
+                }
+            } catch (error) {
+                console.error('Error loading friends:', error)
+            } finally {
+                setLoadingFriends(false)
             }
-            return
         }
+        loadFriends()
+    }, [])
 
-        setIsSearching(true)
-        setShowResults(true) // Show results container to display "Buscando..."
-        try {
-            const result = await searchRestaurantsByText(searchText.trim())
-            
-            if (result.success && result.data) {
-                setSearchResults(result.data)
-                setShowResults(true)
-            } else {
+    // --- SELECCIONAR AMIGO ---
+    const handleFriendSelect = (friendUsername: string | null) => {
+        if (!friendUsername) {
+            setSelectedFriend('Tus Gustos')
+            setSelectedFriendUsername(null)
+            updateUrlParam('amigo', null)
+        } else {
+            const friend = friends.find(f => f.username === friendUsername)
+            if (friend) {
+                setSelectedFriend(friend.nombre)
+                setSelectedFriendUsername(friend.username)
+                updateUrlParam('amigo', friendUsername)
+            }
+        }
+        setFriendsOpen(false)
+    }
+
+    // Función para obtener el color del amigo seleccionado
+    const getSelectedFriendColor = () => {
+        if (!selectedFriendUsername) return '#ff5050'
+        const index = friends.findIndex(f => f.username === selectedFriendUsername)
+        if (index === -1) return '#ff5050'
+        const colors = ['#4CAF50', '#2196F3', '#FF9800', '#9C27B0']
+        return colors[index % colors.length]
+    }
+
+    // --- BÚSQUEDA DE RESTAURANTES ---
+    useEffect(() => {
+        const searchRestaurants = async () => {
+            if (!searchText || searchText.trim().length < 2) {
+                setSearchResults([])
+                if (searchText.trim().length > 0) {
+                    setShowResults(true)
+                } else {
+                    setShowResults(false)
+                }
+                return
+            }
+
+            setIsSearching(true)
+            setShowResults(true) // Show results container to display "Buscando..."
+            try {
+                const result = await searchRestaurantsByText(searchText.trim())
+
+                if (result.success && result.data) {
+                    setSearchResults(result.data)
+                    setShowResults(true)
+                } else {
+                    setSearchResults([])
+                    setShowResults(false)
+                }
+            } catch (error) {
+                console.error('Error al buscar restaurantes:', error)
                 setSearchResults([])
                 setShowResults(false)
+            } finally {
+                setIsSearching(false)
             }
-        } catch (error) {
-            console.error('Error al buscar restaurantes:', error)
-            setSearchResults([])
-            setShowResults(false)
-        } finally {
-            setIsSearching(false)
+        }
+
+        const debounceTimer = setTimeout(() => {
+            searchRestaurants()
+        }, 300) // Debounce de 300ms
+
+        return () => clearTimeout(debounceTimer)
+    }, [searchText])
+
+    const handleRestaurantSelect = (restaurant: RestaurantSearchResult) => {
+        setSearchText('')
+        setShowResults(false)
+
+        // Si tiene coordenadas, mover el mapa a esa ubicación
+        if (restaurant.latitud !== undefined && restaurant.longitud !== undefined) {
+            // Disparar evento personalizado para que MapClient lo escuche
+            window.dispatchEvent(new CustomEvent('mapPanTo', {
+                detail: {
+                    lat: restaurant.latitud,
+                    lng: restaurant.longitud,
+                    restaurantId: restaurant.id
+                }
+            }))
+        } else {
+            // Si no tiene coordenadas, ir directo a detalles
+            router.push(`${ROUTES.RESTAURANT}${restaurant.id}`)
         }
     }
 
-    const debounceTimer = setTimeout(() => {
-        searchRestaurants()
-    }, 300) // Debounce de 300ms
-
-    return () => clearTimeout(debounceTimer)
-}, [searchText])
-
-const handleRestaurantSelect = (restaurant: RestaurantSearchResult) => {
-    setSearchText('')
-    setShowResults(false)
-    
-    // Si tiene coordenadas, mover el mapa a esa ubicación
-    if (restaurant.latitud !== undefined && restaurant.longitud !== undefined) {
-        // Disparar evento personalizado para que MapClient lo escuche
-        window.dispatchEvent(new CustomEvent('mapPanTo', {
-            detail: {
-                lat: restaurant.latitud,
-                lng: restaurant.longitud,
-                restaurantId: restaurant.id
+    // --- CERRAR DROPDOWN ---
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (kmRef.current && !kmRef.current.contains(event.target as Node)) {
+                setKmOpen(false)
             }
-        }))
-    } else {
-        // Si no tiene coordenadas, ir directo a detalles
-        router.push(`${ROUTES.RESTAURANT}${restaurant.id}`)
-    }
-}
-
-// --- CERRAR DROPDOWN ---
-useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-        if (kmRef.current && !kmRef.current.contains(event.target as Node)) {
-            setKmOpen(false)
+            if (friendsRef.current && !friendsRef.current.contains(event.target as Node)) {
+                setFriendsOpen(false)
+            }
+            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+                setShowResults(false)
+            }
         }
-        if (friendsRef.current && !friendsRef.current.contains(event.target as Node)) {
-            setFriendsOpen(false)
-        }
-        if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-            setShowResults(false)
-        }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-}, [])
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
     return (
         <div className={styles.buscador}>
@@ -297,7 +304,7 @@ useEffect(() => {
             {/* Select de Kilómetros */}
             {showSelectors && (
                 <div className={styles.select} ref={kmRef}>
-                    <button 
+                    <button
                         className={styles.select__button}
                         onClick={() => {
                             setKmOpen(!kmOpen)
@@ -305,8 +312,8 @@ useEffect(() => {
                         }}
                     >
                         <span className={styles.select__text}>{selectedKm}</span>
-                        <FontAwesomeIcon 
-                            icon={kmOpen ? faChevronUp : faChevronDown} 
+                        <FontAwesomeIcon
+                            icon={kmOpen ? faChevronUp : faChevronDown}
                             className={styles.select__icon}
                         />
                     </button>
@@ -326,113 +333,119 @@ useEffect(() => {
                 </div>
             )}
 
-           {/* SELECT DE AMIGOS */}
-{showSelectors && (
-<div className={styles.select_friends} ref={friendsRef}>
-    <button
-        className={styles.select__button}
-        onClick={() => {
-            setFriendsOpen(!friendsOpen)
-            setKmOpen(false)
-        }}
-    >
-        <div className={styles.select__friend_display}>
-            {selectedFriend === 'Tus Gustos' ? (
-                <div className={styles.select__friend_avatar}>
-                    <Image
-                        src="/images/all/tus_gustos.svg"
-                        alt="Tus Gustos"
-                        width={28}
-                        height={28}
-                        className={styles.select__friend_icon}
-                    />
-                </div>
-            ) : selectedFriendUsername ? (
-                (() => {
-                    const friend = friends.find(f => f.username === selectedFriendUsername)
-                    return friend ? (
-                        <div className={styles.select__friend_avatar}>
-                            {friend.fotoPerfilUrl ? (
-                                <Image
-                                    src={friend.fotoPerfilUrl}
-                                    alt={friend.nombre}
-                                    width={28}
-                                    height={28}
-                                    className={styles.select__friend_icon}
-                                />
-                            ) : (
-                                <FontAwesomeIcon icon={faUser} />
-                            )}
-                        </div>
-                    ) : (
-                        <div 
-                            className={styles.select__friend_avatar}
-                            style={{ backgroundColor: getSelectedFriendColor() }}
-                        />
-                    )
-                })()
-            ) : (
-                <div 
-                    className={styles.select__friend_avatar}
-                    style={{ backgroundColor: getSelectedFriendColor() }}
-                />
-            )}
-            <span className={styles.select__text}>{selectedFriend}</span>
-        </div>
-        <FontAwesomeIcon
-            icon={friendsOpen ? faChevronUp : faChevronDown}
-            className={styles.select__icon}
-        />
-    </button>
-
-    {friendsOpen && (
-        <div className={styles.select__dropdown}>
-            {/* TUS GUSTOS */}
-            <button
-                className={styles.select__option_friend}
-                onClick={() => handleFriendSelect(null)}
-            >
-                <div className={styles.select__friend_avatar}>
-                    <Image
-                        src="/images/all/tus_gustos.svg"
-                        alt="Tus Gustos"
-                        width={28}
-                        height={28}
-                        className={styles.select__friend_icon}
-                    />
-                </div>
-                <span>Tus Gustos</span>
-            </button>
-
-            {/* AMIGOS REALES */}
-            {friends.map((amigo) => {
-                return (
+            {/* SELECT DE AMIGOS */}
+            {showSelectors && (
+                <div className={styles.select_friends} ref={friendsRef}>
                     <button
-                        key={amigo.id}
-                        className={styles.select__option_friend}
-                        onClick={() => handleFriendSelect(amigo.username)}
+                        className={styles.select__button}
+                        onClick={() => {
+                            setFriendsOpen(!friendsOpen)
+                            setKmOpen(false)
+                        }}
                     >
-                        <div className={styles.select__friend_avatar}>
-                            {amigo.fotoPerfilUrl ? (
-                                <Image
-                                    src={amigo.fotoPerfilUrl}
-                                    alt={amigo.nombre}
-                                    width={28}
-                                    height={28}
-                                    className={styles.select__friend_icon}
-                                />
+                        <div className={styles.select__friend_display}>
+                            {selectedFriend === 'Tus Gustos' ? (
+                                <div className={styles.select__friend_avatar}>
+                                    <Image
+                                        src="/images/all/tus_gustos.svg"
+                                        alt="Tus Gustos"
+                                        width={28}
+                                        height={28}
+                                        className={styles.select__friend_icon}
+                                    />
+                                </div>
+                            ) : selectedFriendUsername ? (
+                                (() => {
+                                    const friend = friends.find(f => f.username === selectedFriendUsername)
+                                    return friend ? (
+                                        <div className={styles.select__friend_avatar}>
+                                            {friend.fotoPerfilUrl ? (
+                                                <Image
+                                                    src={friend.fotoPerfilUrl}
+                                                    alt={friend.nombre}
+                                                    width={28}
+                                                    height={28}
+                                                    className={styles.select__friend_icon}
+                                                />
+                                            ) : (
+                                                <FontAwesomeIcon icon={faUser} />
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className={styles.select__friend_avatar}
+                                            style={{ backgroundColor: getSelectedFriendColor() }}
+                                        />
+                                    )
+                                })()
                             ) : (
-                                <FontAwesomeIcon icon={faUser} />
+                                <div
+                                    className={styles.select__friend_avatar}
+                                    style={{ backgroundColor: getSelectedFriendColor() }}
+                                />
+                            )}
+                            <span className={styles.select__text}>{selectedFriend}</span>
+                        </div>
+                        <FontAwesomeIcon
+                            icon={friendsOpen ? faChevronUp : faChevronDown}
+                            className={styles.select__icon}
+                        />
+                    </button>
+
+                    {friendsOpen && (
+                        <div className={styles.select__dropdown}>
+                            {/* TUS GUSTOS */}
+                            <button
+                                className={styles.select__option_friend}
+                                onClick={() => handleFriendSelect(null)}
+                            >
+                                <div className={styles.select__friend_avatar}>
+                                    <Image
+                                        src="/images/all/tus_gustos.svg"
+                                        alt="Tus Gustos"
+                                        width={28}
+                                        height={28}
+                                        className={styles.select__friend_icon}
+                                    />
+                                </div>
+                                <span>Tus Gustos</span>
+                            </button>
+
+                            {/* AMIGOS REALES */}
+                            {loadingFriends ? (
+                                <div className={styles.select__loading}>
+                                    Cargando amigos...
+                                </div>
+                            ) : (
+                                friends.map((amigo) => {
+                                    return (
+                                        <button
+                                            key={amigo.id}
+                                            className={styles.select__option_friend}
+                                            onClick={() => handleFriendSelect(amigo.username)}
+                                        >
+                                            <div className={styles.select__friend_avatar}>
+                                                {amigo.fotoPerfilUrl ? (
+                                                    <Image
+                                                        src={amigo.fotoPerfilUrl}
+                                                        alt={amigo.nombre}
+                                                        width={28}
+                                                        height={28}
+                                                        className={styles.select__friend_icon}
+                                                    />
+                                                ) : (
+                                                    <FontAwesomeIcon icon={faUser} />
+                                                )}
+                                            </div>
+                                            <span>{amigo.nombre}</span>
+                                        </button>
+                                    )
+                                })
                             )}
                         </div>
-                        <span>{amigo.nombre}</span>
-                    </button>
-                )
-            })}
-        </div>
-    )}
-</div>
-)}
+                    )}
+                </div>
+            )}
         </div>
     )
 }
