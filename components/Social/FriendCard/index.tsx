@@ -35,6 +35,9 @@ export default function FriendCard({
     const handleAddFriend = async (e: React.MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
+        if (isInvitating) {
+            return toast.info('Ya enviaste una solicitud a este usuario')
+        }
         setLoading(true)
 
         try {

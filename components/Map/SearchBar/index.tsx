@@ -8,6 +8,7 @@ import { useUpdateUrlParam } from '@/hooks/useUpdateUrlParam'
 import Image from 'next/image'
 import { Friend } from '@/types'
 import { getFriends } from '@/app/actions/friends'
+import { searchRestaurantsByText } from '@/app/actions/restaurants'
 import { ROUTES } from '@/routes'
 
 interface SearchBarProps {
@@ -143,16 +144,21 @@ useEffect(() => {
     const searchRestaurants = async () => {
         if (!searchText || searchText.trim().length < 2) {
             setSearchResults([])
-            setShowResults(false)
+            if (searchText.trim().length > 0) {
+                setShowResults(true)
+            } else {
+                setShowResults(false)
+            }
             return
         }
 
         setIsSearching(true)
+        setShowResults(true) // Show results container to display "Buscando..."
         try {
-            const response = await fetch(`/api/restaurante/buscar?texto=${encodeURIComponent(searchText.trim())}`)
-            if (response.ok) {
-                const data = await response.json()
-                setSearchResults(data || [])
+            const result = await searchRestaurantsByText(searchText.trim())
+            
+            if (result.success && result.data) {
+                setSearchResults(result.data)
                 setShowResults(true)
             } else {
                 setSearchResults([])
@@ -224,48 +230,65 @@ useEffect(() => {
                         name="search"
                         className={styles.buscador__input}
                         value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value
+                            setSearchText(val)
+                            if (val.trim().length > 0) {
+                                setShowResults(true)
+                            } else {
+                                setShowResults(false)
+                            }
+                        }}
                         onFocus={() => {
-                            if (searchResults.length > 0) {
+                            if (searchText.length > 0) {
                                 setShowResults(true)
                             }
                         }}
                     />
-                    {showResults && searchResults.length > 0 && (
+                    {showResults && (searchResults.length > 0 || isSearching || (searchText.length > 0 && searchText.length < 2) || (searchText.length >= 2 && !isSearching && searchResults.length === 0)) && (
                         <div className={styles.buscador__results}>
-                            {isSearching && (
+                            {searchText.length > 0 && searchText.length < 2 ? (
+                                <div className={styles.buscador__loading}>
+                                    Ingresa al menos 2 letras
+                                </div>
+                            ) : isSearching ? (
                                 <div className={styles.buscador__loading}>
                                     Buscando...
                                 </div>
-                            )}
-                            {!isSearching && searchResults.map((restaurant) => (
-                                <button
-                                    key={restaurant.id}
-                                    className={styles.buscador__resultItem}
-                                    onClick={() => handleRestaurantSelect(restaurant)}
-                                >
-                                    {restaurant.imagenUrl && (
-                                        <Image
-                                            src={restaurant.imagenUrl}
-                                            alt={restaurant.nombre}
-                                            width={40}
-                                            height={40}
-                                            className={styles.buscador__resultImage}
-                                        />
-                                    )}
-                                    <div className={styles.buscador__resultInfo}>
-                                        <span className={styles.buscador__resultName}>{restaurant.nombre}</span>
-                                        {restaurant.direccion && (
-                                            <span className={styles.buscador__resultAddress}>{restaurant.direccion}</span>
+                            ) : searchResults.length === 0 ? (
+                                <div className={styles.buscador__loading}>
+                                    No se encontraron restaurantes
+                                </div>
+                            ) : (
+                                searchResults.map((restaurant) => (
+                                    <button
+                                        key={restaurant.id}
+                                        className={styles.buscador__resultItem}
+                                        onClick={() => handleRestaurantSelect(restaurant)}
+                                    >
+                                        {restaurant.imagenUrl && (
+                                            <Image
+                                                src={restaurant.imagenUrl}
+                                                alt={restaurant.nombre}
+                                                width={40}
+                                                height={40}
+                                                className={styles.buscador__resultImage}
+                                            />
                                         )}
-                                    </div>
-                                    {restaurant.rating !== undefined && restaurant.rating !== null && typeof restaurant.rating === 'number' && (
-                                        <span className={styles.buscador__resultRating}>
-                                            ⭐ {restaurant.rating.toFixed(1)}
-                                        </span>
-                                    )}
-                                </button>
-                            ))}
+                                        <div className={styles.buscador__resultInfo}>
+                                            <span className={styles.buscador__resultName}>{restaurant.nombre}</span>
+                                            {restaurant.direccion && (
+                                                <span className={styles.buscador__resultAddress}>{restaurant.direccion}</span>
+                                            )}
+                                        </div>
+                                        {restaurant.rating !== undefined && restaurant.rating !== null && typeof restaurant.rating === 'number' && (
+                                            <span className={styles.buscador__resultRating}>
+                                                ⭐ {restaurant.rating.toFixed(1)}
+                                            </span>
+                                        )}
+                                    </button>
+                                ))
+                            )}
                         </div>
                     )}
                 </div>

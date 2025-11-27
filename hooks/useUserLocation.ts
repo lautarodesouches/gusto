@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 
 // Ubicación por defecto (Buenos Aires, Argentina)
 const DEFAULT_LOCATION: Coordinates = {
-    lat: -34.603722,
-    lng: -58.381592,
+    lat: -34.6728048,
+    lng: -58.5650301,
 }
 
 export function useUserLocation() {
@@ -25,12 +25,12 @@ export function useUserLocation() {
 
         // Timeout extendido para dar más tiempo a obtener la ubicación
         const timeoutId = setTimeout(() => {
-            if (isMounted) {
-                // Si después de 20 segundos no se obtuvo la ubicación, usar la por defecto
+            if (loading) {
+                // Si después de 60 segundos no se obtuvo la ubicación, usar la por defecto
                 setCoords(DEFAULT_LOCATION)
                 setLoading(false)
             }
-        }, 20000)
+        }, 60000)
 
         navigator.geolocation.getCurrentPosition(
             position => {
@@ -52,9 +52,9 @@ export function useUserLocation() {
                     setLoading(false)
                 }
             },
-            { 
-                enableHighAccuracy: true, // Mejor precisión
-                timeout: 15000, // Timeout extendido a 15 segundos
+            {
+                enableHighAccuracy: false, // Cambiar a false para que sea más rápido
+                timeout: 8000, // Timeout de 8 segundos
                 maximumAge: 300000 // Aceptar ubicación cacheada de hasta 5 minutos
             }
         )

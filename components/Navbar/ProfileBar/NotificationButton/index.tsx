@@ -1,6 +1,6 @@
 'use client'
 
-import NotificationBell from '@/components/NotificationBell/Notificacion'
+import NotificationBell from '@/components/NotificationBell'
 import styles from './NotificationButton.module.css'
 
 interface NotificationButtonProps {

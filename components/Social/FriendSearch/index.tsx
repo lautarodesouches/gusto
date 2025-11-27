@@ -15,14 +15,15 @@ export default function FriendSearch({ onClose }: FriendSearchProps) {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<Array<Friend>>([])
     const [error, setError] = useState('')
+    const [isSearching, setIsSearching] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setQuery(e.target.value)
     }
 
-
-
     const search = async () => {
+        setIsSearching(true)
+        setError('')
         try {
             const result = await searchFriends(query)
 
@@ -36,6 +37,8 @@ export default function FriendSearch({ onClose }: FriendSearchProps) {
                 setError(err.message)
             }
             console.error(err)
+        } finally {
+            setIsSearching(false)
         }
     }
 
@@ -77,17 +80,25 @@ export default function FriendSearch({ onClose }: FriendSearchProps) {
                     value={query}
                 />
             </header>
-            <p className={styles.search__description}>
-                Busca usuarios por su nombre de usuario para agregarlos como amigos
-            </p>
-            {results.length > 0 && (
+            
+            {!isSearching && results.length === 0 && !error && query.trim() === '' && (
+                <p className={styles.search__description}>
+                    Busca usuarios por su nombre de usuario para agregarlos como amigos
+                </p>
+            )}
+
+            {isSearching && (
+                <p className={styles.search__description}>Buscando...</p>
+            )}
+
+            {!isSearching && results.length > 0 && (
                 <div className={styles.search__results}>
                     {results.map(f => (
                         <FriendCard friend={f} key={f.id} isSearching />
                     ))}
                 </div>
             )}
-            {error && results.length === 0 && (
+            {!isSearching && error && results.length === 0 && (
                 <span className={styles.search__error}>{error}</span>
             )}
         </aside>

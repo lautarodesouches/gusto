@@ -9,6 +9,7 @@ import { Restaurant, Coordinates } from '@/types'
 import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
 import SearchZoneButton from '../SearchZoneButton'
+import MyLocationButton from '../MyLocationButton'
 import { searchRestaurants } from '@/app/actions/restaurants'
 import { normalizeResponse, isValidRestaurant, mapToRestaurant } from './utils'
 
@@ -25,8 +26,6 @@ const INITIAL_STATE: MapState = {
     center: null,
     isLoading: true,
 }
-
-
 
 function _buildRestaurantQuery(center: Coordinates, searchParams: URLSearchParams) {
     const query = new URLSearchParams()
@@ -57,8 +56,6 @@ function coordinatesChanged(prev: Coordinates | null, current: Coordinates): boo
     if (!prev) return true
     return prev.lat !== current.lat || prev.lng !== current.lng
 }
-
-
 
 export default function MapClient({ containerStyle }: { containerStyle: string }) {
     const router = useRouter()
@@ -164,7 +161,38 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
         [searchParams, router, toast]
     )
 
+    const handleGoToMyLocation = useCallback(() => {
+        if (!mapInstance) return
 
+        if (!navigator.geolocation) {
+            toast.error('Tu navegador no soporta geolocalización')
+            return
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords
+                const newCoords = { lat: latitude, lng: longitude }
+                const targetPosition = new google.maps.LatLng(latitude, longitude)
+
+                mapInstance.panTo(targetPosition)
+                mapInstance.setZoom(16)
+                updateCenter(newCoords)
+                
+                // Buscar restaurantes en la nueva ubicación
+                fetchRestaurants(newCoords)
+            },
+            (error) => {
+                console.warn('Error getting location:', error)
+                toast.error('No se pudo obtener tu ubicación actual. Asegúrate de permitir el acceso.')
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        )
+    }, [mapInstance, updateCenter, fetchRestaurants, toast])
 
     const handleMapIdle = useCallback(() => {
         if (!mapInstance) return
@@ -183,15 +211,12 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
 
     }, [mapInstance, state.center, updateCenter, initialLoaded])
 
-   
-
     useEffect(() => {
         if (!coords) return
         if (state.center) return
 
         updateCenter(coords)
 
-     
         setTimeout(() => {
             fetchRestaurants(coords)
             setInitialLoaded(true)
@@ -304,6 +329,8 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                     isVisible={shouldSearchButton}
                     onClick={() => fetchRestaurants(state.center!)}
                 />
+
+                <MyLocationButton onClick={handleGoToMyLocation} />
 
                 <MapView
                     containerStyle={containerStyle}

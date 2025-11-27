@@ -185,3 +185,60 @@ export async function getMyRestaurant(): Promise<ApiResponse<MyRestaurantRespons
         }
     }
 }
+
+/**
+ * Busca restaurantes por texto (nombre)
+ */
+export async function searchRestaurantsByText(texto: string): Promise<{
+    success: boolean
+    data?: any[]
+    error?: string
+}> {
+    try {
+        const cookieStore = await cookies()
+        const token = cookieStore.get('token')?.value
+
+        if (!token) {
+            return {
+                success: false,
+                error: 'No autorizado: falta token',
+            }
+        }
+
+        if (!texto || texto.trim() === '') {
+            return {
+                success: false,
+                error: 'El texto es requerido',
+            }
+        }
+
+        const apiUrl = new URL(`${API_URL}/api/Restaurantes/buscar`)
+        apiUrl.searchParams.append('texto', texto.trim())
+
+        const res = await fetch(apiUrl.toString(), {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            cache: 'no-store',
+        })
+
+        if (!res.ok) {
+            const errorText = await res.text().catch(() => '')
+            console.error('Error al buscar restaurantes por texto:', errorText)
+            return {
+                success: false,
+                error: 'No se pudieron buscar los restaurantes',
+            }
+        }
+
+        const data = await res.json()
+        return { success: true, data }
+    } catch (error) {
+        console.error('Error in searchRestaurantsByText:', error)
+        return {
+            success: false,
+            error: 'Error interno del servidor',
+        }
+    }
+}

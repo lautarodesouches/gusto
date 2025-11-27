@@ -156,7 +156,9 @@ export async function addFriend(username: string): Promise<ApiResponse<User>> {
             const errorData = await res.json().catch(() => ({}))
             return {
                 success: false,
-                error: errorData?.error || 'Error al enviar solicitud',
+                error:
+                    errorData?.message ||
+                    'Error al enviar solicitud',
             }
         }
 

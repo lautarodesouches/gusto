@@ -13,7 +13,7 @@ import { Group } from '@/types'
 import { ROUTES } from '@/routes'
 import { GroupClient, FriendRequests, ProfileOverlay } from '@/components'
 import admin from '@/lib/firebaseAdmin'
-import NotificationBell from '@/components/NotificationBell/Notificacion'
+import NotificationBell from '@/components/NotificationBell'
 import Navbar from '@/components/Navbar'
 import { getGroup } from '@/app/actions/groups'
 
@@ -122,51 +122,19 @@ function GroupErrorView({ error }: { error: GroupError }) {
     const content = getErrorContent()
 
     return (
-        <main className={styles.main}>
-            <nav className={styles.nav}>
-                <div className={styles.nav__logo}>
-                    <Link href={ROUTES.MAP} aria-label="Ir al mapa">
-                        <Image
-                            src="/images/brand/gusto-center-negative.svg"
-                            alt="Logo Gusto!"
-                            className={styles.nav__img}
-                            width={120}
-                            height={40}
-                            priority
-                        />
-                    </Link>
-                </div>
-
-                <div className={styles.nav__icons}>
-                    <FriendRequests />
-                    <NotificationBell />
-                    <Link
-                        href={ROUTES.PROFILE}
-                        className={styles.nav__div}
-                        aria-label="Perfil de usuario"
-                    >
-                        <FontAwesomeIcon
-                            icon={faUser}
-                            className={styles.nav__icon}
-                        />
-                    </Link>
-                </div>
-            </nav>
-
-            <div className={styles.errorContainer}>
-                <div className={styles.errorContent}>
-                    <FontAwesomeIcon
-                        icon={content.icon}
-                        className={styles.errorIcon}
-                    />
-                    <h2 className={styles.errorTitle}>{content.title}</h2>
-                    <p className={styles.errorMessage}>{content.message}</p>
-                    <Link href={ROUTES.MAP} className={styles.errorButton}>
-                        Volver al mapa
-                    </Link>
-                </div>
+        <div className={styles.errorContainer}>
+            <div className={styles.errorContent}>
+                <FontAwesomeIcon
+                    icon={content.icon}
+                    className={styles.errorIcon}
+                />
+                <h2 className={styles.errorTitle}>{content.title}</h2>
+                <p className={styles.errorMessage}>{content.message}</p>
+                <Link href={ROUTES.MAP} className={styles.errorButton}>
+                    Volver al mapa
+                </Link>
             </div>
-        </main>
+        </div>
     )
 }
 
@@ -176,19 +144,18 @@ export default async function GroupDetail({ params }: Props) {
     await verifyAuthentication()
 
     const result = await fetchGroup({ id })
-
-    if ('status' in result && 'message' in result) {
-        return <GroupErrorView error={result} />
-    }
-
-    const group = result as Group
+    const isError = 'status' in result && 'message' in result
 
     return (
         <div className={styles.wrapper}>
             <ProfileOverlay />
             <Navbar />
             <main className={styles.main}>
-                <GroupClient group={group} />
+                {isError ? (
+                    <GroupErrorView error={result as GroupError} />
+                ) : (
+                    <GroupClient group={result as Group} />
+                )}
             </main>
         </div>
     )

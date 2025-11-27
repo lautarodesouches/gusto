@@ -1,9 +1,8 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBell, faUser, faUsers } from '@fortawesome/free-solid-svg-icons'
-import styles from './NotificationBell.module.css'
+import styles from './styles.module.css'
 import { useToast } from '@/context/ToastContext'
 import { useSignalR } from '@/context/SignalRContext'
 
@@ -72,45 +71,21 @@ export default function NotificationBell({ showPanel = false, isActive = false }
         setMounted(true)
     }, [])
 
-    useEffect(() => {
-        if (!showPanel || !bellRef.current || !panelRef.current) return
-
-        const updatePosition = () => {
-            if (!bellRef.current || !panelRef.current) return
-
-            const bellRect = bellRef.current.getBoundingClientRect()
-            const panel = panelRef.current
-
-            panel.style.top = `${bellRect.bottom + 10}px`
-            panel.style.right = `${window.innerWidth - bellRect.right}px`
-        }
-
-        updatePosition()
-        window.addEventListener('scroll', updatePosition, true)
-        window.addEventListener('resize', updatePosition)
-
-        return () => {
-            window.removeEventListener('scroll', updatePosition, true)
-            window.removeEventListener('resize', updatePosition)
-        }
-    }, [showPanel])
 
     const unreadCount = notificaciones.filter(n => !n.leida).length
 
     return (
-        <>
-            <div className={styles.contenedor} ref={bellRef}>
-                <FontAwesomeIcon
-                    icon={faBell}
-                    className={`${styles.icono} ${isActive ? styles.icono_activo : ''}`}
-                />
+        <div className={styles.contenedor} ref={bellRef}>
+            <FontAwesomeIcon
+                icon={faBell}
+                className={`${styles.icono} ${isActive ? styles.icono_activo : ''}`}
+            />
 
-                {unreadCount > 0 && (
-                    <span className={styles.badge}>{unreadCount}</span>
-                )}
-            </div>
+            {unreadCount > 0 && (
+                <span className={styles.badge}>{unreadCount}</span>
+            )}
 
-            {mounted && showPanel && createPortal(
+            {mounted && showPanel && (
                 <div className={styles.panel} ref={panelRef} data-notification-panel="true">
                     <h4>
                         Notificaciones
@@ -268,9 +243,8 @@ export default function NotificationBell({ showPanel = false, isActive = false }
                             )
                         })}
                     </div>
-                </div>,
-                document.body
+                </div>
             )}
-        </>
+        </div>
     )
 }
