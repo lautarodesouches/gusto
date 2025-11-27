@@ -1,29 +1,16 @@
 'use client'
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr'
-import { API_URL } from '@/constants'
+import { HubConnection } from '@microsoft/signalr'
 import { SolicitudAmistadResponse } from '@/types'
-import { useAuth } from './AuthContext'
-
-interface Notificacion {
-  id: string
-  titulo: string
-  mensaje: string
-  tipo: string
-  leida: boolean
-  fechaCreacion: string
-}
-
-interface UnifiedNotification {
-  id: string
-  tipo: 'notificacion' | 'solicitud_amistad'
-  titulo: string
-  mensaje: string
-  leida: boolean
-  fechaCreacion: string
-  tipoNotificacion?: string
-  solicitudAmistad?: SolicitudAmistadResponse
-}
+import { 
+  createHubConnection, 
+  mergeNewNotifications, 
+  addSingleNotification, 
+  mergeFriendRequests, 
+  addFriendRequest,
+  UnifiedNotification,
+  Notificacion
+} from './SignalRUtils'
 
 interface SignalRContextValue {
   notificaciones: UnifiedNotification[]
@@ -52,7 +39,6 @@ interface SignalRProviderProps {
 }
 
 export function SignalRProvider({ children }: SignalRProviderProps) {
-  const { token } = useAuth()
   const [notificacionesConnection, setNotificacionesConnection] = useState<HubConnection | null>(null)
   const [solicitudesConnection, setSolicitudesConnection] = useState<HubConnection | null>(null)
   const [notificaciones, setNotificaciones] = useState<UnifiedNotification[]>([])
@@ -64,61 +50,17 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
     let isMounted = true
 
     const connectNotificaciones = async () => {
-      if (!token) {
-        return
-      }
-
       try {
-        conn = new HubConnectionBuilder()
-          .withUrl(`${API_URL}/notificacionesHub`, {
-            withCredentials: true,
-            accessTokenFactory: () => {
-              return token || ''
-            }
-          })
-          .withAutomaticReconnect({
-            nextRetryDelayInMilliseconds: () => 3000
-          })
-          .build()
+        conn = createHubConnection('notificacionesHub')
 
         conn.on('CargarNotificaciones', (data: Notificacion[]) => {
           if (!isMounted) return
-          setNotificaciones(prev => {
-            const backendNotifs = data.map(n => ({
-              id: n.id,
-              tipo: 'notificacion' as const,
-              titulo: n.titulo,
-              mensaje: n.mensaje,
-              leida: n.leida,
-              fechaCreacion: n.fechaCreacion,
-              tipoNotificacion: n.tipo,
-            }))
-            
-            const solicitudesAmistad = prev.filter(n => n.tipo === 'solicitud_amistad')
-            
-            return [...backendNotifs, ...solicitudesAmistad]
-              .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
-          })
+          setNotificaciones(prev => mergeNewNotifications(prev, data))
         })
 
         conn.on('RecibirNotificacion', (notif: Notificacion) => {
           if (!isMounted) return
-          setNotificaciones(prev => {
-            const exists = prev.some(n => n.id === notif.id)
-            if (exists) return prev
-            const newNotif: UnifiedNotification = {
-              id: notif.id,
-              tipo: 'notificacion',
-              titulo: notif.titulo,
-              mensaje: notif.mensaje,
-              leida: notif.leida,
-              fechaCreacion: notif.fechaCreacion,
-              tipoNotificacion: notif.tipo,
-            }
-            return [newNotif, ...prev].sort((a, b) => 
-              new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime()
-            )
-          })
+          setNotificaciones(prev => addSingleNotification(prev, notif))
         })
 
         conn.on('NotificacionEliminada', (id: string) => {
@@ -126,17 +68,9 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
           setNotificaciones(prev => prev.filter(n => n.id !== id))
         })
 
-        conn.onreconnecting(() => {
-          setIsConnected(false)
-        })
-
-        conn.onreconnected(() => {
-          setIsConnected(true)
-        })
-
-        conn.onclose(() => {
-          setIsConnected(false)
-        })
+        conn.onreconnecting(() => setIsConnected(false))
+        conn.onreconnected(() => setIsConnected(true))
+        conn.onclose(() => setIsConnected(false))
 
         await conn.start()
         if (isMounted) {
@@ -149,9 +83,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       }
     }
 
-    if (token) {
-      connectNotificaciones()
-    }
+    connectNotificaciones()
 
     return () => {
       isMounted = false
@@ -159,79 +91,29 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [token])
+  }, [])
 
   useEffect(() => {
     let conn: HubConnection | null = null
     let isMounted = true
 
     const connectSolicitudes = async () => {
-      if (!token) {
-        return
-      }
-
       try {
-        conn = new HubConnectionBuilder()
-          .withUrl(`${API_URL}/solicitudesAmistadHub`, {
-            withCredentials: true,
-            accessTokenFactory: () => {
-              return token || ''
-            }
-          })
-          .withAutomaticReconnect({
-            nextRetryDelayInMilliseconds: () => 3000
-          })
-          .build()
+        conn = createHubConnection('solicitudesAmistadHub')
 
         conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
           if (!isMounted) return
-          setNotificaciones(prev => {
-            const existingIds = new Set(prev.map(n => n.id))
-            const newSolicitudes = data
-              .filter(s => !existingIds.has(s.id))
-              .map(s => ({
-                id: s.id,
-                tipo: 'solicitud_amistad' as const,
-                titulo: 'Solicitud de amistad',
-                mensaje: `${s.remitente.nombre} quiere ser tu amigo.`,
-                leida: false,
-                fechaCreacion: s.fechaEnvio,
-                solicitudAmistad: s,
-              }))
-            return [...newSolicitudes, ...prev.filter(n => n.tipo === 'notificacion')]
-              .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
-          })
+          setNotificaciones(prev => mergeFriendRequests(prev, data))
         })
 
         conn.on('RecibirSolicitudAmistad', (solicitud: SolicitudAmistadResponse) => {
           if (!isMounted) return
-          setNotificaciones(prev => {
-            const exists = prev.some(n => n.id === solicitud.id)
-            if (exists) return prev
-            const newSolicitud: UnifiedNotification = {
-              id: solicitud.id,
-              tipo: 'solicitud_amistad',
-              titulo: 'Solicitud de amistad',
-              mensaje: `${solicitud.remitente.nombre} quiere ser tu amigo.`,
-              leida: false,
-              fechaCreacion: solicitud.fechaEnvio,
-              solicitudAmistad: solicitud,
-            }
-            return [newSolicitud, ...prev].sort((a, b) => 
-              new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime()
-            )
-          })
+          setNotificaciones(prev => addFriendRequest(prev, solicitud))
         })
 
         conn.on('SolicitudEliminada', (id: string) => {
           if (!isMounted) return
           setNotificaciones(prev => prev.filter(n => n.id !== id))
-        })
-
-        conn.onreconnecting(() => {
-        })
-
-        conn.onreconnected(() => {
         })
 
         await conn.start()
@@ -243,9 +125,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
       }
     }
 
-    if (token) {
-      connectSolicitudes()
-    }
+    connectSolicitudes()
 
     return () => {
       isMounted = false
@@ -253,7 +133,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [token])
+  }, [])
 
   const aceptarInvitacion = useCallback(async (id: string) => {
     if (!notificacionesConnection) {

@@ -9,6 +9,7 @@ import modalStyles from './modal.module.css'
 import { Restaurant } from '@/types'
 import { useToast } from '@/context/ToastContext'
 import ErrorAlert from '@/components/CreateRestaurant/ErrorAlert'
+import { submitRestaurantReview } from '@/app/actions/review'
 
 interface ReviewModalProps {
     restaurant: Restaurant
@@ -135,33 +136,13 @@ export default function ReviewModal({ restaurant, isOpen, onClose }: ReviewModal
             formData.append('imagenes', image)
         })
 
+
         startTransition(async () => {
             try {
-                const res = await fetch('/api/opinion-restaurante', {
-                    method: 'POST',
-                    body: formData,
-                })
+                const result = await submitRestaurantReview(formData)
 
-                if (!res.ok) {
-                    let errorMessage = ''
-                    let errors: Record<string, string[]> = {}
-                    
-                    try {
-                        const errorData = await res.json()
-                        
-                        if (errorData.errors && typeof errorData.errors === 'object') {
-                            errors = errorData.errors as Record<string, string[]>
-                            errorMessage = ''
-                        } else {
-                            errorMessage = errorData.error || errorData.message || 'Error al enviar opinión'
-                        }
-                    } catch {
-                        const errorText = await res.text().catch(() => '')
-                        errorMessage = errorText || 'Error al enviar opinión'
-                    }
-                    
-                    setError(errorMessage)
-                    setValidationErrors(errors)
+                if (!result.success) {
+                    setError(result.error || 'Error al enviar opinión')
                     return
                 }
 

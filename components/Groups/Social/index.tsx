@@ -16,7 +16,7 @@ import styles from './page.module.css'
 import { Group, GroupMember } from '@/types'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useToast } from '@/context/ToastContext'
-import { inviteUserToGroup, removeGroupMember, deleteGroup } from '@/app/actions/groups'
+import { inviteUserToGroup, removeGroupMember, deleteGroup, leaveGroup, updateGroupName } from '@/app/actions/groups'
 import { ROUTES } from '@/routes'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
@@ -52,19 +52,17 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
         
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}/update-name`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre: groupName.trim() })
-            })
+            const result = await updateGroupName(group.id, groupName.trim())
 
-            if (!res.ok) throw new Error('Error al actualizar el nombre')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Nombre del grupo actualizado')
             router.refresh()
             setIsEditing(false)
-        } catch {
-            toast.error('Error al actualizar el nombre del grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al actualizar el nombre del grupo'
+            )
             setGroupName(group.nombre)
         } finally {
             setLoading(false)
@@ -93,16 +91,16 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const handleLeaveGroup = async () => {
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}/leave`, {
-                method: 'POST'
-            })
+            const result = await leaveGroup(group.id)
 
-            if (!res.ok) throw new Error('Error al abandonar grupo')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Has abandonado el grupo')
             router.push(ROUTES.MAP)
-        } catch {
-            toast.error('Error al abandonar el grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al abandonar el grupo'
+            )
         } finally {
             setLoading(false)
             setShowLeaveConfirm(false)

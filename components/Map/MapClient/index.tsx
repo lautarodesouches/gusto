@@ -10,6 +10,7 @@ import MapView from '../MapView'
 import { MapProvider } from '../MapProvider'
 import SearchZoneButton from '../SearchZoneButton'
 import { searchRestaurants } from '@/app/actions/restaurants'
+import { normalizeResponse, isValidRestaurant, mapToRestaurant } from './utils'
 
 interface MapState {
     restaurants: Restaurant[]
@@ -78,8 +79,6 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     const lastRatingRef = useRef<string | null>(null)
     const lastRadiusRef = useRef<string | null>(null)
 
- 
-
     const updateCenter = useCallback((newCenter: Coordinates) => {
         setState(prev => ({
             ...prev,
@@ -90,8 +89,6 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     const setHoveredMarker = useCallback((markerId: number | null) => {
         setState(prev => ({ ...prev, hoveredMarker: markerId }))
     }, [])
-
-   
 
     const fetchRestaurants = useCallback(
         async (center: Coordinates, onComplete?: () => void) => {
@@ -132,76 +129,13 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                 }
 
                 // Normalizar la respuesta (puede venir como array o como objeto con recomendaciones)
-                const restaurants = Array.isArray(data) 
-                    ? data 
-                    : (data.recomendaciones || [])
+                const restaurants = normalizeResponse(data)
 
-                // Filtrar restaurantes con coordenadas válidas
-                // NO filtrar por PlaceId, foto, rating, ni ningún otro campo - solo coordenadas válidas
-                const validRestaurants = restaurants.filter((r: Record<string, unknown>) => {
-                    const lat = r.latitud ?? r.Latitud
-                    const lng = r.longitud ?? r.Longitud
-                    
-                    // Validar que las coordenadas sean números válidos y estén en rangos geográficos
-                    const isValidLat = typeof lat === 'number' && !isNaN(lat) && lat >= -90 && lat <= 90
-                    const isValidLng = typeof lng === 'number' && !isNaN(lng) && lng >= -180 && lng <= 180
-                    
-                    if (!isValidLat || !isValidLng) {
-                        return false
-                    }
-                    
-                    // Aceptar todos los restaurantes con coordenadas válidas, sin importar PlaceId, foto, rating, etc.
-                    return true
-                })
-
-                // Mapear restaurantes para normalizar campos (PascalCase a camelCase)
-                // Aceptar TODOS los restaurantes con coordenadas válidas, sin importar PlaceId, foto, etc.
-                const mappedRestaurants = validRestaurants
-                    .map((r: Record<string, unknown>) => {
-                    const lat = r.latitud ?? r.Latitud ?? 0
-                    const lng = r.longitud ?? r.Longitud ?? 0
-                    
-                    // El backend envía GooglePlaceId (no PlaceId)
-                    const googlePlaceId = r.googlePlaceId || r.GooglePlaceId || ''
-                    const placeId = r.placeId || r.PlaceId || googlePlaceId
-                    
-                    // LÓGICA: Si NO tiene GooglePlaceId, entonces es de la app (sin importar EsDeLaApp del backend)
-                    // Si tiene GooglePlaceId, entonces NO es de la app
-                    // Esto corrige el caso donde el backend envía EsDeLaApp=false pero no tiene GooglePlaceId
-                    const tieneGooglePlaceId = googlePlaceId && googlePlaceId !== null && googlePlaceId !== '' && String(googlePlaceId).trim() !== ''
-                    const esDeLaApp = !tieneGooglePlaceId
-                    
-                    // Asegurar que el ID sea válido (no puede estar vacío)
-                    const rawId = r.id || r.Id
-                    if (!rawId || String(rawId).trim() === '') {
-                        console.warn('⚠️ Restaurante sin ID válido omitido:', {
-                            nombre: r.nombre || r.Nombre,
-                            datos: r
-                        })
-                        return null
-                    }
-                    
-                    const mapped: Restaurant = {
-                        id: String(rawId),
-                        nombre: String(r.nombre || r.Nombre || 'Sin nombre'),
-                        direccion: String(r.direccion || r.Direccion || ''),
-                        latitud: typeof lat === 'number' ? lat : parseFloat(String(lat)) || 0,
-                        longitud: typeof lng === 'number' ? lng : parseFloat(String(lng)) || 0,
-                        rating: (r.rating ?? r.Rating ?? r.valoracion ?? r.Valoracion) as number | undefined,
-                        categoria: (r.categoria || r.Categoria || undefined) as string | undefined,
-                        imagenUrl: (r.imagenUrl || r.ImagenUrl || undefined) as string | undefined,
-                        esDeLaApp: esDeLaApp,
-                        placeId: (placeId ? String(placeId) : null) as string | null,
-                        googlePlaceId: (googlePlaceId ? String(googlePlaceId) : null) as string | null,
-                        imagenesInterior: Array.isArray(r.imagenesInterior) ? r.imagenesInterior : [],
-                        imagenesComida: Array.isArray(r.imagenesComida) ? r.imagenesComida : [],
-                        reviewsLocales: Array.isArray(r.reviewsLocales) ? r.reviewsLocales : [],
-                        reviewsGoogle: Array.isArray(r.reviewsGoogle) ? r.reviewsGoogle : [],
-                    }
-                    
-                    return mapped
-                })
-                .filter((r): r is Restaurant => r !== null) // Filtrar los null
+                // Filtrar restaurantes con coordenadas válidas y mapear
+                const mappedRestaurants = restaurants
+                    .filter(isValidRestaurant)
+                    .map(mapToRestaurant)
+                    .filter((r): r is Restaurant => r !== null)
 
                 setState(prev => ({
                     ...prev,

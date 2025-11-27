@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Group } from '@/types'
 import { useToast } from '@/context/ToastContext'
 import { ROUTES } from '@/routes'
-import { deleteGroup } from '@/app/actions/groups'
+import { deleteGroup, leaveGroup, removeGroupMember, updateGroupName } from '@/app/actions/groups'
 import styles from './styles.module.css'
 
 interface Props {
@@ -28,18 +28,16 @@ export default function GroupSettings({ group, isAdmin, userId: _userId }: Props
         
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}/update-name`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre: groupName.trim() })
-            })
+            const result = await updateGroupName(group.id, groupName.trim())
 
-            if (!res.ok) throw new Error('Error al actualizar el nombre')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Nombre del grupo actualizado')
             router.refresh()
-        } catch {
-            toast.error('Error al actualizar el nombre del grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al actualizar el nombre del grupo'
+            )
             setGroupName(group.nombre)
         } finally {
             setLoading(false)
@@ -49,19 +47,17 @@ export default function GroupSettings({ group, isAdmin, userId: _userId }: Props
     const handleRemoveMember = async (username: string) => {
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}/remove-member`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username })
-            })
+            const result = await removeGroupMember(group.id, username)
 
-            if (!res.ok) throw new Error('Error al eliminar miembro')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Miembro eliminado del grupo')
             setMemberToRemove(null)
             router.refresh()
-        } catch {
-            toast.error('Error al eliminar miembro del grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al eliminar miembro del grupo'
+            )
         } finally {
             setLoading(false)
         }
@@ -89,16 +85,16 @@ export default function GroupSettings({ group, isAdmin, userId: _userId }: Props
     const handleLeaveGroup = async () => {
         setLoading(true)
         try {
-            const res = await fetch(`/api/group/${group.id}/leave`, {
-                method: 'POST'
-            })
+            const result = await leaveGroup(group.id)
 
-            if (!res.ok) throw new Error('Error al abandonar grupo')
+            if (!result.success) throw new Error(result.error)
 
             toast.success('Has abandonado el grupo')
             router.push(ROUTES.MAP)
-        } catch {
-            toast.error('Error al abandonar el grupo')
+        } catch (err: unknown) {
+            toast.error(
+                err instanceof Error ? err.message : 'Error al abandonar el grupo'
+            )
         } finally {
             setLoading(false)
             setShowLeaveConfirm(false)

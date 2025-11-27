@@ -313,11 +313,12 @@
     align-items: center;
     justify-content: center;
     color: var(--dark);
-    opacity: 0.3;
+    opacity: 0.9;
 }
 
 .imagen {
     width: 100%;
+    border-radius: 12px;
     height: auto;
 }
 
