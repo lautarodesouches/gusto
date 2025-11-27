@@ -23,10 +23,9 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["./*"]
+    },
+    "baseUrl": "."
   },
   "include": [
     "**/*.ts",
@@ -36,6 +35,7 @@
     ".next-temp/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next"
   ]
 }
