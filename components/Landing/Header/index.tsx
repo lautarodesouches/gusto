@@ -25,9 +25,8 @@ export default function Header() {
                 />
             </div>
             <div
-                className={`${styles.header__container} ${
-                    menuOpen ? styles.header__active : ''
-                }`}
+                className={`${styles.header__container} ${menuOpen ? styles.header__active : ''
+                    }`}
             >
                 <FontAwesomeIcon
                     icon={faClose}
@@ -60,12 +59,17 @@ export default function Header() {
                 <div className={styles.header__bcontainer}>
                     <Link href={ROUTES.REGISTER__RESTAURANT}>
                         <button className={styles.header__buttonRes}>
-                            <span>REGISTRÁ TU LOCAL</span>
+                            <span>SOY LOCAL</span>
+                        </button>
+                    </Link>
+                    <Link href={ROUTES.LOGIN}>
+                        <button className={styles.header__button}>
+                            <span>INGRESAR</span>
                         </button>
                     </Link>
                     <Link href={ROUTES.REGISTER}>
                         <button className={styles.header__button}>
-                            <span>REGÍSTRATE GRATIS</span>
+                            <span>REGISTRARME</span>
                         </button>
                     </Link>
                 </div>
