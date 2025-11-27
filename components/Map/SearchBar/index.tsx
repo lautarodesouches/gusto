@@ -396,7 +396,7 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
                         <div className={styles.select__dropdown}>
                             {/* TUS GUSTOS */}
                             <button
-                                className={styles.select__option_friend}
+                                className={`${styles.select__option_friend} ${selectedFriend === 'Tus Gustos' ? styles.select__option_active : ''}`}
                                 onClick={() => handleFriendSelect(null)}
                             >
                                 <div className={styles.select__friend_avatar}>
@@ -421,7 +421,7 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
                                     return (
                                         <button
                                             key={amigo.id}
-                                            className={styles.select__option_friend}
+                                            className={`${styles.select__option_friend} ${selectedFriendUsername === amigo.username ? styles.select__option_active : ''}`}
                                             onClick={() => handleFriendSelect(amigo.username)}
                                         >
                                             <div className={styles.select__friend_avatar}>
