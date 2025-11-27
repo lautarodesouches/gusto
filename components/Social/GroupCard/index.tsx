@@ -6,6 +6,7 @@ import { Group } from '@/types'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { getProfile } from '@/app/actions/profile'
 
 export default function GroupCard({ 
     group, 
@@ -26,15 +27,10 @@ export default function GroupCard({
             const firstMember = group.miembros[0]
             if (firstMember?.usuarioUsername) {
                 try {
-                    const res = await fetch(
-                        `/api/social?endpoint=Usuario/${encodeURIComponent(firstMember.usuarioUsername)}/perfil`
-                    )
+                    const result = await getProfile(firstMember.usuarioUsername)
 
-                    if (res.ok) {
-                        const data = await res.json()
-                        if (data?.fotoPerfilUrl) {
-                            setFirstMemberPhoto(data.fotoPerfilUrl)
-                        }
+                    if (result.success && result.data?.fotoPerfilUrl) {
+                        setFirstMemberPhoto(result.data.fotoPerfilUrl)
                     }
                 } catch (error) {
                     console.error('Error fetching member photo:', error)
