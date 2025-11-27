@@ -5,6 +5,7 @@ import { Friend } from '@/types'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faX } from '@fortawesome/free-solid-svg-icons'
+import { searchFriends } from '@/app/actions/friends'
 
 interface FriendSearchProps {
     onClose?: () => void
@@ -19,19 +20,17 @@ export default function FriendSearch({ onClose }: FriendSearchProps) {
         setQuery(e.target.value)
     }
 
+
+
     const search = async () => {
         try {
-            const res = await fetch(
-                `/api/social?endpoint=Amistad/buscar-usuarios/?username=${query}`
-            )
+            const result = await searchFriends(query)
 
-            if (!res.ok) throw new Error('Error al buscar amigos')
+            if (!result.success) throw new Error(result.error || 'Error al buscar amigos')
 
-            const data = await res.json()
+            if (!result.data || result.data.length === 0) setError('No encontramos resultados')
 
-            if (data.length === 0) setError('No encontramos resultados')
-
-            setResults(data)
+            setResults(result.data || [])
         } catch (err) {
             if (err instanceof Error) {
                 setError(err.message)
