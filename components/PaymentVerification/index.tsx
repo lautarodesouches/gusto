@@ -11,15 +11,15 @@ export default function PaymentVerification() {
     const [showSuccess, setShowSuccess] = useState(false)
 
     useEffect(() => {
-        // No hacer nada si aún está cargando la autenticación
-        if (loading) return
+        // No hacer nada si aún está cargando la autenticación o no hay token
+        if (loading || !token) return
 
         const checkPayment = async () => {
             const pendingPayment = localStorage.getItem('pendingPayment')
             const paymentEmail = localStorage.getItem('paymentEmail')
 
             // Verificar que hay un pago pendiente y el usuario está autenticado
-            if (pendingPayment === 'true' && paymentEmail && token) {
+            if (pendingPayment === 'true' && paymentEmail) {
                 try {
                     // Esperar 3 segundos para dar tiempo a que MercadoPago procese el pago
                     await new Promise(resolve => setTimeout(resolve, 3000))

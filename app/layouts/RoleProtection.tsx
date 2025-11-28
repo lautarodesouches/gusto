@@ -58,6 +58,17 @@ export default function RoleProtection({ children }: { children: React.ReactNode
     }
 
     useEffect(() => {
+        // Verificar si es una ruta pública PRIMERO para evitar procesamiento innecesario
+        const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
+        
+        if (isPublicRoute) {
+            setShouldBlock(false)
+            setIsChecking(false)
+            return
+        }
+
+        // Si es ruta pública, no necesitamos verificar roles ni restaurantes
+        // Solo procesar autenticación para rutas protegidas
         if (isLoading || isLoadingRestaurant) {
             setShouldBlock(false)
             return
@@ -88,7 +99,7 @@ export default function RoleProtection({ children }: { children: React.ReactNode
             const dashboardPath = `${ROUTES.RESTAURANT}${restaurantId}/dashboard`
             const isDashboardRoute = pathname === dashboardPath || pathname?.startsWith(`${ROUTES.RESTAURANT}${restaurantId}/dashboard`)
             
-            // Si no está en el dashboard, redirigir inmediatamente (incluso si está en ruta pública)
+            // Si no está en el dashboard, redirigir inmediatamente
             if (!isDashboardRoute && !hasRedirected) {
                 setHasRedirected(true)
                 setIsChecking(false)
@@ -103,15 +114,6 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 setIsChecking(false)
                 return
             }
-        }
-
-        // Verificar si es una ruta pública (solo para usuarios normales)
-        const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
-        
-        if (isPublicRoute) {
-            setShouldBlock(false)
-            setIsChecking(false)
-            return
         }
 
         setShouldBlock(false)
