@@ -21,6 +21,7 @@ const _DUENO_RESTAURANTE_ALLOWED_ROUTES = [
 const PUBLIC_ROUTES = [
     '/auth/login',
     '/auth/register',
+    '/auth/register/step/1',
     '/auth/restaurant',
     '/',
 ]
@@ -39,6 +40,10 @@ export default function RoleProtection({ children }: { children: React.ReactNode
     const [hasRedirected, setHasRedirected] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
 
+    // Verificar si es una ruta pública (solo para usuarios normales)
+    // HACER ESTO PRIMERO para evitar parpadeos o recargas en registro/login
+    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
+
     const handleGoHomeAndLogout = async () => {
         try {
             setIsLoggingOut(true)
@@ -55,6 +60,10 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         } finally {
             setIsLoggingOut(false)
         }
+    }
+
+    if (isPublicRoute) {
+        return <>{children}</>
     }
 
     useEffect(() => {
@@ -77,17 +86,17 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 setIsChecking(true)
                 return
             }
-            
+
             // Si no tiene restaurante después de cargar, mostrar error
             if (!restaurantId) {
                 setIsChecking(false)
                 return
             }
-            
+
             // Construir la ruta del dashboard
             const dashboardPath = `${ROUTES.RESTAURANT}${restaurantId}/dashboard`
             const isDashboardRoute = pathname === dashboardPath || pathname?.startsWith(`${ROUTES.RESTAURANT}${restaurantId}/dashboard`)
-            
+
             // Si no está en el dashboard, redirigir inmediatamente (incluso si está en ruta pública)
             if (!isDashboardRoute && !hasRedirected) {
                 setHasRedirected(true)
@@ -96,7 +105,7 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 window.location.href = dashboardPath
                 return
             }
-            
+
             // Si ya está en el dashboard, permitir continuar
             if (isDashboardRoute) {
                 setShouldBlock(false)
@@ -105,27 +114,16 @@ export default function RoleProtection({ children }: { children: React.ReactNode
             }
         }
 
-        // Verificar si es una ruta pública (solo para usuarios normales)
-        const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
-        
-        if (isPublicRoute) {
-            setShouldBlock(false)
-            setIsChecking(false)
-            return
-        }
-
         setShouldBlock(false)
         setIsChecking(false)
     }, [isLoading, isLoadingRestaurant, isPendienteRestaurante, isDuenoRestaurante, restaurantId, pathname, router, hasRedirected])
 
-    // No renderizar nada hasta que se verifique el rol y el restaurante (si es dueño)
-    // Si es DuenoRestaurante, esperar a que termine de cargar el restaurantId antes de mostrar error
     if (isLoading || isChecking || (isDuenoRestaurante && isLoadingRestaurant)) {
         return (
-            <div style={{ 
-                minHeight: '100vh', 
-                display: 'flex', 
-                alignItems: 'center', 
+            <div style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
                 background: 'var(--background)',
                 color: 'white'
@@ -146,10 +144,10 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         // Si isLoadingRestaurant es true, ya se mostró "Cargando..." arriba
         if (!restaurantId && !isLoadingRestaurant) {
             return (
-                <div style={{ 
-                    minHeight: '100vh', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     background: 'var(--background)',
                     padding: '2rem'
@@ -221,18 +219,18 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 </div>
             )
         }
-        
+
         // Verificar si está en el dashboard correcto
         const dashboardPath = `${ROUTES.RESTAURANT}${restaurantId}/dashboard`
         const isDashboardRoute = pathname === dashboardPath || pathname?.startsWith(`${ROUTES.RESTAURANT}${restaurantId}/dashboard`)
-        
+
         // Si no está en el dashboard y ya intentamos redirigir, mostrar loading
         if (!isDashboardRoute && hasRedirected) {
             return (
-                <div style={{ 
-                    minHeight: '100vh', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     background: 'var(--background)',
                     color: 'white'
