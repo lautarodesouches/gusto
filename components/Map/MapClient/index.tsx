@@ -140,6 +140,10 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                     isLoading: false,
                 }))
 
+                if (mappedRestaurants.length === 0) {
+                    toast.info('No encontramos restaurantes en la zona con tus filtros')
+                }
+
                 setShouldSearchButton(false)
 
                 // Ejecutar callback si existe
