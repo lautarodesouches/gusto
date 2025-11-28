@@ -31,7 +31,7 @@ export default function Step({
     content = [],
 }: Props) {
     const step = useStep()
-   
+
     const isLastStep = false
     const { data, setData, mode, basePath } = useRegister()
     const router = useRouter()
@@ -53,7 +53,7 @@ export default function Step({
     }
 
     const shouldSyncData = (preSelected: RegisterItem[], currentData: RegisterItem[]): boolean => {
-        return currentData.length === 0 || 
+        return currentData.length === 0 ||
             preSelected.length !== currentData.length ||
             !preSelected.every(item => currentData.some(c => c.id === item.id))
     }
@@ -65,13 +65,13 @@ export default function Step({
 
         const preSelected = content.filter(item => item.seleccionado)
         const currentData = data[stepKey] || []
-        
+
         if (shouldSyncData(preSelected, currentData)) {
             setData({
                 [stepKey]: preSelected,
             })
         }
-        
+
         hasInitialized.current = true
     }
 
@@ -138,7 +138,7 @@ export default function Step({
             console.error('[Step] basePath no está definido')
             return
         }
-        
+
         // NO saltar el guardado en el paso 3 - siempre debe guardar antes de avanzar
         if (!token) {
             // Si no hay token, solo navegar (no debería pasar en modo edición)
@@ -160,7 +160,7 @@ export default function Step({
                 // Si el id es un número, convertirlo a string (aunque gustos deberían ser siempre strings/GUIDs)
                 return typeof item.id === 'number' ? String(item.id) : item.id
             })
-            
+
             // Para paso 3 (gustos): requiere mínimo 3 gustos, no se puede saltar
             if (step === 3) {
                 if (current.length < 3) {
@@ -170,7 +170,7 @@ export default function Step({
                     return
                 }
             }
-            
+
             // Para step 3 no se puede saltar, para otros steps sí
             const skip = step === 3 ? false : current.length === 0
 
@@ -199,7 +199,7 @@ export default function Step({
             if (mode !== 'edicion') {
                 hasInitialized.current = false
             }
-            
+
             // Si estamos en el paso 3, ir al paso 4 (resumen)
             if (step === 3) {
                 router.push(`${basePath}/4`)
@@ -227,7 +227,7 @@ export default function Step({
         setSearchTerm(e.target.value)
     }
 
-    const filteredContent = content.filter(item => 
+    const filteredContent = content.filter(item =>
         item.nombre.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
@@ -257,7 +257,7 @@ export default function Step({
                         </div>
                         <div className={styles.counter}>
                             <span>
-                                {step === 3 
+                                {step === 3
                                     ? (selected as unknown as number[]).length
                                     : `${(selected as unknown as number[]).length}/5`}
                             </span>
@@ -276,9 +276,8 @@ export default function Step({
                                 <button
                                     key={id}
                                     onClick={() => handleSelect(id)}
-                                    className={`${styles.gridItem} ${
-                                        isSelected ? styles.selected : ''
-                                    } ${hasImage ? styles.withImage : ''}`}
+                                    className={`${styles.gridItem} ${isSelected ? styles.selected : ''
+                                        } ${hasImage ? styles.withImage : ''}`}
                                 >
                                     {hasImage && (
                                         <img
@@ -317,12 +316,12 @@ export default function Step({
                             {saving
                                 ? 'GUARDANDO..'
                                 : isLastStep
-                                ? 'FINALIZAR'
-                                : step === 3 && selected.length < 3
-                                ? 'SELECCIONA MÍNIMO 3'
-                                : selected.length === 0
-                                ? 'SALTAR'
-                                : 'SIGUIENTE'}
+                                    ? 'FINALIZAR'
+                                    : step === 3 && selected.length < 3
+                                        ? 'SELECCIONA MÍNIMO 3'
+                                        : selected.length === 0
+                                            ? 'SALTAR'
+                                            : 'SIGUIENTE'}
                         </button>
                     </nav>
                 </div>

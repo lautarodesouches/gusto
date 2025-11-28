@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
+import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserFriends, faUser } from '@fortawesome/free-solid-svg-icons'
 import styles from './FriendRequests.module.css'
@@ -30,10 +30,9 @@ export default function FriendRequests() {
                             return token || ''
                         }
                     })
+                    .configureLogging(LogLevel.Error)
                     .withAutomaticReconnect()
                     .build()
-
-         
 
                 // Cargar solicitudes pendientes al conectar
                 conn.on('SolicitudesPendientes', (data: SolicitudAmistadResponse[]) => {
@@ -92,12 +91,12 @@ export default function FriendRequests() {
             await connection?.invoke('AceptarSolicitud', solicitudId)
             toast.success('Solicitud de amistad aceptada')
             setSolicitudes(prev => prev.filter(s => s.id !== solicitudId))
-            
+
             // Refrescar lista de amigos
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('friends:refresh'))
             }
-            
+
             setShowPanel(false)
         } catch (err) {
             console.error('❌ Error aceptando solicitud:', err)

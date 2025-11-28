@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr'
+import { HubConnectionBuilder, HubConnection, LogLevel } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { SolicitudAmistadResponse } from '@/types'
 
@@ -34,6 +34,7 @@ export function createHubConnection(hubPath: string, token: string | null): HubC
         .withAutomaticReconnect({
             nextRetryDelayInMilliseconds: () => 3000
         })
+        .configureLogging(LogLevel.Error)
         .build()
 }
 
@@ -51,10 +52,10 @@ export function mergeNewNotifications(
         fechaCreacion: n.fechaCreacion,
         tipoNotificacion: n.tipo,
     }))
-    
+
     // Mantener las solicitudes de amistad que no vienen del backend
     const solicitudesAmistad = prev.filter(n => n.tipo === 'solicitud_amistad')
-    
+
     // Combinar: notificaciones del backend + solicitudes de amistad
     return [...backendNotifs, ...solicitudesAmistad]
         .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
@@ -96,10 +97,10 @@ export function mergeFriendRequests(
         fechaCreacion: s.fechaEnvio,
         solicitudAmistad: s,
     }))
-    
+
     // Mantener las notificaciones que no vienen del backend de solicitudes
     const notificaciones = prev.filter(n => n.tipo === 'notificacion')
-    
+
     // Combinar: solicitudes del backend + notificaciones
     return [...backendSolicitudes, ...notificaciones]
         .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())

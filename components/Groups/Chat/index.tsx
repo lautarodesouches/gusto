@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styles from './page.module.css'
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useState, useRef } from 'react'
-import { HubConnectionBuilder, HubConnection, HubConnectionState } from '@microsoft/signalr'
+import { HubConnectionBuilder, HubConnection, HubConnectionState, LogLevel } from '@microsoft/signalr'
 import { API_URL } from '@/constants'
 import { useToast } from '@/context/ToastContext'
 import { useAuth } from '@/context/AuthContext'
@@ -76,6 +76,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
                             return currentToken
                         }
                     })
+                    .configureLogging(LogLevel.Error)
                     .withAutomaticReconnect({
                         nextRetryDelayInMilliseconds: (retryContext) => {
                             return Math.min(1000 * Math.pow(2, retryContext.previousRetryCount), 30000)
