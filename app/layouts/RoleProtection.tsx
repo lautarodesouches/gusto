@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useUserRole } from '@/hooks/useUserRole'
 import { useMyRestaurant } from '@/hooks/useMyRestaurant'
 import { useAuth } from '@/context/AuthContext'
@@ -34,16 +34,11 @@ export default function RoleProtection({ children }: { children: React.ReactNode
     const { isLoading, isPendienteRestaurante, isDuenoRestaurante } = useUserRole()
     const { restaurantId, isLoading: isLoadingRestaurant } = useMyRestaurant()
     const { logout } = useAuth()
-    const router = useRouter()
     const pathname = usePathname()
     const [isChecking, setIsChecking] = useState(true)
     const [shouldBlock, setShouldBlock] = useState(false)
     const [hasRedirected, setHasRedirected] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
-
-    // Verificar si es una ruta pública (solo para usuarios normales)
-    // HACER ESTO PRIMERO para evitar parpadeos o recargas en registro/login
-    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
 
     const handleGoHomeAndLogout = async () => {
         try {
@@ -62,10 +57,6 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         }
     }
 
-    if (isPublicRoute) {
-        return <>{children}</>
-    }
-
     useEffect(() => {
         // Verificar si es una ruta pública
         const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
@@ -78,6 +69,15 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 setIsChecking(false)
                 setHasRedirected(false)
             }
+            return
+        }
+
+        // Si ya no está cargando y es ruta pública para un usuario que no es dueño,
+        // permitir continuar sin aplicar lógica adicional
+        if (isPublicRoute && !isDuenoRestaurante) {
+            setShouldBlock(false)
+            setIsChecking(false)
+            setHasRedirected(false)
             return
         }
 
