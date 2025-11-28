@@ -5,6 +5,8 @@ import { ROUTES } from '@/routes'
 import RequestCard from '@/components/Admin/RequestCard'
 import { useToast } from '@/context/ToastContext'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+import { logout as logoutAction } from '@/app/actions/login'
 import styles from './page.module.css'
 import { SolicitudRestaurante, SolicitudStatus } from '@/types'
 import RequestDetailModal from '@/components/Admin/RequestDetailModal'
@@ -14,6 +16,7 @@ import RejectModal from '@/components/Admin/RejectModal'
 
 export default function AdminPanel() {
     const router = useRouter()
+    const { logout } = useAuth()
     const toast = useToast()
     const [solicitudes, setSolicitudes] = useState<SolicitudRestaurante[]>([])
     const [filteredSolicitudes, setFilteredSolicitudes] = useState<SolicitudRestaurante[]>([])
@@ -218,8 +221,17 @@ export default function AdminPanel() {
         toast.info('Función de remover próximamente')
     }
 
-    const handleSalir = () => {
-        router.push(ROUTES.MAP)
+    const handleSalir = async () => {
+        try {
+            // Cerrar sesión en backend (cookie) y en Firebase
+            await logoutAction()
+            await logout()
+            // Redirigir al mapa con navegación completa
+            window.location.href = ROUTES.MAP
+        } catch (error) {
+            console.error('Error al salir del panel admin:', error)
+            window.location.href = ROUTES.MAP
+        }
     }
 
     const handleEnviarRecomendaciones = async () => {
