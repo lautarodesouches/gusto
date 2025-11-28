@@ -23,11 +23,11 @@ export async function searchRestaurants(
     success: boolean
     data?: { total: number; recomendaciones: Restaurant[] }
     error?: string
+    code?: string
 }> {
     try {
         const headers = await getAuthHeaders()
 
-        // Construir la URL de la API con query params
         const apiUrl = new URL(`${API_URL}/api/Restaurantes`)
 
         apiUrl.searchParams.append('top', '200')
@@ -52,7 +52,18 @@ export async function searchRestaurants(
 
         if (!res.ok) {
             const errorText = await res.text().catch(() => '')
-            console.error('Error al traer restaurantes:', errorText)
+
+            if (
+                res.status === 400 &&
+                errorText.toLowerCase().includes('gustos que quiere buscar no son validos')
+            ) {
+                return {
+                    success: true,
+                    data: { total: 0, recomendaciones: [] as Restaurant[] },
+                    code: 'NO_GUSTOS_VALIDOS',
+                }
+            }
+
             return {
                 success: false,
                 error: 'No se pudieron obtener los restaurantes',
@@ -61,8 +72,7 @@ export async function searchRestaurants(
 
         const data = await res.json()
         return { success: true, data }
-    } catch (error) {
-        console.error('Error searching restaurants:', error)
+    } catch {
         return {
             success: false,
             error: 'Error interno del servidor',

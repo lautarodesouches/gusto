@@ -5,6 +5,8 @@ import { ROUTES } from '@/routes'
 import RequestCard from '@/components/Admin/RequestCard'
 import { useToast } from '@/context/ToastContext'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+import { logout as logoutAction } from '@/app/actions/login'
 import styles from './page.module.css'
 import { SolicitudRestaurante, SolicitudStatus } from '@/types'
 import RequestDetailModal from '@/components/Admin/RequestDetailModal'
@@ -14,6 +16,7 @@ import RejectModal from '@/components/Admin/RejectModal'
 
 export default function AdminPanel() {
     const router = useRouter()
+    const { logout } = useAuth()
     const toast = useToast()
     const [solicitudes, setSolicitudes] = useState<SolicitudRestaurante[]>([])
     const [filteredSolicitudes, setFilteredSolicitudes] = useState<SolicitudRestaurante[]>([])
@@ -218,8 +221,17 @@ export default function AdminPanel() {
         toast.info('Función de remover próximamente')
     }
 
-    const handleSalir = () => {
-        router.push(ROUTES.HOME)
+    const handleSalir = async () => {
+        try {
+            // Cerrar sesión en backend (cookie) y en Firebase
+            await logoutAction()
+            await logout()
+            // Redirigir al mapa con navegación completa
+            window.location.href = ROUTES.MAP
+        } catch (error) {
+            console.error('Error al salir del panel admin:', error)
+            window.location.href = ROUTES.MAP
+        }
     }
 
     const handleEnviarRecomendaciones = async () => {
@@ -258,13 +270,18 @@ export default function AdminPanel() {
         <div className={styles.page}>
             <header className={styles.header}>
                 <div className={styles.header__left}>
-                    <Link href={ROUTES.HOME} className={styles.logo}>
+                    <Link href={ROUTES.MAP} className={styles.logo}>
                         <span className={styles.logo__text}>GUSTO!</span>
                         <span className={styles.logo__tagline}>
-                            Decidir dónde comer, juntos
+                            Panel de administración
                         </span>
                     </Link>
-                    <h1 className={styles.header__title}>Panel de Moderador</h1>
+                    <div className={styles.header__titles}>
+                        <h1 className={styles.header__title}>Panel de Moderador</h1>
+                        <p className={styles.header__subtitle}>
+                            Gestioná las solicitudes de restaurantes y recomendaciones globales
+                        </p>
+                    </div>
                 </div>
                 <div className={styles.header__actions}>
                     <button 
@@ -272,10 +289,10 @@ export default function AdminPanel() {
                         onClick={handleEnviarRecomendaciones}
                         disabled={isRecommendationLoading}
                     >
-                        {isRecommendationLoading ? 'Enviando...' : '📧 Enviar Recomendaciones'}
+                        {isRecommendationLoading ? 'Enviando...' : '📧 Enviar recomendaciones'}
                     </button>
                     <button className={styles.header__button} onClick={handleSalir}>
-                        Salir del Panel
+                        Volver al mapa
                     </button>
                 </div>
             </header>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useUserRole } from '@/hooks/useUserRole'
 import { useMyRestaurant } from '@/hooks/useMyRestaurant'
 import { useAuth } from '@/context/AuthContext'
@@ -21,7 +21,6 @@ const _DUENO_RESTAURANTE_ALLOWED_ROUTES = [
 const PUBLIC_ROUTES = [
     '/auth/login',
     '/auth/register',
-    '/auth/register/step/1',
     '/auth/restaurant',
     '/',
 ]
@@ -30,10 +29,9 @@ const PUBLIC_ROUTES = [
  * Componente que protege las rutas según el rol del usuario
  */
 export default function RoleProtection({ children }: { children: React.ReactNode }) {
-    const { isLoading, isPendienteRestaurante, isDuenoRestaurante } = useUserRole()
+    const { isLoading, isPendienteRestaurante, isDuenoRestaurante, isAdmin } = useUserRole()
     const { restaurantId, isLoading: isLoadingRestaurant } = useMyRestaurant()
     const { logout } = useAuth()
-    const router = useRouter()
     const pathname = usePathname()
     const [isChecking, setIsChecking] = useState(true)
     const [shouldBlock, setShouldBlock] = useState(false)
@@ -42,7 +40,12 @@ export default function RoleProtection({ children }: { children: React.ReactNode
 
     // Verificar si es una ruta pública (solo para usuarios normales)
     // HACER ESTO PRIMERO para evitar parpadeos o recargas en registro/login
-    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
+    // OJO: para '/' solo coincidencia exacta, para no marcar todo como público
+    const isPublicRoute = PUBLIC_ROUTES.some(route => {
+        if (!pathname) return false
+        if (route === '/') return pathname === '/'
+        return pathname === route || pathname.startsWith(route)
+    })
 
     const handleGoHomeAndLogout = async () => {
         try {
@@ -51,22 +54,57 @@ export default function RoleProtection({ children }: { children: React.ReactNode
             await logoutAction()
             // Cerrar sesión en Firebase y limpiar estado
             await logout()
-            // Redirigir al home
-            router.push(ROUTES.HOME)
+            // Usar window.location.href para forzar navegación completa y limpiar estado
+            // Esto evita que componentes intenten cargar datos antes de que el logout termine
+            window.location.href = ROUTES.HOME
         } catch (error) {
             console.error('Error al cerrar sesión:', error)
-            // Aún así redirigir al home
-            router.push(ROUTES.HOME)
+            // Aún así redirigir al home con navegación completa
+            window.location.href = ROUTES.HOME
         } finally {
             setIsLoggingOut(false)
         }
     }
 
     useEffect(() => {
-        if (isPublicRoute) return
-
+        // Mientras está cargando roles o restaurante, no aplicar lógica (afuera se muestra "Cargando...")
         if (isLoading || isLoadingRestaurant) {
+            return
+        }
+
+        // ADMIN: solo auto-redirigir al panel de admin cuando está en una ruta pública (p.ej. después de login)
+        if (isAdmin) {
+            const adminBase = ROUTES.ADMIN // '/admin'
+            const isAdminRoute =
+                pathname === adminBase ||
+                (pathname?.startsWith(adminBase) &&
+                    (pathname.length === adminBase.length ||
+                        pathname[adminBase.length] === '/'))
+
+            // Si está en ruta pública y no en /admin, redirigir una sola vez
+            if (isPublicRoute && !isAdminRoute && !hasRedirected) {
+                setHasRedirected(true)
+                setIsChecking(false)
+                window.location.href = adminBase
+                return
+            }
+
+            // Si ya está en /admin o subruta, permitir continuar
+            if (isAdminRoute) {
+                setShouldBlock(false)
+                setIsChecking(false)
+                setHasRedirected(false)
+                return
+            }
+            // Si es admin y está en una ruta NO pública y NO es /admin (por ejemplo /mapa),
+            // no forzamos redirección: se comporta como usuario normal en esa ruta
+        }
+
+        // Rutas públicas para usuarios normales (no dueño ni admin)
+        if (isPublicRoute && !isDuenoRestaurante && !isAdmin) {
             setShouldBlock(false)
+            setIsChecking(false)
+            setHasRedirected(false)
             return
         }
 
@@ -114,7 +152,7 @@ export default function RoleProtection({ children }: { children: React.ReactNode
 
         setShouldBlock(false)
         setIsChecking(false)
-    }, [isLoading, isLoadingRestaurant, isPendienteRestaurante, isDuenoRestaurante, restaurantId, pathname, router, hasRedirected, isPublicRoute])
+    }, [isLoading, isLoadingRestaurant, isPendienteRestaurante, isDuenoRestaurante, isAdmin, restaurantId, pathname, hasRedirected])
 
     if (isPublicRoute) {
         return <>{children}</>
@@ -246,4 +284,3 @@ export default function RoleProtection({ children }: { children: React.ReactNode
     // Todo está bien, renderizar children
     return <>{children}</>
 }
-
