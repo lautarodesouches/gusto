@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { ROUTES } from '@/routes'
-import { Group } from '@/types'
 import admin from '@/lib/firebaseAdmin'
 import Navbar from '@/components/Navbar'
 import GroupSettings from '@/components/Groups/Settings'
@@ -33,8 +32,7 @@ export default async function GroupSettingsPage({ params }: Props) {
     const { id } = await params
     const userId = await verifyAuthentication()
 
-    const headersList = await headers()
-    const cookie = headersList.get('cookie') || ''
+
 
     const groupResponse = await getGroup(id)
     const group = groupResponse.success ? groupResponse.data : null

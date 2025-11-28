@@ -18,7 +18,6 @@ export function useApiCall() {
     ): Promise<T | null> => {
         // Si ya hay una llamada pendiente con esta key, no hacer nada
         if (pendingCallsRef.current.has(key)) {
-            console.log(`[useApiCall] Llamada duplicada prevenida para: ${key}`)
             return null
         }
 

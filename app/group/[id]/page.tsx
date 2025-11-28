@@ -1,19 +1,17 @@
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import Image from 'next/image'
+
 import Link from 'next/link'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faUser,
     faExclamationTriangle,
     faLock,
 } from '@fortawesome/free-solid-svg-icons'
 import styles from './page.module.css'
 import { Group } from '@/types'
 import { ROUTES } from '@/routes'
-import { GroupClient, FriendRequests, ProfileOverlay } from '@/components'
+import { GroupClient, ProfileOverlay } from '@/components'
 import admin from '@/lib/firebaseAdmin'
-import NotificationBell from '@/components/NotificationBell'
 import Navbar from '@/components/Navbar'
 import { getGroup } from '@/app/actions/groups'
 
@@ -39,7 +37,7 @@ async function fetchGroup({
 
         if (!result.success) {
             const errorMessage = result.error || 'Error desconocido'
-            
+
             // Determinar el código de estado basado en el error
             let status = 500
             if (errorMessage.includes('No autorizado') || errorMessage.includes('401')) {
