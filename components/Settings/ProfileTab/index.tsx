@@ -76,7 +76,6 @@ export default function ProfileTab() {
                     // Actualizar foto si cambió
                     if (newPhoto) {
                         setNewPhoto(null)
-                        // Keep previewUrl to show the uploaded image immediately without waiting for server propagation
 
                         // Handle potential casing issues from backend
                         const userData = result.data as any
@@ -85,9 +84,10 @@ export default function ProfileTab() {
                         if (newUrl) {
                             setFotoPerfil(newUrl)
                             if (typeof window !== 'undefined') {
-                                window.dispatchEvent(new CustomEvent('friends:refresh'))
                             }
                         }
+
+                        window.location.reload()
                     }
                 }
             } else {
