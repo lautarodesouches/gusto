@@ -69,6 +69,7 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
     const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null)
 
     const isFetchingRef = useRef(false)
+    const noGustosToastShownRef = useRef(false)
     const [shouldSearchButton, setShouldSearchButton] = useState(false)
     const [initialLoaded, setInitialLoaded] = useState(false) // ⭐ para cargar solo una vez
     const lastAmigoUsernameRef = useRef<string | null>(null)
@@ -112,6 +113,15 @@ export default function MapClient({ containerStyle }: { containerStyle: string }
                         return
                     }
                     throw new Error(result.error || 'Error al cargar restaurantes')
+                }
+
+                // Caso especial: usuario sin gustos válidos
+                if (result.code === 'NO_GUSTOS_VALIDOS' && !noGustosToastShownRef.current) {
+                    toast.info(
+                        'Aún no podemos recomendarte restaurantes porque no configuraste tus gustos. Completa tu perfil para ver recomendaciones.',
+                        7000
+                    )
+                    noGustosToastShownRef.current = true
                 }
 
                 // Obtener los restaurantes de result.data

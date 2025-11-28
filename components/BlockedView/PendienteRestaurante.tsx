@@ -20,14 +20,13 @@ export default function PendienteRestauranteBlocked() {
             await logoutAction()
             // Cerrar sesión en Firebase y limpiar estado
             await logout()
-            // Redirigir al home
-            router.push(ROUTES.HOME)
+            // Usar window.location.href para forzar navegación completa y limpiar estado
+            // Esto evita que componentes intenten cargar datos antes de que el logout termine
+            window.location.href = ROUTES.HOME
         } catch (error) {
             console.error('Error al cerrar sesión:', error)
-            // Aún así redirigir al home
-            router.push(ROUTES.HOME)
-        } finally {
-            setIsLoggingOut(false)
+            // Aún así redirigir al home con navegación completa
+            window.location.href = ROUTES.HOME
         }
     }
 

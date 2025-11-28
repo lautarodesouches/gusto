@@ -45,6 +45,19 @@
     margin: 0;
 }
 
+.header__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.header__subtitle {
+    font-size: 0.9rem;
+    color: #b3b3b3;
+    margin: 0;
+    font-weight: 400;
+}
+
 .header__actions {
     display: flex;
     gap: 1rem;

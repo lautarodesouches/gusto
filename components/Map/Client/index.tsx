@@ -33,12 +33,8 @@ export default function Client({ socialData, filters }: Props) {
     const [activeSocialPanel, setActiveSocialPanel] =
         useState<SocialPanel>(null)
 
-    // Mostrar modal cuando el registro está incompleto y estamos en el mapa
-    // El modal aparecerá cada vez que el usuario entre al mapa si el registro está incompleto
     useEffect(() => {
         if (incompleto && mostrarModal && !checking) {
-            // Mostrar el modal cada vez que se entra al mapa
-            // El usuario puede cerrarlo y seguir usando la app normalmente
             setShowModal(true)
         } else {
             setShowModal(false)
@@ -47,8 +43,6 @@ export default function Client({ socialData, filters }: Props) {
 
     const handleCloseModal = () => {
         setShowModal(false)
-        // Guardar en sessionStorage que el usuario cerró el modal
-        // Esto permite que aparezca de nuevo la próxima vez que entre al mapa
         sessionStorage.setItem('registrationModalDismissed', 'true')
     }
 
@@ -60,13 +54,9 @@ export default function Client({ socialData, filters }: Props) {
         setActiveSocialPanel(prev => (prev === panel ? null : panel))
     }
 
-    if (checking) {
-        return <div style={{ color: 'white', padding: 20 }}>Cargando...</div>
-    }
-
     return (
         <main className={styles.main}>
-            {showModal && incompleto && (
+            {showModal && incompleto && !checking && (
                 <IncompleteRegistrationModal
                     paso={paso}
                     onClose={handleCloseModal}
