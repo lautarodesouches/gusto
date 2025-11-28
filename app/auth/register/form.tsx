@@ -120,44 +120,44 @@ export default function Form() {
                 username: form.username.value.trim(),
             })
 
-            if (result.success) {
-                router.push(`${ROUTES.STEPS}/1/`)
-            } else {
-                // Si falla el backend, eliminar la cuenta de Firebase
-                try {
-                    await deleteUser(user)
-                } catch (deleteError) {
-                    console.error('Error al eliminar cuenta de Firebase:', deleteError)
-                }
+            // Si el backend responde exitosamente, redirigir al usuario
+            if (result.success) return router.push(`${ROUTES.STEPS}/1/`)
 
-                // Manejar errores del backend
-                const errorMessage = result.error || 'Error en el registro'
-
-                // Intentar mapear errores comunes del backend a campos específicos
-                const lowerMessage = errorMessage.toLowerCase()
-                
-                // Detectar errores de username duplicado (más específico primero)
-                if (
-                    lowerMessage.includes('nombre de usuario') ||
-                    (lowerMessage.includes('usuario') && lowerMessage.includes('en uso')) ||
-                    (lowerMessage.includes('username') && (lowerMessage.includes('en uso') || lowerMessage.includes('already')))
-                ) {
-                    setFieldError('username', errorMessage)
-                } else if (
-                    lowerMessage.includes('email') ||
-                    lowerMessage.includes('correo') ||
-                    lowerMessage.includes('correo electrónico')
-                ) {
-                    setFieldError('email', errorMessage)
-                } else if (
-                    lowerMessage.includes('usuario') ||
-                    lowerMessage.includes('username')
-                ) {
-                    setFieldError('username', errorMessage)
-                } else {
-                    setGlobalError(errorMessage)
-                }
+            // Si falla el backend, eliminar la cuenta de Firebase
+            try {
+                await deleteUser(user)
+            } catch (deleteError) {
+                console.error('Error al eliminar cuenta de Firebase:', deleteError)
             }
+
+            // Manejar errores del backend
+            const errorMessage = result.error || 'Error en el registro'
+
+            // Intentar mapear errores comunes del backend a campos específicos
+            const lowerMessage = errorMessage.toLowerCase()
+
+            // Detectar errores de username duplicado (más específico primero)
+            if (
+                lowerMessage.includes('nombre de usuario') ||
+                (lowerMessage.includes('usuario') && lowerMessage.includes('en uso')) ||
+                (lowerMessage.includes('username') && (lowerMessage.includes('en uso') || lowerMessage.includes('already')))
+            ) {
+                setFieldError('username', errorMessage)
+            } else if (
+                lowerMessage.includes('email') ||
+                lowerMessage.includes('correo') ||
+                lowerMessage.includes('correo electrónico')
+            ) {
+                setFieldError('email', errorMessage)
+            } else if (
+                lowerMessage.includes('usuario') ||
+                lowerMessage.includes('username')
+            ) {
+                setFieldError('username', errorMessage)
+            } else {
+                setGlobalError(errorMessage)
+            }
+
         } catch (error: unknown) {
             // Manejar errores de Firebase
             if (error && typeof error === 'object' && 'code' in error) {
@@ -216,9 +216,16 @@ export default function Form() {
 
             <div className={styles.container}>
                 <button className={styles.button} disabled={isButtonDisabled}>
-                    Registrarme
+                    {isButtonDisabled ? (
+                        <>
+                            <div className={styles.spinner}></div>
+                            Procesando...
+                        </>
+                    ) : (
+                        'Registrarme'
+                    )}
                 </button>
             </div>
-        </form>
+        </form >
     )
 }

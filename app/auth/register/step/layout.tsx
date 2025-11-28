@@ -4,6 +4,8 @@ import styles from './page.module.css'
 import { AuthProgress } from '@/components'
 import Image from 'next/image'
 
+import { PreventWrapper } from './PreventWrapper'
+
 interface Props {
     children: React.ReactNode
 }
@@ -11,6 +13,7 @@ interface Props {
 export default function Layout({ children }: Props) {
     return (
         <RegisterProvider>
+            <PreventWrapper />
             <div className={`${styles.wrapper} step-layout`}>
                 <header className={styles.header}>
                     <Image

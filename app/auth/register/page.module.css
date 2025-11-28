@@ -27,11 +27,37 @@
     font-family: var(--font-gliker);
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .button:hover {
     background: var(--primary);
     color: var(--beige);
+}
+
+.button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: var(--white);
+    color: var(--black);
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .error {

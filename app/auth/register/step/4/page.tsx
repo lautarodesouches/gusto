@@ -4,7 +4,6 @@ import styles from './page.module.css'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/routes'
 import { useRegister } from '@/context/RegisterContext'
-import { PreventWrapper } from '../../PreventWrapper'
 import { useEffect, useState, useRef } from 'react'
 import { RegisterItem } from '@/types'
 import { saveSteps } from '@/app/actions/steps'
@@ -42,7 +41,7 @@ export default function StepFour() {
         const loadData = async () => {
             try {
                 const result = await getUserResumen('registro')
-                
+
                 if (!result.success || !result.data) {
                     setLoading(false)
                     return
@@ -149,9 +148,6 @@ export default function StepFour() {
 
     return (
         <>
-            {/* Prevenir acceso si no se han completado los pasos previos */}
-            <PreventWrapper />
-
             <div className={styles.container}>
                 <header className={styles.header}>
                     <p className={styles.stepLabel}>Paso 4</p>

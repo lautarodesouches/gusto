@@ -41,6 +41,10 @@ export default function RoleProtection({ children }: { children: React.ReactNode
     const [hasRedirected, setHasRedirected] = useState(false)
     const [isLoggingOut, setIsLoggingOut] = useState(false)
 
+    // Verificar si es una ruta pública (solo para usuarios normales)
+    // HACER ESTO PRIMERO para evitar parpadeos o recargas en registro/login
+    const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
+
     const handleGoHomeAndLogout = async () => {
         try {
             setIsLoggingOut(true)
@@ -51,11 +55,15 @@ export default function RoleProtection({ children }: { children: React.ReactNode
             // Usar window.location.href para forzar navegación completa y limpiar estado
             // Esto evita que componentes intenten cargar datos antes de que el logout termine
             window.location.href = ROUTES.HOME
-        } catch (error) {
+     } catch (error) {
             console.error('Error al cerrar sesión:', error)
             // Aún así redirigir al home con navegación completa
             window.location.href = ROUTES.HOME
         }
+    }
+
+    if (isPublicRoute) {
+        return <>{children}</>
     }
 
     useEffect(() => {
@@ -90,14 +98,14 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 setIsChecking(true)
                 return
             }
-            
+
             // Si no tiene restaurante después de cargar, mostrar error
             if (!restaurantId) {
                 setIsChecking(false)
                 setHasRedirected(false)
                 return
             }
-            
+
             // Construir la ruta del dashboard
             const dashboardPath = `${ROUTES.RESTAURANT}${restaurantId}/dashboard`
             // Verificación más estricta: debe ser exactamente el dashboard o una subruta válida
@@ -157,14 +165,12 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         setIsChecking(false)
     }, [isLoading, isLoadingRestaurant, isPendienteRestaurante, isDuenoRestaurante, restaurantId, pathname, hasRedirected])
 
-    // No renderizar nada hasta que se verifique el rol y el restaurante (si es dueño)
-    // Si es DuenoRestaurante, esperar a que termine de cargar el restaurantId antes de mostrar error
     if (isLoading || isChecking || (isDuenoRestaurante && isLoadingRestaurant)) {
         return (
-            <div style={{ 
-                minHeight: '100vh', 
-                display: 'flex', 
-                alignItems: 'center', 
+            <div style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
                 background: 'var(--background)',
                 color: 'white'
@@ -185,10 +191,10 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         // Si isLoadingRestaurant es true, ya se mostró "Cargando..." arriba
         if (!restaurantId && !isLoadingRestaurant) {
             return (
-                <div style={{ 
-                    minHeight: '100vh', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     background: 'var(--background)',
                     padding: '2rem'
@@ -264,10 +270,10 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         // Si tiene restaurante pero está redirigiendo, mostrar loading
         if (restaurantId && hasRedirected) {
             return (
-                <div style={{ 
-                    minHeight: '100vh', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <div style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     background: 'var(--background)',
                     color: 'white'
