@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { verifyFirebaseToken } from '@/lib/firebaseAdmin'
 import { ApiResponse } from '@/types'
-import { IS_PRODUCTION } from '@/constants'
+import { IS_PRODUCTION, API_URL } from '@/constants'
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7 // 7 días en segundos
 
@@ -46,7 +46,32 @@ export async function login(
             }
         }
 
-        // Token válido - establecer cookie
+        // Token válido - Verificar si el usuario existe en el backend
+        try {
+            const userResponse = await fetch(`${API_URL}/Usuario/me`, {
+                headers: {
+                    Authorization: `Bearer ${firebaseToken}`,
+                },
+            })
+
+            if (!userResponse.ok) {
+                if (userResponse.status === 404) {
+                    return {
+                        success: false,
+                        error: 'Usuario no registrado. Por favor regístrate primero.',
+                    }
+                }
+                throw new Error('Error al verificar usuario en backend')
+            }
+        } catch (error) {
+            console.error('Error verificando usuario en backend:', error)
+            return {
+                success: false,
+                error: 'Error al verificar tu cuenta. Intenta nuevamente.',
+            }
+        }
+
+        // Usuario existe - establecer cookie
         const cookieStore = await cookies()
         cookieStore.set('token', firebaseToken, {
             httpOnly: true,
