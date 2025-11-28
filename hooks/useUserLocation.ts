@@ -10,7 +10,7 @@ const DEFAULT_LOCATION: Coordinates = {
 
 export function useUserLocation() {
     const [coords, setCoords] = useState<Coordinates | null>(null)
-    const [error, setError] = useState<string | null>(null)
+    // const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -65,5 +65,5 @@ export function useUserLocation() {
         }
     }, [])
 
-    return { coords, error, loading }
+    return { coords, error: null, loading }
 }

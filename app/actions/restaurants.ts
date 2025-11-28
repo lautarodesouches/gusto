@@ -191,7 +191,7 @@ export async function getMyRestaurant(): Promise<ApiResponse<MyRestaurantRespons
  */
 export async function searchRestaurantsByText(texto: string): Promise<{
     success: boolean
-    data?: any[]
+    data?: Restaurant[]
     error?: string
 }> {
     try {

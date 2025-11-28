@@ -1,7 +1,6 @@
-import { useEffect} from 'react'
+import { useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'next/navigation'
-import { pasoToNumber } from '@/utils'
 import { getRegistrationStatus } from '@/app/actions/profile'
 
 export function usePreventCompletedUsers() {
@@ -15,7 +14,7 @@ export function usePreventCompletedUsers() {
             try {
                 const result = await getRegistrationStatus()
                 if (result.success && result.data?.registroCompleto) {
-                    router.replace('/mapa')  
+                    router.replace('/mapa')
                 }
             } catch (e) {
                 console.error('usePreventCompletedUsers error', e)
