@@ -219,7 +219,7 @@ export default function AdminPanel() {
     }
 
     const handleSalir = () => {
-        router.push(ROUTES.HOME)
+        router.push(ROUTES.MAP)
     }
 
     const handleEnviarRecomendaciones = async () => {
@@ -258,13 +258,18 @@ export default function AdminPanel() {
         <div className={styles.page}>
             <header className={styles.header}>
                 <div className={styles.header__left}>
-                    <Link href={ROUTES.HOME} className={styles.logo}>
+                    <Link href={ROUTES.MAP} className={styles.logo}>
                         <span className={styles.logo__text}>GUSTO!</span>
                         <span className={styles.logo__tagline}>
-                            Decidir dónde comer, juntos
+                            Panel de administración
                         </span>
                     </Link>
-                    <h1 className={styles.header__title}>Panel de Moderador</h1>
+                    <div className={styles.header__titles}>
+                        <h1 className={styles.header__title}>Panel de Moderador</h1>
+                        <p className={styles.header__subtitle}>
+                            Gestioná las solicitudes de restaurantes y recomendaciones globales
+                        </p>
+                    </div>
                 </div>
                 <div className={styles.header__actions}>
                     <button 
@@ -272,10 +277,10 @@ export default function AdminPanel() {
                         onClick={handleEnviarRecomendaciones}
                         disabled={isRecommendationLoading}
                     >
-                        {isRecommendationLoading ? 'Enviando...' : '📧 Enviar Recomendaciones'}
+                        {isRecommendationLoading ? 'Enviando...' : '📧 Enviar recomendaciones'}
                     </button>
                     <button className={styles.header__button} onClick={handleSalir}>
-                        Salir del Panel
+                        Volver al mapa
                     </button>
                 </div>
             </header>

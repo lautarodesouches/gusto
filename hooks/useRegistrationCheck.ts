@@ -21,24 +21,35 @@ export function useRegistrationCheck() {
     })
 
     useEffect(() => {
-        // Verificar si es ruta pública PRIMERO
-        const isPublicRoute = PUBLIC_ROUTES.some(route => pathname === route || pathname?.startsWith(route))
-        
-        // No hacer nada en rutas públicas
-        if (isPublicRoute) {
+        const isPublicRoute = PUBLIC_ROUTES.some(route => {
+            if (!pathname) return false
+            if (route === '/') return pathname === '/'
+            return pathname === route || pathname.startsWith(route)
+        })
+
+        const normalizedPath = pathname?.replace(/\/$/, '') || ''
+        const isMapaRoute = normalizedPath === '/mapa'
+
+        if (isPublicRoute || !isMapaRoute) {
             setEstado({ checking: false, incompleto: false, paso: 1, mostrarModal: false })
             return
         }
 
-        // Solo verificar registro en rutas no públicas
-        if (loading || !token || !user) {
-            setEstado({ checking: true, incompleto: false, paso: 1, mostrarModal: false })
+        if (loading) {
+            setEstado(prev => ({ ...prev, checking: true }))
+            return
+        }
+
+        if (!token || !user) {
+            setEstado({ checking: false, incompleto: false, paso: 1, mostrarModal: false })
             return
         }
 
         const verify = async () => {
             try {
+                setEstado(prev => ({ ...prev, checking: true }))
                 const result = await getRegistrationStatus()
+
                 if (result.success && result.data) {
                     if (!result.data.registroCompleto) {
                         setEstado({

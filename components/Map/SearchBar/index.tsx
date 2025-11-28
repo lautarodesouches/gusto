@@ -10,6 +10,7 @@ import { Friend } from '@/types'
 import { getFriends } from '@/app/actions/friends'
 import { searchRestaurantsByText } from '@/app/actions/restaurants'
 import { ROUTES } from '@/routes'
+import { useAuth } from '@/context/AuthContext'
 
 interface SearchBarProps {
     showSearchField?: boolean
@@ -32,6 +33,7 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
     const searchParams = useSearchParams()
     const updateUrlParam = useUpdateUrlParam()
     const router = useRouter()
+    const { token, loading } = useAuth()
 
     const [kmOpen, setKmOpen] = useState(false)
     const kmRef = useRef<HTMLDivElement>(null)
@@ -106,6 +108,12 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
     }
 
     useEffect(() => {
+        // No cargar amigos si no hay token o está cargando
+        if (loading || !token) {
+            setLoadingFriends(false)
+            return
+        }
+
         async function loadFriends() {
             try {
                 const res = await getFriends()
@@ -119,7 +127,7 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
             }
         }
         loadFriends()
-    }, [])
+    }, [token, loading])
 
     // --- SELECCIONAR AMIGO ---
     const handleFriendSelect = (friendUsername: string | null) => {
