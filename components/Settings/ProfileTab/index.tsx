@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import { useToast } from '@/context/ToastContext'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { updateUserProfile } from '@/app/actions/settings'
@@ -9,7 +8,6 @@ import styles from './styles.module.css'
 
 export default function ProfileTab() {
     const { user: backendUser, loading: backendLoading } = useCurrentUser()
-    const router = useRouter()
     const toast = useToast()
 
     const [nombre, setNombre] = useState('')
@@ -78,6 +76,7 @@ export default function ProfileTab() {
                         setNewPhoto(null)
 
                         // Handle potential casing issues from backend
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         const userData = result.data as any
                         const newUrl = userData.fotoPerfilUrl || userData.FotoPerfilUrl || userData.profilePictureUrl
 

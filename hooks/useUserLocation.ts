@@ -43,7 +43,7 @@ export function useUserLocation() {
                     setLoading(false)
                 }
             },
-            err => {
+            () => {
                 clearTimeout(timeoutId)
                 if (isMounted) {
                     // Si hay error, usar ubicación por defecto en lugar de mostrar error

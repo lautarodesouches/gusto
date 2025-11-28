@@ -62,11 +62,9 @@ export default function RoleProtection({ children }: { children: React.ReactNode
         }
     }
 
-    if (isPublicRoute) {
-        return <>{children}</>
-    }
-
     useEffect(() => {
+        if (isPublicRoute) return
+
         if (isLoading || isLoadingRestaurant) {
             setShouldBlock(false)
             return
@@ -116,7 +114,11 @@ export default function RoleProtection({ children }: { children: React.ReactNode
 
         setShouldBlock(false)
         setIsChecking(false)
-    }, [isLoading, isLoadingRestaurant, isPendienteRestaurante, isDuenoRestaurante, restaurantId, pathname, router, hasRedirected])
+    }, [isLoading, isLoadingRestaurant, isPendienteRestaurante, isDuenoRestaurante, restaurantId, pathname, router, hasRedirected, isPublicRoute])
+
+    if (isPublicRoute) {
+        return <>{children}</>
+    }
 
     if (isLoading || isChecking || (isDuenoRestaurante && isLoadingRestaurant)) {
         return (
