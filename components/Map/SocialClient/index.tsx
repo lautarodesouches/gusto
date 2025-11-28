@@ -4,6 +4,7 @@ import SocialView from '../SocialView'
 import { useCallback, useEffect, useState } from 'react'
 import { getGroupsData } from '@/app/actions/groups'
 import { getFriendsData } from '@/app/actions/friends'
+import { useAuth } from '@/context/AuthContext'
 
 interface Props {
     isVisible?: boolean
@@ -25,6 +26,7 @@ export default function SocialClient({
     activePanel: externalActivePanel,
     onTogglePanel: externalTogglePanel,
 }: Props) {
+    const { token, loading } = useAuth()
     const [internalActivePanel, setInternalActivePanel] = useState<ActivePanel>(null)
     const [data, setData] = useState<SocialData>(socialData)
 
@@ -40,6 +42,9 @@ export default function SocialClient({
     }
 
     const refreshGroups = useCallback(async () => {
+        // No refrescar si no hay token
+        if (!token || loading) return
+        
         const res = await getGroupsData()
         if (res.success) {
             setData(prev => ({
@@ -48,9 +53,12 @@ export default function SocialClient({
                 groupsRequests: res.data?.groupsRequests ?? prev.groupsRequests,
             }))
         }
-    }, [])
+    }, [token, loading])
 
     const refreshFriends = useCallback(async () => {
+        // No refrescar si no hay token
+        if (!token || loading) return
+        
         const res = await getFriendsData()
         if (res.success && res.data) {
             setData(prev => ({
@@ -59,7 +67,7 @@ export default function SocialClient({
                 friendsRequests: res.data?.friendsRequests ?? [],
             }))
         }
-    }, [])
+    }, [token, loading])
 
     useEffect(() => {
         const handlerGroups = () => {

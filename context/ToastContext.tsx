@@ -15,14 +15,15 @@ interface ToastData {
     id: string
     type: ToastType
     message: string
+    duration?: number
 }
 
 interface ToastContextType {
-    addToast: (type: ToastType, message: string) => void
-    success: (message: string) => void
-    error: (message: string) => void
-    info: (message: string) => void
-    warning: (message: string) => void
+    addToast: (type: ToastType, message: string, duration?: number) => void
+    success: (message: string, duration?: number) => void
+    error: (message: string, duration?: number) => void
+    info: (message: string, duration?: number) => void
+    warning: (message: string, duration?: number) => void
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined)
@@ -34,25 +35,25 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         setToasts(prev => prev.filter(toast => toast.id !== id))
     }, [])
 
-    const addToast = useCallback((type: ToastType, message: string) => {
+    const addToast = useCallback((type: ToastType, message: string, duration?: number) => {
         const id = Math.random().toString(36).substring(7)
-        setToasts(prev => [...prev, { id, type, message }])
+        setToasts(prev => [...prev, { id, type, message, duration }])
     }, [])
 
     const success = useCallback(
-        (message: string) => addToast('success', message),
+        (message: string, duration?: number) => addToast('success', message, duration),
         [addToast]
     )
     const error = useCallback(
-        (message: string) => addToast('error', message),
+        (message: string, duration?: number) => addToast('error', message, duration),
         [addToast]
     )
     const info = useCallback(
-        (message: string) => addToast('info', message),
+        (message: string, duration?: number) => addToast('info', message, duration),
         [addToast]
     )
     const warning = useCallback(
-        (message: string) => addToast('warning', message),
+        (message: string, duration?: number) => addToast('warning', message, duration),
         [addToast]
     )
 
@@ -68,6 +69,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                         id={toast.id}
                         type={toast.type}
                         message={toast.message}
+                        duration={toast.duration}
                         onClose={removeToast}
                     />
                 ))}

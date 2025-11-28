@@ -190,7 +190,9 @@ export async function getRegistrationStatus(): Promise<ApiResponse<{ registroCom
             }
         }
 
+        // Llamar al backend al endpoint original que indica si el registro está completo
         const res = await fetch(`${API_URL}/Usuario/estado-registro`, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -206,13 +208,13 @@ export async function getRegistrationStatus(): Promise<ApiResponse<{ registroCom
         }
 
         const data = await res.json()
+        const registroCompleto = Boolean((data as { registroCompleto?: boolean }).registroCompleto)
 
-        return { success: true, data }
-    } catch (error) {
-        console.error('Error checking registration status:', error)
+        return { success: true, data: { registroCompleto } }
+    } catch {
         return {
-            success: false,
-            error: 'Error al verificar registro',
+            success: true,
+            data: { registroCompleto: false },
         }
     }
 }

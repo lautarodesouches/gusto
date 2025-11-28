@@ -130,14 +130,8 @@ export default function RestaurantRegister() {
         setError('')
         setValidationErrors({})
 
-        try {
-            if (!formData.nombre.trim()) {
-                setError('El nombre del restaurante es requerido')
-                setIsLoading(false)
-                return
-            }
-
-            if (!formData.direccion.trim()) {
+            try {
+                if (!formData.direccion.trim()) {
                 setError('La dirección es requerida')
                 setIsLoading(false)
                 return
@@ -320,7 +314,6 @@ export default function RestaurantRegister() {
                                 placeholder="Nombre del restaurante"
                                 value={formData.nombre}
                                 onChange={handleInputChange}
-                                required
                             />
                             <AuthInput
                                 name="website"
