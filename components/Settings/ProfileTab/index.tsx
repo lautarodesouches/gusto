@@ -11,7 +11,7 @@ export default function ProfileTab() {
     const { user: backendUser, loading: backendLoading } = useCurrentUser()
     const router = useRouter()
     const toast = useToast()
-    
+
     const [nombre, setNombre] = useState('')
     const [apellido, setApellido] = useState('')
     const [email, setEmail] = useState('')
@@ -19,15 +19,12 @@ export default function ProfileTab() {
     const [fotoPerfil, setFotoPerfil] = useState<string | null>(null)
     const [newPhoto, setNewPhoto] = useState<File | null>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     // Loading states for individual fields
-    const [loadingNombre, setLoadingNombre] = useState(false)
-    const [loadingApellido, setLoadingApellido] = useState(false)
-    const [loadingEmail, setLoadingEmail] = useState(false)
+    const [loadingGlobal, setLoadingGlobal] = useState(false)
     const [loadingPrivacidad, setLoadingPrivacidad] = useState(false)
-    const [loadingFoto, setLoadingFoto] = useState(false)
 
     // Cargar datos del usuario cuando estén disponibles
     useEffect(() => {
@@ -49,51 +46,66 @@ export default function ProfileTab() {
         }
     }
 
-    const handleUpdate = async (field: 'nombre' | 'apellido' | 'email' | 'esPrivado' | 'foto', value: string | boolean | File) => {
-        // Set loading state based on field
-        if (field === 'nombre') setLoadingNombre(true)
-        if (field === 'apellido') setLoadingApellido(true)
-        if (field === 'email') setLoadingEmail(true)
-        if (field === 'esPrivado') setLoadingPrivacidad(true)
-        if (field === 'foto') setLoadingFoto(true)
+    const handleUpdate = async (type: 'global' | 'privacy', privacyValue?: boolean) => {
+        if (type === 'global') setLoadingGlobal(true)
+        if (type === 'privacy') setLoadingPrivacidad(true)
 
         try {
             const formData = new FormData()
-            // Use current state for other fields, but the new value for the updated field
-            formData.append('Nombre', field === 'nombre' ? value as string : nombre)
-            formData.append('Apellido', field === 'apellido' ? value as string : apellido)
-            formData.append('Email', field === 'email' ? value as string : email)
-            formData.append('EsPrivado', (field === 'esPrivado' ? value : esPrivado).toString())
-            
-            if (field === 'foto' && value instanceof File) {
-                formData.append('FotoPerfil', value)
+
+            // Usar valores actuales del estado
+            formData.append('Nombre', nombre)
+            formData.append('Apellido', apellido)
+            formData.append('Email', email)
+
+            // Si es privacy, usar el valor pasado, sino el del estado
+            const privacyToSend = type === 'privacy' && privacyValue !== undefined ? privacyValue : esPrivado
+            formData.append('EsPrivado', privacyToSend.toString())
+
+            // Si hay nueva foto y es global update, enviarla
+            if (type === 'global' && newPhoto) {
+                formData.append('FotoPerfil', newPhoto)
             }
 
             const result = await updateUserProfile(formData)
 
-            if (result.success) {
+            if (result.success && result.data) {
                 toast.success('Perfil actualizado correctamente')
-                if (field === 'foto') {
-                    setNewPhoto(null)
-                    setPreviewUrl(null)
-                    // Refrescar amigos para que se actualicen las fotos
-                    if (typeof window !== 'undefined') {
-                        window.dispatchEvent(new CustomEvent('friends:refresh'))
+
+                if (type === 'global') {
+                    // Actualizar foto si cambió
+                    if (newPhoto) {
+                        setNewPhoto(null)
+                        // Keep previewUrl to show the uploaded image immediately without waiting for server propagation
+
+                        // Handle potential casing issues from backend
+                        const userData = result.data as any
+                        const newUrl = userData.fotoPerfilUrl || userData.FotoPerfilUrl || userData.profilePictureUrl
+
+                        if (newUrl) {
+                            setFotoPerfil(newUrl)
+                            if (typeof window !== 'undefined') {
+                                window.dispatchEvent(new CustomEvent('friends:refresh'))
+                            }
+                        }
                     }
                 }
-                router.refresh()
             } else {
                 toast.error(result.error || 'Error al actualizar perfil')
+                // Revertir cambio de privacidad si falló
+                if (type === 'privacy' && privacyValue !== undefined) {
+                    setEsPrivado(!privacyValue)
+                }
             }
         } catch (error) {
             console.error('Error:', error)
             toast.error('Error al actualizar perfil')
+            if (type === 'privacy' && privacyValue !== undefined) {
+                setEsPrivado(!privacyValue)
+            }
         } finally {
-            if (field === 'nombre') setLoadingNombre(false)
-            if (field === 'apellido') setLoadingApellido(false)
-            if (field === 'email') setLoadingEmail(false)
-            if (field === 'esPrivado') setLoadingPrivacidad(false)
-            if (field === 'foto') setLoadingFoto(false)
+            if (type === 'global') setLoadingGlobal(false)
+            if (type === 'privacy') setLoadingPrivacidad(false)
         }
     }
 
@@ -107,9 +119,9 @@ export default function ProfileTab() {
             <div className={styles.photoSection}>
                 <div className={styles.avatarContainer}>
                     {previewUrl || fotoPerfil ? (
-                        <img 
-                            src={previewUrl || fotoPerfil || ''} 
-                            alt="Foto de perfil" 
+                        <img
+                            src={previewUrl || fotoPerfil || ''}
+                            alt="Foto de perfil"
                             className={styles.avatar}
                         />
                     ) : (
@@ -126,21 +138,12 @@ export default function ProfileTab() {
                     />
                 </div>
                 <div className={styles.photoActions}>
-                    <button 
+                    <button
                         onClick={() => fileInputRef.current?.click()}
                         className={styles.uploadButton}
                     >
                         Cambiar Foto
                     </button>
-                    {newPhoto && (
-                        <button 
-                            onClick={() => handleUpdate('foto', newPhoto)}
-                            className={styles.saveButton}
-                            disabled={loadingFoto}
-                        >
-                            {loadingFoto ? 'Guardando...' : 'Guardar Foto'}
-                        </button>
-                    )}
                 </div>
             </div>
 
@@ -157,13 +160,6 @@ export default function ProfileTab() {
                         className={styles.input}
                         required
                     />
-                    <button 
-                        onClick={() => handleUpdate('nombre', nombre)}
-                        className={styles.saveButton}
-                        disabled={loadingNombre}
-                    >
-                        {loadingNombre ? 'Guardando...' : 'Guardar'}
-                    </button>
                 </div>
             </div>
 
@@ -180,13 +176,6 @@ export default function ProfileTab() {
                         className={styles.input}
                         required
                     />
-                    <button 
-                        onClick={() => handleUpdate('apellido', apellido)}
-                        className={styles.saveButton}
-                        disabled={loadingApellido}
-                    >
-                        {loadingApellido ? 'Guardando...' : 'Guardar'}
-                    </button>
                 </div>
             </div>
 
@@ -203,19 +192,22 @@ export default function ProfileTab() {
                         className={styles.input}
                         required
                     />
-                    <button 
-                        onClick={() => handleUpdate('email', email)}
-                        className={styles.saveButton}
-                        disabled={loadingEmail}
-                    >
-                        {loadingEmail ? 'Guardando...' : 'Guardar'}
-                    </button>
                 </div>
+            </div>
+
+            <div className={styles.actions}>
+                <button
+                    onClick={() => handleUpdate('global')}
+                    className={styles.saveButtonGlobal}
+                    disabled={loadingGlobal}
+                >
+                    {loadingGlobal ? 'Guardando cambios...' : 'Guardar cambios'}
+                </button>
             </div>
 
             <div className={styles.privacySection}>
                 <h3 className={styles.privacyTitle}>Privacidad de la cuenta</h3>
-                
+
                 <div className={styles.privacyOption}>
                     <div>
                         <h4 className={styles.optionTitle}>Cuenta Privada</h4>
@@ -231,7 +223,7 @@ export default function ProfileTab() {
                             onChange={(e) => {
                                 const newValue = e.target.checked
                                 setEsPrivado(newValue)
-                                handleUpdate('esPrivado', newValue)
+                                handleUpdate('privacy', newValue)
                             }}
                             disabled={loadingPrivacidad}
                         />
