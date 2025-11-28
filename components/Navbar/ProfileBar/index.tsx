@@ -31,14 +31,14 @@ export default function ProfileBar() {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node
-            
+
             // Verificar si el clic fue dentro del contenedor del ProfileBar
             const clickedInsideContainer = containerRef.current?.contains(target)
-            
+
             // Verificar si el clic fue dentro del panel de notificaciones (renderizado con portal)
             const notificationPanel = document.querySelector('[data-notification-panel="true"]')
             const clickedInsidePanel = notificationPanel?.contains(target)
-            
+
             // Si el clic fue fuera de ambos, cerrar los menús
             if (!clickedInsideContainer && !clickedInsidePanel) {
                 setShowProfileMenu(false)
@@ -72,7 +72,7 @@ export default function ProfileBar() {
     }
 
     const username = backendUser?.idUsuario || user?.displayName || 'Usuario'
-    
+
     if (backendLoading) {
         return (
             <div className={styles.container}>
@@ -82,15 +82,15 @@ export default function ProfileBar() {
             </div>
         )
     }
-    
+
     return (
         <>
             <div className={styles.container} ref={containerRef}>
                 <div className={styles.wrapper}>
                     {/* Botón Premium (solo si no es premium) */}
                     {!isPremium && (
-                        <PremiumButton 
-                            onClick={() => setShowPremiumModal(true)} 
+                        <PremiumButton
+                            onClick={() => setShowPremiumModal(true)}
                         />
                     )}
 
@@ -104,6 +104,7 @@ export default function ProfileBar() {
                     {/* Perfil */}
                     <ProfileButton
                         username={username}
+                        imageUrl={backendUser?.fotoPerfilUrl}
                         isPremium={isPremium}
                         onClick={() => setShowProfileMenu(!showProfileMenu)}
                     />

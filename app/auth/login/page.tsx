@@ -15,7 +15,7 @@ export default function Login() {
                 }}
             >
                 <Form />
-                <AuthSocial link="" />
+                <AuthSocial link="" mode="login" />
             </AuthContainer>
         </>
     )

@@ -41,7 +41,7 @@ async function registerUserInBackend(
     })
 }
 
-export async function socialLogin(
+export async function socialRegister(
     firebaseToken: string,
     userData: SocialLoginData
 ): Promise<ApiResponse<{ isNewUser: boolean }>> {
@@ -126,7 +126,7 @@ export async function socialLogin(
         return { success: true, data: { isNewUser } }
 
     } catch (error) {
-        console.error('Error in socialLogin:', error)
+        console.error('Error in socialRegister:', error)
         return { success: false, error: ERROR_MESSAGES.INTERNAL_ERROR }
     }
 }

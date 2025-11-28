@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                             // console.warn('[Auth] ⚠️ Token renovado pero aún no tiene claim de rol. Puede tardar unos segundos más.')
                         }
                     }
-                } catch (e) {
+                } catch {
                     // console.warn('[Auth] ⚠️ No se pudo decodificar el token para verificar:', e)
                 }
 

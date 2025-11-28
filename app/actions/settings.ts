@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { API_URL } from '@/constants'
-import { ApiResponse, Restaurant } from '@/types'
+import { ApiResponse, Restaurant, User } from '@/types'
 
 const ERROR_MESSAGES = {
     MISSING_TOKEN: 'No autorizado: falta token',
@@ -46,7 +46,7 @@ export async function getFavoriteRestaurants(): Promise<ApiResponse<Restaurant[]
 /**
  * Actualizar perfil de usuario
  */
-export async function updateUserProfile(formData: FormData): Promise<ApiResponse<null>> {
+export async function updateUserProfile(formData: FormData): Promise<ApiResponse<User>> {
     try {
         const cookieStore = await cookies()
         const token = cookieStore.get('token')?.value
@@ -72,7 +72,8 @@ export async function updateUserProfile(formData: FormData): Promise<ApiResponse
             }
         }
 
-        return { success: true, data: null }
+        const updatedUser = await response.json()
+        return { success: true, data: updatedUser }
     } catch (error) {
         console.error('Error in updateUserProfile:', error)
         return { success: false, error: ERROR_MESSAGES.INTERNAL_ERROR }

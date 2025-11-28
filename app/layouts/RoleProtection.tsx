@@ -65,6 +65,8 @@ export default function RoleProtection({ children }: { children: React.ReactNode
     useEffect(() => {
         if (isPublicRoute) return
 
+        
+
         if (isLoading || isLoadingRestaurant) {
             setShouldBlock(false)
             return

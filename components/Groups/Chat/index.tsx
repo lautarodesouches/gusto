@@ -204,7 +204,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
         try {
             await connection.invoke('SendMessageToGroup', groupId, input)
             setInput('')
-        } catch (error) {
+        } catch {
             toast.error(`Hubo un error al enviar el mensaje`)
         }
     }
