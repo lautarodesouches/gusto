@@ -112,6 +112,16 @@
     border-radius: 10px;
 }
 
+.member__div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.member__link > .member__div:first-child {
+    gap: 12px;
+}
+
 .member__link > div:nth-child(2) {
     flex: 1;
 }
@@ -131,6 +141,26 @@
     height: 18px;
     color: #FFD700;
     flex-shrink: 0;
+}
+
+.member__status {
+    width: 12px;
+    height: 12px;
+    min-width: 12px;
+    min-height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.member__status_online {
+    background-color: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+
+.member__status_offline {
+    background-color: #ef4444;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
 }
 
 .member > div:last-child {
@@ -374,4 +404,35 @@
 
 .dangerButton.delete:hover {
     background: #ff1a1a;
+}
+
+.leaveGroupContainer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--grey);
+}
+
+.leaveGroupButton {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.leaveGroupButton:hover {
+    background: rgba(255, 59, 48, 0.1);
+}
+
+.leaveGroupButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
