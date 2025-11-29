@@ -20,7 +20,6 @@ import { inviteUserToGroup, removeGroupMember, deleteGroup, leaveGroup, updateGr
 import { ROUTES } from '@/routes'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ConfirmModal } from '@/components/modal/ConfirmModal'
-import Image from 'next/image'
 
 interface Props {
     group: Group
@@ -305,7 +304,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                         }
                                     />
                                     {m.fotoPerfilUrl ? (
-                                        <Image
+                                        <img
                                             src={m.fotoPerfilUrl}
                                             className={styles.member__img}
                                             alt={m.usuarioNombre}
