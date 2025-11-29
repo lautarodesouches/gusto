@@ -12,6 +12,7 @@ import { formatChatDate } from '../../../utils/index'
 interface Props {
     admin: string
     groupId: string
+    isAdmin?: boolean
 }
 
 interface ChatMessage {
@@ -32,7 +33,13 @@ interface UsuarioAbandonoPayload {
     firebaseUid: string
 }
 
-export default function GroupsChat({ groupId, admin }: Props) {
+interface UsuarioExpulsadoPayload {
+    usuarioId: string
+    firebaseUid: string
+    nombre: string
+}
+
+export default function GroupsChat({ groupId, admin, isAdmin = false }: Props) {
     const toast = useToast()
     const { token, loading, user } = useAuth()
     const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -42,6 +49,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [input, setInput] = useState('')
     const connectionRef = useRef<HubConnection | null>(null)
+    const isAdminRef = useRef(isAdmin)
 
     const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
         messagesEndRef.current?.scrollIntoView({ behavior })
@@ -50,6 +58,11 @@ export default function GroupsChat({ groupId, admin }: Props) {
     useEffect(() => {
         scrollToBottom()
     }, [messages])
+
+    // Mantener isAdmin actualizado en el ref para usar en los handlers
+    useEffect(() => {
+        isAdminRef.current = isAdmin
+    }, [isAdmin])
 
     useEffect(() => {
         // Esperar a que termine el estado de autenticación.
@@ -183,6 +196,38 @@ export default function GroupsChat({ groupId, admin }: Props) {
                     }
                 }
 
+                const handleUsuarioExpulsado = (payload: UsuarioExpulsadoPayload) => {
+                    if (!isMounted) return
+
+                    // Si el usuario actual es admin, no mostrar el mensaje porque ya vio el toast de éxito
+                    // cuando hizo la acción de expulsar
+                    if (isAdminRef.current) {
+                        // Solo refrescar la lista de miembros, pero no mostrar toast ni mensaje
+                        if (typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('groups:refresh'))
+                        }
+                        return
+                    }
+
+                    // Refrescar lista de miembros en tiempo real
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('groups:refresh'))
+                    }
+
+                    // Mensaje de sistema local en el chat (no persistido en BD)
+                    const systemMessage: ChatMessage = {
+                        usuario: 'Sistema',
+                        mensaje: `${payload.nombre} fue expulsado del grupo 🚫`,
+                        fecha: new Date().toISOString(),
+                    }
+
+                    setMessages(prev => [...prev, systemMessage])
+
+                    // Toast informativo para que el usuario sepa que alguien fue expulsado
+                    // 15000 ms = 15 segundos
+                    toast.info(`${payload.nombre} fue expulsado del grupo 🚫`, 15000)
+                }
+
                 const handleUsuariosConectados = (conectados: string[]) => {
                     if (!isMounted) return
 
@@ -197,6 +242,7 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 conn.on('ReceiveMessage', handleReceiveMessage)
                 conn.on('UsuarioSeUnio', handleUsuarioSeUnio)
                 conn.on('UsuarioAbandonoGrupo', handleUsuarioAbandono)
+                conn.on('UsuarioExpulsado', handleUsuarioExpulsado)
                 conn.on('KickedFromGroup', handleKickedFromGroup)
                 conn.on('UsuariosConectados', handleUsuariosConectados)
 
@@ -312,13 +358,14 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 currentConn.off('ReceiveMessage')
                 currentConn.off('UsuarioSeUnio')
                 currentConn.off('UsuarioAbandonoGrupo')
+                currentConn.off('UsuarioExpulsado')
                 currentConn.off('KickedFromGroup')
                 currentConn.off('UsuariosConectados')
                 connectionRef.current = null
                 setConnection(null)
             }
         }
-    }, [groupId, token, loading, toast])
+    }, [groupId, token, loading, toast, user])
 
     const handleSend = async () => {
         if (!input.trim() || !connection) return
