@@ -183,13 +183,11 @@ export async function upgradeToPremium(): Promise<{ success: boolean; data?: Pre
  */
 export async function createPayment(data: { email: string; nombreCompleto: string }): Promise<{ success: boolean; data?: { initPoint: string }; error?: string }> {
     try {
-        const res = await fetch(`${API_URL}/api/Pago/crear-test`, {
+        const headers = await getAuthHeaders()
+        const res = await fetch(`${API_URL}/api/Pago/crear`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers,
             body: JSON.stringify({
-                usuarioId: 'test-user',
                 email: data.email,
                 nombreCompleto: data.nombreCompleto,
             }),
@@ -204,9 +202,7 @@ export async function createPayment(data: { email: string; nombreCompleto: strin
             }
         }
 
-        // Para el endpoint de prueba, la respuesta está en data.data
-        const initPoint = responseData.success ? responseData.data : responseData
-        return { success: true, data: initPoint }
+        return { success: true, data: responseData }
     } catch (error) {
         console.error('Error creating payment:', error)
         return {
@@ -215,4 +211,5 @@ export async function createPayment(data: { email: string; nombreCompleto: strin
         }
     }
 }
+
 
