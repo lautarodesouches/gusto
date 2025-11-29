@@ -18,11 +18,23 @@ interface ChatMessage {
     usuario: string
     mensaje: string
     fecha: string
+    uid?: string       // UID de Firebase del remitente (opcional)
+}
+
+interface UsuarioSeUnioPayload {
+    usuarioId: string
+    nombre: string
+}
+
+interface UsuarioAbandonoPayload {
+    usuarioId: string
+    nombre: string
+    firebaseUid: string
 }
 
 export default function GroupsChat({ groupId, admin }: Props) {
     const toast = useToast()
-    const { token } = useAuth()
+    const { token, loading, user } = useAuth()
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const chatContainerRef = useRef<HTMLDivElement>(null)
 
@@ -40,9 +52,10 @@ export default function GroupsChat({ groupId, admin }: Props) {
     }, [messages])
 
     useEffect(() => {
-        // No intentar conectar si no hay token
-        if (!token) {
-            toast.error('No se pudo conectar al chat, no se encontró token')
+        // Esperar a que termine el estado de autenticación.
+        // Si no hay token (usuario no logueado o cerrando sesión),
+        // simplemente no intentamos conectar ni mostramos errores.
+        if (loading || !token) {
             return
         }
 
@@ -69,10 +82,6 @@ export default function GroupsChat({ groupId, admin }: Props) {
                         accessTokenFactory: () => {
                             // Retornar el token para que se incluya en la negociación y conexión
                             const currentToken = token || ''
-                            if (!currentToken) {
-                                toast.error('No se pudo conectar al chat, no se encontró token')
-                                return ''
-                            }
                             return currentToken
                         }
                     })
@@ -102,11 +111,120 @@ export default function GroupsChat({ groupId, admin }: Props) {
                     setMessages(prev => [...prev, msg])
                 }
 
+                const handleUsuarioSeUnio = (payload: UsuarioSeUnioPayload) => {
+                    if (!isMounted) return
+
+                    console.log('[Chat] UsuarioSeUnio recibido:', payload)
+
+                    // Refrescar lista de miembros en tiempo real
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('groups:refresh'))
+                    }
+
+                    // Mensaje de sistema local en el chat (no persistido en BD)
+                    const systemMessage: ChatMessage = {
+                        usuario: 'Sistema',
+                        mensaje: `${payload.nombre} se unió al grupo 👋`,
+                        fecha: new Date().toISOString(),
+                    }
+
+                    setMessages(prev => [...prev, systemMessage])
+
+                    // Toast informativo para que el usuario sepa que alguien se unió
+                    // 15000 ms = 15 segundos
+                    toast.info(`${payload.nombre} se unió al grupo 👋`, 15000)
+                }
+
+                const handleUsuarioAbandono = (payload: UsuarioAbandonoPayload) => {
+                    if (!isMounted) return
+
+                    // Si el usuario que abandonó es el usuario actual, no mostrar toast ni mensaje
+                    // porque ya sabe que abandonó (él mismo hizo la acción)
+                    const esUsuarioActual = user?.uid === payload.firebaseUid
+
+                    // Refrescar lista de miembros en tiempo real (siempre, para que otros usuarios vean el cambio)
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('groups:refresh'))
+                    }
+
+                    // Solo mostrar mensaje de sistema y toast si NO es el usuario actual
+                    if (!esUsuarioActual) {
+                        // Mensaje de sistema local en el chat (no persistido en BD)
+                        const systemMessage: ChatMessage = {
+                            usuario: 'Sistema',
+                            mensaje: `${payload.nombre} abandonó el grupo 👋`,
+                            fecha: new Date().toISOString(),
+                        }
+
+                        setMessages(prev => [...prev, systemMessage])
+
+                        // Toast informativo para que el usuario sepa que alguien abandonó
+                        // 15000 ms = 15 segundos
+                        toast.info(`${payload.nombre} abandonó el grupo 👋`, 15000)
+                    }
+                }
+
+                const handleKickedFromGroup = (payload: { grupoId: string; nombreGrupo: string }) => {
+                    if (!isMounted) return
+
+                    // Solo reaccionar si es el grupo actual
+                    if (payload.grupoId !== groupId) return
+
+                    // Notificar a toda la vista de grupo mediante un evento global
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('group:kicked', { detail: payload }))
+                    }
+
+                    // Detener la conexión de chat para evitar seguir enviando
+                    try {
+                        conn?.stop().catch(() => { })
+                    } catch {
+                        // ignorar
+                    }
+                }
+
+                const handleUsuariosConectados = (conectados: string[]) => {
+                    if (!isMounted) return
+
+                    // Notificar a toda la app mediante un evento global
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(
+                            new CustomEvent('usuarios:conectados', { detail: conectados })
+                        )
+                    }
+                }
+
                 conn.on('ReceiveMessage', handleReceiveMessage)
+                conn.on('UsuarioSeUnio', handleUsuarioSeUnio)
+                conn.on('UsuarioAbandonoGrupo', handleUsuarioAbandono)
+                conn.on('KickedFromGroup', handleKickedFromGroup)
+                conn.on('UsuariosConectados', handleUsuariosConectados)
 
                 conn.on('LoadChatHistory', mensajes => {
                     if (!isMounted) return
-                    setMessages(mensajes)
+                    // Mergear mensajes históricos con los mensajes en tiempo real existentes
+                    // para evitar perder mensajes de sistema recientes
+                    setMessages(prev => {
+                        // Crear un mapa de mensajes existentes por clave única (usuario + mensaje + fecha)
+                        const existingMap = new Map<string, ChatMessage>()
+                        prev.forEach(m => {
+                            const key = `${m.usuario}-${m.mensaje}-${m.fecha}`
+                            existingMap.set(key, m)
+                        })
+
+                        // Agregar mensajes históricos, evitando duplicados
+                        mensajes.forEach((m: ChatMessage) => {
+                            const key = `${m.usuario}-${m.mensaje}-${m.fecha}`
+                            if (!existingMap.has(key)) {
+                                existingMap.set(key, m)
+                            }
+                        })
+
+                        // Convertir de vuelta a array y ordenar por fecha
+                        return Array.from(existingMap.values()).sort((a, b) => 
+                            new Date(a.fecha).getTime() - new Date(b.fecha).getTime()
+                        )
+                    })
                     setTimeout(() => scrollToBottom('auto'), 100)
                 })
 
@@ -192,11 +310,15 @@ export default function GroupsChat({ groupId, admin }: Props) {
                 }
 
                 currentConn.off('ReceiveMessage')
+                currentConn.off('UsuarioSeUnio')
+                currentConn.off('UsuarioAbandonoGrupo')
+                currentConn.off('KickedFromGroup')
+                currentConn.off('UsuariosConectados')
                 connectionRef.current = null
                 setConnection(null)
             }
         }
-    }, [groupId, token, toast])
+    }, [groupId, token, loading, toast])
 
     const handleSend = async () => {
         if (!input.trim() || !connection) return
@@ -221,21 +343,24 @@ export default function GroupsChat({ groupId, admin }: Props) {
             <div className={styles.chat} ref={chatContainerRef}>
                 {messages.map((msg, i) => {
                     const { date, time } = formatChatDate(msg.fecha)
+
+                    // Determinar si el mensaje es del usuario actual usando el UID de Firebase.
+                    // El backend envía uid = firebaseUid en SendMessageToGroup.
+                    const myUid = user?.uid
+                    const isMine = !!myUid && !!msg.uid && msg.uid === myUid
+
+                    const displayName = isMine ? 'Yo' : msg.usuario
+
                     return (
                         <article
                             key={i}
-                            className={`${styles.chat__message} ${admin
-                                .toLowerCase()
-                                .includes(
-                                    msg.usuario.toLowerCase().split(' ')[0]
-                                )
-                                ? styles['chat__message--mine']
-                                : ''
-                                }`}
+                            className={`${styles.chat__message} ${
+                                isMine ? styles['chat__message--mine'] : ''
+                            }`}
                         >
                             <div className={styles.chat__header}>
                                 <p className={styles.chat__sender}>
-                                    {msg.usuario}
+                                    {displayName}
                                 </p>
                             </div>
                             <p className={styles.chat__text}>{msg.mensaje}</p>
