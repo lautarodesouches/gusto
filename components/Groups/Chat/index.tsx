@@ -25,6 +25,7 @@ interface ChatMessage {
 interface UsuarioSeUnioPayload {
     usuarioId: string
     nombre: string
+    fotoPerfilUrl?: string  // URL de la foto de perfil (opcional)
 }
 
 interface UsuarioAbandonoPayload {
@@ -398,6 +399,7 @@ export default function GroupsChat({ groupId, admin, isAdmin = false }: Props) {
 
                     const displayName = isMine ? 'Yo' : msg.usuario
 
+                    // Detectar si es un mensaje de sistema (unión, abandono, expulsión)
                     return (
                         <article
                             key={i}
