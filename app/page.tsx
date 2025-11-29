@@ -19,10 +19,7 @@ export default function Landing() {
                         DONDE LOS GUSTOS COINCIDEN
                     </h1>
                     <p className={styles.start__text}>
-                        GUSTO! REÚNE LAS PREFERENCIAS DE TU GRUPO Y CON NUESTRO
-                        ALGORITMO DE REDES NEURONALES ENCUENTRA EL RESTAURANTE
-                        PERFECTO EN SEGUNDOS. VOTEN, ORGANICEN LA SALIDA Y
-                        DISFRUTEN SIN PERDER TIEMPO DISCUTIENDO.
+                        ¡Basta de debates! Nuestro algoritmo elige el restaurante perfecto para todos al instante.
                     </p>
                     <Link
                         className={styles.start__link}

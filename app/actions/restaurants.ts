@@ -51,6 +51,13 @@ export async function searchRestaurants(
         })
 
         if (!res.ok) {
+            if (res.status === 404) {
+                return {
+                    success: true,
+                    data: { total: 0, recomendaciones: [] },
+                }
+            }
+
             const errorText = await res.text().catch(() => '')
 
             if (

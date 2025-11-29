@@ -61,3 +61,50 @@
         display: block;
     }
 }
+
+/* Overlay cuando el usuario fue expulsado del grupo */
+.kickedOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 1.5rem;
+}
+
+.kickedOverlay__content {
+    max-width: 400px;
+    background-color: #1f1f1f;
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.kickedOverlay__content h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.kickedOverlay__content p {
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+}
+
+.kickedOverlay__button {
+    background-color: #ff5e5e;
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.kickedOverlay__button:hover {
+    background-color: #ff3b3b;
+}
