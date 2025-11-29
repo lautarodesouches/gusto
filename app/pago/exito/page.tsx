@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import styles from './page.module.css'
 
 export default function PagoExitoPage() {
     const searchParams = useSearchParams()
@@ -20,12 +21,41 @@ export default function PagoExitoPage() {
         router.replace('/mapa?payment=success')
     }, [searchParams, router])
 
-    // Mostrar un loader mientras redirige
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50">
-            <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                <p className="text-gray-600">Procesando tu pago exitoso...</p>
+        <div className={styles.container}>
+            <div className={styles.content}>
+                {/* Ícono de verificación animado */}
+                <div className={styles.iconContainer}>
+                    <div className={styles.circle}>
+                        <svg className={styles.checkmark} viewBox="0 0 52 52">
+                            <circle className={styles.checkmarkCircle} cx="26" cy="26" r="25" fill="none"/>
+                            <path className={styles.checkmarkCheck} fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {/* Textos */}
+                <h1 className={styles.title}>
+                    Verificando pago
+                </h1>
+                <p className={styles.subtitle}>
+                    Estamos procesando tu compra
+                </p>
+
+                {/* Puntos de carga animados */}
+                <div className={styles.dotsContainer}>
+                    <span className={styles.dot}></span>
+                    <span className={styles.dot}></span>
+                    <span className={styles.dot}></span>
+                </div>
+            </div>
+
+            {/* Barra de progreso */}
+            <div className={styles.progressContainer}>
+                <p className={styles.progressText}>Redirigiendo...</p>
+                <div className={styles.progressBar}>
+                    <div className={styles.progressFill}></div>
+                </div>
             </div>
         </div>
     )
