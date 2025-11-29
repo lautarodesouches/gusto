@@ -40,6 +40,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const [filteredMembers, setFilteredMembers] = useState<GroupMember[]>([])
     const [isEditing, setIsEditing] = useState(false)
     const [memberToDelete, setMemberToDelete] = useState<GroupMember | null>(null)
+    const [usuariosConectados, setUsuariosConectados] = useState<Set<string>>(new Set())
     
     // Settings State
     const [loading, setLoading] = useState(false)
@@ -116,6 +117,26 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
         })
         setFilteredMembers(sortedMembers)
     }, [group, members])
+
+    // Escuchar eventos globales de usuarios conectados para mostrar indicadores
+    useEffect(() => {
+        const handler = (event: Event) => {
+            const conectados = (event as CustomEvent<string[]>).detail
+            if (conectados && Array.isArray(conectados)) {
+                setUsuariosConectados(new Set(conectados))
+            }
+        }
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('usuarios:conectados', handler as EventListener)
+        }
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('usuarios:conectados', handler as EventListener)
+            }
+        }
+    }, [])
 
     const handleSearchMembers = (e: ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -222,16 +243,19 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                     )}
                 </div>
 
-                <div 
-                    className={styles.social__div}
-                    onClick={() => setIsEditing(!isEditing)}
-                    style={{ cursor: 'pointer' }}
-                >
-                    <FontAwesomeIcon
-                        icon={isEditing ? faX : faGear}
-                        className={styles.social__icon}
-                    />
-                </div>
+                {/* Solo el administrador puede ver y usar la rueda de configuración */}
+                {isAdmin && (
+                    <div 
+                        className={styles.social__div}
+                        onClick={() => setIsEditing(!isEditing)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <FontAwesomeIcon
+                            icon={isEditing ? faX : faGear}
+                            className={styles.social__icon}
+                        />
+                    </div>
+                )}
             </nav>
             <fieldset className={styles.search}>
                 <FontAwesomeIcon
@@ -267,6 +291,19 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                 className={styles.member__link}
                             >
                                 <div className={styles.member__div}>
+                                    {/* Indicador de conexión */}
+                                    <span
+                                        className={`${styles.member__status} ${
+                                            usuariosConectados.has(m.usuarioFirebaseUid)
+                                                ? styles.member__status_online
+                                                : styles.member__status_offline
+                                        }`}
+                                        title={
+                                            usuariosConectados.has(m.usuarioFirebaseUid)
+                                                ? 'En línea'
+                                                : 'Desconectado'
+                                        }
+                                    />
                                     {m.fotoPerfilUrl ? (
                                         <Image
                                             src={m.fotoPerfilUrl}
@@ -295,69 +332,80 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                 </div>
                             </a>
                             <div className={styles.member__div}>
-                                {isEditing ? (
-                                    <button
-                                        className={styles.member__delete_btn}
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            e.stopPropagation()
-                                            handleKickClick(m)
-                                        }}
-                                        disabled={m.esAdministrador}
-                                        title={m.esAdministrador ? 'No se puede eliminar al administrador' : 'Eliminar del grupo'}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={faUserMinus}
-                                            className={styles.member__delete_icon}
-                                        />
-                                    </button>
-                                ) : (
-                                    <label className={styles.member__checkbox_label}>
-                                        <input
-                                            type="checkbox"
-                                            className={styles.filter__input}
-                                            checked={isChecked}
-                                            onChange={() => onCheck(m.id)}
-                                        />
-                                        <span className={styles.checkmark}></span>
-                                    </label>
+                                {/* Solo el administrador puede ver checkboxes y botón de eliminar */}
+                                {isAdmin && (
+                                    isEditing ? (
+                                        <button
+                                            className={styles.member__delete_btn}
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                handleKickClick(m)
+                                            }}
+                                            disabled={m.esAdministrador}
+                                            title={m.esAdministrador ? 'No se puede eliminar al administrador' : 'Eliminar del grupo'}
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={faUserMinus}
+                                                className={styles.member__delete_icon}
+                                            />
+                                        </button>
+                                    ) : (
+                                        <label className={styles.member__checkbox_label}>
+                                            <input
+                                                type="checkbox"
+                                                className={styles.filter__input}
+                                                checked={isChecked}
+                                                onChange={() => onCheck(m.id)}
+                                            />
+                                            <span className={styles.checkmark}></span>
+                                        </label>
+                                    )
                                 )}
                             </div>
                         </article>
                     )
                 })}
             </div>
-            <form className={styles.invite} onSubmit={handleInvite}>
-                <fieldset className={styles.invite__fieldset}>
-                    <FontAwesomeIcon
-                        className={styles.invite__icon}
-                        icon={faUserPlus}
-                    />
-                    <input
-                        className={styles.invite__input}
-                        type="text"
-                        name="email"
-                        placeholder="Email del usuario"
-                        required
-                    />
-                </fieldset>
-                <div className={styles.invite__div}>
-                    <button className={styles.invite__button}>Agregar</button>
+
+            {/* Solo el administrador puede invitar nuevos miembros */}
+            {isAdmin && (
+                <form className={styles.invite} onSubmit={handleInvite}>
+                    <fieldset className={styles.invite__fieldset}>
+                        <FontAwesomeIcon
+                            className={styles.invite__icon}
+                            icon={faUserPlus}
+                        />
+                        <input
+                            className={styles.invite__input}
+                            type="text"
+                            name="email"
+                            placeholder="Email del usuario"
+                            required
+                        />
+                    </fieldset>
+                    <div className={styles.invite__div}>
+                        <button className={styles.invite__button}>Agregar</button>
+                    </div>
+                </form>
+            )}
+
+            {/* Botón de abandonar grupo para usuarios no admin (siempre visible) */}
+            {!isAdmin && (
+                <div className={styles.leaveGroupContainer}>
+                    <button
+                        onClick={() => setShowLeaveConfirm(true)}
+                        className={styles.leaveGroupButton}
+                        disabled={loading}
+                    >
+                        <FontAwesomeIcon icon={faRightFromBracket} />
+                        Abandonar Grupo
+                    </button>
                 </div>
-            </form>
+            )}
 
             {isEditing && (
                 <div className={styles.dangerZone}>
-                    {!isAdmin && (
-                        <button
-                            onClick={() => setShowLeaveConfirm(true)}
-                            className={styles.dangerButton}
-                            disabled={loading}
-                        >
-                            <FontAwesomeIcon icon={faRightFromBracket} />
-                            Abandonar Grupo
-                        </button>
-                    )}
                     {isAdmin && (
                         <button
                             onClick={() => setShowDeleteConfirm(true)}

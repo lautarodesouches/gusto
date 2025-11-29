@@ -44,7 +44,7 @@ export default function GroupComponent({
                     currentRestaurants={currentRestaurants}
                 />
             ) : (
-                <GroupsChat admin={admin} groupId={groupId} />
+                <GroupsChat admin={admin} groupId={groupId} isAdmin={isAdmin} />
             )}
         </>
     )
