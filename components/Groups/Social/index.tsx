@@ -40,6 +40,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const [isEditing, setIsEditing] = useState(false)
     const [memberToDelete, setMemberToDelete] = useState<GroupMember | null>(null)
     const [usuariosConectados, setUsuariosConectados] = useState<Set<string>>(new Set())
+    const [inviteType, setInviteType] = useState<'email' | 'username'>('email')
     
     // Settings State
     const [loading, setLoading] = useState(false)
@@ -49,7 +50,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
     const handleUpdateGroupName = async () => {
         if (!groupName.trim() || groupName === group.nombre) return
-        
+
         setLoading(true)
         try {
             const result = await updateGroupName(group.id, groupName.trim())
@@ -163,20 +164,19 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
         const formData = new FormData(e.currentTarget)
 
-        const email = formData.get('email') as string
+        const identifier = formData.get('identifier') as string
 
-        if (!email) return toast.error('Ingrese un email')
+        if (!identifier) return toast.error(`Ingrese un ${inviteType === 'email' ? 'email' : 'username'}`)
 
         const message = `Te invito a formar parte de ${group.nombre}`
 
-        const result = await inviteUserToGroup(group.id, email, message)
+        const result = await inviteUserToGroup(group.id, identifier, message, inviteType)
 
         if (!result.success)
             return toast.error(result.error || 'Error al invitar al grupo')
 
         toast.success('Invitación enviada')
-
-        setFilteredMembers(prev => [...prev])
+        e.currentTarget.reset()
     }
 
     const handleKickClick = (member: GroupMember) => {
@@ -197,7 +197,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
         toast.success(`${memberToDelete.usuarioNombre} fue eliminado del grupo`)
 
         setFilteredMembers(prev => prev.filter(m => m.id !== memberToDelete.id))
-        
+
         // Notificar al componente padre para actualizar el estado
         if (onMemberRemoved) {
             onMemberRemoved(memberToDelete.id)
@@ -244,7 +244,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
                 {/* Solo el administrador puede ver y usar la rueda de configuración */}
                 {isAdmin && (
-                    <div 
+                    <div
                         className={styles.social__div}
                         onClick={() => setIsEditing(!isEditing)}
                         style={{ cursor: 'pointer' }}
@@ -292,11 +292,10 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                 <div className={styles.member__div}>
                                     {/* Indicador de conexión */}
                                     <span
-                                        className={`${styles.member__status} ${
-                                            usuariosConectados.has(m.usuarioFirebaseUid)
+                                        className={`${styles.member__status} ${usuariosConectados.has(m.usuarioFirebaseUid)
                                                 ? styles.member__status_online
                                                 : styles.member__status_offline
-                                        }`}
+                                            }`}
                                         title={
                                             usuariosConectados.has(m.usuarioFirebaseUid)
                                                 ? 'En línea'
@@ -369,24 +368,42 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
             {/* Solo el administrador puede invitar nuevos miembros */}
             {isAdmin && (
-                <form className={styles.invite} onSubmit={handleInvite}>
-                    <fieldset className={styles.invite__fieldset}>
-                        <FontAwesomeIcon
-                            className={styles.invite__icon}
-                            icon={faUserPlus}
-                        />
-                        <input
-                            className={styles.invite__input}
-                            type="text"
-                            name="email"
-                            placeholder="Email del usuario"
-                            required
-                        />
-                    </fieldset>
-                    <div className={styles.invite__div}>
-                        <button className={styles.invite__button}>Agregar</button>
+                <div className={styles.inviteContainer}>
+                    <div className={styles.inviteTabs}>
+                        <button
+                            type="button"
+                            className={`${styles.inviteTab} ${inviteType === 'email' ? styles.inviteTabActive : ''}`}
+                            onClick={() => setInviteType('email')}
+                        >
+                            Email
+                        </button>
+                        <button
+                            type="button"
+                            className={`${styles.inviteTab} ${inviteType === 'username' ? styles.inviteTabActive : ''}`}
+                            onClick={() => setInviteType('username')}
+                        >
+                            Username
+                        </button>
                     </div>
-                </form>
+                    <form className={styles.invite} onSubmit={handleInvite}>
+                        <fieldset className={styles.invite__fieldset}>
+                            <FontAwesomeIcon
+                                className={styles.invite__icon}
+                                icon={faUserPlus}
+                            />
+                            <input
+                                className={styles.invite__input}
+                                type="text"
+                                name="identifier"
+                                placeholder={inviteType === 'email' ? 'Email del usuario' : 'Username del usuario'}
+                                required
+                            />
+                        </fieldset>
+                        <div className={styles.invite__div}>
+                            <button className={styles.invite__button}>Agregar</button>
+                        </div>
+                    </form>
+                </div>
             )}
 
             {/* Botón de abandonar grupo para usuarios no admin (siempre visible) */}

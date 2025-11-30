@@ -44,7 +44,7 @@ export default function RestaurantGallery({ restaurant }: Props) {
         <>
             <div className={styles.gallery}>
                 {/* Imagen principal */}
-                <div 
+                <div
                     className={styles.gallery__main}
                     onClick={() => {
                         if (restaurant.esDeLaApp && allImages.length > 0) {
@@ -72,12 +72,12 @@ export default function RestaurantGallery({ restaurant }: Props) {
                             icon={faImage}
                             className={styles.gallery__badgeicon}
                         />
-                        <span>
+                        {/*<span>
                             {restaurant.esDeLaApp 
                                 ? allImages.length
                                 : 25
                             }
-                        </span>
+                        </span>*/}
                     </div>
                 </div>
 
@@ -106,7 +106,7 @@ export default function RestaurantGallery({ restaurant }: Props) {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Primera imagen de comida */}
                     {restaurant.imagenesComida && restaurant.imagenesComida.length > 0 && (
                         <div
@@ -135,7 +135,7 @@ export default function RestaurantGallery({ restaurant }: Props) {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Menú */}
                     {restaurant.menu && (
                         <div
@@ -155,33 +155,33 @@ export default function RestaurantGallery({ restaurant }: Props) {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Fallback si no hay imágenes */}
-                    {(!restaurant.imagenesInterior || restaurant.imagenesInterior.length === 0) && 
-                     (!restaurant.imagenesComida || restaurant.imagenesComida.length === 0) && 
-                     !restaurant.menu && (
-                        <>
-                            {[1, 2, 3].map((i) => (
-                                <div
-                                    key={i}
-                                    className={styles['gallery__side-item']}
-                                >
-                                    <Image
-                                        className={styles['gallery__side-image']}
-                                        src={`/images/restaurant/${i === 1 ? 'interior' : i === 2 ? 'comida' : 'menu'}.png`}
-                                        alt={`Imagen ${i}`}
-                                        width={400}
-                                        height={300}
-                                    />
-                                    <div className={styles['gallery__side-info']}>
-                                        <span className={styles['gallery__side-title']}>
-                                            {i === 1 ? 'Interior' : i === 2 ? 'Comida' : 'Menú'}
-                                        </span>
+                    {(!restaurant.imagenesInterior || restaurant.imagenesInterior.length === 0) &&
+                        (!restaurant.imagenesComida || restaurant.imagenesComida.length === 0) &&
+                        !restaurant.menu && (
+                            <>
+                                {[1, 2, 3].map((i) => (
+                                    <div
+                                        key={i}
+                                        className={styles['gallery__side-item']}
+                                    >
+                                        <Image
+                                            className={styles['gallery__side-image']}
+                                            src={`/images/restaurant/${i === 1 ? 'interior' : i === 2 ? 'comida' : 'menu'}.png`}
+                                            alt={`Imagen ${i}`}
+                                            width={400}
+                                            height={300}
+                                        />
+                                        <div className={styles['gallery__side-info']}>
+                                            <span className={styles['gallery__side-title']}>
+                                                {i === 1 ? 'Interior' : i === 2 ? 'Comida' : 'Menú'}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </>
-                    )}
+                                ))}
+                            </>
+                        )}
                 </div>
             </div>
 
@@ -197,7 +197,7 @@ export default function RestaurantGallery({ restaurant }: Props) {
                         </button>
                         {selectedImageIndex !== null && selectedImageIndex > 0 && (
                             <button
-                                className={styles.gallery__lightboxNav} 
+                                className={styles.gallery__lightboxNav}
                                 style={{ left: '20px' }}
                                 onClick={(e) => {
                                     e.stopPropagation()

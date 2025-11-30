@@ -127,17 +127,29 @@ export async function createGroup(payload: {
 
 export async function inviteUserToGroup(
     groupId: string,
-    email: string,
-    message: string
+    identifier: string,
+    message: string,
+    inviteType: 'email' | 'username' = 'email'
 ): Promise<ApiResponse<null>> {
     try {
+        const body: {
+            emailUsuario?: string
+            usuarioUsername?: string
+            mensajePersonalizado: string
+        } = {
+            mensajePersonalizado: message,
+        }
+
+        if (inviteType === 'email') {
+            body.emailUsuario = identifier
+        } else {
+            body.usuarioUsername = identifier
+        }
+
         const res = await fetch(`${API_URL}/Grupo/${groupId}/invitar`, {
             method: 'POST',
             headers: await getAuthHeaders(),
-            body: JSON.stringify({
-                emailUsuario: email,
-                mensajePersonalizado: message,
-            }),
+            body: JSON.stringify(body),
         })
 
         const data = await res.json().catch(() => ({}))

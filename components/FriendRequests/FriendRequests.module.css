@@ -132,12 +132,14 @@
   color: var(--white);
   margin-bottom: 4px;
   font-size: 0.95rem;
+  word-break: break-word;
 }
 
 .userUsername {
   margin: 0 0 6px 0;
   color: var(--grey);
   font-size: 0.85rem;
+  word-break: break-all;
 }
 
 .message {
@@ -146,6 +148,7 @@
   font-size: 0.9rem;
   line-height: 1.4;
   font-style: italic;
+  word-break: break-word;
 }
 
 .time {
@@ -197,8 +200,10 @@
 @media (max-width: 768px) {
   .panel {
     right: 20px;
+    top: 80px;
     width: calc(100vw - 40px);
     max-width: 320px;
+    max-height: calc(100vh - 100px);
   }
 }
 
