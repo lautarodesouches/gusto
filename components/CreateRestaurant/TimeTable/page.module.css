@@ -59,7 +59,7 @@
     cursor: pointer;
 }
 
-.timetable__lock {
+.timetable__lockBtn {
     background: transparent;
     border: none;
     color: var(--light);
@@ -71,10 +71,48 @@
     transition: color 0.3s ease;
 }
 
-.timetable__lock:hover {
+.timetable__lockBtn:hover {
     color: var(--primary);
 }
 
 .timetable__lock--active {
     color: var(--primary);
+}
+
+@media (max-width: 600px) {
+    .timetable__header {
+        display: none;
+    }
+
+    .timetable__row {
+        grid-template-columns: 1fr auto;
+        grid-template-areas: 
+            "day lock"
+            "from to";
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .timetable__day {
+        grid-area: day;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .timetable__lockBtn { /* Note: In index.tsx it uses timetable__lockBtn but css had timetable__lock. Checking index.tsx again... it uses timetable__lockBtn for button class */
+        grid-area: lock;
+        justify-self: end;
+    }
+
+    .timetable__input {
+        width: 100%;
+    }
+    
+    .timetable__input:first-of-type {
+        grid-area: from;
+    }
+    
+    .timetable__input:last-of-type {
+        grid-area: to;
+    }
 }

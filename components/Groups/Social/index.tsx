@@ -40,7 +40,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const [isEditing, setIsEditing] = useState(false)
     const [memberToDelete, setMemberToDelete] = useState<GroupMember | null>(null)
     const [usuariosConectados, setUsuariosConectados] = useState<Set<string>>(new Set())
-    
+
     // Settings State
     const [loading, setLoading] = useState(false)
     const [groupName, setGroupName] = useState(group.nombre)
@@ -49,7 +49,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
     const handleUpdateGroupName = async () => {
         if (!groupName.trim() || groupName === group.nombre) return
-        
+
         setLoading(true)
         try {
             const result = await updateGroupName(group.id, groupName.trim())
@@ -176,6 +176,9 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
         toast.success('Invitación enviada')
 
+        // Limpiar el campo de email
+        e.currentTarget.reset()
+
         setFilteredMembers(prev => [...prev])
     }
 
@@ -197,7 +200,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
         toast.success(`${memberToDelete.usuarioNombre} fue eliminado del grupo`)
 
         setFilteredMembers(prev => prev.filter(m => m.id !== memberToDelete.id))
-        
+
         // Notificar al componente padre para actualizar el estado
         if (onMemberRemoved) {
             onMemberRemoved(memberToDelete.id)
@@ -244,7 +247,7 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
 
                 {/* Solo el administrador puede ver y usar la rueda de configuración */}
                 {isAdmin && (
-                    <div 
+                    <div
                         className={styles.social__div}
                         onClick={() => setIsEditing(!isEditing)}
                         style={{ cursor: 'pointer' }}
@@ -292,11 +295,10 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                 <div className={styles.member__div}>
                                     {/* Indicador de conexión */}
                                     <span
-                                        className={`${styles.member__status} ${
-                                            usuariosConectados.has(m.usuarioFirebaseUid)
+                                        className={`${styles.member__status} ${usuariosConectados.has(m.usuarioFirebaseUid)
                                                 ? styles.member__status_online
                                                 : styles.member__status_offline
-                                        }`}
+                                            }`}
                                         title={
                                             usuariosConectados.has(m.usuarioFirebaseUid)
                                                 ? 'En línea'
