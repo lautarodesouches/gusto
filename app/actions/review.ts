@@ -8,7 +8,7 @@ import { ApiResponse } from '@/types'
  * Envía una opinión/review de un restaurante
  * Soporta FormData con archivos (imágenes)
  */
-export async function submitRestaurantReview(formData: FormData): Promise<ApiResponse<null>> {
+export async function submitRestaurantReview(formData: FormData): Promise<ApiResponse<null> & { validationErrors?: Record<string, string[]> }> {
     try {
         const headers = await getAuthHeaders()
         // No incluir Content-Type para FormData, el navegador lo maneja automáticamente
@@ -48,31 +48,47 @@ export async function submitRestaurantReview(formData: FormData): Promise<ApiRes
         if (!res.ok) {
             const errorText = await res.text().catch(() => '')
             let errorMessage = ''
+            let validationErrors: Record<string, string[]> = {}
 
             try {
                 const errorData = errorText ? JSON.parse(errorText) : {}
 
-                // Si hay errores de validación, devolverlos en el formato esperado
-                if (errorData.errors) {
-                    // Aquí podríamos devolver los errores de validación estructurados si ApiResponse lo soportara mejor
-                    // Por ahora devolvemos el primer error o un mensaje genérico
-                    const firstError = Object.values(errorData.errors)[0]
-                    if (Array.isArray(firstError) && firstError.length > 0) {
-                        errorMessage = String(firstError[0])
-                    } else {
-                        errorMessage = 'Error de validación'
-                    }
+                // Si hay errores de validación de FluentValidation, devolverlos estructurados
+                if (errorData.errors && typeof errorData.errors === 'object') {
+                    validationErrors = errorData.errors as Record<string, string[]>
+                    // Si hay errores de validación, no devolver mensaje general
+                    errorMessage = ''
                 } else {
-                    errorMessage = errorData.message || errorData.error || errorData.title || 'Error al crear opinión'
+                    // Detectar errores relacionados con tamaño de archivo (fallback si no hay validationErrors)
+                    const errorLower = errorText.toLowerCase()
+                    if (
+                        errorLower.includes('size') ||
+                        errorLower.includes('tamaño') ||
+                        errorLower.includes('too large') ||
+                        errorLower.includes('muy grande') ||
+                        errorLower.includes('supera los 2mb') ||
+                        errorLower.includes('413') ||
+                        res.status === 413
+                    ) {
+                        errorMessage = 'Las imágenes son demasiado grandes. El tamaño máximo permitido es 2MB por imagen.'
+                    } else {
+                        errorMessage = errorData.message || errorData.error || errorData.title || 'Error al crear opinión'
+                    }
                 }
             } catch {
-                errorMessage = errorText || 'Error al crear opinión'
+                // Si el error es 413 (Payload Too Large), es un problema de tamaño
+                if (res.status === 413) {
+                    errorMessage = 'Las imágenes son demasiado grandes. El tamaño máximo permitido es 2MB por imagen.'
+                } else {
+                    errorMessage = errorText || 'Error al crear opinión'
+                }
             }
 
-            console.error('Error al crear opinión:', errorMessage)
+            console.error('Error al crear opinión:', errorMessage || validationErrors)
             return {
                 success: false,
                 error: errorMessage,
+                validationErrors: Object.keys(validationErrors).length > 0 ? validationErrors : undefined,
             }
         }
 

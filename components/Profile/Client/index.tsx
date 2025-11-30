@@ -1,5 +1,5 @@
 'use client'
-import { useTransition } from 'react'
+import { useTransition, useState } from 'react'
 import { User } from '@/types'
 import { ProfileView } from '../View'
 import { useRouter } from 'next/navigation'
@@ -13,12 +13,12 @@ interface ProfileClientProps {
 }
 
 export default function ProfileClient({
-    profile,
+    profile: initialProfile,
     onGoBack,
 }: ProfileClientProps) {
     const toast = useToast()
-
     const router = useRouter()
+    const [profile, setProfile] = useState<User>(initialProfile)
 
     const handleEditTastes = () => {
         router.push(`/perfil/${profile.username}/editar/preferencias/step/1`)
@@ -43,7 +43,6 @@ export default function ProfileClient({
                 toast.success('Solicitud de amistad enviada')
                 router.refresh()
             } catch (err: unknown) {
-                console.error(err)
                 toast.error(
                     err instanceof Error ? err.message : 'Ocurrió un error'
                 )
@@ -62,9 +61,15 @@ export default function ProfileClient({
                     )
 
                 toast.success('Amigo eliminado correctamente')
+                
+                setProfile(prev => ({ ...prev, esAmigo: false }))
+                
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('friends:refresh'))
+                }
+                
                 router.refresh()
             } catch (err: unknown) {
-                console.error(err)
                 toast.error(
                     err instanceof Error ? err.message : 'Ocurrió un error'
                 )
