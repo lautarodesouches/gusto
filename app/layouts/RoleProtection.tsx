@@ -72,7 +72,8 @@ export default function RoleProtection({ children }: { children: React.ReactNode
             return
         }
 
-        // ADMIN: solo auto-redirigir al panel de admin cuando está en una ruta pública (p.ej. después de login)
+        // ADMIN: auto-redirigir al panel de admin cuando está en una ruta pública (p.ej. después de login)
+        // Pero NO bloquear otras rutas - puede navegar libremente por la app
         if (isAdmin) {
             const adminBase = ROUTES.ADMIN // '/admin'
             const isAdminRoute =
@@ -81,7 +82,7 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                     (pathname.length === adminBase.length ||
                         pathname[adminBase.length] === '/'))
 
-            // Si está en ruta pública y no en /admin, redirigir una sola vez
+            // Si está en ruta pública y no en /admin, redirigir una sola vez al panel
             if (isPublicRoute && !isAdminRoute && !hasRedirected) {
                 setHasRedirected(true)
                 setIsChecking(false)
@@ -96,8 +97,13 @@ export default function RoleProtection({ children }: { children: React.ReactNode
                 setHasRedirected(false)
                 return
             }
+            
             // Si es admin y está en una ruta NO pública y NO es /admin (por ejemplo /mapa),
-            // no forzamos redirección: se comporta como usuario normal en esa ruta
+            // permitir navegar libremente - NO bloquear
+            setShouldBlock(false)
+            setIsChecking(false)
+            setHasRedirected(false)
+            return
         }
 
         // Rutas públicas para usuarios normales (no dueño ni admin)

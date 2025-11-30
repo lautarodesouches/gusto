@@ -122,16 +122,21 @@ export const getRatingDistribution = (restaurant: Restaurant, reviews: Review[])
         horrible: 0
     }
 
-    // Usar reviews locales o de Google si existen, o el array general
-    const reviewsToUse = (restaurant.reviewsLocales && restaurant.reviewsLocales.length > 0)
-        ? restaurant.reviewsLocales
-        : (restaurant.reviewsGoogle && restaurant.reviewsGoogle.length > 0)
-            ? restaurant.reviewsGoogle
-            : reviews
+    // Combinar todas las opiniones: locales, de Google y el array general
+    const allReviews = [
+        ...(restaurant.reviewsLocales || []),
+        ...(restaurant.reviewsGoogle || []),
+        ...(reviews || [])
+    ]
 
-    if (!reviewsToUse || reviewsToUse.length === 0) return distribution
+    if (!allReviews || allReviews.length === 0) return distribution
 
-    reviewsToUse.forEach(review => {
+    // Eliminar duplicados basándose en el ID (igual que en RestaurantView)
+    const uniqueReviews = Array.from(
+        new Map(allReviews.map(r => [r.id, r])).values()
+    )
+
+    uniqueReviews.forEach(review => {
         const rating = review.rating || review.valoracion || 0
         if (rating >= 4.5) distribution.excelente++
         else if (rating >= 3.5) distribution.bueno++

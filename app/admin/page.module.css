@@ -28,7 +28,7 @@
 .logo__text {
     font-size: 2rem;
     font-weight: 900;
-    color: white;
+    color: var(--primary, #ff5050);
     font-family: var(--font-gliker, Arial, sans-serif);
 }
 

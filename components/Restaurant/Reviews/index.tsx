@@ -40,7 +40,7 @@ function ReviewCard({ review, showImages = true, isLocal = false }: ReviewCardPr
 
 
   return (
-    <article className={styles['review-card']}>
+    <article className={`${styles['review-card']} ${isLocal ? styles['review-card--local'] : ''}`}>
       <header className={styles['review-card__header']}>
         <div className={styles['review-card__user']}>
           <div className={styles['review-card__avatar']}>
@@ -116,12 +116,14 @@ interface ReviewListProps {
   reviews: Review[]
   showImages?: boolean
   isLocal?: boolean
+  localReviewIds?: Set<string>
 }
 
 export default function ReviewList({
   reviews,
   showImages = true,
   isLocal = false,
+  localReviewIds,
 }: ReviewListProps) {
   if (!reviews || reviews.length === 0) {
     return (
@@ -133,9 +135,19 @@ export default function ReviewList({
 
   return (
     <div className={styles['review-list']}>
-      {reviews.map((r) => (
-        <ReviewCard key={r.id} review={r} showImages={showImages} isLocal={isLocal} />
-      ))}
+      {reviews.map((r) => {
+        // Determinar si es local: SOLO si está en el Set de IDs locales
+        const isLocalReview = localReviewIds?.has(r.id) ?? false
+        
+        return (
+          <ReviewCard 
+            key={r.id} 
+            review={r} 
+            showImages={showImages} 
+            isLocal={isLocalReview} 
+          />
+        )
+      })}
     </div>
   )
 }
