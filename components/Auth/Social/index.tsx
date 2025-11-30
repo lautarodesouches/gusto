@@ -8,6 +8,7 @@ import {
 import {
     GoogleAuthProvider,
     signInWithPopup,
+    getAdditionalUserInfo,
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { useRouter } from 'next/navigation'
@@ -30,10 +31,20 @@ export default function SocialAuth({ mode = 'login' }: Props) {
             const provider = new GoogleAuthProvider()
 
             const result = await signInWithPopup(auth, provider)
-            const token = await result.user.getIdToken()
+            const { user } = result
+            const additionalUserInfo = getAdditionalUserInfo(result)
+            const isNewUser = additionalUserInfo?.isNewUser
 
             // MODO LOGIN: Solo autenticar con Firebase y crear cookie de sesión
             if (mode === 'login') {
+                // Si es un usuario nuevo y está intentando loguearse, no permitirlo
+                if (isNewUser) {
+                    await user.delete()
+                    toast.error('No existe una cuenta con este email. Por favor regístrate.')
+                    return
+                }
+
+                const token = await user.getIdToken()
                 const loginResult = await login(token)
 
                 if (loginResult.success) {
@@ -47,7 +58,7 @@ export default function SocialAuth({ mode = 'login' }: Props) {
             }
 
             // MODO REGISTER: Registrar en backend y luego redirigir
-            const user = result.user
+            const token = await user.getIdToken()
             const displayName = user.displayName || ''
             const email = user.email || ''
 
