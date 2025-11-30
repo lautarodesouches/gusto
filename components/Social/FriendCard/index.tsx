@@ -9,7 +9,7 @@ import {
     faThumbsUp,
     faUser,
 } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ROUTES } from '@/routes'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { addFriend, respondToFriendInvitation } from '@/app/actions/friends'
@@ -32,6 +32,31 @@ export default function FriendCard({
     const [loading, setLoading] = useState(false)
     const [isInvitating, setIsInvitating] = useState(false)
 
+    useEffect(() => {
+        const handleSolicitudEliminada = (event: CustomEvent) => {
+            const username = (event.detail as { username?: string })?.username
+            if (username && username === friend.username) {
+                setIsInvitating(false)
+            }
+        }
+
+        const handleFriendsRefresh = () => {
+            setIsInvitating(false)
+        }
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('solicitud:eliminada', handleSolicitudEliminada as EventListener)
+            window.addEventListener('friends:refresh', handleFriendsRefresh)
+        }
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('solicitud:eliminada', handleSolicitudEliminada as EventListener)
+                window.removeEventListener('friends:refresh', handleFriendsRefresh)
+            }
+        }
+    }, [friend.username])
+
     const handleAddFriend = async (e: React.MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()
@@ -53,7 +78,6 @@ export default function FriendCard({
             toast.success(`Solicitud de amistad enviada`)
         } catch (err: unknown) {
             toast.error(`No se pudo enviar solicitud`)
-            console.error(err)
         } finally {
             setLoading(false)
         }
