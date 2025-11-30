@@ -3,12 +3,10 @@
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-    faApple,
     faGoogle,
 } from '@fortawesome/free-brands-svg-icons'
 import {
     GoogleAuthProvider,
-    OAuthProvider,
     signInWithPopup,
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
@@ -27,19 +25,11 @@ export default function SocialAuth({ mode = 'login' }: Props) {
     const router = useRouter()
     const toast = useToast()
 
-    const handleSocialLogin = async (providerName: 'google' | 'apple') => {
+    const handleGoogleLogin = async () => {
         try {
-            let provider
-            switch (providerName) {
-                case 'google':
-                    provider = new GoogleAuthProvider()
-                    break
-                case 'apple':
-                    provider = new OAuthProvider('apple.com')
-                    break
-            }
+            const provider = new GoogleAuthProvider()
 
-            const result = await signInWithPopup(auth, provider!)
+            const result = await signInWithPopup(auth, provider)
             const token = await result.user.getIdToken()
 
             // MODO LOGIN: Solo autenticar con Firebase y crear cookie de sesión
@@ -96,21 +86,11 @@ export default function SocialAuth({ mode = 'login' }: Props) {
         <div className={styles.icons}>
             <div
                 className={styles.icons__div}
-                onClick={() => handleSocialLogin('google')}
+                onClick={handleGoogleLogin}
                 style={{ cursor: 'pointer' }}
             >
                 <FontAwesomeIcon
                     icon={faGoogle}
-                    className={styles.icons__icon}
-                />
-            </div>
-            <div
-                className={styles.icons__div}
-                onClick={() => handleSocialLogin('apple')}
-                style={{ cursor: 'pointer' }}
-            >
-                <FontAwesomeIcon
-                    icon={faApple}
                     className={styles.icons__icon}
                 />
             </div>
