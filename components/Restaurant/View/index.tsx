@@ -13,6 +13,8 @@ import { parseHorarios, getEstadoActual, getRatingDistribution, getRatingLabel }
 import RestaurantHeader from './RestaurantHeader'
 import RestaurantGallery from './RestaurantGallery'
 import RestaurantInfo from './RestaurantInfo'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPencil } from '@fortawesome/free-solid-svg-icons'
 
 interface Props {
     restaurant: Restaurant
@@ -99,6 +101,13 @@ export default function RestaurantView({
     const estadoActual = getEstadoActual(restaurant, horarios)
     const rating = restaurant.rating ?? restaurant.valoracion ?? 0
     const ratingDistribution = getRatingDistribution(restaurant, reviews)
+    
+    // Calcular total de opiniones únicas
+    const totalOpiniones = ratingDistribution.excelente + 
+                          ratingDistribution.bueno + 
+                          ratingDistribution.promedio + 
+                          ratingDistribution.malo + 
+                          ratingDistribution.horrible
 
     const stars = []
     for (let i = 1; i <= 5; i++) {
@@ -206,30 +215,72 @@ export default function RestaurantView({
             </section>
 
             <section className={styles.reviews} id="opiniones">
-                <div className={styles.reviews__header}>
-                    <h3 className={styles.reviews__title}>Opiniones</h3>
-                    <button 
-                        className={styles.reviews__button}
-                        onClick={() => setShowReviewModal(true)}
-                    >
-                        Escribir una opinión
-                    </button>
-                </div>
+                <h3 className={styles.reviews__title}>Opinión</h3>
                 
-                <RatingDistribution 
-                    data={ratingDistribution} 
-                    rating={rating}
-                    ratingLabel={getRatingLabel(rating)}
-                />
+                {/* Solo mostrar el scoreboard si hay opiniones */}
+                {totalOpiniones > 0 && (
+                    <RatingDistribution 
+                        data={ratingDistribution} 
+                        rating={rating}
+                        ratingLabel={getRatingLabel(rating)}
+                    />
+                )}
+                
+                <button 
+                    className={styles.reviews__button}
+                    onClick={() => setShowReviewModal(true)}
+                >
+                    <FontAwesomeIcon icon={faPencil} className={styles.reviews__buttonIcon} />
+                    Escribir una opinión
+                </button>
                 
                 <ReviewList 
-                    reviews={
-                        (restaurant.reviewsLocales && restaurant.reviewsLocales.length > 0) 
-                            ? restaurant.reviewsLocales 
-                            : (restaurant.reviewsGoogle && restaurant.reviewsGoogle.length > 0)
-                                ? restaurant.reviewsGoogle
-                                : reviews
-                    } 
+                    reviews={(() => {
+                        // Obtener IDs de reviews locales para identificar fácilmente
+                        const localReviewIds = new Set(
+                            (restaurant.reviewsLocales || []).map(r => r.id)
+                        )
+                        
+                        // Combinar todas las opiniones
+                        const allReviews = [
+                            ...(restaurant.reviewsLocales || []),
+                            ...(restaurant.reviewsGoogle || []),
+                            ...(reviews || [])
+                        ]
+                        
+                        // Eliminar duplicados basándose en el ID
+                        const uniqueReviews = Array.from(
+                            new Map(allReviews.map(r => [r.id, r])).values()
+                        )
+                        
+                        // Separar locales de Google/otras
+                        const localReviews = uniqueReviews.filter(r => 
+                            localReviewIds.has(r.id)
+                        )
+                        const otherReviews = uniqueReviews.filter(r => 
+                            !localReviewIds.has(r.id)
+                        )
+                        
+                        // Ordenar locales por fecha (más recientes primero)
+                        const sortedLocal = [...localReviews].sort((a, b) => {
+                            const dateA = new Date(a.fecha || a.fechaCreacion || 0).getTime()
+                            const dateB = new Date(b.fecha || b.fechaCreacion || 0).getTime()
+                            return dateB - dateA
+                        })
+                        
+                        // Ordenar otras por fecha (más recientes primero)
+                        const sortedOther = [...otherReviews].sort((a, b) => {
+                            const dateA = new Date(a.fecha || a.fechaCreacion || 0).getTime()
+                            const dateB = new Date(b.fecha || b.fechaCreacion || 0).getTime()
+                            return dateB - dateA
+                        })
+                        
+                        // Retornar locales primero, luego otras
+                        return [...sortedLocal, ...sortedOther]
+                    })()}
+                    localReviewIds={(() => {
+                        return new Set((restaurant.reviewsLocales || []).map(r => r.id))
+                    })()}
                 />
             </section>
 

@@ -237,9 +237,9 @@ export default function ReviewForm({ restaurant }: ReviewFormProps) {
 
                     <div className={styles.reviewForm__card}>
                         <div className={styles.reviewForm__cardImage}>
-                            {restaurant.imagenUrl ? (
+                            {restaurant.imagenDestacada || restaurant.imagenUrl ? (
                                 <Image
-                                    src={'/images/restaurant/main.png'}
+                                    src={restaurant.imagenDestacada || restaurant.imagenUrl || ''}
                                     alt={restaurant.nombre}
                                     fill
                                     style={{ objectFit: 'cover' }}
