@@ -17,7 +17,7 @@
     width: 90%;
     max-width: 1000px;
     max-height: 90vh;
-    background: #1a1a1a;
+    background: var(--background);
     border-radius: 1rem;
     z-index: 10000;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);

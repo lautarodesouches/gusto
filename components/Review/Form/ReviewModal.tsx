@@ -8,7 +8,7 @@ import styles from './styles.module.css'
 import modalStyles from './modal.module.css'
 import { Restaurant } from '@/types'
 import { useToast } from '@/context/ToastContext'
-import ErrorAlert from '@/components/CreateRestaurant/ErrorAlert'
+import { ErrorAlert } from '@/components/CreateRestaurant'
 import { submitRestaurantReview } from '@/app/actions/review'
 
 interface ReviewModalProps {
@@ -81,15 +81,61 @@ export default function ReviewModal({ restaurant, isOpen, onClose }: ReviewModal
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
+        const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB en bytes (coincide con backend)
+        const MAX_FILES = 3 // Máximo 3 imágenes (coincide con backend)
+        const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp']
 
-        if (files.length + images.length > 5) {
-            toast.error('Máximo 5 fotos permitidas')
+        if (files.length + images.length > MAX_FILES) {
+            toast.error('Máximo 3 fotos permitidas')
             return
         }
 
-        setImages(prev => [...prev, ...files])
+        // Validar tamaño y extensión de cada archivo
+        const oversizedFiles: string[] = []
+        const invalidExtensionFiles: string[] = []
+        const validFiles: File[] = []
 
         files.forEach(file => {
+            const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase()
+            
+            if (!ALLOWED_EXTENSIONS.includes(fileExtension)) {
+                invalidExtensionFiles.push(file.name)
+            } else if (file.size > MAX_FILE_SIZE) {
+                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2)
+                oversizedFiles.push(`${file.name} (${sizeInMB}MB)`)
+            } else {
+                validFiles.push(file)
+            }
+        })
+
+        if (invalidExtensionFiles.length > 0) {
+            toast.error(
+                `Formato inválido (solo jpg, jpeg, png o webp): ${invalidExtensionFiles.join(', ')}`,
+                8000
+            )
+        }
+
+        if (oversizedFiles.length > 0) {
+            toast.error(
+                `Las siguientes imágenes son muy grandes (máximo 2MB): ${oversizedFiles.join(', ')}`,
+                8000
+            )
+        }
+
+        if (validFiles.length === 0) {
+            return
+        }
+
+        // Verificar que no excedamos el límite total después de filtrar
+        if (validFiles.length + images.length > MAX_FILES) {
+            toast.error('Máximo 3 fotos permitidas')
+            return
+        }
+
+        setImages(prev => [...prev, ...validFiles])
+
+        // Crear previews solo para archivos válidos
+        validFiles.forEach(file => {
             const reader = new FileReader()
             reader.onloadend = () => {
                 setImagePreviews(prev => [...prev, reader.result as string])
@@ -142,7 +188,15 @@ export default function ReviewModal({ restaurant, isOpen, onClose }: ReviewModal
                 const result = await submitRestaurantReview(formData)
 
                 if (!result.success) {
-                    setError(result.error || 'Error al enviar opinión')
+                    // Si hay errores de validación, guardarlos
+                    if (result.validationErrors && Object.keys(result.validationErrors).length > 0) {
+                        setValidationErrors(result.validationErrors)
+                        setError('')
+                    } else {
+                        // Si no hay errores de validación, mostrar mensaje general
+                        setError(result.error || 'Error al enviar opinión')
+                        setValidationErrors({})
+                    }
                     return
                 }
 
@@ -165,7 +219,8 @@ export default function ReviewModal({ restaurant, isOpen, onClose }: ReviewModal
                 router.refresh()
             } catch (error) {
                 console.error('Error al enviar opinión:', error)
-                toast.error('Error al enviar opinión')
+                setError('Error al enviar opinión')
+                setValidationErrors({})
             }
         })
     }

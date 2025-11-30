@@ -56,7 +56,7 @@ export default function FriendRequests() {
                 await conn.start()
                 setConnection(conn)
             } catch (err) {
-                console.error('❌ Error conectando con SolicitudesAmistadHub:', err)
+                // Error silencioso - la conexión se reintentará automáticamente
             }
         }
 
@@ -99,7 +99,6 @@ export default function FriendRequests() {
 
             setShowPanel(false)
         } catch (err) {
-            console.error('❌ Error aceptando solicitud:', err)
             toast.error('No se pudo aceptar la solicitud')
         }
     }
@@ -111,7 +110,6 @@ export default function FriendRequests() {
             setSolicitudes(prev => prev.filter(s => s.id !== solicitudId))
             setShowPanel(false)
         } catch (err) {
-            console.error('❌ Error rechazando solicitud:', err)
             toast.error('No se pudo rechazar la solicitud')
         }
     }

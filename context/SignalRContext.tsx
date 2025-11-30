@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, ReactNode, useCallback 
 import { HubConnection } from '@microsoft/signalr'
 import { SolicitudAmistadResponse } from '@/types'
 import { useAuth } from './AuthContext'
+import { useToast } from './ToastContext'
 import { 
   createHubConnection, 
   mergeNewNotifications, 
@@ -41,6 +42,7 @@ interface SignalRProviderProps {
 
 export function SignalRProvider({ children }: SignalRProviderProps) {
   const { token } = useAuth()
+  const toast = useToast()
   const [notificacionesConnection, setNotificacionesConnection] = useState<HubConnection | null>(null)
   const [solicitudesConnection, setSolicitudesConnection] = useState<HubConnection | null>(null)
   const [notificaciones, setNotificaciones] = useState<UnifiedNotification[]>([])
@@ -116,9 +118,37 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
           setNotificaciones(prev => addFriendRequest(prev, solicitud))
         })
 
+        conn.on('SolicitudAceptada', (data: { nombreUsuario: string; username: string }) => {
+          if (!isMounted) return
+          
+          toast.success(`¡Ahora son amigos con ${data.nombreUsuario}! 🎉`, 5000)
+          
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('friends:refresh'))
+          }
+        })
+
         conn.on('SolicitudEliminada', (id: string) => {
           if (!isMounted) return
-          setNotificaciones(prev => prev.filter(n => n.id !== id))
+          
+          setNotificaciones(prev => {
+            const solicitud = prev.find(n => n.id === id && n.tipo === 'solicitud_amistad')
+            
+            if (solicitud?.solicitudAmistad) {
+              const username = solicitud.solicitudAmistad.remitente?.username || solicitud.solicitudAmistad.destinatario?.username
+              if (username && typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('solicitud:eliminada', { 
+                  detail: { username, solicitudId: id } 
+                }))
+              }
+            }
+            
+            return prev.filter(n => n.id !== id)
+          })
+
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('friends:refresh'))
+          }
         })
 
         await conn.start()
@@ -138,7 +168,7 @@ export function SignalRProvider({ children }: SignalRProviderProps) {
         conn.stop()
       }
     }
-  }, [token])
+  }, [token, toast])
 
   const aceptarInvitacion = useCallback(async (id: string) => {
     if (!notificacionesConnection) {
