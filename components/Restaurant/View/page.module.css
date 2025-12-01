@@ -73,6 +73,21 @@
     font-weight: 600;
 }
 
+.top__titleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top__sourceIcon {
+    background-color: #000;
+    border-radius: 6px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .top__rating {
     margin-top: 20px;
     display: flex;
