@@ -99,7 +99,7 @@ export default function RequestDetailModal({
                 </div>
 
                 <div className={styles.modal__content}>
-                    {true ? (
+                    {isLoading ? (
                         <div className={styles.modal__loading}>
                             <Loading message="Cargando detalles..." />
                         </div>
