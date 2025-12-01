@@ -202,7 +202,7 @@ export async function getRecomendacion(
     restauranteId: string
 ): Promise<ApiResponse<{ explicacion: string }>> {
     try {
-        const res = await fetch(`${API_URL}/api/Recomendador/${restauranteId}`, {
+        const res = await fetch(`${API_URL}/api/Recomendador/${restauranteId}/recomendacion`, {
             headers: await getAuthHeaders(),
             cache: 'no-store',
         })
