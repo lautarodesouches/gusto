@@ -72,9 +72,8 @@
     top: calc(100% + 0.5rem);
     left: 0;
     right: 0;
-    background: rgba(45, 45, 43, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1a1a1a;
+    /* backdrop-filter removed */
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 1rem;
     padding: 0.5rem;
@@ -181,17 +180,17 @@
 /* Select personalizado */
 .select {
     position: relative;
-    min-width: 3.5rem;
-    width: 3.5rem;
-    max-width: 3.5rem;
+    min-width: auto;
+    width: auto;
+    max-width: none;
     flex-shrink: 0;
 }
 
 .select_friends {
     position: relative;
-    min-width: 3.5rem;
-    width: 3.5rem;
-    max-width: 3.5rem;
+    min-width: auto;
+    width: auto;
+    max-width: none;
     flex-shrink: 0;
 }
 
@@ -203,14 +202,13 @@
     background-color: var(--background);
     border: 1px solid var(--grey);
     border-radius: 3rem;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     min-height: 3.5rem;
-    height: 3.5rem;
-    max-height: 3.5rem;
+    height: auto;
+    max-height: none;
     width: 100%;
     cursor: pointer;
     transition: all 0.2s ease;
-    aspect-ratio: 1;
 }
 
 .select__button:hover {
@@ -238,9 +236,8 @@
     top: calc(100% + 0.375rem);
     left: 0;
     right: 0;
-    background: rgba(45, 45, 43, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1a1a1a;
+    /* backdrop-filter removed */
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 0.75rem;
     padding: 0.375rem;
@@ -287,7 +284,11 @@
 }
 
 .select_friends .select__friend_display .select__text {
-    display: none;
+    display: block;
+}
+
+.tus_gustos_text {
+    display: none !important;
 }
 
 /* Avatar del amigo (cuadrado de color o icono) */
@@ -360,9 +361,8 @@
 @media (min-width: 769px) {
     .buscador {
         gap: 0.75rem;
-        background: rgba(45, 45, 43, 0.9);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: #1a1a1a;
+        /* backdrop-filter removed */
         padding: 0.5rem;
         border-radius: 3rem;
         border: 1px solid rgba(255, 255, 255, 0.15);
@@ -412,6 +412,10 @@
 
     .select_friends .select__friend_display .select__text {
         display: block;
+    }
+
+    .tus_gustos_text {
+        display: block !important;
     }
 
     .select__friend_display {

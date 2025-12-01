@@ -9,8 +9,8 @@
 }
 
 .header h2 {
-    font-size: 1.8rem;
-    color: #ffeecf;
+    font-size: 1.3rem;
+    color: var(--light);
     margin-bottom: 1rem;
 }
 
@@ -21,8 +21,11 @@
 }
 
 .stat {
-    background: #3e3e3c;
-    color: #ffeecf;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--background);
+    color: var(--light);
     padding: 0.75rem 1.25rem;
     border-radius: 12px;
     font-size: 0.95rem;
@@ -34,8 +37,7 @@
 
 .stat:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.3);
-    border-color: #ff5050;
+    border-color: var(--primary);
 }
 
 .waiting {
@@ -49,8 +51,8 @@
 }
 
 .empate {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--background);
+    color: var(--white);
     padding: 2rem;
     border-radius: 12px;
     text-align: center;
@@ -73,8 +75,8 @@
 }
 
 .btnRuleta {
-    background: white;
-    color: #667eea;
+    background: var(--primary);
+    color: var(--white);
     border: none;
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -85,20 +87,17 @@
 }
 
 .ganador {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
-    color: #ffeecf;
-    padding: 2.5rem;
+    color: var(--white);
+    padding: 1.5rem;
     border-radius: 20px;
     margin-bottom: 2rem;
-    border: 3px solid rgba(255, 238, 207, 0.3);
-    box-shadow: 0 8px 24px rgba(255, 80, 80, 0.4);
 }
 
 .ganador h3 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 0.75rem;
-    color: #ffeecf;
+    margin-bottom: 1.5rem;
+    color: var(--white);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -112,11 +111,11 @@
 }
 
 .ganadorCard {
-    background: #2d2d2b;
+    background: var(--background);
     border-radius: 16px;
     overflow: hidden;
     padding: 2.5rem;
-    color: #ffeecf;
+    color: var(--white);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -139,16 +138,14 @@
 }
 
 .votosGanador {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
-    color: #ffeecf;
+    background: var(--primary);
+    color: var(--white);
     padding: 0.6rem 1.2rem;
-    border-radius: 16px;
+    border-radius: 12px;
     display: inline-block;
     margin-top: 0.75rem;
     font-weight: 700;
     font-size: 1.05rem;
-    border: 2px solid rgba(255, 238, 207, 0.3);
-    box-shadow: 0 2px 8px rgba(255, 80, 80, 0.3);
 }
 
 .btnDirecciones {
@@ -156,7 +153,7 @@
     color: #ffeecf;
     text-decoration: none;
     padding: 1rem 2rem;
-    border-radius: 16px;
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: 700;
     display: inline-flex;
@@ -165,15 +162,12 @@
     gap: 0.5rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    border: 2px solid #ff5050;
     cursor: pointer;
 }
 
 .btnDirecciones:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.4);
-    background: #5b5b5b;
-    border-color: #ff6b6b;
+    background: var(--primary);
 }
 
 .resultados {
@@ -186,20 +180,17 @@
     color: #ffeecf;
     margin-bottom: 1.5rem;
     padding-bottom: 0.75rem;
-    border-bottom: 3px solid #ff5050;
     display: inline-block;
 }
 
 .resultadoCard {
-    background: #3e3e3c;
-    border: 2px solid #5b5b5b;
+    background: var(--background);
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -212,13 +203,12 @@
     left: 0;
     width: 4px;
     height: 100%;
-    background: linear-gradient(180deg, #ff5050 0%, #ffeecf 100%);
+    background: var(--primary);
 }
 
 .resultadoCard:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(255, 80, 80, 0.2);
-    border-color: #ff5050;
+    border-color: var(--primary);
 }
 
 @media (min-width: 768px) {
@@ -247,7 +237,6 @@
 }
 
 .restauranteInfo h4::before {
-    content: '🍽️';
     font-size: 1.3rem;
     flex-shrink: 0;
 }
@@ -263,7 +252,6 @@
 }
 
 .restauranteInfo p::before {
-    content: '📍';
     font-size: 0.9rem;
     flex-shrink: 0;
 }
@@ -278,11 +266,8 @@
 }
 
 .comentario {
-    background: #2d2d2b;
     padding: 0.9rem 1rem;
     border-radius: 12px;
-    border-left: 4px solid #ff5050;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .comentarioHeader {
@@ -291,21 +276,21 @@
     gap: 0.5rem;
     margin-bottom: 0.4rem;
     font-size: 0.85rem;
-    color: #ffeecf;
+    color: var(--white);
     font-weight: 600;
 }
 
 .comentarioAvatar {
     border-radius: 50%;
-    border: 2px solid #ff5050;
+    border: 2px solid var(--primary);
 }
 
 .comentarioAvatarPlaceholder {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #ff5050;
-    color: #ffeecf;
+    background: var(--primary);
+    color: var(--white);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -327,26 +312,23 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    background: var(--primary);
     border-radius: 16px;
     padding: 1rem 1.5rem;
     min-width: 80px;
-    border: 2px solid rgba(255, 238, 207, 0.2);
-    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.3);
 }
 
 .votosCount {
     display: block;
     font-size: 2.5rem;
     font-weight: 900;
-    color: #ffeecf;
+    color: var(--white);
     line-height: 1;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .votosLabel {
     font-size: 0.75rem;
-    color: #ffeecf;
+    color: var(--white);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -362,10 +344,10 @@
 }
 
 .btnToggleVotantes {
-    background: #3e3e3c;
-    color: #ffeecf;
-    border: 2px solid #5b5b5b;
+    background: var(--dark);
+    color: var(--white);
     padding: 0.75rem 1.25rem;
+    border: none;
     border-radius: 12px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -375,13 +357,10 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .btnToggleVotantes:hover {
-    background: #5b5b5b;
-    border-color: #ff5050;
-    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.3);
+    background: var(--primary);
 }
 
 .votantesContainer {
@@ -449,15 +428,14 @@
 
 .avatar {
     border-radius: 50%;
-    border: 3px solid #ff5050;
-    box-shadow: 0 3px 10px rgba(255, 80, 80, 0.4);
+    border: 3px solid var(--primary);
 }
 
 .avatarPlaceholder {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    background: var(--primary);
     color: #ffeecf;
     display: flex;
     align-items: center;
@@ -478,29 +456,25 @@
 }
 
 .btnPrimary {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
-    color: #ffeecf;
-    border: 2px solid rgba(255, 238, 207, 0.3);
-    padding: 1.2rem 2.5rem;
+    background: var(--primary);
+    color: var(--white);
+    padding: 1rem 2rem;
+    border: none;
     border-radius: 16px;
     font-size: 1.15rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.4);
     transition: all 0.3s ease;
     text-transform: none;
 }
 
 .btnPrimary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(255, 80, 80, 0.5);
-    background: linear-gradient(135deg, #ff6b6b 0%, #ff8585 100%);
-    border-color: rgba(255, 238, 207, 0.5);
 }
 
 .btnSecondary {
     background: #3e3e3c;
-    color: #ffeecf;
+    color: var(--white);
     border: 2px solid #5b5b5b;
     padding: 1.2rem 2.5rem;
     border-radius: 16px;
@@ -508,12 +482,8 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btnSecondary:hover {
-    background: #5b5b5b;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-    border-color: #969696;
 }

@@ -393,7 +393,11 @@ export default function SearchBar({ showSearchField = true, showSelectors = true
                                     style={{ backgroundColor: getSelectedFriendColor() }}
                                 />
                             )}
-                            <span className={styles.select__text}>{selectedFriend}</span>
+                            <span
+                                className={`${styles.select__text} ${selectedFriend === 'Tus Gustos' ? styles.tus_gustos_text : ''}`}
+                            >
+                                {selectedFriend}
+                            </span>
                         </div>
                         <FontAwesomeIcon
                             icon={friendsOpen ? faChevronUp : faChevronDown}

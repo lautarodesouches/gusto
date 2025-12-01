@@ -35,7 +35,7 @@ function ReviewCard({ review, showImages = true, isLocal = false }: ReviewCardPr
     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
   ]
 
-  return `Escrita el ${date.getDate()} de ${months[date.getMonth()]} ${date.getFullYear()}`
+  return `Visitó el local el día ${date.getDate()} de ${months[date.getMonth()]} ${date.getFullYear()}`
 }
 
 

@@ -74,7 +74,7 @@
 }
 
 .btnPrimary {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    background: var(--primary);
     color: #ffeecf;
     border: 2px solid rgba(255, 238, 207, 0.3);
     padding: 1rem 2rem;
@@ -137,7 +137,7 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    background: var(--primary);
     color: #ffeecf;
     display: flex;
     align-items: center;
@@ -160,7 +160,7 @@
 }
 
 .adminBadge {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    background: var(--primary);
     color: #ffeecf;
     padding: 0.25rem 0.75rem;
     border-radius: 8px;

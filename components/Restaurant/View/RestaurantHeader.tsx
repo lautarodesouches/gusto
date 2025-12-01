@@ -26,7 +26,7 @@ export default function RestaurantHeader({
             <div className={styles.top__thumnailcontainer}>
                 <Image
                     src={getSafeImageUrl(
-                        restaurant.esDeLaApp 
+                        restaurant.esDeLaApp
                             ? (restaurant.logoUrl || restaurant.imagenUrl)
                             : restaurant.imagenUrl,
                         `/images/restaurant/logo.png`
@@ -43,7 +43,25 @@ export default function RestaurantHeader({
             </div>
             <div className={styles.top__info}>
                 <h2 className={styles.top__title}>
-                    {restaurant.nombre}
+                    <div className={styles.top__titleWrapper}>
+                        {restaurant.nombre}
+                        <div className={styles.top__sourceIcon}>
+                            <Image
+                                src={
+                                    restaurant.esDeLaApp
+                                        ? '/images/brand/gusto-small-negative.svg'
+                                        : '/images/all/google.svg'
+                                }
+                                alt={
+                                    restaurant.esDeLaApp
+                                        ? 'Gusto'
+                                        : 'Google'
+                                }
+                                width={16}
+                                height={16}
+                            />
+                        </div>
+                    </div>
                 </h2>
                 <div className={styles.top__rating}>
                     <span className={styles.top__number}>

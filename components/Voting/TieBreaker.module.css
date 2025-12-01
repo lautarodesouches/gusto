@@ -8,14 +8,14 @@
 .title {
     font-size: 2.2rem;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    background: var(--primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .subtitle {
-    color: #666;
+    color: var(--light);
     margin-bottom: 2rem;
     font-size: 1.1rem;
 }
@@ -51,17 +51,15 @@
 .opcion.activo {
     opacity: 1;
     transform: scale(1.05);
-    box-shadow: 0 12px 24px rgba(255, 107, 107, 0.3);
-    border: 3px solid #FF6B6B;
+    border: 3px solid var(--primary);
     background: linear-gradient(to right, #FFF5F5, white);
 }
 
 .opcion.ganador {
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    background: var(--primary);
     color: white;
     transform: scale(1.1);
     animation: pulse 0.6s ease-in-out infinite;
-    box-shadow: 0 15px 35px rgba(255, 107, 107, 0.5);
 }
 
 @keyframes pulse {
@@ -121,7 +119,7 @@
 }
 
 .btnGirar {
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    background: var(--primary);
     color: white;
     border: none;
     padding: 1.5rem 4rem;
@@ -129,18 +127,16 @@
     font-size: 1.4rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
     transition: all 0.3s ease;
 }
 
 .btnGirar:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.5);
 }
 
 .mensaje {
     font-size: 1.2rem;
-    color: #667eea;
+    color: var(--light);
     font-weight: 600;
     animation: blink 1s infinite;
 }
@@ -155,7 +151,7 @@
 }
 
 .resultado {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--primary);
     color: white;
     padding: 2rem;
     border-radius: 16px;
@@ -181,4 +177,80 @@
 .resultado p {
     font-size: 1.3rem;
     font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .title {
+        font-size: 1.8rem;
+    }
+
+    .ruleta {
+        padding: 1.5rem;
+    }
+
+    .opcion {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .emoji {
+        font-size: 2.5rem;
+    }
+
+    .nombre {
+        font-size: 1.1rem;
+    }
+
+    .btnGirar {
+        padding: 1.2rem 3rem;
+        font-size: 1.2rem;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .ruleta {
+        padding: 1rem;
+    }
+
+    .opcion {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .nombre {
+        text-align: center;
+    }
+
+    .direccion {
+        text-align: center;
+        font-size: 0.85rem;
+    }
+
+    .emoji {
+        font-size: 2rem;
+    }
+
+    .opcion.activo .emoji {
+        transform: rotate(360deg) scale(1.1);
+    }
+
+    .btnGirar {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
 }

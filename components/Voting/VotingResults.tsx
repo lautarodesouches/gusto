@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { ResultadoVotacion } from '@/types'
 import TieBreaker from '@/components/Voting/TieBreaker'
 import styles from './VotingResults.module.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChartBar, faLocationDot } from '@fortawesome/free-solid-svg-icons'
 
 interface VotingResultsProps {
     resultado: ResultadoVotacion
@@ -35,7 +37,7 @@ export default function VotingResults({
         (a, b) => b.cantidadVotos - a.cantidadVotos
     )
 
-    
+
     const ganador = resultado.ganadorId
         ? resultado.restaurantesVotados.find((r: ResultadoVotacion['restaurantesVotados'][0]) => r.restauranteId === resultado.ganadorId)
         : null
@@ -52,7 +54,7 @@ export default function VotingResults({
         try {
             // Cerrar la ruleta inmediatamente para evitar que se muestre de nuevo
             setMostrarRuleta(false)
-            
+
             const res = await fetch(`/api/votacion/${resultado.votacionId}/seleccionar-ganador`, {
                 method: 'POST',
                 headers: {
@@ -109,10 +111,12 @@ export default function VotingResults({
                 <h2>Resultados de la Votación</h2>
                 <div className={styles.stats}>
                     <span className={styles.stat}>
-                        📊 {resultado.totalVotos} votos
+                        <FontAwesomeIcon icon={faChartBar} />
+                        {resultado.totalVotos} votos
                     </span>
                     <span className={styles.stat}>
-                        👥 {resultado.miembrosActivos} miembros activos
+                        <FontAwesomeIcon icon={faLocationDot} />
+                        {resultado.miembrosActivos} miembros activos
                     </span>
                 </div>
             </div>
@@ -120,17 +124,17 @@ export default function VotingResults({
             {/* Estado */}
             {!resultado.todosVotaron && !ganador && (
                 <div className={styles.waiting}>
-                    ⏳ Esperando a que todos los miembros voten...
+                    Esperando a que todos los miembros voten...
                 </div>
             )}
 
             {/* Mostrar ganador si existe (independiente de si todos votaron) */}
             {ganador ? (
                 <div className={styles.ganador}>
-                    <h3>🏆 ¡Ganador!</h3>
+                    <h3>¡Ganador!</h3>
                     {resultado.hayEmpate && (
                         <p className={styles.ruletaNote}>
-                            ✨ Seleccionado por ruleta - Resultado final
+                            Seleccionado por ruleta - Resultado final
                         </p>
                     )}
                     <div className={styles.ganadorCard}>
@@ -138,7 +142,7 @@ export default function VotingResults({
                             <h4>{ganador.restauranteNombre}</h4>
                             <p>{ganador.restauranteDireccion}</p>
                             <span className={styles.votosGanador}>
-                                ❤️ {ganador.cantidadVotos}{' '}
+                                {ganador.cantidadVotos}{' '}
                                 {ganador.cantidadVotos === 1 ? 'voto' : 'votos'}
                             </span>
                         </div>
@@ -148,19 +152,20 @@ export default function VotingResults({
                             rel="noopener noreferrer"
                             className={styles.btnDirecciones}
                         >
-                            📍 Cómo llegar
+                            <FontAwesomeIcon icon={faLocationDot} />
+                            Cómo llegar
                         </a>
                     </div>
                 </div>
             ) : resultado.hayEmpate && resultado.todosVotaron && !resultado.ganadorId && !mostrarRuleta ? (
                 <div className={styles.empate}>
-                    <h3>🎲 ¡Hay un empate!</h3>
+                    <h3>¡Hay un empate!</h3>
                     <p>
                         {resultado.restaurantesEmpatados.length} restaurantes
                         empatados
                     </p>
                     <p className={styles.ruletaInstruccion}>
-                        {esAdministrador 
+                        {esAdministrador
                             ? 'Puedes girar la ruleta para decidir el ganador'
                             : 'Un administrador puede girar la ruleta para decidir el ganador'}
                     </p>
@@ -184,7 +189,7 @@ export default function VotingResults({
                             <div>
                                 <h4>{restaurante.restauranteNombre}</h4>
                                 <p>{restaurante.restauranteDireccion}</p>
-                                
+
                                 {/* Comentarios visibles */}
                                 {restaurante.votantes.some((v: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => v.comentario) && (
                                     <div className={styles.comentarios}>
@@ -278,7 +283,7 @@ export default function VotingResults({
                         }}
                         className={resultado.ganadorId ? styles.btnPrimary : styles.btnSecondary}
                     >
-                        {resultado.ganadorId ? '🎉 Confirmar Ganador y Cerrar Votación' : 'Cerrar Votación'}
+                        {resultado.ganadorId ? 'Confirmar Ganador y Cerrar Votación' : 'Cerrar Votación'}
                     </button>
                 </div>
             ) : (
