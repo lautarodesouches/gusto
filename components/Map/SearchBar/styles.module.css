@@ -181,17 +181,17 @@
 /* Select personalizado */
 .select {
     position: relative;
-    min-width: 3.5rem;
-    width: 3.5rem;
-    max-width: 3.5rem;
+    min-width: auto;
+    width: auto;
+    max-width: none;
     flex-shrink: 0;
 }
 
 .select_friends {
     position: relative;
-    min-width: 3.5rem;
-    width: 3.5rem;
-    max-width: 3.5rem;
+    min-width: auto;
+    width: auto;
+    max-width: none;
     flex-shrink: 0;
 }
 
@@ -203,14 +203,13 @@
     background-color: var(--background);
     border: 1px solid var(--grey);
     border-radius: 3rem;
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
     min-height: 3.5rem;
-    height: 3.5rem;
-    max-height: 3.5rem;
+    height: auto;
+    max-height: none;
     width: 100%;
     cursor: pointer;
     transition: all 0.2s ease;
-    aspect-ratio: 1;
 }
 
 .select__button:hover {
@@ -287,7 +286,11 @@
 }
 
 .select_friends .select__friend_display .select__text {
-    display: none;
+    display: block;
+}
+
+.tus_gustos_text {
+    display: none !important;
 }
 
 /* Avatar del amigo (cuadrado de color o icono) */
@@ -412,6 +415,10 @@
 
     .select_friends .select__friend_display .select__text {
         display: block;
+    }
+
+    .tus_gustos_text {
+        display: block !important;
     }
 
     .select__friend_display {
