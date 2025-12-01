@@ -21,15 +21,25 @@ export interface Voto {
 
 export interface VotanteInfo {
     usuarioId: string
+    firebaseUid?: string // Firebase UID del usuario (camelCase)
+    FirebaseUid?: string // Firebase UID del usuario (PascalCase - como el backend lo envía)
     usuarioNombre: string
     usuarioFoto?: string
     comentario?: string
+}
+
+export interface RestauranteCandidato {
+    restauranteId: string
+    nombre: string
+    direccion: string
+    imagenUrl?: string
 }
 
 export interface RestauranteVotado {
     restauranteId: string
     restauranteNombre: string
     restauranteDireccion: string
+    restauranteImagenUrl?: string // Incluido en RestauranteVotadoDto del backend
     cantidadVotos: number
     votantes: VotanteInfo[]
 }
@@ -45,13 +55,26 @@ export interface ResultadoVotacion {
     hayEmpate: boolean
     restaurantesEmpatados: string[]
     restaurantesVotados: RestauranteVotado[]
+    // Nuevos campos de la respuesta del GET /Votacion/grupo/{grupoId}/activa
+    restaurantesCandidatos?: RestauranteCandidato[]
+    fechaInicio?: string
+    fechaCierre?: string | null
 }
 
 export interface IniciarVotacionRequest {
     grupoId: string
+    restaurantesCandidatos: string[] // IDs de restaurantes
+    descripcion?: string // Opcional según el backend
 }
 
 export interface RegistrarVotoRequest {
     restauranteId: string
     comentario?: string
+}
+
+// Respuesta del GET /Votacion/grupo/{grupoId}/activa
+export interface VotacionActivaResponse {
+    hayVotacionActiva: boolean
+    soyAdministrador: boolean
+    votacion: ResultadoVotacion | null
 }

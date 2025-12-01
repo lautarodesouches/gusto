@@ -107,6 +107,11 @@ export default function GroupMap({ members, onRestaurantsChange }: GroupMapProps
 
                 const newRestaurants = result.data?.recomendaciones || []
 
+                // Si no se encontraron restaurantes, mostrar mensaje informativo en lugar de error
+                if (result.error === 'NO_RESTAURANTES_ENCONTRADOS' && newRestaurants.length === 0) {
+                    toast.info('No se encontraron restaurantes en esta zona. Intenta ajustar tu búsqueda o cambiar la ubicación del mapa.', 5000)
+                }
+
                 setState(prev => ({
                     ...prev,
                     restaurants: newRestaurants,
@@ -119,8 +124,12 @@ export default function GroupMap({ members, onRestaurantsChange }: GroupMapProps
                 }
 
                 setShouldSearchButton(false)
-            } catch {
-                toast.error('Error al cargar restaurantes del grupo')
+            } catch (err) {
+                // Solo mostrar error si es un error real, no cuando no se encontraron restaurantes
+                const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+                if (!errorMessage.includes('NO_RESTAURANTES_ENCONTRADOS')) {
+                    toast.error('Error al cargar restaurantes del grupo')
+                }
                 setState(prev => ({
                     ...prev,
                     restaurants: [],

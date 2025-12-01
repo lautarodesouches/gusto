@@ -132,37 +132,9 @@ export const getAllUniqueReviews = (restaurant: Restaurant, reviews: Review[]): 
     )
 }
 
-/**
- * Calcula el rating promedio combinado de todas las reviews (locales + Google)
- * @returns El rating promedio (0-5) o null si no hay reviews
- */
-export const calculateAverageRating = (restaurant: Restaurant, reviews: Review[]): number | null => {
-    const uniqueReviews = getAllUniqueReviews(restaurant, reviews)
-    
-    if (uniqueReviews.length === 0) {
-        return null
-    }
-
-    let totalRating = 0
-    let validRatingsCount = 0
-
-    uniqueReviews.forEach(review => {
-        const rating = review.rating ?? review.valoracion ?? null
-        
-        if (rating !== null && rating !== undefined && !isNaN(rating) && rating >= 0 && rating <= 5) {
-            totalRating += rating
-            validRatingsCount++
-        }
-    })
-
-    if (validRatingsCount === 0) {
-        return null
-    }
-
-    const average = totalRating / validRatingsCount
-    // Redondear a 1 decimal
-    return Math.round(average * 10) / 10
-}
+// La función calculateAverageRating fue eliminada
+// El rating ahora se calcula en el backend (RatingCalculado)
+// usando AutoMapper que combina reviews locales + Google
 
 export const getRatingDistribution = (restaurant: Restaurant, reviews: Review[]): RatingDistribution => {
     const distribution = {

@@ -83,8 +83,8 @@
 
 .restaurantGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
@@ -95,7 +95,10 @@
     cursor: pointer;
     transition: all 0.3s ease;
     background: #3e3e3c;
-    min-height: 100px;
+    height: 100%;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -122,8 +125,19 @@
     background: linear-gradient(180deg, #ff5050 0%, #ffeecf 100%);
 }
 
+.restaurantImage {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    background: #2d2d2b;
+}
+
 .info {
     padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .info h4 {
@@ -507,4 +521,71 @@
 
 .votacionInfo strong {
     color: var(--primary);
+}
+
+/* Mensaje de voto del usuario */
+.votoInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(76, 175, 80, 0.15);
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    color: #ffeecf;
+    font-size: 0.95rem;
+}
+
+.votoInfo svg {
+    flex-shrink: 0;
+    color: #4caf50;
+    stroke-width: 3;
+}
+
+.votoInfo strong {
+    color: #4caf50;
+    font-weight: 700;
+}
+
+/* Estilo para la tarjeta del restaurante al que votó */
+.restaurantCard.voted {
+    border-color: #4caf50;
+    background: rgba(76, 175, 80, 0.05);
+    position: relative;
+}
+
+.restaurantCard.voted::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.restaurantCard.voted:hover {
+    border-color: #4caf50;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.restaurantCard.voted {
+    cursor: default;
+}
+
+/* Badge de "Tu voto" */
+.votedBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    color: #ffeecf;
+    padding: 0.35rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 2px solid rgba(255, 238, 207, 0.2);
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+    white-space: nowrap;
 }

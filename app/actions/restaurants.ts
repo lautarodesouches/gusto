@@ -132,6 +132,31 @@ export async function getGroupRestaurants(
 
         if (!res.ok) {
             const text = await res.text().catch(() => '')
+            
+            // Si es 404 y el mensaje indica que no se encontraron restaurantes, devolver código especial
+            if (res.status === 404) {
+                try {
+                    const errorData = JSON.parse(text)
+                    const message = errorData.message || errorData.error || text
+                    const messageLower = message.toLowerCase()
+                    
+                    // Detectar si es porque no se encontraron restaurantes (no es un error real)
+                    if (
+                        messageLower.includes('no se encontraron restaurantes') ||
+                        messageLower.includes('no tiene gustos validos') ||
+                        messageLower.includes('gustos del usuario')
+                    ) {
+                        return {
+                            success: true,
+                            data: { recomendaciones: [] },
+                            error: 'NO_RESTAURANTES_ENCONTRADOS', // Código especial para manejar en el frontend
+                        }
+                    }
+                } catch {
+                    // Si no se puede parsear, tratar como error normal
+                }
+            }
+            
             console.error('Error al traer restaurantes del grupo:', text)
             return {
                 success: false,
