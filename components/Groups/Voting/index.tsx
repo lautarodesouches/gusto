@@ -137,6 +137,7 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
     // Conectar SignalR
     const { isConnected, error: signalRError, connection } = useVotingSignalR({
         grupoId: groupId,
+        currentUserId: auth.user?.uid, // Pasar el Firebase UID del usuario actual
         onResultadosActualizados: fetchResultados,
         onVotacionIniciada: fetchVotacionActiva, // Recargar votación activa cuando se inicia
     })
