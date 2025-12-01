@@ -4,13 +4,29 @@ import { useEffect, useRef, useCallback } from 'react'
 import { API_URL } from '@/constants'
 import { useSignalRConnection } from './useSignalRConnection'
 
-interface UseVotingSignalROptions {
-    grupoId: string
-    onResultadosActualizados: (votacionId: string) => Promise<void>
-    onVotacionIniciada?: () => Promise<boolean> // Para recargar la votación activa completa, retorna true si encontró votación
+interface VotoRegistradoData {
+    votacionId: string
+    usuarioId?: string // GUID de BD (camelCase)
+    UsuarioId?: string // GUID de BD (PascalCase - como el backend lo envía)
+    usuarioNombre?: string
+    usuarioFoto?: string
+    usuarioFirebaseUid?: string // Firebase UID del usuario que votó (camelCase)
+    UsuarioFirebaseUid?: string // Firebase UID del usuario que votó (PascalCase)
+    restauranteId?: string
+    restauranteNombre?: string
+    restauranteImagen?: string
+    esActualizacion?: boolean
 }
 
-export function useVotingSignalR({ grupoId, onResultadosActualizados, onVotacionIniciada }: UseVotingSignalROptions) {
+interface UseVotingSignalROptions {
+    grupoId: string
+    currentUserId?: string // Firebase UID del usuario actual para comparar con iniciadoPor
+    onResultadosActualizados: (votacionId: string) => Promise<void>
+    onVotacionIniciada?: () => Promise<boolean> // Para recargar la votación activa completa, retorna true si encontró votación
+    onVotoRegistrado?: (data: VotoRegistradoData) => void // Callback opcional para mostrar toast cuando alguien vota
+}
+
+export function useVotingSignalR({ grupoId, currentUserId, onResultadosActualizados, onVotacionIniciada, onVotoRegistrado }: UseVotingSignalROptions) {
     
     // 🔥 Prevenir loops infinitos y spam de eventos
     const lastUpdateRef = useRef<number>(0)
@@ -110,9 +126,23 @@ export function useVotingSignalR({ grupoId, onResultadosActualizados, onVotacion
         if (!connection || !isConnected) return
 
         // Suscribirse a eventos (con debounce y protección contra loops)
-        connection.on('VotacionIniciada', async (data: { votacionId: string }) => {
+        connection.on('VotacionIniciada', async (data: { 
+            votacionId: string
+            grupoId?: string
+            descripcion?: string
+            fechaInicio?: string
+            iniciadoPor?: string // Firebase UID del usuario que inició la votación
+        }) => {
                     console.log('[SignalR] VotacionIniciada recibido:', data)
                     
+                    // Si el usuario actual es el que inició la votación, ignorar el evento
+                    // porque ya recargó la votación activa después de iniciarla
+                    if (currentUserId && data.iniciadoPor === currentUserId) {
+                        console.log('[SignalR] Votación iniciada por el usuario actual, ignorando evento')
+                        return
+                    }
+                    
+                    // Si no es el admin, cargar la votación activa para que vea la nueva votación
                     // 🔥 Para VotacionIniciada, esperar un poco para que el backend termine de guardar
                     // El backend puede tardar unos milisegundos en persistir la votación
                     if (onVotacionIniciada) {
@@ -164,8 +194,17 @@ export function useVotingSignalR({ grupoId, onResultadosActualizados, onVotacion
                     }
                 })
 
-        connection.on('VotoRegistrado', (data: { votacionId: string }) => {
+        connection.on('VotoRegistrado', (data: VotoRegistradoData) => {
             console.log('[SignalR] VotoRegistrado:', data)
+            
+            // Si el callback está definido, mostrar toast con la información del voto
+            // Nota: El backend envía usuarioId como GUID de BD, no Firebase UID
+            // Por ahora mostramos el toast a todos excepto si podemos identificar al usuario actual
+            if (onVotoRegistrado) {
+                onVotoRegistrado(data)
+            }
+            
+            // Cargar resultados actualizados
             loadResultados(data.votacionId)
         })
 
@@ -208,7 +247,7 @@ export function useVotingSignalR({ grupoId, onResultadosActualizados, onVotacion
                 connection.off('VotacionCerrada')
             }
         }
-    }, [connection, isConnected, onVotacionIniciada, loadResultados, loadVotacionActiva])
+    }, [connection, isConnected, currentUserId, onVotacionIniciada, onVotoRegistrado, loadResultados, loadVotacionActiva])
 
     return {
         connection,

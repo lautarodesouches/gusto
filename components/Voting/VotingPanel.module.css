@@ -215,6 +215,29 @@
     padding-top: 1.5rem;
 }
 
+.changeVoteNote {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 193, 7, 0.15);
+    border: 2px solid rgba(255, 193, 7, 0.4);
+    border-radius: 12px;
+    padding: 0.875rem 1rem;
+    margin-bottom: 1rem;
+    color: #ffeecf;
+    font-size: 0.9rem;
+}
+
+.changeVoteNote svg {
+    flex-shrink: 0;
+    color: #ffc107;
+}
+
+.changeVoteNote strong {
+    color: #ffc107;
+    font-weight: 700;
+}
+
 .textarea {
     width: 100%;
     min-height: 80px;
