@@ -28,15 +28,8 @@ export default function VotingResults({
         }))
     }
 
-    useEffect(() => {
-        if (!onActualizarResultados) return
-
-        const interval = setInterval(() => {
-            onActualizarResultados()
-        }, 3000)
-
-        return () => clearInterval(interval)
-    }, [onActualizarResultados])
+    // El polling fue eliminado - SignalR actualiza automáticamente
+    // onActualizarResultados solo se usa para actualizaciones manuales si es necesario
 
     const restaurantesOrdenados = [...resultado.restaurantesVotados].sort(
         (a, b) => b.cantidadVotos - a.cantidadVotos
@@ -47,8 +40,19 @@ export default function VotingResults({
         ? resultado.restaurantesVotados.find((r: ResultadoVotacion['restaurantesVotados'][0]) => r.restauranteId === resultado.ganadorId)
         : null
 
+    // 🔥 Resetear mostrarRuleta cuando hay ganador (evita que SignalR recargue y vuelva a mostrar la ruleta)
+    useEffect(() => {
+        if (ganador && mostrarRuleta) {
+            console.log('[VotingResults] Ganador detectado, cerrando ruleta')
+            setMostrarRuleta(false)
+        }
+    }, [ganador, mostrarRuleta])
+
     const handleGanadorRuleta = async (restauranteId: string) => {
         try {
+            // Cerrar la ruleta inmediatamente para evitar que se muestre de nuevo
+            setMostrarRuleta(false)
+            
             const res = await fetch(`/api/votacion/${resultado.votacionId}/seleccionar-ganador`, {
                 method: 'POST',
                 headers: {
@@ -58,23 +62,23 @@ export default function VotingResults({
             })
 
             if (res.ok) {
-                setMostrarRuleta(false)
-                if (onActualizarResultados) {
-                    onActualizarResultados()
-                }
+                // ✅ SignalR enviará "GanadorSeleccionado" y actualizará automáticamente
+                // No hace falta llamar onActualizarResultados manualmente
+                console.log('[VotingResults] Ganador seleccionado, esperando actualización de SignalR')
             } else {
                 const errorData = await res.json()
                 console.error('Error al seleccionar ganador:', errorData)
-                if (res.status === 400 || res.status === 409) {
-                    setMostrarRuleta(false)
-                    if (onActualizarResultados) {
-                        onActualizarResultados()
-                    }
+                // Si hay error, SignalR no actualizará, así que recargar manualmente
+                if (onActualizarResultados) {
+                    onActualizarResultados()
                 }
             }
         } catch (error) {
             console.error('Error al seleccionar ganador:', error)
-            setMostrarRuleta(false)
+            // En caso de error, recargar manualmente
+            if (onActualizarResultados) {
+                onActualizarResultados()
+            }
         }
     }
 
@@ -148,7 +152,7 @@ export default function VotingResults({
                         </a>
                     </div>
                 </div>
-            ) : resultado.hayEmpate && resultado.todosVotaron && !resultado.ganadorId ? (
+            ) : resultado.hayEmpate && resultado.todosVotaron && !resultado.ganadorId && !mostrarRuleta ? (
                 <div className={styles.empate}>
                     <h3>🎲 ¡Hay un empate!</h3>
                     <p>
@@ -156,14 +160,18 @@ export default function VotingResults({
                         empatados
                     </p>
                     <p className={styles.ruletaInstruccion}>
-                        Un miembro puede girar la ruleta para decidir el ganador
+                        {esAdministrador 
+                            ? 'Puedes girar la ruleta para decidir el ganador'
+                            : 'Un administrador puede girar la ruleta para decidir el ganador'}
                     </p>
-                    <button
-                        onClick={() => setMostrarRuleta(true)}
-                        className={styles.btnRuleta}
-                    >
-                        Resolver con Ruleta
-                    </button>
+                    {esAdministrador && (
+                        <button
+                            onClick={() => setMostrarRuleta(true)}
+                            className={styles.btnRuleta}
+                        >
+                            Resolver con Ruleta
+                        </button>
+                    )}
                 </div>
             ) : null}
 

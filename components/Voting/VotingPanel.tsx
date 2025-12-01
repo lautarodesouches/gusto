@@ -1,38 +1,110 @@
 'use client'
 
-import { useState } from 'react'
-import { Restaurant, ResultadoVotacion } from '@/types'
+import { useState, useMemo } from 'react'
+import { ResultadoVotacion, RestauranteCandidato, Restaurant, VotanteInfo } from '@/types'
+import { useToast } from '@/context/ToastContext'
+import { useAuth } from '@/context/AuthContext'
 import styles from './VotingPanel.module.css'
+
+// Tipo extendido para VotanteInfo que incluye FirebaseUid en PascalCase
+type VotanteInfoConFirebase = VotanteInfo & {
+    FirebaseUid?: string
+}
 
 interface VotingPanelProps {
     grupoId: string
-    restaurantes: Restaurant[]
+    restaurantesCandidatos: RestauranteCandidato[]
     votacionActual?: ResultadoVotacion
     onVotar: () => void
+    soyAdministrador?: boolean
+    restaurantesDelMapa?: Restaurant[] // Para pasar al iniciar votación
 }
 
 export default function VotingPanel({
     grupoId,
-    restaurantes,
+    restaurantesCandidatos,
     votacionActual,
     onVotar,
+    soyAdministrador = false,
+    restaurantesDelMapa = [],
 }: VotingPanelProps) {
+    const toast = useToast()
+    const auth = useAuth()
     const [restauranteSeleccionado, setRestauranteSeleccionado] = useState<string>('')
     const [comentario, setComentario] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
-    const [showNoRestaurantsModal, setShowNoRestaurantsModal] = useState(false)
+
+    // Verificar si el usuario actual ya votó y a qué restaurante
+    // Usar useMemo para recalcular cuando cambie votacionActual o auth.user
+    const { miVoto, restauranteVotado } = useMemo(() => {
+        if (!votacionActual || !auth.user?.uid) {
+            return { miVoto: null, restauranteVotado: null }
+        }
+
+        // Buscar en qué restaurante votó el usuario actual
+        // El backend envía FirebaseUid en PascalCase en VotanteInfo
+        const miFirebaseUid = auth.user?.uid
+        const votoEncontrado = votacionActual.restaurantesVotados.find((r: ResultadoVotacion['restaurantesVotados'][0]) =>
+            r.votantes.some((v: VotanteInfoConFirebase) => {
+                // El backend envía FirebaseUid en PascalCase (como el backend recomendó)
+                const votanteFirebaseUid = v.FirebaseUid || v.firebaseUid
+                const coincide = votanteFirebaseUid === miFirebaseUid
+                
+                // Debug para ver qué está pasando
+                if (miFirebaseUid) {
+                    console.log('[VotingPanel] Comparando voto:', {
+                        votanteFirebaseUid,
+                        miFirebaseUid,
+                        coincide,
+                        restauranteId: r.restauranteId,
+                        tieneFirebaseUid: !!v.FirebaseUid,
+                        tieneFirebaseUidCamel: !!v.firebaseUid
+                    })
+                }
+                
+                return coincide
+            })
+        )
+        
+        const restaurante = votoEncontrado 
+            ? restaurantesCandidatos.find(c => c.restauranteId === votoEncontrado.restauranteId) 
+            : null
+
+        // Debug: loggear el estado del voto
+        console.log('[VotingPanel] Estado del voto (useMemo):', {
+            hayVotacion: !!votacionActual,
+            miUid: auth.user.uid,
+            restaurantesVotados: votacionActual.restaurantesVotados.map(r => ({
+                restauranteId: r.restauranteId,
+                votantes: r.votantes.map((v: VotanteInfoConFirebase) => ({ 
+                    usuarioId: v.usuarioId, 
+                    nombre: v.usuarioNombre,
+                    firebaseUid: v.FirebaseUid || v.firebaseUid || 'NO_ENCONTRADO'
+                }))
+            })),
+            votoEncontrado: votoEncontrado ? votoEncontrado.restauranteId : null,
+            restaurante: restaurante?.nombre || null,
+            votoEncontrado_bool: !!votoEncontrado
+        })
+
+        return { miVoto: votoEncontrado, restauranteVotado: restaurante }
+    }, [votacionActual, auth.user?.uid, restaurantesCandidatos])
 
     const iniciarVotacion = async () => {
-        // Validar que haya restaurantes seleccionados
-        if (!restaurantes || restaurantes.length === 0) {
-            setShowNoRestaurantsModal(true)
+        // Validar que haya restaurantes del mapa para usar como candidatos
+        if (!restaurantesDelMapa || restaurantesDelMapa.length === 0) {
+            setError('Primero debes buscar restaurantes en el mapa')
+            toast.error('No hay restaurantes seleccionados. Ve al mapa y busca restaurantes.')
             return
         }
 
         try {
             setLoading(true)
             setError('')
+
+            // Extraer solo los IDs de los restaurantes visibles en el mapa
+            const restaurantesCandidatos = restaurantesDelMapa.map(r => r.id)
 
             const res = await fetch('/api/votacion/iniciar', {
                 method: 'POST',
@@ -41,6 +113,8 @@ export default function VotingPanel({
                 },
                 body: JSON.stringify({
                     grupoId,
+                    restaurantesCandidatos,
+                    // descripcion no se envía (opcional, el backend lo maneja como null)
                 }),
             })
 
@@ -62,10 +136,23 @@ export default function VotingPanel({
                 throw new Error(errorData.message || 'Error al iniciar votación')
             }
 
-            onVotar()
+            // ✅ Solo verificamos 200 OK
+            // ✅ NO manejamos la respuesta (no contiene candidatos)
+            // ✅ SignalR enviará "votacionIniciada" y actualizará todo automáticamente
+            toast.success('¡Votación iniciada!')
+            
+            // 🔥 Recargar inmediatamente para mostrar la votación activa
+            // SignalR también actualizará cuando llegue el evento, pero esto da feedback inmediato
+            if (onVotar) {
+                // Pequeño delay para asegurar que el backend procesó la votación
+                setTimeout(() => {
+                    onVotar()
+                }, 300)
+            }
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error desconocido')
-            console.error('[VotingPanel] Error al iniciar votación:', err)
+            const message = err instanceof Error ? err.message : 'Error desconocido'
+            setError(message)
+            toast.error(message)
         } finally {
             setLoading(false)
         }
@@ -103,107 +190,83 @@ export default function VotingPanel({
                 throw new Error(errorData.message || 'Error al votar')
             }
 
+            toast.success('¡Voto registrado!')
             setRestauranteSeleccionado('')
             setComentario('')
-            onVotar()
+            // SignalR actualizará automáticamente, pero también recargamos para asegurar que se vea el cambio
+            // Pequeño delay para que el backend procese el voto
+            setTimeout(() => {
+                if (onVotar) {
+                    onVotar()
+                }
+            }, 500)
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error desconocido')
+            const message = err instanceof Error ? err.message : 'Error desconocido'
+            setError(message)
+            toast.error(message)
         } finally {
             setLoading(false)
         }
     }
 
+    // Si no hay votación activa, mostrar botón para iniciar
     if (!votacionActual) {
         return (
-            <>
-                {/* Modal de alerta - No hay restaurantes */}
-                {showNoRestaurantsModal && (
-                    <div className={styles.modalBackdrop} onClick={() => setShowNoRestaurantsModal(false)}>
-                        <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                            <div className={styles.modalIcon}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                                    <line x1="12" y1="9" x2="12" y2="13"/>
-                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                                </svg>
-                            </div>
-                            <h3 className={styles.modalTitle}>No hay restaurantes seleccionados</h3>
-                            <p className={styles.modalMessage}>
-                                Para iniciar una votación, primero debes buscar los restaurantes en el <strong>mapa</strong>.
-                            </p>
-                            <p className={styles.modalSteps}>
-                                1. Ve al <strong>mapa</strong><br/>
-                                2. Busca los restaurantes que quieras votar<br/>
-                                3. Vuelve aquí para iniciar la votación
-                            </p>
-                            <button 
-                                onClick={() => setShowNoRestaurantsModal(false)}
-                                className={styles.modalButton}
+            <div className={styles.container}>
+                <div className={styles.noVotacion}>
+                    <h3>No hay votación activa</h3>
+                    <p>Inicia una votación para que los miembros elijan el restaurante</p>
+                    
+                    {/* Nota informativa */}
+                    <div className={styles.infoNote}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <span>
+                            {restaurantesDelMapa.length > 0 
+                                ? `Hay ${restaurantesDelMapa.length} restaurante${restaurantesDelMapa.length > 1 ? 's' : ''} disponible${restaurantesDelMapa.length > 1 ? 's' : ''} del mapa para votar`
+                                : 'Ve al mapa y busca restaurantes antes de iniciar una votación'}
+                        </span>
+                    </div>
+
+                    {soyAdministrador && (
+                        <>
+                            <button
+                                onClick={iniciarVotacion}
+                                disabled={loading || restaurantesDelMapa.length === 0}
+                                className={styles.btnPrimary}
                             >
-                                Entendido
+                                {loading ? 'Iniciando...' : 'Iniciar Votación'}
                             </button>
-                        </div>
-                    </div>
-                )}
-
-                <div className={styles.container}>
-                    <div className={styles.noVotacion}>
-                        <h3>No hay votación activa</h3>
-                        <p>Inicia una votación para que los miembros elijan el restaurante</p>
-                        
-                        {/* Nota informativa */}
-                        <div className={styles.infoNote}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="10"/>
-                                <line x1="12" y1="16" x2="12" y2="12"/>
-                                <line x1="12" y1="8" x2="12.01" y2="8"/>
-                            </svg>
-                            <span>Recuerda buscar primero los restaurantes en el <strong>mapa</strong> antes de iniciar una votación</span>
-                        </div>
-
-                        <button
-                            onClick={iniciarVotacion}
-                            disabled={loading}
-                            className={styles.btnPrimary}
-                        >
-                            {loading ? 'Iniciando...' : 'Iniciar Votación'}
-                        </button>
-                        {error && <p className={styles.error}>{error}</p>}
-                    </div>
+                            {restaurantesDelMapa.length === 0 && (
+                                <p style={{ color: '#fbbf24', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+                                    ⚠️ No hay restaurantes en el mapa. Ve a la pestaña &quot;Mapa&quot; y busca restaurantes.
+                                </p>
+                            )}
+                        </>
+                    )}
+                    {!soyAdministrador && (
+                        <p style={{ color: '#999', marginTop: '1rem' }}>
+                            Solo el administrador puede iniciar una votación
+                        </p>
+                    )}
+                    {error && <p className={styles.error}>{error}</p>}
                 </div>
-            </>
+            </div>
         )
     }
 
-    // Si hay votación activa pero no hay restaurantes en el mapa
-    if (votacionActual && (!restaurantes || restaurantes.length === 0)) {
+    // Si no hay candidatos, mostrar mensaje
+    if (!restaurantesCandidatos || restaurantesCandidatos.length === 0) {
         return (
             <div className={styles.container}>
                 <div className={styles.noRestaurantsWarning}>
-                    <div className={styles.warningIcon}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                    </div>
-                    <h3 className={styles.warningTitle}>Votación activa sin restaurantes</h3>
+                    <h3 className={styles.warningTitle}>No hay restaurantes candidatos</h3>
                     <p className={styles.warningMessage}>
-                        Hay una votación en curso, pero no tienes restaurantes mostrados en el mapa.
+                        La votación está activa pero no hay restaurantes disponibles para votar.
                     </p>
-                    <div className={styles.warningSteps}>
-                        <p className={styles.stepsTitle}>Para participar en la votación:</p>
-                        <ol className={styles.stepsList}>
-                            <li>Ve a la pestaña <strong>Mapa</strong></li>
-                            <li>Busca los restaurantes que quieres que estén disponibles para votar</li>
-                            <li>Regresa a <strong>Votación</strong> para emitir tu voto</li>
-                        </ol>
-                    </div>
-                    <div className={styles.votacionInfo}>
-                        <p>
-                            <strong>Votos actuales:</strong> {votacionActual.totalVotos} / {votacionActual.miembrosActivos}
-                        </p>
-                    </div>
                 </div>
             </div>
         )
@@ -218,28 +281,67 @@ export default function VotingPanel({
                 </span>
             </div>
 
+            {/* Mostrar mensaje si el usuario ya votó */}
+            {restauranteVotado && (
+                <div className={styles.votoInfo}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    <span>Has votado a: <strong>{restauranteVotado.nombre}</strong></span>
+                </div>
+            )}
+
             <div className={styles.restaurantGrid}>
-                {restaurantes.slice(0, 10).map((restaurante) => {
+                {restaurantesCandidatos.map((candidato) => {
                     const votosRestaurante = votacionActual.restaurantesVotados.find(
-                        (r: ResultadoVotacion['restaurantesVotados'][0]) => r.restauranteId === restaurante.id
+                        (r: ResultadoVotacion['restaurantesVotados'][0]) => r.restauranteId === candidato.restauranteId
                     )
                     const cantidadVotos = votosRestaurante?.cantidadVotos || 0
                     const votantes = votosRestaurante?.votantes || []
                     const comentarios = votantes.filter((v: ResultadoVotacion['restaurantesVotados'][0]['votantes'][0]) => v.comentario)
 
+                    // Verificar si el usuario votó a este restaurante
+                    // Verificar tanto con miVoto como directamente en los votantes por si acaso
+                    const miFirebaseUid = auth.user?.uid
+                    const yoVoteAEste = miVoto?.restauranteId === candidato.restauranteId ||
+                        votosRestaurante?.votantes.some((v: VotanteInfoConFirebase) => {
+                            // El backend envía FirebaseUid en PascalCase (como el backend recomendó)
+                            const votanteFirebaseUid = v.FirebaseUid || v.firebaseUid
+                            return votanteFirebaseUid === miFirebaseUid
+                        }) || false
+
                     return (
                         <div
-                            key={restaurante.id}
+                            key={candidato.restauranteId}
                             className={`${styles.restaurantCard} ${
-                                restauranteSeleccionado === restaurante.id
+                                restauranteSeleccionado === candidato.restauranteId
                                     ? styles.selected
                                     : ''
-                            }`}
-                            onClick={() => setRestauranteSeleccionado(restaurante.id)}
+                            } ${yoVoteAEste ? styles.voted : ''}`}
+                            onClick={() => {
+                                // Si ya votó, no permitir cambiar el voto
+                                if (!yoVoteAEste) {
+                                    setRestauranteSeleccionado(candidato.restauranteId)
+                                }
+                            }}
                         >
+                            {candidato.imagenUrl && (
+                                <img 
+                                    src={candidato.imagenUrl} 
+                                    alt={candidato.nombre}
+                                    className={styles.restaurantImage}
+                                />
+                            )}
                             <div className={styles.info}>
-                                <h4>{restaurante.nombre}</h4>
-                                <p className={styles.address}>{restaurante.direccion}</p>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                    <h4>{candidato.nombre}</h4>
+                                    {yoVoteAEste && (
+                                        <span className={styles.votedBadge} title="Has votado a este restaurante">
+                                            ✓ Tu voto
+                                        </span>
+                                    )}
+                                </div>
+                                <p className={styles.address}>{candidato.direccion}</p>
                                 {cantidadVotos > 0 && (
                                     <span className={styles.votes}>
                                         ❤️ {cantidadVotos} {cantidadVotos === 1 ? 'voto' : 'votos'}
@@ -279,7 +381,8 @@ export default function VotingPanel({
                 })}
             </div>
 
-            {restauranteSeleccionado && (
+            {/* Solo mostrar sección de voto si el usuario no ha votado aún */}
+            {!restauranteVotado && restauranteSeleccionado && (
                 <div className={styles.voteSection}>
                     <textarea
                         value={comentario}

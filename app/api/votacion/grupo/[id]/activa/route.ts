@@ -31,13 +31,6 @@ export async function GET(
         })
         
         if (!response.ok) {
-            if (response.status === 404) {
-                return NextResponse.json(
-                    { message: 'No hay votación activa' },
-                    { status: 404 }
-                )
-            }
-            
             const errorText = await response.text()
             let errorData
             try {
@@ -48,6 +41,8 @@ export async function GET(
             return NextResponse.json(errorData, { status: response.status })
         }
 
+        // El backend siempre devuelve 200 OK con esta estructura:
+        // { hayVotacionActiva: boolean, soyAdministrador: boolean, votacion: ResultadoVotacion | null }
         const data = await response.json()
         return NextResponse.json(data)
     } catch (error) {

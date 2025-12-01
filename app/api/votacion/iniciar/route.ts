@@ -17,7 +17,15 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json()
-        const { grupoId } = body
+        const { grupoId, restaurantesCandidatos } = body
+
+        // Validar que vengan restaurantes candidatos
+        if (!restaurantesCandidatos || !Array.isArray(restaurantesCandidatos) || restaurantesCandidatos.length === 0) {
+            return NextResponse.json(
+                { message: 'Debe proporcionar al menos un restaurante candidato' },
+                { status: 400 }
+            )
+        }
 
         const backendUrl = `${API_URL}/Votacion/iniciar`
         
@@ -27,7 +35,10 @@ export async function POST(request: NextRequest) {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ grupoId }),
+            body: JSON.stringify({ 
+                grupoId,
+                restaurantesCandidatos,
+            }),
         })
         
         if (!response.ok) {

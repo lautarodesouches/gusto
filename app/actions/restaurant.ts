@@ -136,8 +136,9 @@ export async function getRestaurant(
                 console.warn('⚠️ Longitud inválida recibida del backend:', lng)
                 return 0
             })(),
-            rating: data.rating || data.Rating || data.valoracion || data.Valoracion || null,
-            valoracion: data.valoracion || data.Valoracion || data.rating || data.Rating || null,
+            // Usar RatingCalculado del backend (calculado automáticamente)
+            rating: data.ratingCalculado || data.RatingCalculado || data.rating || data.Rating || data.valoracion || data.Valoracion || null,
+            valoracion: data.valoracion || data.Valoracion || data.ratingCalculado || data.RatingCalculado || data.rating || data.Rating || null,
             googlePlaceId: data.googlePlaceId || data.GooglePlaceId || data.placeId || data.PlaceId || null,
             placeId: data.placeId || data.PlaceId || data.googlePlaceId || data.GooglePlaceId || null,
             tipo: data.tipo || data.Tipo || data.primaryType || data.PrimaryType || 'restaurant',

@@ -48,10 +48,12 @@ export type {
     Votacion,
     Voto,
     VotanteInfo,
+    RestauranteCandidato,
     RestauranteVotado,
     ResultadoVotacion,
     IniciarVotacionRequest,
-    RegistrarVotoRequest
+    RegistrarVotoRequest,
+    VotacionActivaResponse
 } from './voting'
 
 // Tipos de solicitudes de restaurante
