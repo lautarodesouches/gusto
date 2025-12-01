@@ -98,7 +98,15 @@ export default function ProfileTab() {
             }
         } catch (error) {
             console.error('Error:', error)
-            toast.error('Error al actualizar perfil')
+
+            // Handle Next.js Server Action body size limit error
+            const errorMessage = error instanceof Error ? error.message : String(error)
+            if (errorMessage.includes('Body exceeded') || errorMessage.includes('413')) {
+                toast.error('La imagen es demasiado grande. Por favor, elige una imagen más pequeña.')
+            } else {
+                toast.error('Error al actualizar perfil')
+            }
+
             if (type === 'privacy' && privacyValue !== undefined) {
                 setEsPrivado(!privacyValue)
             }
