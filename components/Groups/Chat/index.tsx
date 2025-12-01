@@ -65,10 +65,12 @@ export default function GroupsChat({ groupId, admin, isAdmin = false }: Props) {
         isAdminRef.current = isAdmin
     }, [isAdmin])
 
+    // 🔥 La conexión ahora se maneja en GroupClient usando useGroupChatConnection
+    // Este componente solo escucha eventos y muestra mensajes
+    // NO crear conexión aquí para evitar que se cierre al cambiar de vista
     useEffect(() => {
-        // Esperar a que termine el estado de autenticación.
-        // Si no hay token (usuario no logueado o cerrando sesión),
-        // simplemente no intentamos conectar ni mostramos errores.
+        // Solo crear una conexión temporal si no hay una compartida disponible
+        // Esto es un fallback por si acaso
         if (loading || !token) {
             return
         }

@@ -119,21 +119,59 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     }, [group, members])
 
     // Escuchar eventos globales de usuarios conectados para mostrar indicadores
+    // 🔥 Combina el estado de conexión del hub de chat Y del hub de votaciones
+    // Un usuario se considera conectado si está conectado a CUALQUIERA de los dos hubs
     useEffect(() => {
-        const handler = (event: Event) => {
+        // Estado local para rastrear usuarios conectados por hub
+        const usuariosPorHub = {
+            chat: new Set<string>(),
+            votaciones: new Set<string>(),
+        }
+
+        const actualizarEstadoCombinado = () => {
+            // Combinar usuarios de ambos hubs
+            const todosConectados = new Set<string>()
+            usuariosPorHub.chat.forEach(uid => todosConectados.add(uid))
+            usuariosPorHub.votaciones.forEach(uid => todosConectados.add(uid))
+            setUsuariosConectados(todosConectados)
+        }
+
+        const handlerChat = (event: Event) => {
             const conectados = (event as CustomEvent<string[]>).detail
             if (conectados && Array.isArray(conectados)) {
-                setUsuariosConectados(new Set(conectados))
+                usuariosPorHub.chat = new Set(conectados)
+                actualizarEstadoCombinado()
+            }
+        }
+
+        // 🔥 También escuchar eventos del hub de votaciones
+        const handlerVotaciones = (event: Event) => {
+            const { usuarioId, conectado } = (event as CustomEvent<{ usuarioId: string; conectado: boolean }>).detail
+            if (usuarioId) {
+                console.log('[Social] Evento votaciones recibido:', { usuarioId, conectado })
+                if (conectado) {
+                    usuariosPorHub.votaciones.add(usuarioId)
+                } else {
+                    usuariosPorHub.votaciones.delete(usuarioId)
+                }
+                actualizarEstadoCombinado()
+                console.log('[Social] Estado combinado actualizado:', {
+                    chat: Array.from(usuariosPorHub.chat),
+                    votaciones: Array.from(usuariosPorHub.votaciones),
+                    todos: Array.from(new Set([...usuariosPorHub.chat, ...usuariosPorHub.votaciones]))
+                })
             }
         }
 
         if (typeof window !== 'undefined') {
-            window.addEventListener('usuarios:conectados', handler as EventListener)
+            window.addEventListener('usuarios:conectados', handlerChat as EventListener)
+            window.addEventListener('usuario:votaciones:conectado', handlerVotaciones as EventListener)
         }
 
         return () => {
             if (typeof window !== 'undefined') {
-                window.removeEventListener('usuarios:conectados', handler as EventListener)
+                window.removeEventListener('usuarios:conectados', handlerChat as EventListener)
+                window.removeEventListener('usuario:votaciones:conectado', handlerVotaciones as EventListener)
             }
         }
     }, [])
@@ -290,18 +328,6 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                 className={styles.member__link}
                             >
                                 <div className={styles.member__div}>
-                                    {/* Indicador de conexión */}
-                                    <span
-                                        className={`${styles.member__status} ${usuariosConectados.has(m.usuarioFirebaseUid)
-                                                ? styles.member__status_online
-                                                : styles.member__status_offline
-                                            }`}
-                                        title={
-                                            usuariosConectados.has(m.usuarioFirebaseUid)
-                                                ? 'En línea'
-                                                : 'Desconectado'
-                                        }
-                                    />
                                     {m.fotoPerfilUrl ? (
                                         <img
                                             src={m.fotoPerfilUrl}

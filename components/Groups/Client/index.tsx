@@ -36,6 +36,7 @@ export default function GroupClient({ group }: Props) {
     // Verificar si el usuario actual es administrador
     const isAdmin = auth.user?.uid === group.administradorFirebaseUid
 
+
     // Escuchar eventos globales de actualización de grupos para refrescar
     // el grupo actual (miembros, etc.) en tiempo real.
     useEffect(() => {
