@@ -36,13 +36,13 @@ export default function RequestDetailModal({
             setIsLoading(true)
             setError(null)
             const response = await fetch(`/api/admin/detalle/${solicitudId}`)
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}))
                 setError(errorData.error || 'Error al cargar los detalles')
                 return
             }
-            
+
             const data: SolicitudRestauranteDetalle = await response.json()
             setDetalle(data)
         } catch (err) {
@@ -99,7 +99,7 @@ export default function RequestDetailModal({
                 </div>
 
                 <div className={styles.modal__content}>
-                    {isLoading ? (
+                    {true ? (
                         <div className={styles.modal__loading}>
                             <Loading message="Cargando detalles..." />
                         </div>
@@ -144,9 +144,9 @@ export default function RequestDetailModal({
                                         <p>
                                             <FontAwesomeIcon icon={faGlobe} className={styles.icon} />
                                             <strong>Sitio Web:</strong>{' '}
-                                            <a 
-                                                href={detalle.websiteUrl} 
-                                                target="_blank" 
+                                            <a
+                                                href={detalle.websiteUrl}
+                                                target="_blank"
                                                 rel="noopener noreferrer"
                                                 className={styles.link}
                                             >
@@ -323,13 +323,13 @@ export default function RequestDetailModal({
                                             />
                                         </div>
                                     ) : null}
-                                    {!detalle.logo && 
-                                     !detalle.imagenesDestacadas && 
-                                     detalle.imagenesInterior.length === 0 && 
-                                     detalle.imagenesComida.length === 0 && 
-                                     !detalle.imagenMenu && (
-                                        <p className={styles.noData}>No hay imágenes registradas</p>
-                                    )}
+                                    {!detalle.logo &&
+                                        !detalle.imagenesDestacadas &&
+                                        detalle.imagenesInterior.length === 0 &&
+                                        detalle.imagenesComida.length === 0 &&
+                                        !detalle.imagenMenu && (
+                                            <p className={styles.noData}>No hay imágenes registradas</p>
+                                        )}
                                 </div>
                             </section>
 
