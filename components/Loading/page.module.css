@@ -6,7 +6,6 @@
     padding: 3rem 1rem;
     text-align: center;
     height: 100%;
-    background: var(--light);
 }
 
 .spinner {
@@ -20,7 +19,7 @@
 }
 
 .loadingText {
-    color: #555;
+    color: var(--white);
     font-size: 1rem;
     font-weight: 500;
 }

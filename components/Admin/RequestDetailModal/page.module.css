@@ -14,7 +14,7 @@
 }
 
 .modal {
-    background: var(--white, #ffffff);
+    background: var(--background);
     border-radius: 12px;
     width: 100%;
     max-width: 900px;
@@ -35,7 +35,7 @@
 .modal__title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--dark, #333);
+    color: var(--white, #fff);
     margin: 0;
 }
 
@@ -43,7 +43,7 @@
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: var(--dark, #333);
+    color: var(--white, #fff);
     cursor: pointer;
     padding: 5px;
     display: flex;
@@ -80,7 +80,7 @@
     margin-top: 16px;
     padding: 10px 20px;
     background: var(--primary, #d32f2f);
-    color: white;
+    color: var(--white, #fff);
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -103,7 +103,7 @@
 .section__title {
     font-size: 1.2rem;
     font-weight: 700;
-    color: var(--dark, #333);
+    color: var(--white, #fff);
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -111,7 +111,7 @@
 }
 
 .section__content {
-    color: var(--dark, #333);
+    color: var(--white, #fff);
     line-height: 1.6;
 }
 
@@ -145,6 +145,7 @@
     margin: 4px 0;
     background: var(--beige, #f5f5f5);
     border-radius: 6px;
+    color: var(--dark);
     border-left: 3px solid var(--primary, #d32f2f);
 }
 

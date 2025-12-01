@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faUser, faCrown } from '@fortawesome/free-solid-svg-icons'
 import NotificationBell from '@/components/NotificationBell'
 import { FriendRequests } from '@/components'
-import { PremiumLimitFloatingCard } from '@/components'
+import UpgradePremiumModal from '@/components/Premium/UpgradePremiumModal'
 import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
@@ -74,9 +74,10 @@ export default function Nav() {
                 </div>
             </nav>
 
-            <PremiumLimitFloatingCard
+            <UpgradePremiumModal
                 isOpen={showPremiumCard}
                 onClose={() => setShowPremiumCard(false)}
+                trigger="general"
                 limitInfo={{
                     tipoPlan: isPremium ? 'Premium' : 'Free',
                     limiteActual: 3,

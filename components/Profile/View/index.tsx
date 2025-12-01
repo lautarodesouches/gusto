@@ -28,6 +28,9 @@ export function ProfileView({
     onAddFriend,
     onEditTastes,
 }: ProfileViewProps) {
+    const mostrarPerfilPrivado =
+        profile.esPrivado && !profile.esMiPerfil && !profile.esAmigo
+
     return (
         <article className={styles.profile}>
             <header className={styles.header}>
@@ -68,7 +71,7 @@ export function ProfileView({
                 </div>
             </section>
             <div className={styles.container}>
-                {profile.esPrivado ? (
+                {mostrarPerfilPrivado ? (
                     <section className={styles.private}>
                         <FontAwesomeIcon
                             icon={faLock}
@@ -114,10 +117,12 @@ export function ProfileView({
                                 Lugares visitados
                             </h3>
                             <hr className={styles.container__line} />
-                            {!profile.visitados || profile.visitados.length === 0 ? (
+                            {!profile.visitados ||
+                            profile.visitados.length === 0 ? (
                                 <div className={styles.visited__empty}>
                                     <p className={styles.visited__empty_text}>
-                                        No visitaste ningún lugar, ¿querés ir a alguno?
+                                        No visitaste ningún lugar, ¿querés ir a
+                                        alguno?
                                     </p>
                                 </div>
                             ) : (
@@ -131,7 +136,9 @@ export function ProfileView({
                                                 {place.nombre}
                                             </p>
                                             <FontAwesomeIcon
-                                                className={styles.visited__icon}
+                                                className={
+                                                    styles.visited__icon
+                                                }
                                                 icon={faLocationDot}
                                             />
                                         </li>

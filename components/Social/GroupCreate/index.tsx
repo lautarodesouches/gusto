@@ -3,7 +3,7 @@ import { useState } from 'react'
 import styles from './page.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPen, faX } from '@fortawesome/free-solid-svg-icons'
-import { PremiumLimitFloatingCard } from '@/components'
+import UpgradePremiumModal from '@/components/Premium/UpgradePremiumModal'
 import { createGroup } from '@/app/actions/groups'
 import { useToast } from '@/context/ToastContext'
 
@@ -28,9 +28,9 @@ export default function GroupCreate({
     const [loading, setLoading] = useState(false)
     const [showLimitCard, setShowLimitCard] = useState(false)
     const [limitInfo, setLimitInfo] = useState<{
-        tipoPlan?: string
-        limiteActual?: number
-        gruposActuales?: number
+        tipoPlan: string
+        limiteActual: number
+        gruposActuales: number
     } | undefined>(undefined)
 
     const handleSubmit = async () => {
@@ -54,9 +54,9 @@ export default function GroupCreate({
                             errorData.error.includes('límite')))
                 ) {
                     setLimitInfo({
-                        tipoPlan: errorData.tipoPlan,
-                        limiteActual: errorData.limiteActual,
-                        gruposActuales: errorData.gruposActuales,
+                        tipoPlan: errorData.tipoPlan || 'Free',
+                        limiteActual: errorData.limiteActual || 0,
+                        gruposActuales: errorData.gruposActuales || 0,
                     })
                     setShowLimitCard(true)
                     return
@@ -81,7 +81,7 @@ export default function GroupCreate({
             setLoading(false)
         }
     }
-    
+
     return (
         <>
             <aside className={styles.create}>
@@ -134,12 +134,13 @@ export default function GroupCreate({
             </aside>
 
             {/* Cartel flotante para límite de grupos */}
-            <PremiumLimitFloatingCard
+            <UpgradePremiumModal
                 isOpen={showLimitCard}
                 onClose={() => {
                     setShowLimitCard(false)
                     setLimitInfo(undefined)
                 }}
+                trigger="group_limit"
                 limitInfo={limitInfo}
             />
         </>
