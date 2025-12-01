@@ -4,25 +4,33 @@
     align-items: center;
 }
 
-/* Contenedor unificado con glassmorphism */
+/* Contenedor unificado */
 .contenedor {
     position: relative;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    /* Efecto glassmorphism */
+    padding: 0.5rem;
+    max-width: fit-content;
+}
+
+/* Fondo Glass separado para no afectar el stacking context de los hijos */
+.fondo_glass {
+    position: absolute;
+    inset: 0;
     background: rgba(45, 45, 43, 0.9);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding: 0.5rem;
     border-radius: 3rem;
-    max-width: fit-content;
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    z-index: 0;
 }
 
 /* Botón Premium */
 .boton_premium {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -36,12 +44,11 @@
 }
 
 .boton_premium:hover {
-    filter: brightness(1.1);
-    transform: scale(1.02);
+    opacity: 0.9;
 }
 
 .boton_premium:active {
-    transform: scale(0.98);
+    opacity: 0.8;
 }
 
 .boton_premium svg {
@@ -61,6 +68,7 @@
 /* Botón de notificaciones */
 .notificacion {
     position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,7 +88,7 @@
 }
 
 .notificacion:active {
-    transform: scale(0.95);
+    background-color: var(--dark);
 }
 
 /* Estado activo cuando el panel está abierto */
@@ -91,12 +99,13 @@
 
 .notificacion.activo:hover {
     background-color: var(--primary);
-    filter: brightness(1.1);
+    opacity: 0.9;
 }
 
 /* Botón de perfil */
 .boton_perfil {
     position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -116,7 +125,7 @@
 }
 
 .boton_perfil:active {
-    transform: scale(0.98);
+    background-color: var(--dark);
 }
 
 /* Avatar del perfil */
