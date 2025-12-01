@@ -75,6 +75,10 @@
     font-size: 1.1rem;
 }
 
+.form__input::placeholder {
+    color: var(--light);
+}
+
 .form__input:focus-visible {
     outline: none;
 }
@@ -111,7 +115,7 @@
 }
 
 .alt__span {
-    color: var(--grey);
+    color: var(--light);
 }
 
 .alt__link {
