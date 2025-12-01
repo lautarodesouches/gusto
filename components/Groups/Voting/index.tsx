@@ -5,6 +5,7 @@ import { useToast } from '@/context/ToastContext'
 import { VotingPanel, VotingResults } from '@/components/Voting'
 import { ResultadoVotacion, VotacionActivaResponse, Restaurant } from '@/types'
 import { useVotingSignalR } from '@/hooks/useVotingSignalR'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
 import styles from './styles.module.css'
 
 interface Props {
@@ -17,11 +18,15 @@ interface Props {
 export default function GroupVoting({ groupId, members: _members, isAdmin = false, currentRestaurants = [] }: Props) {
     const auth = useAuth()
     const toast = useToast()
+    const { user: currentUser } = useCurrentUser() // Obtener el usuario completo con su GUID de BD
     
     const [resultados, setResultados] = useState<ResultadoVotacion | undefined>(undefined)
     const [soyAdministrador, setSoyAdministrador] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+
+    // 🔥 Ref para rastrear si el usuario acaba de votar (para ignorar el evento SignalR)
+    const acaboDeVotarRef = useRef<{ timestamp: number; restauranteId?: string } | null>(null)
 
     // 🔥 Prevenir múltiples fetches simultáneos
     const isFetchingResultadosRef = useRef(false)
@@ -134,11 +139,109 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
         }
     }, [groupId, fetchResultados])
 
+    // Handler para cuando alguien vota (mostrar toast)
+    const handleVotoRegistrado = useCallback((data: {
+        votacionId: string
+        usuarioId?: string // GUID de BD (camelCase)
+        UsuarioId?: string // GUID de BD (PascalCase - como el backend lo envía)
+        usuarioNombre?: string
+        usuarioFoto?: string
+        usuarioFirebaseUid?: string // Firebase UID del usuario que votó (camelCase)
+        UsuarioFirebaseUid?: string // Firebase UID del usuario que votó (PascalCase)
+        restauranteId?: string
+        restauranteNombre?: string
+        restauranteImagen?: string
+        esActualizacion?: boolean
+    }) => {
+        const ahora = Date.now()
+        
+        // 🔥 Protección 1: Si el usuario acaba de votar (en los últimos 3 segundos), ignorar el evento SignalR
+        // Esto evita que se muestre el toast informativo cuando el usuario acaba de votar
+        if (acaboDeVotarRef.current) {
+            const tiempoDesdeVoto = ahora - acaboDeVotarRef.current.timestamp
+            if (tiempoDesdeVoto < 3000) { // 3 segundos
+                // Verificar si es el mismo restaurante
+                if (acaboDeVotarRef.current.restauranteId === data.restauranteId) {
+                    console.log('[GroupVoting] Ignorando evento SignalR: usuario acaba de votar (hace', tiempoDesdeVoto, 'ms)')
+                    return
+                }
+            } else {
+                // Limpiar el ref si ya pasaron más de 3 segundos
+                acaboDeVotarRef.current = null
+            }
+        }
+
+        // 🔥 Protección 2: Comparar con usuarioId (GUID de BD) - solución recomendada por el backend
+        // El backend envía UsuarioId como GUID de BD
+        const votanteUsuarioId = data.usuarioId || data.UsuarioId
+        const miUsuarioId = currentUser?.id || currentUser?.idUsuario // GUID de BD del usuario actual
+        
+        // 🔥 Protección 3: Comparar con FirebaseUid como respaldo
+        const votanteFirebaseUid = data.usuarioFirebaseUid || data.UsuarioFirebaseUid
+        const miFirebaseUid = auth.user?.uid
+        
+        // Es mi voto si coincide el GUID de BD o el Firebase UID
+        const esMiVoto = (miUsuarioId && votanteUsuarioId === miUsuarioId) || 
+                         (miFirebaseUid && votanteFirebaseUid === miFirebaseUid)
+        
+        // Debug: loggear para ver qué está pasando
+        console.log('[GroupVoting] handleVotoRegistrado:', {
+            votanteUsuarioId,
+            miUsuarioId,
+            votanteFirebaseUid,
+            miFirebaseUid,
+            esMiVoto,
+            usuarioNombre: data.usuarioNombre,
+            acaboDeVotar: !!acaboDeVotarRef.current,
+            tiempoDesdeVoto: acaboDeVotarRef.current ? ahora - acaboDeVotarRef.current.timestamp : null
+        })
+        
+        if (esMiVoto) {
+            console.log('[GroupVoting] Voto del usuario actual, no mostrando toast informativo (ya tiene "¡Voto registrado!")')
+            return
+        }
+        
+        // Solo mostrar toast informativo si es otro usuario quien votó
+        if (data.usuarioNombre && data.restauranteNombre) {
+            const mensaje = data.esActualizacion
+                ? `${data.usuarioNombre} actualizó su voto a ${data.restauranteNombre}`
+                : `${data.usuarioNombre} votó a ${data.restauranteNombre}`
+            
+            toast.info(mensaje, 5000) // Mostrar por 5 segundos
+        }
+    }, [toast, auth.user?.uid, currentUser?.id])
+    
+    // 🔥 Escuchar el evento global cuando el usuario vota para marcar el timestamp
+    useEffect(() => {
+        const handleUsuarioVoto = (event: Event) => {
+            const { restauranteId, timestamp } = (event as CustomEvent<{ restauranteId: string; timestamp: number }>).detail
+            acaboDeVotarRef.current = { restauranteId, timestamp }
+            console.log('[GroupVoting] Usuario acaba de votar, marcando timestamp:', { restauranteId, timestamp })
+            
+            // Limpiar el ref después de 3 segundos
+            setTimeout(() => {
+                acaboDeVotarRef.current = null
+            }, 3000)
+        }
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('usuario:voto:registrado', handleUsuarioVoto as EventListener)
+        }
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('usuario:voto:registrado', handleUsuarioVoto as EventListener)
+            }
+        }
+    }, [])
+
     // Conectar SignalR
     const { isConnected, error: signalRError, connection } = useVotingSignalR({
         grupoId: groupId,
+        currentUserId: auth.user?.uid, // Pasar el Firebase UID del usuario actual
         onResultadosActualizados: fetchResultados,
         onVotacionIniciada: fetchVotacionActiva, // Recargar votación activa cuando se inicia
+        onVotoRegistrado: handleVotoRegistrado, // Mostrar toast cuando alguien vota
     })
 
     // 🔥 Notificar cuando el usuario se conecta/desconecta del hub de votaciones

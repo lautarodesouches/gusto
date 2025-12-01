@@ -193,6 +193,20 @@ export default function VotingPanel({
             toast.success('¡Voto registrado!')
             setRestauranteSeleccionado('')
             setComentario('')
+            
+            // 🔥 Notificar que el usuario acaba de votar para ignorar el evento SignalR
+            // Esto evita que se muestre el toast informativo cuando el usuario acaba de votar
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(
+                    new CustomEvent('usuario:voto:registrado', {
+                        detail: {
+                            restauranteId: restauranteSeleccionado,
+                            timestamp: Date.now()
+                        }
+                    })
+                )
+            }
+            
             // SignalR actualizará automáticamente, pero también recargamos para asegurar que se vea el cambio
             // Pequeño delay para que el backend procese el voto
             setTimeout(() => {
@@ -318,10 +332,9 @@ export default function VotingPanel({
                                     : ''
                                 } ${yoVoteAEste ? styles.voted : ''}`}
                             onClick={() => {
-                                // Si ya votó, no permitir cambiar el voto
-                                if (!yoVoteAEste) {
-                                    setRestauranteSeleccionado(candidato.restauranteId)
-                                }
+                                // Permitir cambiar el voto seleccionando otro restaurante
+                                // El backend maneja la actualización del voto
+                                setRestauranteSeleccionado(candidato.restauranteId)
                             }}
                         >
                             {candidato.imagenUrl && (
@@ -380,9 +393,20 @@ export default function VotingPanel({
                 })}
             </div>
 
-            {/* Solo mostrar sección de voto si el usuario no ha votado aún */}
-            {!restauranteVotado && restauranteSeleccionado && (
+            {/* Mostrar sección de voto si hay un restaurante seleccionado */}
+            {/* Permite cambiar el voto si ya votó anteriormente */}
+            {restauranteSeleccionado && (
                 <div className={styles.voteSection}>
+                    {restauranteVotado && restauranteSeleccionado !== restauranteVotado.restauranteId && (
+                        <div className={styles.changeVoteNote}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 9v4"/>
+                                <path d="M12 17h.01"/>
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            <span>Cambiarás tu voto de <strong>{restauranteVotado.nombre}</strong> a <strong>{restaurantesCandidatos.find(c => c.restauranteId === restauranteSeleccionado)?.nombre}</strong></span>
+                        </div>
+                    )}
                     <textarea
                         value={comentario}
                         onChange={(e) => setComentario(e.target.value)}
@@ -395,7 +419,7 @@ export default function VotingPanel({
                         disabled={loading}
                         className={styles.btnPrimary}
                     >
-                        {loading ? 'Votando...' : 'Confirmar Voto'}
+                        {loading ? 'Votando...' : restauranteVotado && restauranteSeleccionado !== restauranteVotado.restauranteId ? 'Cambiar Voto' : 'Confirmar Voto'}
                     </button>
                 </div>
             )}
