@@ -6,12 +6,13 @@ import { ROUTES } from '@/routes'
 import { useRegister } from '@/context/RegisterContext'
 import { useEffect, useState, useRef } from 'react'
 import { RegisterItem } from '@/types'
-import { saveSteps } from '@/app/actions/steps'
-import { getUserResumen } from '@/app/actions/steps'
+import { finishRegistration, getUserResumen } from '@/app/actions/steps'
+import { useToast } from '@/context/ToastContext'
 
 export default function StepFour() {
     const router = useRouter()
     const { data, basePath } = useRegister()
+    const toast = useToast()
     const [loading, setLoading] = useState(true)
     const [displayData, setDisplayData] = useState<{
         step1?: RegisterItem[]
@@ -99,33 +100,25 @@ export default function StepFour() {
     const handleFinish = async () => {
         try {
             // Usar datos del contexto (selecciones del usuario) o displayData como fallback
-            const step1ToSend = data.step1 || displayData.step1 || []
-            const step2ToSend = data.step2 || displayData.step2 || []
             const step3ToSend = data.step3 || displayData.step3 || []
 
             if (step3ToSend.length < 3) {
-                alert(
+                toast.error(
                     'Debes seleccionar al menos 3 gustos para continuar. Por favor vuelve al paso 3.'
                 )
                 return
             }
 
-            const dataToSend = {
-                step1: step1ToSend,
-                step2: step2ToSend,
-                step3: step3ToSend,
-            }
-
-            const result = await saveSteps(dataToSend)
+            const result = await finishRegistration()
 
             if (!result.success) {
-                alert(result.error || 'Error al guardar tus preferencias')
+                toast.error(result.error || 'Error al finalizar el registro')
                 return
             }
 
             router.push(ROUTES.MAP)
         } catch {
-            alert('Error al finalizar el registro. Por favor intenta nuevamente.')
+            toast.error('Error al finalizar el registro. Por favor intenta nuevamente.')
         }
     }
 

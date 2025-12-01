@@ -161,9 +161,9 @@ async function saveStep(
 }
 
 /**
- * Finaliza el registro del usuario en el backend
+ * Finaliza el registro del usuario en el backend (interno)
  */
-async function finalizarRegistro(token: string): Promise<Response> {
+async function finalizarRegistroInternal(token: string): Promise<Response> {
     return fetch(`${API_URL}/Usuario/finalizar`, {
         method: 'POST',
         headers: {
@@ -171,6 +171,30 @@ async function finalizarRegistro(token: string): Promise<Response> {
             Authorization: `Bearer ${token}`,
         },
     })
+}
+
+/**
+ * Finaliza el registro del usuario (Server Action)
+ */
+export async function finishRegistration(): Promise<ApiResponse<{ success: boolean }>> {
+    try {
+        const token = await getToken()
+        if (!token) {
+            return { success: false, error: ERROR_MESSAGES.MISSING_TOKEN }
+        }
+
+        const res = await finalizarRegistroInternal(token)
+
+        if (!res.ok) {
+            const errorText = await res.text()
+            console.error('Error al finalizar registro:', res.status, errorText)
+            return { success: false, error: errorText || ERROR_MESSAGES.FINALIZAR_ERROR }
+        }
+
+        return { success: true, data: { success: true } }
+    } catch (error) {
+        return handleFetchError(error, 'finalizando registro')
+    }
 }
 
 /**
@@ -231,7 +255,7 @@ export async function saveSteps(
 
         // Finalizar registro (no crítico si falla)
         try {
-            const resFinalizar = await finalizarRegistro(token)
+            const resFinalizar = await finalizarRegistroInternal(token)
             if (!resFinalizar.ok) {
                 const errorText = await resFinalizar.text()
                 console.error('Error al finalizar registro:', resFinalizar.status, errorText)

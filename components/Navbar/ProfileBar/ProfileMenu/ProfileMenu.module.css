@@ -2,7 +2,7 @@
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
-    background: var(--background);
+    background: #1a1a1a;
     border: 1px solid var(--grey);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);

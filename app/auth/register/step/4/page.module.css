@@ -13,7 +13,7 @@
 }
 
 .stepLabel {
-    color: var(--grey);
+    color: var(--light);
     font-size: 0.9rem;
     margin: 0;
 }

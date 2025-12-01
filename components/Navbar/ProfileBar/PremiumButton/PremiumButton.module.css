@@ -1,4 +1,6 @@
 .button {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -12,12 +14,11 @@
 }
 
 .button:hover {
-    filter: brightness(1.1);
-    transform: scale(1.02);
+    opacity: 0.9;
 }
 
 .button:active {
-    transform: scale(0.98);
+    opacity: 0.8;
 }
 
 .button svg {

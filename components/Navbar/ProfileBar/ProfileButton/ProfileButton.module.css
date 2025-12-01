@@ -1,5 +1,6 @@
 .button {
     position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -19,7 +20,7 @@
 }
 
 .button:active {
-    transform: scale(0.98);
+    background-color: var(--dark);
 }
 
 .avatar {
