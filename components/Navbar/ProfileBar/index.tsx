@@ -87,6 +87,7 @@ export default function ProfileBar() {
         <>
             <div className={styles.container} ref={containerRef}>
                 <div className={styles.wrapper}>
+                    <div className={styles.glass_background} />
                     {/* Botón Premium (solo si no es premium) */}
                     {!isPremium && (
                         <PremiumButton

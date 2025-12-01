@@ -125,10 +125,28 @@ export default function FiltersClient({
         }
     }, [ratings, updateUrlParam])
 
+    // Función para seleccionar un único item (toggle)
+    const handleSingleSelect = (
+        value: string,
+        setItems: React.Dispatch<React.SetStateAction<FilterItem[]>>
+    ) => {
+        setItems(prev => {
+            return prev.map(item => {
+                if (item.value === value) {
+                    // Si ya estaba seleccionado, lo deseleccionamos (toggle off)
+                    // Si no estaba seleccionado, lo seleccionamos
+                    return { ...item, checked: !item.checked }
+                }
+                // Deseleccionar todos los demás
+                return { ...item, checked: false }
+            })
+        })
+    }
+
     const handleDishClick = (value: string) =>
         handleMultiSelect(value, setDishes)
     const handleRatingClick = (value: string) =>
-        handleMultiSelect(value, setRatings)
+        handleSingleSelect(value, setRatings)
 
     return (
         <FiltersView

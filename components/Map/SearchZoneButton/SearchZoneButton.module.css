@@ -17,8 +17,8 @@
     align-items: center;
     gap: 0.5rem;
     background: rgba(45, 45, 43, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1a1a1a;
+    /* backdrop-filter removed */
     border: 1px solid rgba(255, 80, 80, 0.3);
     border-radius: 3rem;
     padding: 0.75rem 1.5rem;

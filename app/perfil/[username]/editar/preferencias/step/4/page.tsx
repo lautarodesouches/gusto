@@ -5,8 +5,8 @@ import { useRouter, useParams } from 'next/navigation'
 import { useRegister } from '@/context/RegisterContext'
 import { useEffect, useState, useRef } from 'react'
 import { RegisterItem } from '@/types'
-import { saveSteps } from '@/app/actions/steps'
 import { getUserResumen } from '@/app/actions/steps'
+import { ROUTES } from '@/routes'
 
 export default function StepFour() {
     const router = useRouter()
@@ -45,7 +45,7 @@ export default function StepFour() {
         const loadData = async () => {
             try {
                 const result = await getUserResumen('edicion')
-                
+
                 if (!result.success || !result.data) {
                     setLoading(false)
                     return
@@ -104,39 +104,7 @@ export default function StepFour() {
     }, [data.step1, data.step2, data.step3]) // Re-ejecutar si el contexto cambia
 
     const handleFinish = async () => {
-        try {
-            // Usar datos del contexto (selecciones del usuario) o displayData como fallback
-            const step1ToSend = data.step1 || displayData.step1 || []
-            const step2ToSend = data.step2 || displayData.step2 || []
-            const step3ToSend = data.step3 || displayData.step3 || []
-
-            if (step3ToSend.length < 3) {
-                alert('Debes seleccionar al menos 3 gustos.')
-                return
-            }
-
-            if (mode === 'edicion') {
-                router.push(`/perfil/${username}`)
-                return
-            }
-
-            const dataToSend = {
-                step1: step1ToSend,
-                step2: step2ToSend,
-                step3: step3ToSend,
-            }
-
-            const result = await saveSteps(dataToSend)
-
-            if (!result.success) {
-                alert(result.error || 'Error al guardar tus preferencias')
-                return
-            }
-
-            router.push('/mapa/')
-        } catch {
-            alert('Error al finalizar el registro. Por favor intenta nuevamente.')
-        }
+        router.push(ROUTES.MAP)
     }
 
     const handleBack = () => {

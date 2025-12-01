@@ -176,7 +176,7 @@
 
 .visited__empty_text {
     font-size: 1rem;
-    color: var(--grey);
+    color: var(--light);
     font-style: italic;
 }
 
