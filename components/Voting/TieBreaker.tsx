@@ -44,7 +44,7 @@ export default function TieBreaker({ restaurantes, onGanador }: TieBreakerProps)
 
     return (
         <div className={styles.container}>
-            <h2 className={styles.title}>🎰 Ruleta de Desempate</h2>
+            <h2 className={styles.title}>Ruleta de Desempate</h2>
             <p className={styles.subtitle}>
                 ¡Dejemos que la suerte decida!
             </p>
@@ -54,11 +54,9 @@ export default function TieBreaker({ restaurantes, onGanador }: TieBreakerProps)
                     {restaurantes.map((restaurante, index) => (
                         <div
                             key={restaurante.restauranteId}
-                            className={`${styles.opcion} ${
-                                indiceActual === index ? styles.activo : ''
-                            } ${
-                                ganadorIndex === index ? styles.ganador : ''
-                            }`}
+                            className={`${styles.opcion} ${indiceActual === index ? styles.activo : ''
+                                } ${ganadorIndex === index ? styles.ganador : ''
+                                }`}
                         >
                             <div className={styles.emoji}>
                                 {ganadorIndex === index ? '🏆' : '🍽️'}
@@ -76,7 +74,7 @@ export default function TieBreaker({ restaurantes, onGanador }: TieBreakerProps)
 
             {!girando && ganadorIndex === null && (
                 <button onClick={girarRuleta} className={styles.btnGirar}>
-                    🎲 Girar Ruleta
+                    Girar Ruleta
                 </button>
             )}
 
@@ -86,7 +84,7 @@ export default function TieBreaker({ restaurantes, onGanador }: TieBreakerProps)
 
             {ganadorIndex !== null && (
                 <div className={styles.resultado}>
-                    <h3>🏆 ¡Ganador!</h3>
+                    <h3>¡Ganador!</h3>
                     <p>{restaurantes[ganadorIndex].restauranteNombre}</p>
                 </div>
             )}

@@ -50,7 +50,7 @@ export default function VotingPanel({
                 // El backend envía FirebaseUid en PascalCase (como el backend recomendó)
                 const votanteFirebaseUid = v.FirebaseUid || v.firebaseUid
                 const coincide = votanteFirebaseUid === miFirebaseUid
-                
+
                 // Debug para ver qué está pasando
                 if (miFirebaseUid) {
                     console.log('[VotingPanel] Comparando voto:', {
@@ -62,13 +62,13 @@ export default function VotingPanel({
                         tieneFirebaseUidCamel: !!v.firebaseUid
                     })
                 }
-                
+
                 return coincide
             })
         )
-        
-        const restaurante = votoEncontrado 
-            ? restaurantesCandidatos.find(c => c.restauranteId === votoEncontrado.restauranteId) 
+
+        const restaurante = votoEncontrado
+            ? restaurantesCandidatos.find(c => c.restauranteId === votoEncontrado.restauranteId)
             : null
 
         // Debug: loggear el estado del voto
@@ -77,8 +77,8 @@ export default function VotingPanel({
             miUid: auth.user.uid,
             restaurantesVotados: votacionActual.restaurantesVotados.map(r => ({
                 restauranteId: r.restauranteId,
-                votantes: r.votantes.map((v: VotanteInfoConFirebase) => ({ 
-                    usuarioId: v.usuarioId, 
+                votantes: r.votantes.map((v: VotanteInfoConFirebase) => ({
+                    usuarioId: v.usuarioId,
                     nombre: v.usuarioNombre,
                     firebaseUid: v.FirebaseUid || v.firebaseUid || 'NO_ENCONTRADO'
                 }))
@@ -126,13 +126,13 @@ export default function VotingPanel({
                 } catch {
                     errorData = { message: errorText || 'Error al iniciar votación' }
                 }
-                
+
                 // Si ya existe una votación activa, recargar los datos
                 if (res.status === 409) {
                     onVotar()
                     return
                 }
-                
+
                 throw new Error(errorData.message || 'Error al iniciar votación')
             }
 
@@ -140,7 +140,7 @@ export default function VotingPanel({
             // ✅ NO manejamos la respuesta (no contiene candidatos)
             // ✅ SignalR enviará "votacionIniciada" y actualizará todo automáticamente
             toast.success('¡Votación iniciada!')
-            
+
             // 🔥 Recargar inmediatamente para mostrar la votación activa
             // SignalR también actualizará cuando llegue el evento, pero esto da feedback inmediato
             if (onVotar) {
@@ -216,16 +216,16 @@ export default function VotingPanel({
                 <div className={styles.noVotacion}>
                     <h3>No hay votación activa</h3>
                     <p>Inicia una votación para que los miembros elijan el restaurante</p>
-                    
+
                     {/* Nota informativa */}
                     <div className={styles.infoNote}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="16" x2="12" y2="12"/>
-                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="16" x2="12" y2="12" />
+                            <line x1="12" y1="8" x2="12.01" y2="8" />
                         </svg>
                         <span>
-                            {restaurantesDelMapa.length > 0 
+                            {restaurantesDelMapa.length > 0
                                 ? `Hay ${restaurantesDelMapa.length} restaurante${restaurantesDelMapa.length > 1 ? 's' : ''} disponible${restaurantesDelMapa.length > 1 ? 's' : ''} del mapa para votar`
                                 : 'Ve al mapa y busca restaurantes antes de iniciar una votación'}
                         </span>
@@ -285,7 +285,7 @@ export default function VotingPanel({
             {restauranteVotado && (
                 <div className={styles.votoInfo}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M20 6L9 17l-5-5"/>
+                        <path d="M20 6L9 17l-5-5" />
                     </svg>
                     <span>Has votado a: <strong>{restauranteVotado.nombre}</strong></span>
                 </div>
@@ -313,11 +313,10 @@ export default function VotingPanel({
                     return (
                         <div
                             key={candidato.restauranteId}
-                            className={`${styles.restaurantCard} ${
-                                restauranteSeleccionado === candidato.restauranteId
+                            className={`${styles.restaurantCard} ${restauranteSeleccionado === candidato.restauranteId
                                     ? styles.selected
                                     : ''
-                            } ${yoVoteAEste ? styles.voted : ''}`}
+                                } ${yoVoteAEste ? styles.voted : ''}`}
                             onClick={() => {
                                 // Si ya votó, no permitir cambiar el voto
                                 if (!yoVoteAEste) {
@@ -326,8 +325,8 @@ export default function VotingPanel({
                             }}
                         >
                             {candidato.imagenUrl && (
-                                <img 
-                                    src={candidato.imagenUrl} 
+                                <img
+                                    src={candidato.imagenUrl}
                                     alt={candidato.nombre}
                                     className={styles.restaurantImage}
                                 />
@@ -344,10 +343,10 @@ export default function VotingPanel({
                                 <p className={styles.address}>{candidato.direccion}</p>
                                 {cantidadVotos > 0 && (
                                     <span className={styles.votes}>
-                                        ❤️ {cantidadVotos} {cantidadVotos === 1 ? 'voto' : 'votos'}
+                                        {cantidadVotos} {cantidadVotos === 1 ? 'voto' : 'votos'}
                                     </span>
                                 )}
-                                
+
                                 {/* Mostrar comentarios si existen */}
                                 {comentarios.length > 0 && (
                                     <div className={styles.comentariosSection}>

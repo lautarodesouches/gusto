@@ -65,20 +65,18 @@
 
 .header h3 {
     font-size: 1.5rem;
-    color: #ffeecf;
+    color: var(--beige);
     margin: 0;
     font-weight: 700;
 }
 
 .badge {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
-    color: #ffeecf;
+    background: var(--primary);
+    color: var(--beige);
     padding: 0.6rem 1rem;
     border-radius: 16px;
     font-size: 0.9rem;
     font-weight: 700;
-    border: 2px solid rgba(255, 238, 207, 0.3);
-    box-shadow: 0 2px 8px rgba(255, 80, 80, 0.3);
 }
 
 .restaurantGrid {
@@ -103,27 +101,16 @@
 }
 
 .restaurantCard:hover {
-    border-color: #ff5050;
-    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.4);
+    border-color: var(--primary);
     transform: translateY(-4px);
 }
 
 .restaurantCard.selected {
-    border-color: #ff5050;
+    border-color: var(--primary);
     background: #2d2d2b;
-    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.5);
     position: relative;
 }
 
-.restaurantCard.selected::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, #ff5050 0%, #ffeecf 100%);
-}
 
 .restaurantImage {
     width: 100%;
@@ -160,14 +147,13 @@
 
 .votes {
     display: inline-block;
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
+    background: var(--primary);
     color: #ffeecf;
     padding: 0.4rem 0.8rem;
+    border: none;
     border-radius: 12px;
     font-size: 0.85rem;
     font-weight: 700;
-    border: 2px solid rgba(255, 238, 207, 0.2);
-    box-shadow: 0 2px 6px rgba(255, 80, 80, 0.3);
 }
 
 .comentariosSection {
@@ -184,8 +170,7 @@
     background: #2d2d2b;
     padding: 0.8rem;
     border-radius: 12px;
-    border-left: 4px solid #ff5050;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid var(--primary);
 }
 
 .comentarioHeader {
@@ -194,21 +179,21 @@
     gap: 0.5rem;
     margin-bottom: 0.4rem;
     font-size: 0.85rem;
-    color: #ffeecf;
+    color: var(--beige);
     font-weight: 600;
 }
 
 .comentarioAvatar {
     border-radius: 50%;
-    border: 2px solid #ff5050;
+    border: 2px solid var(--primary);
 }
 
 .comentarioAvatarPlaceholder {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #ff5050;
-    color: #ffeecf;
+    background: var(--primary);
+    color: var(--beige);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -252,28 +237,24 @@
 
 .textarea:focus {
     outline: none;
-    border-color: #ff5050;
-    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.3);
+    border-color: var(--primary);
 }
 
 .btnPrimary {
-    background: linear-gradient(135deg, #ff5050 0%, #ff6b6b 100%);
-    color: #ffeecf;
-    border: 2px solid rgba(255, 238, 207, 0.3);
+    background: var(--primary);
+    color: var(--beige);
     padding: 1rem 2rem;
+    border: none;
     border-radius: 16px;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
-    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.4);
 }
 
 .btnPrimary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ff8585 100%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(255, 80, 80, 0.5);
 }
 
 .btnPrimary:disabled {
@@ -284,14 +265,13 @@
 }
 
 .error {
-    color: #ffeecf;
+    color: var(--beige);
     background: rgba(255, 80, 80, 0.2);
     padding: 1rem;
     border-radius: 12px;
     margin-top: 1rem;
     font-size: 0.95rem;
-    border: 2px solid #ff5050;
-    box-shadow: 0 2px 8px rgba(255, 80, 80, 0.3);
+    border: 2px solid var(--primary);
 }
 
 /* Modal de alerta */
@@ -326,7 +306,6 @@
     padding: 2.5rem;
     max-width: 500px;
     width: 90%;
-    box-shadow: 0 20px 60px rgba(255, 80, 80, 0.4);
     animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     text-align: center;
 }
@@ -377,8 +356,8 @@
 }
 
 .modalSteps {
-    background: rgba(255, 80, 80, 0.1);
-    border: 2px solid rgba(255, 80, 80, 0.3);
+    background: var(--background);
+    border: 2px solid var(--primary);
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -394,9 +373,9 @@
 }
 
 .modalButton {
-    background: linear-gradient(135deg, var(--primary) 0%, #ff6b6b 100%);
+    background: var(--primary);
     color: var(--beige);
-    border: 2px solid rgba(255, 238, 207, 0.3);
+    border: 2px solid var(--primary);
     padding: 1rem 2.5rem;
     border-radius: 16px;
     font-size: 1.1rem;
@@ -408,9 +387,8 @@
 }
 
 .modalButton:hover {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ff8585 100%);
+    background: var(--primary);
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(255, 80, 80, 0.5);
 }
 
 @media (max-width: 768px) {
@@ -437,10 +415,9 @@
 .noRestaurantsWarning {
     text-align: center;
     padding: 3rem 2rem;
-    background: #2d2d2b;
+    background: var(--background);
     border-radius: 16px;
-    border: 2px solid rgba(255, 80, 80, 0.5);
-    box-shadow: 0 4px 16px rgba(255, 80, 80, 0.3);
+    border: 2px solid var(--primary);
 }
 
 .warningIcon {
@@ -467,15 +444,15 @@
 }
 
 .warningMessage {
-    color: #ffeecf;
+    color: var(--beige);
     margin-bottom: 2rem;
     font-size: 1.1rem;
     line-height: 1.6;
 }
 
 .warningSteps {
-    background: rgba(255, 238, 207, 0.1);
-    border: 2px solid rgba(255, 238, 207, 0.3);
+    background: var(--background);
+    border: 2px solid var(--primary);
     border-radius: 16px;
     padding: 2rem;
     margin-bottom: 2rem;
@@ -507,11 +484,11 @@
 }
 
 .votacionInfo {
-    background: rgba(255, 80, 80, 0.1);
-    border: 2px solid rgba(255, 80, 80, 0.3);
+    background: var(--background);
+    border: 2px solid var(--primary);
     border-radius: 12px;
     padding: 1rem;
-    color: #ffeecf;
+    color: var(--beige);
     font-size: 1rem;
 }
 
@@ -528,12 +505,12 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    background: rgba(76, 175, 80, 0.15);
-    border: 2px solid rgba(76, 175, 80, 0.4);
+    background: var(--background);
+    border: 2px solid var(--primary);
     border-radius: 12px;
     padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
-    color: #ffeecf;
+    color: var(--beige);
     font-size: 0.95rem;
 }
 

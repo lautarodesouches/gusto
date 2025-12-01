@@ -59,6 +59,10 @@
     font-size: 1rem;
 }
 
+.search__input::placeholder {
+    color: var(--light);
+}
+
 .search__input:focus-visible {
     outline: none;
 }
@@ -338,6 +342,7 @@
     color: var(--white);
     width: 100%;
     border: none;
+    padding: 0 10px;
     border-radius: 10px;
     background: none;
 }
@@ -365,7 +370,7 @@
 
 @media (min-width: 768px) {
     .search {
-        border: 1px solid var(--light);
+        border: 1px solid var(--grey);
     }
 
     .member {
@@ -375,7 +380,7 @@
     }
 
     .invite__fieldset {
-        border: 1px solid var(--light);
+        border: 1px solid var(--grey);
     }
 }
 

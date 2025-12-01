@@ -41,7 +41,8 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const [memberToDelete, setMemberToDelete] = useState<GroupMember | null>(null)
     const [usuariosConectados, setUsuariosConectados] = useState<Set<string>>(new Set())
     const [inviteType, setInviteType] = useState<'email' | 'username'>('email')
-    
+    const [inviteIdentifier, setInviteIdentifier] = useState('')
+
     // Settings State
     const [loading, setLoading] = useState(false)
     const [groupName, setGroupName] = useState(group.nombre)
@@ -200,21 +201,17 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
     const handleInvite = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const formData = new FormData(e.currentTarget)
-
-        const identifier = formData.get('identifier') as string
-
-        if (!identifier) return toast.error(`Ingrese un ${inviteType === 'email' ? 'email' : 'username'}`)
+        if (!inviteIdentifier) return toast.error(`Ingrese un ${inviteType === 'email' ? 'email' : 'username'}`)
 
         const message = `Te invito a formar parte de ${group.nombre}`
 
-        const result = await inviteUserToGroup(group.id, identifier, message, inviteType)
+        const result = await inviteUserToGroup(group.id, inviteIdentifier, message, inviteType)
 
         if (!result.success)
             return toast.error(result.error || 'Error al invitar al grupo')
 
         toast.success('Invitación enviada')
-        e.currentTarget.reset()
+        setInviteIdentifier('')
     }
 
     const handleKickClick = (member: GroupMember) => {
@@ -421,6 +418,8 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                 className={styles.invite__input}
                                 type="text"
                                 name="identifier"
+                                value={inviteIdentifier}
+                                onChange={(e) => setInviteIdentifier(e.target.value)}
                                 placeholder={inviteType === 'email' ? 'Email del usuario' : 'Username del usuario'}
                                 required
                             />

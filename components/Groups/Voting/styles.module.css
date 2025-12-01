@@ -9,8 +9,8 @@
 .title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 2rem;
-    color: #ffeecf;
+    margin-top: 3rem;
+    color: var(--white);
     text-align: center;
 }
 
