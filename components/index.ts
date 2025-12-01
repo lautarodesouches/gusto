@@ -24,9 +24,9 @@ export { default as GroupSettings } from './Groups/Settings'
 export { default as FriendRequests } from './FriendRequests'
 export { default as PremiumBenefits } from './Premium/PremiumBenefits'
 export { default as UpgradePremiumModal } from './Premium/UpgradePremiumModal'
-export { default as PremiumTestButton } from './Premium/PremiumTestButton'
+
 export { default as PaymentSuccess } from './Premium/PaymentSuccess'
-export { default as PremiumLimitFloatingCard } from './Premium/PremiumLimitFloatingCard'
+
 export { ConfirmModal } from './modal/ConfirmModal'
 export { default as RestaurantDashboard } from './Restaurant/Dashboard'
 export { default as ProfileOverlay } from './Profile/Overlay'
