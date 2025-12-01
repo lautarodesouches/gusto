@@ -77,11 +77,10 @@ export default function SocialView({
                     document.body
                 )}
             <section
-                className={`${styles.social} ${isVisible ? styles.show : ''} ${
-                    isExpanded
+                className={`${styles.social} ${isVisible ? styles.show : ''} ${isExpanded
                         ? styles.social_expanded
                         : styles.social_collapsed
-                }`}
+                    }`}
             >
                 {/* Logo que cambia según el estado */}
                 <div className={styles.social__logo}>
@@ -143,10 +142,10 @@ export default function SocialView({
                                 {socialData.friends.map(f => (
                                     <FriendCard friend={f} key={f.id} />
                                 ))}
+                                <FriendButton
+                                    handleClick={() => togglePanel('searchFriend')}
+                                />
                             </ul>
-                            <FriendButton
-                                handleClick={() => togglePanel('searchFriend')}
-                            />
                         </div>
                         <div className={styles.social__div}>
                             <h3 className={styles.social__description}>

@@ -12,19 +12,10 @@
     gap: 0.75rem;
     padding: 0.5rem;
     max-width: fit-content;
-}
-
-/* Fondo Glass separado para no afectar el stacking context de los hijos */
-.fondo_glass {
-    position: absolute;
-    inset: 0;
-    background: rgba(45, 45, 43, 0.9);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1a1a1a;
     border-radius: 3rem;
     border: 1px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    z-index: 0;
 }
 
 /* Botón Premium */

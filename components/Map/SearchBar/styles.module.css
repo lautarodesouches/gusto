@@ -72,9 +72,8 @@
     top: calc(100% + 0.5rem);
     left: 0;
     right: 0;
-    background: rgba(45, 45, 43, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1a1a1a;
+    /* backdrop-filter removed */
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 1rem;
     padding: 0.5rem;
@@ -237,9 +236,8 @@
     top: calc(100% + 0.375rem);
     left: 0;
     right: 0;
-    background: rgba(45, 45, 43, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #1a1a1a;
+    /* backdrop-filter removed */
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 0.75rem;
     padding: 0.375rem;
@@ -363,9 +361,8 @@
 @media (min-width: 769px) {
     .buscador {
         gap: 0.75rem;
-        background: rgba(45, 45, 43, 0.9);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: #1a1a1a;
+        /* backdrop-filter removed */
         padding: 0.5rem;
         border-radius: 3rem;
         border: 1px solid rgba(255, 255, 255, 0.15);

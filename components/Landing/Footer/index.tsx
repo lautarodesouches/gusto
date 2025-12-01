@@ -24,9 +24,8 @@ export default function Footer() {
         <footer className={styles.footer}>
             <div className={styles.footer__top}>
                 <h3
-                    className={`${styles.footer__title} ${
-                        isVisible ? styles.write : ''
-                    }`}
+                    className={`${styles.footer__title} ${isVisible ? styles.write : ''
+                        }`}
                     ref={
                         typeof ref === 'boolean'
                             ? null
@@ -59,7 +58,7 @@ export default function Footer() {
                     <p className={styles.footer__text}>REDES SOCIALES</p>
                     <Link
                         className={styles.footer__link}
-                        href="https://www.instagram.com/"
+                        href="https://www.instagram.com/gusto.app_?igsh=MTZ1ZzR1ZnUycGdzbQ=="
                         target="_blank"
                     >
                         Instagram
