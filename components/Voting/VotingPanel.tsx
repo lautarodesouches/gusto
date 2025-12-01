@@ -245,6 +245,39 @@ export default function VotingPanel({
                         </span>
                     </div>
 
+                    {/* Previsualización de restaurantes disponibles */}
+                    {restaurantesDelMapa.length > 0 && (
+                        <div className={styles.restaurantesPreview}>
+                            <h4 className={styles.restaurantesPreviewTitle}>
+                                🍽️ Restaurantes que se incluirán en la votación:
+                            </h4>
+                            <div className={styles.restaurantesPreviewList}>
+                                {restaurantesDelMapa.slice(0, 10).map((restaurante) => (
+                                    <div key={restaurante.id} className={styles.restaurantePreviewItem}>
+                                        {restaurante.imagenUrl && (
+                                            <img 
+                                                src={restaurante.imagenUrl} 
+                                                alt={restaurante.nombre}
+                                                className={styles.restaurantePreviewImage}
+                                            />
+                                        )}
+                                        <div className={styles.restaurantePreviewInfo}>
+                                            <span className={styles.restaurantePreviewNombre}>{restaurante.nombre}</span>
+                                            {restaurante.direccion && (
+                                                <span className={styles.restaurantePreviewDireccion}>{restaurante.direccion}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                {restaurantesDelMapa.length > 10 && (
+                                    <div className={styles.restaurantesPreviewMore}>
+                                        + {restaurantesDelMapa.length - 10} restaurante{restaurantesDelMapa.length - 10 > 1 ? 's' : ''} más
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {soyAdministrador && (
                         <>
                             <button

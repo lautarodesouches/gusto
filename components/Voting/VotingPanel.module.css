@@ -51,6 +51,90 @@
     font-weight: 700;
 }
 
+.restaurantesPreview {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.restaurantesPreviewTitle {
+    font-size: 1.1rem;
+    color: #ffeecf;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.restaurantesPreviewList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 238, 207, 0.1);
+}
+
+.restaurantePreviewItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 238, 207, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 238, 207, 0.1);
+    transition: all 0.2s ease;
+}
+
+.restaurantePreviewItem:hover {
+    background: rgba(255, 238, 207, 0.1);
+    border-color: rgba(255, 238, 207, 0.2);
+}
+
+.restaurantePreviewImage {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 238, 207, 0.2);
+    flex-shrink: 0;
+}
+
+.restaurantePreviewInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.restaurantePreviewNombre {
+    font-size: 0.95rem;
+    color: #ffeecf;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.restaurantePreviewDireccion {
+    font-size: 0.8rem;
+    color: #969696;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.restaurantesPreviewMore {
+    text-align: center;
+    padding: 0.75rem;
+    color: #969696;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
 .header {
     display: flex;
     justify-content: space-between;
