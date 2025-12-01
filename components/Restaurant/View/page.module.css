@@ -592,10 +592,30 @@
     color: var(--white);
 }
 
+.data__subtitleContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 10px;
+    margin-bottom: 1rem;
+}
+
 .data__subtitle {
-    margin-top: 40px;
     font-size: 1.8rem;
     color: var(--white);
+    margin: 0;
+}
+
+.data__aiIcon {
+    color: #6366f1;
+    flex-shrink: 0;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.data__aiIcon:hover {
+    opacity: 1;
 }
 
 .data__info {

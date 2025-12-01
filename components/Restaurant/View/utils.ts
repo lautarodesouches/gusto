@@ -113,6 +113,57 @@ export const getEstadoActual = (restaurant: Restaurant, horarios: ScheduleItem[]
     }
 }
 
+/**
+ * Obtiene todas las reviews únicas combinando locales, Google y el array general
+ */
+export const getAllUniqueReviews = (restaurant: Restaurant, reviews: Review[]): Review[] => {
+    // Combinar todas las opiniones: locales, de Google y el array general
+    const allReviews = [
+        ...(restaurant.reviewsLocales || []),
+        ...(restaurant.reviewsGoogle || []),
+        ...(reviews || [])
+    ]
+
+    if (!allReviews || allReviews.length === 0) return []
+
+    // Eliminar duplicados basándose en el ID
+    return Array.from(
+        new Map(allReviews.map(r => [r.id, r])).values()
+    )
+}
+
+/**
+ * Calcula el rating promedio combinado de todas las reviews (locales + Google)
+ * @returns El rating promedio (0-5) o null si no hay reviews
+ */
+export const calculateAverageRating = (restaurant: Restaurant, reviews: Review[]): number | null => {
+    const uniqueReviews = getAllUniqueReviews(restaurant, reviews)
+    
+    if (uniqueReviews.length === 0) {
+        return null
+    }
+
+    let totalRating = 0
+    let validRatingsCount = 0
+
+    uniqueReviews.forEach(review => {
+        const rating = review.rating ?? review.valoracion ?? null
+        
+        if (rating !== null && rating !== undefined && !isNaN(rating) && rating >= 0 && rating <= 5) {
+            totalRating += rating
+            validRatingsCount++
+        }
+    })
+
+    if (validRatingsCount === 0) {
+        return null
+    }
+
+    const average = totalRating / validRatingsCount
+    // Redondear a 1 decimal
+    return Math.round(average * 10) / 10
+}
+
 export const getRatingDistribution = (restaurant: Restaurant, reviews: Review[]): RatingDistribution => {
     const distribution = {
         excelente: 0,
@@ -122,19 +173,9 @@ export const getRatingDistribution = (restaurant: Restaurant, reviews: Review[])
         horrible: 0
     }
 
-    // Combinar todas las opiniones: locales, de Google y el array general
-    const allReviews = [
-        ...(restaurant.reviewsLocales || []),
-        ...(restaurant.reviewsGoogle || []),
-        ...(reviews || [])
-    ]
+    const uniqueReviews = getAllUniqueReviews(restaurant, reviews)
 
-    if (!allReviews || allReviews.length === 0) return distribution
-
-    // Eliminar duplicados basándose en el ID (igual que en RestaurantView)
-    const uniqueReviews = Array.from(
-        new Map(allReviews.map(r => [r.id, r])).values()
-    )
+    if (uniqueReviews.length === 0) return distribution
 
     uniqueReviews.forEach(review => {
         const rating = review.rating || review.valoracion || 0

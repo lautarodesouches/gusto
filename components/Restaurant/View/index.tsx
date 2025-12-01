@@ -9,7 +9,7 @@ import RestaurantMap from '../Map'
 import { MapProvider } from '@/components/Map/MapProvider'
 import { useEffect, useState, useRef } from 'react'
 import { getRecomendacion } from '@/app/actions/restaurant'
-import { parseHorarios, getEstadoActual, getRatingDistribution, getRatingLabel } from './utils'
+import { parseHorarios, getEstadoActual, getRatingDistribution, getRatingLabel, calculateAverageRating } from './utils'
 import RestaurantHeader from './RestaurantHeader'
 import RestaurantGallery from './RestaurantGallery'
 import RestaurantInfo from './RestaurantInfo'
@@ -99,7 +99,12 @@ export default function RestaurantView({
 
     const horarios = parseHorarios(restaurant)
     const estadoActual = getEstadoActual(restaurant, horarios)
-    const rating = restaurant.rating ?? restaurant.valoracion ?? 0
+    
+    // Calcular el rating promedio combinado de todas las reviews (locales + Google)
+    // Si no hay reviews, usar el rating del backend como fallback
+    const calculatedRating = calculateAverageRating(restaurant, reviews)
+    const rating = calculatedRating ?? restaurant.rating ?? restaurant.valoracion ?? 0
+    
     const ratingDistribution = getRatingDistribution(restaurant, reviews)
     
     // Calcular total de opiniones únicas
