@@ -27,6 +27,30 @@
     font-size: 1rem;
 }
 
+.infoNote {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 238, 207, 0.1);
+    border: 2px solid rgba(255, 238, 207, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    color: #ffeecf;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.infoNote svg {
+    flex-shrink: 0;
+    color: #ffeecf;
+}
+
+.infoNote strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -254,4 +278,233 @@
     font-size: 0.95rem;
     border: 2px solid #ff5050;
     box-shadow: 0 2px 8px rgba(255, 80, 80, 0.3);
+}
+
+/* Modal de alerta */
+.modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modalContent {
+    background: var(--background);
+    border: 3px solid var(--primary);
+    border-radius: 24px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(255, 80, 80, 0.4);
+    animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    text-align: center;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalIcon {
+    margin-bottom: 1.5rem;
+    animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.modalTitle {
+    font-family: var(--font-gliker);
+    font-size: 2rem;
+    color: var(--beige);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.modalMessage {
+    font-size: 1.1rem;
+    color: var(--light);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.modalMessage strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.modalSteps {
+    background: rgba(255, 80, 80, 0.1);
+    border: 2px solid rgba(255, 80, 80, 0.3);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    text-align: left;
+    color: var(--beige);
+    line-height: 2;
+    font-size: 1rem;
+}
+
+.modalSteps strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.modalButton {
+    background: linear-gradient(135deg, var(--primary) 0%, #ff6b6b 100%);
+    color: var(--beige);
+    border: 2px solid rgba(255, 238, 207, 0.3);
+    padding: 1rem 2.5rem;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.4);
+    font-family: var(--font-plus);
+}
+
+.modalButton:hover {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8585 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(255, 80, 80, 0.5);
+}
+
+@media (max-width: 768px) {
+    .modalContent {
+        padding: 2rem 1.5rem;
+        max-width: 90%;
+    }
+
+    .modalTitle {
+        font-size: 1.6rem;
+    }
+
+    .modalMessage {
+        font-size: 1rem;
+    }
+
+    .modalSteps {
+        padding: 1.2rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Warning cuando hay votación activa pero sin restaurantes */
+.noRestaurantsWarning {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #2d2d2b;
+    border-radius: 16px;
+    border: 2px solid rgba(255, 80, 80, 0.5);
+    box-shadow: 0 4px 16px rgba(255, 80, 80, 0.3);
+}
+
+.warningIcon {
+    margin-bottom: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+.warningTitle {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.warningMessage {
+    color: #ffeecf;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.warningSteps {
+    background: rgba(255, 238, 207, 0.1);
+    border: 2px solid rgba(255, 238, 207, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.stepsTitle {
+    font-size: 1.1rem;
+    color: #ffeecf;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.stepsList {
+    color: var(--light);
+    font-size: 1rem;
+    line-height: 2;
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.stepsList li {
+    margin-bottom: 0.5rem;
+}
+
+.stepsList strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.votacionInfo {
+    background: rgba(255, 80, 80, 0.1);
+    border: 2px solid rgba(255, 80, 80, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    color: #ffeecf;
+    font-size: 1rem;
+}
+
+.votacionInfo p {
+    margin: 0;
+}
+
+.votacionInfo strong {
+    color: var(--primary);
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useAuth } from '@/context/AuthContext'
 import styles from './PremiumModal.module.css'
 import { createPayment } from '@/app/actions/payment'
@@ -26,6 +27,12 @@ export default function UpgradePremiumModal({
     const { user } = useAuth()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+        return () => setMounted(false)
+    }, [])
 
     // Cerrar modal con ESC
     useEffect(() => {
@@ -78,9 +85,9 @@ export default function UpgradePremiumModal({
         }
     }
 
-    if (!isOpen) return null
+    if (!isOpen || !mounted) return null
 
-    return (
+    return createPortal(
         <div
             className={styles.backdrop}
             onClick={e => e.target === e.currentTarget && onClose()}
@@ -94,8 +101,8 @@ export default function UpgradePremiumModal({
                     title="Cerrar"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 6 6 18"/>
-                        <path d="m6 6 12 12"/>
+                        <path d="M18 6 6 18" />
+                        <path d="m6 6 12 12" />
                     </svg>
                 </button>
 
@@ -113,9 +120,9 @@ export default function UpgradePremiumModal({
 
                     {/* Beneficio principal con SVG */}
                     <div className={styles.beneficio_principal}>
-                        <img 
-                            src="/images/all/mas_grupos.svg" 
-                            alt="Grupos ilimitados" 
+                        <img
+                            src="/images/all/mas_grupos.svg"
+                            alt="Grupos ilimitados"
                             className={styles.grupos_svg}
                         />
                         <div className={styles.beneficio_texto}>
@@ -124,13 +131,13 @@ export default function UpgradePremiumModal({
                     </div>
 
                     <div className={styles.beneficio_principal}>
-                        <img 
-                            src="/images/all/mas_favoritos.svg" 
-                            alt="Grupos ilimitados" 
+                        <img
+                            src="/images/all/mas_favoritos.svg"
+                            alt="Grupos ilimitados"
                             className={styles.grupos_svg}
                         />
                         <div className={styles.beneficio_texto}>
-                            <p>Poder guardar en favoritos más de <span className={styles.destacado_numero}>3 RESTAURANTES</span></p>
+                            <p>Poder <span className={styles.destacado}>GUARDAR</span> en favoritos más de <span className={styles.destacado_numero}>3 RESTAURANTES</span></p>
                         </div>
                     </div>
 
@@ -162,9 +169,9 @@ export default function UpgradePremiumModal({
                             </>
                         ) : (
                             <>
-                                <img 
-                                    src="/images/all/mercado_pago.svg" 
-                                    alt="Mercado Pago" 
+                                <img
+                                    src="/images/all/mercado_pago.svg"
+                                    alt="Mercado Pago"
                                     className={styles.icono_mercado_pago}
                                 />
                                 Continuar con Mercado Pago
@@ -182,21 +189,22 @@ export default function UpgradePremiumModal({
                         title="Cerrar"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M18 6 6 18"/>
-                            <path d="m6 6 12 12"/>
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
                         </svg>
                     </button>
-                    
+
                     {/* Placeholder para imagen */}
                     <div className={styles.imagen_placeholder}>
-                            <img 
-                            src="/images/all/premium.jpg" 
-                            alt="Beneficios" 
+                        <img
+                            src="/images/all/premium.jpg"
+                            alt="Beneficios"
                             className={styles.imagen}
                         />
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }

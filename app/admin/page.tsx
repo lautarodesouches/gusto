@@ -292,7 +292,7 @@ export default function AdminPanel() {
                         {isRecommendationLoading ? 'Enviando...' : '📧 Enviar recomendaciones'}
                     </button>
                     <button className={styles.header__button} onClick={handleSalir}>
-                        Volver al mapa
+                        Cerrar sesión
                     </button>
                 </div>
             </header>

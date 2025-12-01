@@ -16,7 +16,7 @@ type FavoriteLimitResponse = {
     linkPago?: string
     message?: string
 }
-import FavoriteLimitFloatingCard from '@/components/Premium/FavoriteLimitFloatingCard'
+import UpgradePremiumModal from '@/components/Premium/UpgradePremiumModal'
 
 interface Props {
     restaurant: Restaurant
@@ -94,10 +94,16 @@ export default function RestaurantClient({ restaurant, reviews, initialIsFavorit
                 isFavourite={isFavourite}
                 onFavourite={handleFavourite}
             />
-            <FavoriteLimitFloatingCard
+            <UpgradePremiumModal
                 isOpen={showLimitCard}
                 onClose={() => setShowLimitCard(false)}
-                limitInfo={limitInfo}
+                trigger="general"
+                limitInfo={limitInfo ? {
+                    ...limitInfo,
+                    tipoPlan: limitInfo.tipoPlan || 'Free',
+                    limiteActual: limitInfo.limiteActual || 0,
+                    gruposActuales: limitInfo.favoritosActuales || 0
+                } : undefined}
             />
         </>
     )

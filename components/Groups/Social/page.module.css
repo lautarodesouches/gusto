@@ -270,11 +270,50 @@
 }
 
 .invite {
+    margin-top: 10px;
+    display: flex;
+    gap: 20px;
+}
+
+.inviteContainer {
     margin-top: 20px;
     padding-top: 20px;
     border-top: 1px solid var(--grey);
+}
+
+.inviteTabs {
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.inviteTab {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--grey);
+    background: transparent;
+    color: var(--light);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.inviteTab:hover {
+    border-color: var(--beige);
+    color: var(--beige);
+}
+
+.inviteTabActive {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+
+.inviteTabActive:hover {
+    background: #ff3333;
+    border-color: #ff3333;
 }
 
 .invite__fieldset {

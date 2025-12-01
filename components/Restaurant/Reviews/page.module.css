@@ -13,6 +13,14 @@
     padding: 1.5rem;
     color: white;
     position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Opiniones locales - más visibles */
+.review-card--local {
+    background: #333333;
+    border: 2px solid var(--primary, #ff5050);
+    box-shadow: 0 4px 12px rgba(255, 80, 80, 0.15), 0 0 20px rgba(255, 80, 80, 0.1);
 }
 
 .review-card__badge {
@@ -180,4 +188,22 @@
     .review-card__title {
         font-size: 1.125rem;
     }
+}
+
+/* Empty state - cuando no hay opiniones */
+.review-list__empty {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #2b2b2b;
+    border-radius: 0.75rem;
+    border: 1px solid #3a3a3a;
+    margin-top: 1rem;
+}
+
+.review-list__empty p {
+    color: var(--light, #d0d0d0);
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1.5;
 }
