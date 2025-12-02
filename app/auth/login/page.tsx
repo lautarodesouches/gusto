@@ -1,5 +1,11 @@
 import { ROUTES } from '@/routes'
+import { Metadata } from 'next'
 import Form from './form'
+
+export const metadata: Metadata = {
+    title: 'Iniciar Sesión | Gusto',
+    description: 'Iniciá sesión en Gusto para encontrar restaurantes y votar con amigos.',
+}
 import { AuthContainer, AuthSocial } from '@/components'
 
 export default function Login() {

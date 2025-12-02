@@ -1,5 +1,11 @@
 import { ROUTES } from '@/routes'
+import { Metadata } from 'next'
 import Image from 'next/image'
+
+export const metadata: Metadata = {
+    title: 'Gusto - Donde los gustos coinciden',
+    description: 'Encontrá tu próximo lugar favorito para comer. Votá con amigos, descubrí restaurantes y disfrutá de la mejor gastronomía.',
+}
 import Link from 'next/link'
 import styles from './page.module.css'
 import {

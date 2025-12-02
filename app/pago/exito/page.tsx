@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import styles from './page.module.css'
+import { ROUTES } from '@/routes'
 
 export default function PagoExitoPage() {
     const searchParams = useSearchParams()
@@ -12,13 +13,13 @@ export default function PagoExitoPage() {
         // Redirigir inmediatamente al mapa con parámetro de pago exitoso
         const pagoId = searchParams.get('payment_id')
         const collectionStatus = searchParams.get('collection_status')
-        
+
         console.log('🎉 [PagoExito] Redirigiendo al mapa con pago exitoso')
         console.log('Payment ID:', pagoId)
         console.log('Collection Status:', collectionStatus)
-        
+
         // Redirigir al mapa con parámetro de pago exitoso
-        router.replace('/mapa?payment=success')
+        router.replace(`${ROUTES.MAP}?payment=success`)
     }, [searchParams, router])
 
     return (
@@ -28,8 +29,8 @@ export default function PagoExitoPage() {
                 <div className={styles.iconContainer}>
                     <div className={styles.circle}>
                         <svg className={styles.checkmark} viewBox="0 0 52 52">
-                            <circle className={styles.checkmarkCircle} cx="26" cy="26" r="25" fill="none"/>
-                            <path className={styles.checkmarkCheck} fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            <circle className={styles.checkmarkCircle} cx="26" cy="26" r="25" fill="none" />
+                            <path className={styles.checkmarkCheck} fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
                         </svg>
                     </div>
                 </div>

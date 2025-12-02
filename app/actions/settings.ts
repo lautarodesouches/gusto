@@ -9,6 +9,7 @@ const ERROR_MESSAGES = {
     UPDATE_FAILED: 'No se pudo actualizar el perfil',
     FETCH_FAILED: 'No se pudo obtener los favoritos',
     INTERNAL_ERROR: 'Error interno del servidor',
+    IMAGE_TOO_LARGE: 'La imagen es demasiado grande. Por favor, elige una imagen más pequeña.',
 } as const
 
 /**
@@ -62,6 +63,13 @@ export async function updateUserProfile(formData: FormData): Promise<ApiResponse
             },
             body: formData,
         })
+
+        if (response.status === 413) {
+            return {
+                success: false,
+                error: ERROR_MESSAGES.IMAGE_TOO_LARGE
+            }
+        }
 
         if (!response.ok) {
             const errorText = await response.text().catch(() => '')

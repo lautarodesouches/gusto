@@ -15,7 +15,25 @@ import admin from '@/lib/firebaseAdmin'
 import Navbar from '@/components/Navbar'
 import { getGroup } from '@/app/actions/groups'
 
+import { Metadata } from 'next'
+
 export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { id } = await params
+    const group = await getGroup(id)
+
+    if (!group.success || !group.data) {
+        return {
+            title: 'Grupo no encontrado | Gusto',
+        }
+    }
+
+    return {
+        title: `${group.data.nombre} | Gusto`,
+        description: `Unite al grupo ${group.data.nombre} en Gusto y votá dónde comer.`,
+    }
+}
 
 interface Props {
     params: Promise<{ id: string }>

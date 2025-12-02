@@ -145,9 +145,13 @@
     padding: 8px 18px;
     border-radius: 999px;
     border: none;
-    background: #444;
-    color: #888;
+    background: #ff6b6b;
+    color: white;
     font-size: 13px;
+    cursor: pointer;
+}
+
+.saveButton:disabled {
     cursor: not-allowed;
 }
 

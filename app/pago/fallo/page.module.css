@@ -1,0 +1,191 @@
+/* Contenedor principal */
+.container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--background);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Contenido centrado */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+}
+
+/* Contenedor del ícono */
+.iconContainer {
+    margin-bottom: 50px;
+    animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0); }
+    50% { transform: scale(1.15); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Círculo del error */
+.circle {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 80, 80, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 0 0 8px rgba(255, 80, 80, 0.1),
+        0 0 0 16px rgba(255, 80, 80, 0.05),
+        0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 
+            0 0 0 8px rgba(255, 80, 80, 0.1),
+            0 0 0 16px rgba(255, 80, 80, 0.05),
+            0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 
+            0 0 0 12px rgba(255, 80, 80, 0.15),
+            0 0 0 24px rgba(255, 80, 80, 0.08),
+            0 15px 40px rgba(0, 0, 0, 0.25);
+    }
+}
+
+/* SVG del cross */
+.cross {
+    width: 80px;
+    height: 80px;
+    animation: rotate 0.8s ease-in-out 0.3s both;
+}
+
+@keyframes rotate {
+    from { transform: rotate(-90deg); }
+    to { transform: rotate(0); }
+}
+
+.crossLine {
+    stroke: var(--primary);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: strokeLine 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.5s forwards;
+}
+
+.crossLineDelay {
+    animation-delay: 0.7s;
+}
+
+@keyframes strokeLine {
+    to { stroke-dashoffset: 0; }
+}
+
+/* Título */
+.title {
+    font-family: var(--font-gliker);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: slideUp 0.6s ease-out 0.3s both;
+}
+
+/* Subtítulo */
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--light);
+    margin-bottom: 40px;
+    max-width: 400px;
+    line-height: 1.6;
+    animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Botón */
+.buttonContainer {
+    width: 100%;
+    max-width: 300px;
+    animation: slideUp 0.6s ease-out 0.5s both;
+}
+
+.button {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 80, 80, 0.3);
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 80, 80, 0.4);
+    background: #ff3333;
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.contactText {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--grey);
+    animation: slideUp 0.6s ease-out 0.6s both;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content { padding: 30px 20px; }
+    .circle { width: 150px; height: 150px; }
+    .cross { width: 60px; height: 60px; }
+    .title { font-size: 2.8rem; }
+    .subtitle { font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+    .circle { width: 130px; height: 130px; }
+    .cross { width: 50px; height: 50px; }
+    .title { font-size: 2.2rem; letter-spacing: 1px; }
+    .subtitle { font-size: 1rem; margin-bottom: 30px; }
+    .button { padding: 14px; font-size: 1rem; }
+}
