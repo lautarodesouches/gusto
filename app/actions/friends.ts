@@ -165,7 +165,7 @@ export async function addFriend(username: string): Promise<ApiResponse<User>> {
         revalidatePath(`/perfil/${username}`)
 
         return { success: true }
-    } catch (error) {
+    } catch {
         return {
             success: false,
             error: 'Error al enviar solicitud de amistad',
@@ -194,7 +194,7 @@ export async function deleteFriend(
         revalidateTag('friends')
 
         return { success: true }
-    } catch (error) {
+    } catch {
         return {
             success: false,
             error: 'Error al eliminar amigo',
