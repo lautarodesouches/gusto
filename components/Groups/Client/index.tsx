@@ -30,11 +30,61 @@ export default function GroupClient({ group }: Props) {
     const [kickedInfo, setKickedInfo] = useState<{ grupoId: string; nombreGrupo: string } | null>(null)
 
     const [members, setMembers] = useState(
-        group.miembros.map(m => ({ ...m, checked: true }))
+        group.miembros.map(m => ({ 
+            ...m, 
+            checked: m.afectarRecomendacion ?? true // Usar el valor del backend, por defecto true
+        }))
     )
+    
+    const [hayVotacionActiva, setHayVotacionActiva] = useState(false)
     
     // Verificar si el usuario actual es administrador
     const isAdmin = auth.user?.uid === group.administradorFirebaseUid
+
+    // Verificar si hay una votación activa
+    useEffect(() => {
+        const checkVotacionActiva = async () => {
+            try {
+                const res = await fetch(`/api/votacion/grupo/${group.id}/activa`)
+                if (res.ok) {
+                    const data = await res.json()
+                    setHayVotacionActiva(data.hayVotacionActiva || false)
+                }
+            } catch (err) {
+                console.error('[GroupClient] Error verificando votación activa:', err)
+            }
+        }
+        
+        checkVotacionActiva()
+        
+        // Verificar periódicamente si hay votación activa (cada 5 segundos)
+        const interval = setInterval(checkVotacionActiva, 5000)
+        
+        return () => clearInterval(interval)
+    }, [group.id])
+
+    // Escuchar eventos de votación iniciada/cerrada
+    useEffect(() => {
+        const handleVotacionIniciada = () => {
+            setHayVotacionActiva(true)
+        }
+        
+        const handleVotacionCerrada = () => {
+            setHayVotacionActiva(false)
+        }
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('votacion:iniciada', handleVotacionIniciada)
+            window.addEventListener('votacion:cerrada', handleVotacionCerrada)
+        }
+
+        return () => {
+            if (typeof window !== 'undefined') {
+                window.removeEventListener('votacion:iniciada', handleVotacionIniciada)
+                window.removeEventListener('votacion:cerrada', handleVotacionCerrada)
+            }
+        }
+    }, [])
 
 
     // Escuchar eventos globales de actualización de grupos para refrescar
@@ -62,10 +112,13 @@ export default function GroupClient({ group }: Props) {
             const prevById = new Map(prev.map(m => [m.id, m]))
 
             return group.miembros.map(m => {
-                const prevMember = prevById.get(m.id)
+                // Siempre usar el valor del backend (afectarRecomendacion) cuando esté disponible
+                // Por defecto true si no viene definido
+                const checkedFromBackend = m.afectarRecomendacion ?? true
+                
                 return {
                     ...m,
-                    checked: prevMember?.checked ?? true,
+                    checked: checkedFromBackend,
                 }
             })
         })
@@ -95,6 +148,12 @@ export default function GroupClient({ group }: Props) {
     }, [group.id])
 
     const handleToggleCheck = async (id: string) => {
+        // Si hay votación activa, mostrar mensaje y no permitir cambiar
+        if (hayVotacionActiva) {
+            toast.error('La asistencia no puede modificarse durante una votación activa.')
+            return
+        }
+
         const member = members.find(m => m.id === id)
         if (!member) return
 
@@ -103,7 +162,11 @@ export default function GroupClient({ group }: Props) {
 
         // Optimistic update
         setMembers(prev =>
-            prev.map(m => (m.id === id ? { ...m, checked: newCheckedState } : m))
+            prev.map(m => (m.id === id ? { 
+                ...m, 
+                checked: newCheckedState,
+                afectarRecomendacion: newCheckedState // Sincronizar también el valor que viene del backend
+            } : m))
         )
 
         // Call backend action
@@ -114,8 +177,13 @@ export default function GroupClient({ group }: Props) {
         if (!result.success) {
             // Revert on error
             setMembers(prev =>
-                prev.map(m => (m.id === id ? { ...m, checked: isCurrentlyChecked } : m))
+                prev.map(m => (m.id === id ? { 
+                    ...m, 
+                    checked: isCurrentlyChecked,
+                    afectarRecomendacion: isCurrentlyChecked
+                } : m))
             )
+            // Si el backend devuelve un error específico, mostrarlo
             toast.error(result.error || 'Error al actualizar el estado del miembro')
         } else {
             toast.success(
@@ -123,6 +191,8 @@ export default function GroupClient({ group }: Props) {
                     ? `${member.usuarioNombre} activado`
                     : `${member.usuarioNombre} desactivado`
             )
+            // Recargar el grupo para sincronizar con el backend
+            router.refresh()
         }
     }
 
@@ -182,6 +252,7 @@ export default function GroupClient({ group }: Props) {
                         onMemberRemoved={handleMemberRemoved}
                         isAdmin={isAdmin}
                         currentUserId={auth.user?.uid || ''}
+                        hayVotacionActiva={hayVotacionActiva}
                     />
                 </div>
                 <div

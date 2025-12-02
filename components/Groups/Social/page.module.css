@@ -224,6 +224,64 @@
     background-position: center;
 }
 
+.member__checkbox_disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    position: relative;
+}
+
+.member__checkbox_disabled .checkmark {
+    cursor: not-allowed;
+    border-color: var(--grey);
+    opacity: 0.5;
+}
+
+.member__checkbox_disabled:hover .checkmark {
+    border-color: var(--grey);
+}
+
+.member__checkbox_disabled .filter__input:checked + .checkmark {
+    background: var(--grey);
+    border-color: var(--grey);
+    opacity: 0.5;
+}
+
+.member__checkbox_label {
+    position: relative;
+}
+
+/* Tooltip */
+.member__checkbox_label[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.member__checkbox_label[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 2px;
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    pointer-events: none;
+    z-index: 1000;
+}
+
 .member__delete_btn {
     background: var(--primary);
     border: none;

@@ -3,19 +3,19 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
 import { VotingPanel, VotingResults } from '@/components/Voting'
-import { ResultadoVotacion, VotacionActivaResponse, Restaurant } from '@/types'
+import { ResultadoVotacion, VotacionActivaResponse, Restaurant, GroupMember } from '@/types'
 import { useVotingSignalR } from '@/hooks/useVotingSignalR'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import styles from './styles.module.css'
 
 interface Props {
     groupId: string
-    members: unknown[]
+    members: (GroupMember & { checked: boolean })[]
     isAdmin?: boolean
     currentRestaurants: Restaurant[] // Restaurantes visibles en el mapa para usar como candidatos
 }
 
-export default function GroupVoting({ groupId, members: _members, isAdmin = false, currentRestaurants = [] }: Props) {
+export default function GroupVoting({ groupId, members, isAdmin = false, currentRestaurants = [] }: Props) {
     const auth = useAuth()
     const toast = useToast()
     const { user: currentUser } = useCurrentUser() // Obtener el usuario completo con su GUID de BD
@@ -104,6 +104,10 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
                         // Si está cerrada, limpiar el estado
                         console.log('[GroupVoting] Votación cerrada detectada, limpiando estado')
                         setResultados(undefined)
+                        // Emitir evento de votación cerrada
+                        if (typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('votacion:cerrada'))
+                        }
                         return false
                     } else {
                         console.log('[GroupVoting] Estableciendo votación activa en resultados')
@@ -114,12 +118,20 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
                         if (votacionId) {
                             await fetchResultados(votacionId)
                         }
+                        // Emitir evento de votación iniciada
+                        if (typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('votacion:iniciada'))
+                        }
                         return true // Votación encontrada
                     }
                 } else {
                     // No hay votación activa
                     console.log('[GroupVoting] No hay votación activa, limpiando resultados')
                     setResultados(undefined)
+                    // Emitir evento de votación cerrada
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('votacion:cerrada'))
+                    }
                     return false // No hay votación
                 }
             } else {
@@ -294,6 +306,10 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
             }
 
             toast.success('Votación cerrada')
+            // Emitir evento de votación cerrada
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('votacion:cerrada'))
+            }
             // SignalR avisará cuando se cierre, no hace falta recargar manualmente
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Error desconocido'
@@ -362,6 +378,7 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
                     }}
                     soyAdministrador={soyAdministrador || isAdmin}
                     restaurantesDelMapa={currentRestaurants}
+                    miembros={members}
                 />
             </div>
         )
