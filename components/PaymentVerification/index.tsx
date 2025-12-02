@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { PaymentSuccess } from '@/components'
 import { verifyRecentPayment } from '@/app/actions/payment'
+import { ROUTES } from '@/routes'
 
 export default function PaymentVerification() {
     const router = useRouter()
@@ -38,7 +39,7 @@ export default function PaymentVerification() {
 
                         // Mostrar pantalla de éxito
                         setShowSuccess(true)
-                        
+
                         // El componente PaymentSuccess manejará la redirección automáticamente
                     } else {
                         // Si no hay pago aprobado, limpiar localStorage y no hacer nada
@@ -61,10 +62,10 @@ export default function PaymentVerification() {
     }, [router, token, loading, refreshPremiumStatus])
 
     return (
-        <PaymentSuccess 
+        <PaymentSuccess
             show={showSuccess}
             onComplete={() => {
-                router.push('/')
+                router.push(ROUTES.MAP)
                 setTimeout(() => {
                     window.location.reload()
                 }, 300)

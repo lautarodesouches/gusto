@@ -1,0 +1,209 @@
+/* Contenedor principal */
+.container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--beige);
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Contenido centrado */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    text-align: center;
+}
+
+/* Contenedor del ícono */
+.iconContainer {
+    margin-bottom: 50px;
+    animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0); }
+    50% { transform: scale(1.15); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Círculo del reloj */
+.circle {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 80, 80, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        0 0 0 8px rgba(255, 80, 80, 0.05),
+        0 0 0 16px rgba(255, 80, 80, 0.02),
+        0 10px 30px rgba(0, 0, 0, 0.1);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 
+            0 0 0 8px rgba(255, 80, 80, 0.05),
+            0 0 0 16px rgba(255, 80, 80, 0.02),
+            0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 
+            0 0 0 12px rgba(255, 80, 80, 0.08),
+            0 0 0 24px rgba(255, 80, 80, 0.04),
+            0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* SVG del reloj */
+.clock {
+    width: 90px;
+    height: 90px;
+}
+
+.clockCircle {
+    stroke: var(--primary);
+    stroke-width: 3;
+    fill: none;
+}
+
+.clockHand {
+    stroke: var(--primary);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform-origin: 26px 26px;
+}
+
+.hourHand {
+    animation: rotateHand 12s linear infinite;
+}
+
+.minuteHand {
+    animation: rotateHand 2s linear infinite;
+}
+
+@keyframes rotateHand {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Título */
+.title {
+    font-family: var(--font-gliker);
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: slideUp 0.6s ease-out 0.3s both;
+}
+
+/* Subtítulo */
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--grey);
+    margin-bottom: 30px;
+    max-width: 450px;
+    line-height: 1.6;
+    animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+/* Caja de información */
+.infoBox {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 80, 80, 0.2);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    max-width: 400px;
+    animation: slideUp 0.6s ease-out 0.5s both;
+}
+
+.infoText {
+    font-size: 0.95rem;
+    color: var(--dark);
+    line-height: 1.5;
+}
+
+.infoText strong {
+    color: var(--primary);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Botón */
+.buttonContainer {
+    width: 100%;
+    max-width: 300px;
+    animation: slideUp 0.6s ease-out 0.6s both;
+}
+
+.button {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 600;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 80, 80, 0.3);
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 80, 80, 0.4);
+    background: #ff3333;
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content { padding: 30px 20px; }
+    .circle { width: 150px; height: 150px; }
+    .clock { width: 70px; height: 70px; }
+    .title { font-size: 2.8rem; }
+    .subtitle { font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+    .circle { width: 130px; height: 130px; }
+    .clock { width: 60px; height: 60px; }
+    .title { font-size: 2.2rem; letter-spacing: 1px; }
+    .subtitle { font-size: 1rem; margin-bottom: 20px; }
+    .button { padding: 14px; font-size: 1rem; }
+    .infoBox { padding: 15px; margin-bottom: 30px; }
+}

@@ -20,10 +20,7 @@ const nextConfig: NextConfig = {
     unoptimized: false,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
-  },
-  serverActions: {
-    bodySizeLimit: '10mb', // Permitir hasta 10MB para Server Actions (suficiente para 3 imágenes de 2MB cada una)
-  },
+  }
 };
 
 export default nextConfig;

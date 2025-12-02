@@ -1,37 +1,58 @@
 'use client'
 
+import { ROUTES } from '@/routes'
 import { useRouter } from 'next/navigation'
+import styles from './page.module.css'
 
 export default function PagoFalloPage() {
     const router = useRouter()
 
     const handleRetry = () => {
-        router.push('/map')
+        router.push(ROUTES.MAP)
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-8 text-center">
-                <div className="text-6xl mb-4">❌</div>
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">
+        <div className={styles.container}>
+            <div className={styles.content}>
+                {/* Ícono de error animado */}
+                <div className={styles.iconContainer}>
+                    <div className={styles.circle}>
+                        <svg className={styles.cross} viewBox="0 0 52 52">
+                            <path
+                                className={styles.crossLine}
+                                fill="none"
+                                d="M16 16 36 36"
+                            />
+                            <path
+                                className={`${styles.crossLine} ${styles.crossLineDelay}`}
+                                fill="none"
+                                d="M36 16 16 36"
+                            />
+                        </svg>
+                    </div>
+                </div>
+
+                {/* Textos */}
+                <h1 className={styles.title}>
                     Pago Cancelado
                 </h1>
-                <p className="text-gray-600 mb-6">
-                    Tu pago no fue procesado. Puedes intentarlo nuevamente cuando gustes.
+                <p className={styles.subtitle}>
+                    Tu pago no pudo ser procesado. No te preocupes, no se ha realizado ningún cargo a tu cuenta.
                 </p>
-                
-                <div className="space-y-3">
+
+                {/* Botón */}
+                <div className={styles.buttonContainer}>
                     <button
                         onClick={handleRetry}
-                        className="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition-colors"
+                        className={styles.button}
                     >
-                        Volver a la App
+                        Volver a intentar
                     </button>
-                    
-                    <p className="text-sm text-gray-500">
-                        Si tienes problemas, contáctanos en soporte@gustosapp.com
-                    </p>
                 </div>
+
+                <p className={styles.contactText}>
+                    Si el problema persiste, contáctanos en soporte@gustosapp.com
+                </p>
             </div>
         </div>
     )
