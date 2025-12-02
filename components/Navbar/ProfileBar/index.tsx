@@ -54,8 +54,8 @@ export default function ProfileBar() {
         await logoutAction()
         // Cerrar sesión en Firebase y limpiar estado
         await logout()
-        // Redirigir a login
-        router.push(ROUTES.LOGIN)
+        // Redirigir a login (usando window.location para forzar recarga y limpiar estado)
+        window.location.href = ROUTES.LOGIN
     }
 
     const handleViewProfile = () => {

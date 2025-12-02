@@ -24,27 +24,28 @@ export function useSignalRConnection({
     onReconnected,
     onError,
 }: UseSignalRConnectionOptions) {
-    const connectionRef = useRef<HubConnection | null>(null)
+    const [connection, setConnection] = useState<HubConnection | null>(null)
     const [isConnected, setIsConnected] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const startAttemptedRef = useRef(false)
 
-    // Crear conexión una sola vez (fuera del useEffect)
-    if (!connectionRef.current) {
+    // Efecto para crear y gestionar la conexión
+    useEffect(() => {
+        if (!url) return
+
         const connectionOptions: Record<string, unknown> = {
             withCredentials,
         }
 
-        // Solo agregar accessTokenFactory si hay token
         if (token) {
             connectionOptions.accessTokenFactory = () => token
         }
 
-        connectionRef.current = new HubConnectionBuilder()
+        // Crear instancia
+        const newConnection = new HubConnectionBuilder()
             .withUrl(url, connectionOptions)
             .withAutomaticReconnect({
                 nextRetryDelayInMilliseconds: (retryContext) => {
-                    // Reintentar después de 0s, 2s, 10s, 30s, luego cada 30s
                     if (retryContext.previousRetryCount === 0) return 0
                     if (retryContext.previousRetryCount === 1) return 2000
                     if (retryContext.previousRetryCount === 2) return 10000
@@ -53,121 +54,91 @@ export function useSignalRConnection({
             })
             .build()
 
-        // Configurar event handlers una sola vez
-        connectionRef.current.onreconnecting(() => {
+        setConnection(newConnection)
+
+        // Handlers
+        newConnection.onreconnecting(() => {
             console.log('[SignalR] Reconnecting...', url)
             setIsConnected(false)
             if (onReconnecting) onReconnecting()
         })
 
-        connectionRef.current.onreconnected(() => {
+        newConnection.onreconnected(() => {
             console.log('[SignalR] Reconnected', url)
             setIsConnected(true)
             setError(null)
             if (onReconnected) onReconnected()
         })
 
-        connectionRef.current.onclose((err) => {
+        newConnection.onclose((err) => {
             console.log('[SignalR] Connection closed', url, err)
             setIsConnected(false)
             if (err) {
                 const errorMessage = err.message || 'Conexión perdida'
-                // ❌ NO establecer error en estado para errores de negociación/conexión
-                // Estos son temporales y se resuelven automáticamente con reconexión
-                // Solo loggear en consola
-                if (!errorMessage.toLowerCase().includes('negotiation') && 
+                if (!errorMessage.toLowerCase().includes('negotiation') &&
                     !errorMessage.toLowerCase().includes('connection was stopped')) {
-                    // Solo establecer error para errores críticos
                     setError(errorMessage)
                     if (onError) onError(new Error(errorMessage))
                 } else {
-                    // Errores de negociación: solo loggear, NO mostrar en UI
                     console.log('[SignalR] Error de negociación (ignorado en UI):', errorMessage)
                 }
             }
             if (onDisconnected) onDisconnected()
         })
-    }
 
-    const startConnection = useCallback(async () => {
-        const conn = connectionRef.current
-        if (!conn) return
+        // Función de inicio
+        const startConnection = async () => {
+            if (startAttemptedRef.current) return
 
-        // Verificar estado antes de intentar conectar
-        if (
-            conn.state === HubConnectionState.Connected ||
-            conn.state === HubConnectionState.Connecting ||
-            conn.state === HubConnectionState.Reconnecting
-        ) {
-            console.log('[SignalR] Ya conectado o conectando, estado:', conn.state, url)
-            return
-        }
+            // Verificar estado antes de iniciar
+            if (newConnection.state !== HubConnectionState.Disconnected) return
 
-        // Evitar múltiples intentos simultáneos
-        if (startAttemptedRef.current) {
-            console.log('[SignalR] Start ya intentado, esperando...', url)
-            return
-        }
+            startAttemptedRef.current = true
 
-        startAttemptedRef.current = true
+            try {
+                await newConnection.start()
+                console.log('[SignalR] Connected:', url)
+                setIsConnected(true)
+                setError(null)
+                if (onConnected) onConnected()
+            } catch (err) {
+                console.error('[SignalR] Error connecting:', err, url)
+                const errorMessage = err instanceof Error ? err.message : String(err)
 
-        try {
-            await conn.start()
-            console.log('[SignalR] Connected:', url)
-            setIsConnected(true)
-            setError(null)
-            if (onConnected) onConnected()
-        } catch (err) {
-            console.error('[SignalR] Error connecting:', err, url)
-            const errorMessage = err instanceof Error ? err.message : String(err)
-            
-            // ❌ NO establecer error en estado para errores de negociación/conexión
-            // Estos son temporales y se resuelven automáticamente con reconexión
-            if (!errorMessage.toLowerCase().includes('negotiation') && 
-                !errorMessage.toLowerCase().includes('connection was stopped') &&
-                !errorMessage.toLowerCase().includes('failed to start')) {
-                // Solo establecer error para errores críticos (ej: 401 Unauthorized)
-                setError(errorMessage)
-                if (onError) onError(err instanceof Error ? err : new Error(errorMessage))
-            } else {
-                // Errores de negociación/conexión: solo loggear, NO mostrar en UI
-                console.log('[SignalR] Error de conexión (ignorado en UI, reintentando):', errorMessage)
+                if (!errorMessage.toLowerCase().includes('negotiation') &&
+                    !errorMessage.toLowerCase().includes('connection was stopped') &&
+                    !errorMessage.toLowerCase().includes('failed to start')) {
+                    setError(errorMessage)
+                    if (onError) onError(err instanceof Error ? err : new Error(errorMessage))
+                } else {
+                    console.log('[SignalR] Error de conexión (ignorado en UI, reintentando):', errorMessage)
+                }
+
+                setIsConnected(false)
+
+                // Retry simple si falla el inicio inicial
+                setTimeout(() => {
+                    startAttemptedRef.current = false
+                    if (newConnection.state === HubConnectionState.Disconnected) {
+                        startConnection()
+                    }
+                }, 2000)
             }
-            
-            setIsConnected(false)
-            
-            // Retry después de 2 segundos
-            setTimeout(() => {
-                startAttemptedRef.current = false
-                startConnection()
-            }, 2000)
         }
-    }, [url, onConnected, onError])
-
-    useEffect(() => {
-        if (!url) return
 
         startConnection()
 
+        // Cleanup
         return () => {
-            const conn = connectionRef.current
-            if (conn) {
-                conn.stop()
-                    .then(() => {
-                        console.log('[SignalR] Disconnected:', url)
-                    })
-                    .catch((err) => {
-                        console.error('[SignalR] Error disconnecting:', err, url)
-                    })
-                connectionRef.current = null
-                setIsConnected(false)
-                startAttemptedRef.current = false
-            }
+            startAttemptedRef.current = false
+            newConnection.stop()
+                .then(() => console.log('[SignalR] Disconnected:', url))
+                .catch(err => console.error('[SignalR] Error disconnecting:', err, url))
         }
-    }, [url, startConnection])
+    }, [url, token, withCredentials]) // Re-crear si cambia URL o token
 
     return {
-        connection: connectionRef.current,
+        connection,
         isConnected,
         error,
     }

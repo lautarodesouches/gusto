@@ -4,8 +4,26 @@ import { checkFavoriteRestaurant } from '@/app/actions/favorites'
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 
+import { Metadata } from 'next'
+
 interface Props {
     params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { id } = await params
+    const restaurant = await getRestaurant(id)
+
+    if (!restaurant.success || !restaurant.data) {
+        return {
+            title: 'Restaurante no encontrado | Gusto',
+        }
+    }
+
+    return {
+        title: `${restaurant.data.nombre} | Gusto`,
+        description: `Descubrí ${restaurant.data.nombre} en Gusto. Mirá opiniones, fotos y más.`,
+    }
 }
 
 export default async function Restaurant({ params }: Props) {
@@ -30,9 +48,9 @@ export default async function Restaurant({ params }: Props) {
     return (
         <>
             <Navbar />
-            <RestaurantClient 
-                restaurant={restaurant} 
-                reviews={reviews} 
+            <RestaurantClient
+                restaurant={restaurant}
+                reviews={reviews}
                 initialIsFavorite={initialIsFavorite}
             />
         </>
