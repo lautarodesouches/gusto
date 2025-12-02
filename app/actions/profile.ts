@@ -81,8 +81,17 @@ export async function updateProfile(
         const updatedUser = await res.json()
 
         return { success: true, data: updatedUser }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error updating profile:', error)
+
+        // Detectar error de límite de tamaño de Next.js Server Actions
+        if (error.message && error.message.includes('Body exceeded')) {
+            return {
+                success: false,
+                error: 'La imagen es demasiado grande. El límite es 10MB.',
+            }
+        }
+
         return {
             success: false,
             error: 'Error al actualizar el perfil',

@@ -100,8 +100,17 @@ export async function submitRestaurantReview(formData: FormData): Promise<ApiRes
         }
 
         return { success: true, data: null }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error submitting restaurant review:', error)
+
+        // Detectar error de límite de tamaño de Next.js Server Actions
+        if (error.message && error.message.includes('Body exceeded')) {
+            return {
+                success: false,
+                error: 'El tamaño total de las imágenes es demasiado grande. El límite es 10MB.',
+            }
+        }
+
         return {
             success: false,
             error: 'Error interno del servidor',
