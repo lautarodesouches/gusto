@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gusto - Donde los gustos coinciden</title>
+    <meta name="description" content="Encontrá tu próximo lugar favorito para comer. Votá con amigos, descubrí restaurantes y disfrutá de la mejor gastronomía.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="main" id="inicio">
+        <!-- Header -->
+        <header class="header">
+            <div class="header__div">
+                <img class="header__img" src="images/brand/gusto-no-slogan.svg" alt="Logo Gusto!" />
+            </div>
+            <div class="header__container" id="menuContainer">
+                <svg class="header__close" id="closeMenu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+                    <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                </svg>
+                <nav class="header__nav">
+                    <a class="header__link" href="#inicio">Inicio</a>
+                    <a class="header__link" href="#beneficios">Beneficios</a>
+                    <a class="header__link" href="#faq">FAQ</a>
+                </nav>
+                <div class="header__bcontainer">
+                    <a href="https://gusto-dusky.vercel.app/restaurante/agregar">
+                        <button class="header__buttonRes">
+                            <span>SOY LOCAL</span>
+                        </button>
+                    </a>
+                    <a href="https://gusto-dusky.vercel.app/auth/login">
+                        <button class="header__button">
+                            <span>INGRESAR</span>
+                        </button>
+                    </a>
+                    <a href="https://gusto-dusky.vercel.app/auth/register">
+                        <button class="header__button">
+                            <span>REGISTRARME</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <svg class="header__icon" id="openMenu" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor">
+                <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/>
+            </svg>
+        </header>
+
+        <!-- Start Section -->
+        <section class="start">
+            <div class="start__div">
+                <h1 class="start__title">DONDE LOS GUSTOS COINCIDEN</h1>
+                <p class="start__text">¡Basta de debates! Nuestro algoritmo elige el restaurante perfecto para todos al instante.</p>
+                <a class="start__link" href="#beneficios">
+                    <button class="start__button">
+                        <span>Ver Más</span>
+                    </button>
+                </a>
+            </div>
+            <div class="start__div">
+                <img class="start__img" src="images/all/poster.jpg" alt="Grupo de personas comiendo" />
+            </div>
+        </section>
+
+        <!-- Carousel -->
+        <section class="carrusel">
+            <div class="carousel__wrapper">
+                <div class="carousel__track">
+                    <img src="images/all/carrusel.svg" alt="Carrusel SVG" class="carousel__img" />
+                    <img src="images/all/carrusel.svg" alt="Carrusel SVG" class="carousel__img" />
+                    <img src="images/all/carrusel.svg" alt="Carrusel SVG" class="carousel__img" />
+                    <img src="images/all/carrusel.svg" alt="Carrusel SVG" class="carousel__img" />
+                    <img src="images/all/carrusel.svg" alt="Carrusel SVG" class="carousel__img" />
+                    <img src="images/all/carrusel.svg" alt="Carrusel SVG" class="carousel__img" />
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="benefits" id="beneficios">
+            <div class="benefits__div">
+                <h2 class="benefits__title">BENEFICIOS DE ELEGIR <span>GUSTO</span><span>!</span></h2>
+                <p class="benefits__text">
+                    Hacemos que decidir dónde comer sea rápido, justo y divertido. Nuestra inteligencia artificial analiza los
+                    gustos, restricciones y preferencias de cada persona del grupo para encontrar el lugar perfecto, evitando
+                    discusiones y ahorrando tiempo.
+                </p>
+                <a class="benefits__link" href="https://gusto-dusky.vercel.app/auth/register">
+                    <button class="benefits__button">
+                        <span>PROBAR</span>
+                    </button>
+                </a>
+                <hr class="benefits__hr" />
+                <div class="benefits__container">
+                    <img class="benefits__img" src="images/all/beneficios.svg" alt="Grupo de personas viendo celular" />
+                </div>
+            </div>
+            <div class="benefits__div">
+                <article class="benefit">
+                    <div class="benefit__container">
+                        <img class="benefit__icon" src="images/all/bot.svg" alt="" />
+                        <h3 class="benefit__title">RECOMENDACIONES <span>INTELIGENTES</span></h3>
+                    </div>
+                    <ul class="benefit__list">
+                        <li class="benefit__item">Nuestro algoritmo analiza los gustos del grupo y encuentra el punto justo para todos.</li>
+                        <li class="benefit__item">Un sistema inteligente que combina preferencias y restricciones para sugerirte el lugar ideal.</li>
+                        <li class="benefit__item">Tu decisión guiada por datos, no discusiones. GUSTO! elige con vos.</li>
+                    </ul>
+                </article>
+                <article class="benefit">
+                    <div class="benefit__container">
+                        <img class="benefit__icon" src="images/all/hamburguesa.svg" alt="" />
+                        <h3 class="benefit__title">OPCIONES <span>PERSONALIZADAS</span></h3>
+                    </div>
+                    <ul class="benefit__list">
+                        <li class="benefit__item">Explorá lugares según tipo de comida, presupuesto o distancia.</li>
+                        <li class="benefit__item">Todo a tu medida: filtrá por menú, estilo y ubicación.</li>
+                        <li class="benefit__item">Recomendaciones pensadas según lo que te gusta (y lo que no).</li>
+                    </ul>
+                </article>
+                <article class="benefit">
+                    <div class="benefit__container">
+                        <img class="benefit__icon" src="images/all/cronometro.svg" alt="" />
+                        <h3 class="benefit__title">DECISIONES MÁS <span>RÁPIDAS</span></h3>
+                    </div>
+                    <ul class="benefit__list">
+                        <li class="benefit__item">Elegí dónde comer en minutos, sin perder tiempo debatiendo.</li>
+                        <li class="benefit__item">Menos chat, más acción: decidí en segundos.</li>
+                        <li class="benefit__item">Ahorra tiempo y energía: el algoritmo hace el trabajo por el grupo.</li>
+                    </ul>
+                </article>
+                <article class="benefit">
+                    <div class="benefit__container">
+                        <img class="benefit__icon" src="images/all/estrella.svg" alt="" />
+                        <h3 class="benefit__title">OPINIONES <span>REALES</span></h3>
+                    </div>
+                    <ul class="benefit__list">
+                        <li class="benefit__item">Basado en experiencias reales de otros grupos como el tuyo.</li>
+                        <li class="benefit__item">Descubrí lugares populares según reseñas auténticas.</li>
+                        <li class="benefit__item">Recomendaciones impulsadas por la comunidad, no por publicidad.</li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq" id="faq">
+            <div class="faq__div">
+                <h2 class="faq__title">PREGUNTAS <span>FRECUENTES</span></h2>
+                <img class="faq__img" src="images/all/aplicacion-gusto.png" alt="Aplicacion Gusto!" />
+            </div>
+            <div class="faq__div">
+                <details class="faq__details" open>
+                    <summary class="faq__summary">
+                        <h4>1. ¿Cómo funciona?</h4>
+                        <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+                        </svg>
+                    </summary>
+                    <div class="faq__content">
+                        <p>Es muy simple: Cada integrante completa el "paso a paso" con sus preferencias. <strong>GUSTO!</strong> analiza los datos y genera un match de lugares ideales. El grupo elige el que más les guste. ¡Listo! <strong>Sin vueltas, sin debates eternos.</strong></p>
+                    </div>
+                </details>
+
+                <details class="faq__details">
+                    <summary class="faq__summary">
+                        <h4>2. ¿Necesito crear una cuenta?</h4>
+                        <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+                        </svg>
+                    </summary>
+                    <div class="faq__content">
+                        <p>Sí, para aprovechar el <strong>CORE de Deep Learning (DL)</strong> y todas las funciones sociales de <strong>GUSTO!</strong>, es necesario crear una cuenta. Al registrarte, puedes guardar tus gustos, restricciones alimentarias y, lo más importante, crear grupos y enviar solicitudes de amistad para empezar a organizar salidas.</p>
+                    </div>
+                </details>
+
+                <details class="faq__details">
+                    <summary class="faq__summary">
+                        <h4>3. ¿Cómo decide qué recomendar?</h4>
+                        <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+                        </svg>
+                    </summary>
+                    <div class="faq__content">
+                        <p><strong>GUSTO!</strong> utiliza un avanzado algoritmo de <strong>redes neuronales (DL)</strong></p>
+                        <ul>
+                            <li><strong>Análisis Predictivo:</strong> El algoritmo analiza tu <strong>perfil completo</strong> (tus gustos, tu historial y tus restricciones) para calcular un Score de Afinidad con miles de restaurantes.</li>
+                            <li><strong>Decisión Grupal:</strong> Cuando estás en un grupo, la IA no solo te considera a ti; calcula la <strong>Máxima Satisfacción Colectiva</strong>. Esto significa que encuentra el lugar que mejor se adapta a la mayoría de los miembros, garantizando que sea seguro para aquellos con restricciones.</li>
+                        </ul>
+                        <p>La recomendación no se basa solo en popularidad, sino en una predicción de tu satisfacción personal y grupal.</p>
+                    </div>
+                </details>
+
+                <details class="faq__details">
+                    <summary class="faq__summary">
+                        <h4>4. ¿Los restaurantes pueden aparecer en GUSTO!?</h4>
+                        <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+                        </svg>
+                    </summary>
+                    <div class="faq__content">
+                        <p>¡Por supuesto! <strong>GUSTO!</strong> está abierto a que nuevos negocios se registren.</p>
+                        <ul>
+                            <li>Si eres dueño de un restaurante, puedes <strong>registrar tu local</strong> con todos los detalles clave: nombre, ubicación, coordenadas, platos y especialidades.</li>
+                            <li>Esto garantiza la <strong>visibilidad</strong> ante nuevos clientes que son perfectamente compatibles con tu oferta, gracias a los filtros de recomendación inteligente de nuestra plataforma.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="faq__details">
+                    <summary class="faq__summary">
+                        <h4>5. ¿Está disponible en mi zona?</h4>
+                        <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+                        </svg>
+                    </summary>
+                    <div class="faq__content">
+                        <p>Actualmente, <strong>GUSTO!</strong> está enfocado en el mercado <strong>argentino</strong>. Estamos trabajando para mapear y expandir rápidamente nuestra base de datos de restaurantes en las principales ciudades del país. Si no encuentras tu zona aún, te invitamos a registrarte para que podamos notificarte en cuanto la disponibilidad se expanda.</p>
+                    </div>
+                </details>
+
+                <details class="faq__details">
+                    <summary class="faq__summary">
+                        <h4>6. ¿Qué pasa con mis datos?</h4>
+                        <svg class="faq__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+                            <path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/>
+                        </svg>
+                    </summary>
+                    <div class="faq__content">
+                        <p>Nos tomamos la privacidad muy en serio:</p>
+                        <ul>
+                            <li><strong>Preferencias y Restricciones:</strong> Tus datos de gustos y restricciones alimentarias (el input principal del algoritmo) son tratados con la máxima confidencialidad. Se utilizan exclusivamente para <strong>mejorar la precisión de tus recomendaciones</strong> y para <strong>garantizar la seguridad alimentaria</strong> de tu grupo.</li>
+                            <li><strong>Información Pública:</strong> Solo la información que tú decidas hacer pública (como tus reseñas en el foro o tus amistades) será visible para la comunidad.</li>
+                            <li><strong>Compromiso:</strong> No compartimos tus datos personales con terceros. Nuestro negocio se basa en el valor de la <strong>recomendación inteligente</strong>, no en la venta de información.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer__top">
+                <h3 class="footer__title">EL PRÓXIMO PLAN, <span>JUNTOS</span></h3>
+            </div>
+            <div class="footer__container">
+                <div class="footer__div">
+                    <p class="footer__text">CONTACTO</p>
+                    <a class="footer__link" href="mailto:gusto.info.app@gmail.com">gusto.info.app@gmail.com</a>
+                </div>
+                <div class="footer__div">
+                    <img class="footer__img" src="images/brand/gusto-center-negative.svg" alt="Logo Gusto!" />
+                </div>
+                <div class="footer__div">
+                    <p class="footer__text">REDES SOCIALES</p>
+                    <a class="footer__link" href="https://www.instagram.com/gusto.app_?igsh=MTZ1ZzR1ZnUycGdzbQ==" target="_blank">Instagram</a>
+                </div>
+            </div>
+            <nav class="footer__nav">
+                <a class="footer__a" href="#inicio">
+                    Inicio
+                    <svg class="footer__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+                        <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/>
+                    </svg>
+                </a>
+                <a class="footer__a" href="#beneficios">
+                    Beneficios
+                    <svg class="footer__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+                        <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/>
+                    </svg>
+                </a>
+                <a class="footer__a" href="#faq">
+                    FAQ
+                    <svg class="footer__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor">
+                        <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/>
+                    </svg>
+                </a>
+            </nav>
+        </footer>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const menuContainer = document.getElementById('menuContainer');
+        const openMenu = document.getElementById('openMenu');
+        const closeMenu = document.getElementById('closeMenu');
+        
+        openMenu.addEventListener('click', () => {
+            menuContainer.classList.add('header__active');
+        });
+        
+        closeMenu.addEventListener('click', () => {
+            menuContainer.classList.remove('header__active');
+        });
+
+        // Close menu when clicking on links (mobile)
+        document.querySelectorAll('.header__link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuContainer.classList.remove('header__active');
+            });
+        });
+
+        // Smooth scroll to top for footer links
+        document.querySelectorAll('.footer__a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.getAttribute('href') === '#inicio') {
+                    e.preventDefault();
+                    document.getElementById('inicio').scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // FAQ accordion functionality
+        document.querySelectorAll('.faq__summary').forEach(summary => {
+            summary.addEventListener('click', function(e) {
+                e.preventDefault();
+                const details = this.parentElement;
+                const wasOpen = details.hasAttribute('open');
+                
+                // Close all other details
+                document.querySelectorAll('.faq__details').forEach(d => d.removeAttribute('open'));
+                
+                // Toggle current one
+                if (!wasOpen) {
+                    details.setAttribute('open', '');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
