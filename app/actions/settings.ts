@@ -82,11 +82,12 @@ export async function updateUserProfile(formData: FormData): Promise<ApiResponse
 
         const updatedUser = await response.json()
         return { success: true, data: updatedUser }
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error('Error in updateUserProfile:', error)
 
         // Detectar error de límite de tamaño de Next.js Server Actions
-        if (error.message && error.message.includes('Body exceeded')) {
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        if (errorMessage.includes('Body exceeded')) {
             return {
                 success: false,
                 error: ERROR_MESSAGES.IMAGE_TOO_LARGE,
