@@ -14,8 +14,7 @@ import { faFilter, faUsers, faX } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
 import { useRegistrationCheck } from '@/hooks/useRegistrationCheck'
 import { IncompleteRegistrationModal } from '@/components/modal/IncompleteRegistrationModal'
-import { PaymentSuccess } from '@/components'
-import { useSearchParams, useRouter } from 'next/navigation'
+
 
 interface Props {
     socialData: SocialData
@@ -28,9 +27,6 @@ type SocialPanel = 'searchFriend' | 'newGroup' | null
 export default function Client({ socialData, filters }: Props) {
     const { checking, incompleto, paso, mostrarModal } = useRegistrationCheck()
     const [showModal, setShowModal] = useState(false)
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
 
     const [activePanel, setActivePanel] = useState<ActivePanel>(null)
     const [isSocialExpanded, setIsSocialExpanded] = useState(true)
@@ -38,16 +34,7 @@ export default function Client({ socialData, filters }: Props) {
     const [activeSocialPanel, setActiveSocialPanel] =
         useState<SocialPanel>(null)
 
-    // Detectar si viene de un pago exitoso
-    useEffect(() => {
-        const payment = searchParams.get('payment')
-        if (payment === 'success') {
-            console.log('🎉 [MapClient] Pago exitoso detectado, mostrando animación')
-            setShowPaymentSuccess(true)
-            // Limpiar el parámetro de la URL
-            router.replace('/mapa')
-        }
-    }, [searchParams, router])
+
 
     useEffect(() => {
         if (incompleto && mostrarModal && !checking) {
@@ -72,12 +59,8 @@ export default function Client({ socialData, filters }: Props) {
 
     return (
         <main className={styles.main}>
-            {/* Modal de pago exitoso */}
-            <PaymentSuccess 
-                show={showPaymentSuccess} 
-                onComplete={() => setShowPaymentSuccess(false)}
-            />
-            
+
+
             {showModal && incompleto && !checking && (
                 <IncompleteRegistrationModal
                     paso={paso}
@@ -156,8 +139,8 @@ export default function Client({ socialData, filters }: Props) {
                     {/* Panel social colapsable */}
                     <aside
                         className={`${styles.desktop__social} ${isSocialExpanded
-                                ? styles.desktop__social_expanded
-                                : ''
+                            ? styles.desktop__social_expanded
+                            : ''
                             }`}
                     >
                         <SocialClient
