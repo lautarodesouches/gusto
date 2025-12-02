@@ -60,13 +60,13 @@ export type Review = {
     content?: string
     images?: string[]
     isVerified?: boolean
-    
+
     esImportada?: boolean
     fuenteExterna?: string
     fechaVisita?: string
     motivoVisita?: string
     mesAnioVisita?: string
-    
+
     autorExterno?: string
     imagenAutorExterno?: string
     valoracion?: number
@@ -83,6 +83,7 @@ export type Review = {
         url?: string
         id?: string
     }>
+    imagenAutor?: string
 }
 
 export type Gusto = {
@@ -123,7 +124,9 @@ export interface RestauranteMetricasDashboard {
     totalTop3Individual: number
     totalTop3Grupo: number
     totalVisitasPerfil: number
-    totalFavoritosHistorico: number
-    totalFavoritosActual: number
+    favoritosPorDia: {
+        fecha: string
+        cantidad: number
+    }[]
 }
 

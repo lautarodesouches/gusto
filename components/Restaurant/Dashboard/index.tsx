@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import styles from './page.module.css'
 import {
@@ -71,19 +70,8 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
                 label: 'Visitas al perfil',
                 value: metrics.totalVisitasPerfil,
             },
-            {
-                id: 'favoritos-actual',
-                label: 'En favoritos (actual)',
-                value: metrics.totalFavoritosActual,
-            },
-            {
-                id: 'favoritos-historico',
-                label: 'Favoritos (histórico)',
-                value: metrics.totalFavoritosHistorico,
-            },
         ]
         : []
-
 
     const totalReviews =
         (restaurant.reviewsLocales?.length ?? 0) +
@@ -126,6 +114,10 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
         }
 
         return undefined
+    }
+
+    const getReviewAuthorImage = (review: Review): string | undefined => {
+        return review.imagenAutor || review.usuario?.fotoPerfilUrl || review.imagenAutorExterno
     }
 
     // --------------------
@@ -173,6 +165,7 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
                             getReviewText={getReviewText}
                             getReviewDate={getReviewDate}
                             getReviewImage={getReviewImage}
+                            getReviewAuthorImage={getReviewAuthorImage}
                         />
                     ) : (
                         <DataView

@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default async function RestauranteDashboardPage({ params }: Props) {
-    const { id } = params
+    const { id } = await params
 
     // Verificar que el usuario sea el dueño del restaurante
     const myRestaurantResult = await getMyRestaurant()

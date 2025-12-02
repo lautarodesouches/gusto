@@ -23,10 +23,9 @@
 }
 
 .content {
-    display: grid;
-    grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr);
+    display: flex;
     gap: 24px;
-    align-items: flex-start;
+    flex-direction: column;
 }
 
 .leftPanel {
@@ -42,11 +41,8 @@
 
 
 .metricsCard {
-    background: var(--dark);
-    border-radius: 20px;
     padding: 24px;
     position: relative;
-    border: 1px solid #4a4a48;
 }
 
 .metricsLoading,
@@ -178,17 +174,10 @@
     text-align: left;
 }
 
-
-
 .rightPanel {
-    background: var(--black);
-    border: 1px solid #333;
-    border-radius: 24px;
-    padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
 .reviewsHeader {
@@ -218,11 +207,8 @@
 
 .reviewsList {
     flex: 0 0 auto;          
-    border-radius: 16px;
-    background: var(--dark);
     padding: 20px;
     min-height: 560px;
-    border: 1px solid #4a4a48;
 }
 
 .reviewsPlaceholder {
@@ -502,6 +488,19 @@
     gap: 2px;
 }
 
+.reviewAuthorWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.reviewAuthorImage {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .reviewAuthor {
     font-weight: 600;
     font-size: 13px;
@@ -596,3 +595,254 @@
     max-width: 600px;
     width: 100%;
 }
+
+/* Metrics Container - BEM Methodology */
+.metricsContainer {
+    padding: 32px;
+}
+
+.metricsContainer__section {
+    margin-bottom: 32px;
+}
+
+.metricsContainer__section:last-child {
+    margin-bottom: 0;
+}
+
+.metricsContainer__title {
+    font-family: var(--font-gliker);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 20px;
+    letter-spacing: 0.02em;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.metricsContainer__title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/* Destacados Stats - BEM */
+.destacados__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.destacados__card {
+    background: #1a1a18;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.destacados__card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 20px rgba(255, 80, 80, 0.15);
+}
+
+.destacados__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+}
+
+.destacados__value {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.destacados__note {
+    font-size: 10px;
+    color: #666;
+    line-height: 1.5;
+    font-style: italic;
+    margin-top: 8px;
+}
+
+/* Visitantes Stat - BEM */
+.visitantes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: #1a1a18;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+.visitantes__value {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+}
+
+/* Review Analytics - BEM */
+.reviewAnalytics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.reviewAnalytics__chart {
+    background: #1a1a18;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #333;
+}
+
+.reviewAnalytics__chartTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.reviewAnalytics__chartSubtitle {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+/* Rating Distribution */
+.ratingDist__bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.ratingDist__label {
+    font-size: 12px;
+    color: #999;
+    min-width: 60px;
+}
+
+.ratingDist__barTrack {
+    flex: 1;
+    height: 20px;
+    background: #0d0d0c;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ratingDist__barFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #ff8080);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.ratingDist__count {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--white);
+    min-width: 30px;
+    text-align: right;
+}
+
+/* Reviews Over Time */
+.reviewsTimeline__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 150px;
+    margin-bottom: 8px;
+}
+
+.reviewsTimeline__bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--primary), #cc4444);
+    border-radius: 4px 4px 0 0;
+    min-height: 3px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.reviewsTimeline__bar:hover {
+    filter: brightness(1.3);
+}
+
+.reviewsTimeline__barValue {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--white);
+    background: #222;
+    padding: 2px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    margin-bottom: 4px;
+}
+
+.reviewsTimeline__bar:hover .reviewsTimeline__barValue {
+    opacity: 1;
+}
+
+.reviewsTimeline__labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #666;
+}
+
+/* Average Rating Card */
+.avgRating {
+    text-align: center;
+    padding: 24px;
+}
+
+.avgRating__value {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.avgRating__max {
+    font-size: 18px;
+    color: #666;
+}
+
+.avgRating__stars {
+    font-size: 24px;
+    margin-top: 12px;
+}
+
+.avgRating__stars span {
+    color: #f5c518;
+}
+
