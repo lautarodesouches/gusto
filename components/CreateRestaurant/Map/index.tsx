@@ -9,11 +9,15 @@ const libraries: ('places' | 'drawing' | 'geometry')[] = ['places', 'drawing', '
 type RestaurantMapProps = {
     address: string
     onLocationSelect: (lat: number, lng: number, address: string) => void
+    initialLat?: number
+    initialLng?: number
 }
 
 export default function RestaurantMap({
     address,
     onLocationSelect,
+    initialLat,
+    initialLng,
 }: RestaurantMapProps) {
     const [map, setMap] = useState<google.maps.Map | null>(null)
     const [markerPosition, setMarkerPosition] = useState<{
@@ -34,6 +38,13 @@ export default function RestaurantMap({
         lng: -58.381592,
     }
 
+    // Set initial marker position if provided
+    useEffect(() => {
+        if (initialLat && initialLng && !markerPosition) {
+            setMarkerPosition({ lat: initialLat, lng: initialLng })
+        }
+    }, [initialLat, initialLng])
+
     const onLocationSelectRef = useRef(onLocationSelect)
     useEffect(() => {
         onLocationSelectRef.current = onLocationSelect
@@ -51,31 +62,31 @@ export default function RestaurantMap({
 
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace()
-                
+
                 if (place.geometry?.location) {
-                    const latValue = typeof place.geometry.location.lat === 'function' 
-                        ? place.geometry.location.lat() 
+                    const latValue = typeof place.geometry.location.lat === 'function'
+                        ? place.geometry.location.lat()
                         : place.geometry.location.lat
-                    const lngValue = typeof place.geometry.location.lng === 'function' 
-                        ? place.geometry.location.lng() 
+                    const lngValue = typeof place.geometry.location.lng === 'function'
+                        ? place.geometry.location.lng()
                         : place.geometry.location.lng
-                    
+
                     const lat = parseFloat(latValue.toString())
                     const lng = parseFloat(lngValue.toString())
-                    
+
                     if (isNaN(lat) || isNaN(lng)) {
                         return
                     }
-                    
+
                     const latRounded = Math.round(lat * 10000000) / 10000000
                     const lngRounded = Math.round(lng * 10000000) / 10000000
-                    
+
                     const address = place.formatted_address || place.name || ''
-                    
+
                     setMarkerPosition({ lat: latRounded, lng: lngRounded })
                     setSelectedAddress(address)
                     onLocationSelectRef.current(latRounded, lngRounded, address)
-                    
+
                     if (map) {
                         map.setCenter({ lat, lng })
                         map.setZoom(17)
@@ -91,19 +102,19 @@ export default function RestaurantMap({
         if (e.latLng) {
             const latValue = typeof e.latLng.lat === 'function' ? e.latLng.lat() : e.latLng.lat
             const lngValue = typeof e.latLng.lng === 'function' ? e.latLng.lng() : e.latLng.lng
-            
+
             const lat = parseFloat(latValue.toString())
             const lng = parseFloat(lngValue.toString())
-            
+
             if (isNaN(lat) || isNaN(lng)) {
                 return
             }
-            
+
             const latRounded = Math.round(lat * 10000000) / 10000000
             const lngRounded = Math.round(lng * 10000000) / 10000000
-            
+
             setMarkerPosition({ lat: latRounded, lng: lngRounded })
-            
+
             const geocoder = new google.maps.Geocoder()
             geocoder.geocode({ location: { lat: latRounded, lng: lngRounded } }, (results, status) => {
                 if (status === 'OK' && results && results[0]) {
@@ -172,19 +183,19 @@ export default function RestaurantMap({
                                 if (e.latLng) {
                                     const latValue = typeof e.latLng.lat === 'function' ? e.latLng.lat() : e.latLng.lat
                                     const lngValue = typeof e.latLng.lng === 'function' ? e.latLng.lng() : e.latLng.lng
-                                    
+
                                     const lat = parseFloat(latValue.toString())
                                     const lng = parseFloat(lngValue.toString())
-                                    
+
                                     if (isNaN(lat) || isNaN(lng)) {
                                         return
                                     }
-                                    
+
                                     const latRounded = Math.round(lat * 10000000) / 10000000
                                     const lngRounded = Math.round(lng * 10000000) / 10000000
-                                    
+
                                     setMarkerPosition({ lat: latRounded, lng: lngRounded })
-                                    
+
                                     const geocoder = new google.maps.Geocoder()
                                     geocoder.geocode(
                                         { location: { lat: latRounded, lng: lngRounded } },

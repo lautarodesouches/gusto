@@ -47,20 +47,20 @@ interface ReviewBackend {
 }
 
 function mapReview(review: ReviewBackend, restaurantId: string): Review {
-    const autor = review.autorExterno || 
-                 review.autor ||
-                 review.usuario?.nombre || 
-                 review.usuario?.username ||
-                 'Anónimo'
-    
+    const autor = review.autorExterno ||
+        review.autor ||
+        review.usuario?.nombre ||
+        review.usuario?.username ||
+        'Anónimo'
+
     const foto = review.imagenAutorExterno ||
-                review.imagenAutor ||
-                review.usuario?.fotoPerfilUrl ||
-                ''
-    
+        review.imagenAutor ||
+        review.usuario?.fotoPerfilUrl ||
+        ''
+
     // Mapear fotos - puede venir como array de objetos {url} o como array de strings
     const fotos = review.fotos || review.Fotos || []
-    const images = Array.isArray(fotos) 
+    const images = Array.isArray(fotos)
         ? fotos.map((f) => {
             // Si es un string, usarlo directamente
             if (typeof f === 'string') return f
@@ -69,7 +69,7 @@ function mapReview(review: ReviewBackend, restaurantId: string): Review {
             return fotoObj?.url || fotoObj?.Url || ''
         }).filter((url: string) => url)
         : []
-    
+
     return {
         id: review.id || '',
         autor: autor,
@@ -110,7 +110,7 @@ export async function getRestaurant(
         }
 
         const data = await res.json()
-        
+
         // Mapear el restaurante con los nuevos campos
         const restaurant: Restaurant = {
             id: data.id || data.Id || '',
@@ -148,7 +148,7 @@ export async function getRestaurant(
             cantidadResenas: data.cantidadResenas || data.CantidadResenas || null,
             horariosJson: data.horariosJson || data.HorariosJson || '{}',
             horarios: data.horariosJson || data.HorariosJson ? JSON.parse(data.horariosJson || data.HorariosJson || '{}') : {},
-            
+
             // Nuevos campos
             esDeLaApp: data.esDeLaApp ?? data.EsDeLaApp ?? false,
             logoUrl: data.logoUrl || data.LogoUrl || null,
@@ -174,21 +174,21 @@ export async function getRestaurant(
                     }))
                 }))
             } : null,
-            
+
             // Reviews separadas
             reviewsLocales: ((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
             reviewsGoogle: ((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
-            
+
             // Mantener compatibilidad con reviews antiguas
             reviews: [
                 ...((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
                 ...((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string))
             ],
-            
+
             // Estado de favorito (viene directamente del backend)
             esFavorito: data.esFavorito ?? data.EsFavorito ?? false,
         }
-        
+
         return { success: true, data: restaurant }
     } catch (error) {
         console.error('Error getting restaurant:', error)
@@ -216,7 +216,7 @@ export async function getRecomendacion(
         }
 
         const data = await res.json()
-        
+
         return {
             success: true,
             data: {
@@ -270,3 +270,120 @@ export async function getRestaurantMetrics(
 }
 
 
+
+export async function getRestaurantData(): Promise<ApiResponse<{ gustos: any[]; restricciones: any[] }>> {
+    try {
+        const headers = await getAuthHeaders()
+        const response = await fetch(`${API_URL}/api/Restaurantes/registro-datos`, {
+            method: 'GET',
+            headers,
+            cache: 'no-store',
+        })
+
+        if (!response.ok) {
+            return {
+                success: false,
+                error: 'Error al obtener datos de registro',
+            }
+        }
+
+        const rawData = await response.json()
+
+        const gustosRaw = (rawData as { Gustos?: unknown[]; gustos?: unknown[] }).Gustos ||
+            (rawData as { Gustos?: unknown[]; gustos?: unknown[] }).gustos ||
+            []
+        const restriccionesRaw = (rawData as { Restricciones?: unknown[]; restricciones?: unknown[] }).Restricciones ||
+            (rawData as { Restricciones?: unknown[]; restricciones?: unknown[] }).restricciones ||
+            []
+
+        const gustosArray = Array.isArray(gustosRaw) ? gustosRaw : []
+        const restriccionesArray = Array.isArray(restriccionesRaw) ? restriccionesRaw : []
+
+        const mappedData = {
+            gustos: gustosArray.map((item) => {
+                const typedItem = item as { id?: string | number; Id?: string | number; nombre?: string; Nombre?: string }
+                return {
+                    id: String(typedItem.id || typedItem.Id || ''),
+                    nombre: typedItem.nombre || typedItem.Nombre || '',
+                }
+            }),
+            restricciones: restriccionesArray.map((item) => {
+                const typedItem = item as { id?: string | number; Id?: string | number; nombre?: string; Nombre?: string }
+                return {
+                    id: String(typedItem.id || typedItem.Id || ''),
+                    nombre: typedItem.nombre || typedItem.Nombre || '',
+                }
+            }),
+        }
+
+        return { success: true, data: mappedData }
+    } catch (error) {
+        console.error('Error getting restaurant data:', error)
+        return {
+            success: false,
+            error: 'Error interno del servidor',
+        }
+    }
+}
+
+export async function updateRestaurant(
+    id: string,
+    data: any
+): Promise<ApiResponse<any>> {
+    try {
+        const headers = await getAuthHeaders()
+        const res = await fetch(`${API_URL}/api/Restaurantes/${id}`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(data),
+        })
+
+        if (!res.ok) {
+            let errorMessage = 'Error al actualizar el restaurante'
+            try {
+                const errorData = await res.json()
+                errorMessage = errorData.error || errorData.message || errorMessage
+            } catch { }
+            return { success: false, error: errorMessage }
+        }
+
+        const responseData = await res.json()
+        return { success: true, data: responseData }
+    } catch (error) {
+        console.error('Error updating restaurant:', error)
+        return { success: false, error: 'Error interno al actualizar el restaurante' }
+    }
+}
+
+export async function updateRestaurantImage(
+    id: string,
+    tipo: string,
+    formData: FormData
+): Promise<ApiResponse<any>> {
+    try {
+        const headers = await getAuthHeaders()
+        // Remove Content-Type header to let browser set it with boundary for FormData
+        const { 'Content-Type': _, ...headersWithoutContentType } = headers as any
+
+        const res = await fetch(`${API_URL}/api/Restaurantes/${id}/imagenes/${tipo}`, {
+            method: 'PUT',
+            headers: headersWithoutContentType,
+            body: formData,
+        })
+
+        if (!res.ok) {
+            let errorMessage = 'Error al actualizar imagen'
+            try {
+                const errorData = await res.json()
+                errorMessage = errorData.error || errorData.message || errorMessage
+            } catch { }
+            return { success: false, error: errorMessage }
+        }
+
+        const data = await res.json()
+        return { success: true, data }
+    } catch (error) {
+        console.error('Error updating restaurant image:', error)
+        return { success: false, error: 'Error interno al actualizar la imagen' }
+    }
+}
