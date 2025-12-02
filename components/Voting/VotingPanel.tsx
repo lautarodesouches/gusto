@@ -95,10 +95,24 @@ export default function VotingPanel({
     }, [votacionActual, auth.user?.uid, restaurantesCandidatos])
 
     const iniciarVotacion = async () => {
-        // Validar que haya restaurantes del mapa para usar como candidatos
+        // Validar que haya más de 1 miembro activo
+        const miembrosActivos = miembros.filter(m => m.checked)
+        if (miembrosActivos.length <= 1) {
+            setError('Debes tener al menos 2 miembros activos para iniciar una votación')
+            toast.error('Se necesitan al menos 2 miembros activos para iniciar una votación. Activa más miembros en la pestaña de miembros.')
+            return
+        }
+
+        // Validar que haya más de 1 restaurante del mapa para usar como candidatos
         if (!restaurantesDelMapa || restaurantesDelMapa.length === 0) {
             setError('Primero debes buscar restaurantes en el mapa')
             toast.error('No hay restaurantes seleccionados. Ve al mapa y busca restaurantes.')
+            return
+        }
+
+        if (restaurantesDelMapa.length <= 1) {
+            setError('Debes tener al menos 2 restaurantes para iniciar una votación')
+            toast.error('Se necesitan al menos 2 restaurantes para iniciar una votación. Ve al mapa y busca más restaurantes.')
             return
         }
 
@@ -143,6 +157,11 @@ export default function VotingPanel({
             // ✅ NO manejamos la respuesta (no contiene candidatos)
             // ✅ SignalR enviará "votacionIniciada" y actualizará todo automáticamente
             toast.success('¡Votación iniciada!')
+            
+            // Emitir evento de votación iniciada
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('votacion:iniciada'))
+            }
 
             // 🔥 Recargar inmediatamente para mostrar la votación activa
             // SignalR también actualizará cuando llegue el evento, pero esto da feedback inmediato
@@ -353,22 +372,50 @@ export default function VotingPanel({
                         </div>
                     )}
 
-                    {soyAdministrador && (
-                        <>
-                            <button
-                                onClick={iniciarVotacion}
-                                disabled={loading || restaurantesDelMapa.length === 0}
-                                className={styles.btnPrimary}
-                            >
-                                {loading ? 'Iniciando...' : 'Iniciar Votación'}
-                            </button>
-                            {restaurantesDelMapa.length === 0 && (
-                                <p style={{ color: '#fbbf24', marginTop: '0.5rem', fontSize: '0.875rem' }}>
-                                    ⚠️ No hay restaurantes en el mapa. Ve a la pestaña &quot;Mapa&quot; y busca restaurantes.
-                                </p>
-                            )}
-                        </>
-                    )}
+                    {soyAdministrador && (() => {
+                        const miembrosActivos = miembros.filter(m => m.checked)
+                        const tieneSuficientesMiembros = miembrosActivos.length > 1
+                        const tieneSuficientesRestaurantes = restaurantesDelMapa.length > 1
+                        const puedeIniciar = tieneSuficientesMiembros && tieneSuficientesRestaurantes
+
+                        return (
+                            <>
+                                <button
+                                    onClick={iniciarVotacion}
+                                    disabled={loading || !puedeIniciar}
+                                    className={styles.btnPrimary}
+                                    title={
+                                        !tieneSuficientesMiembros 
+                                            ? 'Se necesitan al menos 2 miembros activos para iniciar una votación'
+                                            : !tieneSuficientesRestaurantes
+                                            ? 'Se necesitan al menos 2 restaurantes para iniciar una votación'
+                                            : ''
+                                    }
+                                >
+                                    {loading ? 'Iniciando...' : 'Iniciar Votación'}
+                                </button>
+                                
+                                {/* Mensajes informativos sobre qué falta */}
+                                {!tieneSuficientesMiembros && (
+                                    <p style={{ color: '#fbbf24', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+                                        ⚠️ Se necesitan al menos 2 miembros activos para iniciar una votación. Activa más miembros en la pestaña de miembros.
+                                    </p>
+                                )}
+                                
+                                {tieneSuficientesMiembros && restaurantesDelMapa.length === 0 && (
+                                    <p style={{ color: '#fbbf24', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+                                        ⚠️ No hay restaurantes en el mapa. Ve a la pestaña &quot;Mapa&quot; y busca restaurantes.
+                                    </p>
+                                )}
+                                
+                                {tieneSuficientesMiembros && restaurantesDelMapa.length === 1 && (
+                                    <p style={{ color: '#fbbf24', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+                                        ⚠️ Se necesitan al menos 2 restaurantes para iniciar una votación. Ve a la pestaña &quot;Mapa&quot; y busca más restaurantes.
+                                    </p>
+                                )}
+                            </>
+                        )
+                    })()}
                     {!soyAdministrador && (
                         <p style={{ color: '#999', marginTop: '1rem' }}>
                             Solo el administrador puede iniciar una votación

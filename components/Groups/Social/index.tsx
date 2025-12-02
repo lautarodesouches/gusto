@@ -28,9 +28,10 @@ interface Props {
     onMemberRemoved?: (memberId: string) => void
     isAdmin: boolean
     currentUserId: string
+    hayVotacionActiva?: boolean // Indica si hay una votación activa
 }
 
-export default function GroupSocial({ group, members, onCheck, onMemberRemoved, isAdmin }: Props) {
+export default function GroupSocial({ group, members, onCheck, onMemberRemoved, isAdmin, hayVotacionActiva = false }: Props) {
     const toast = useToast()
     const router = useRouter()
     const pathname = usePathname()
@@ -372,12 +373,16 @@ export default function GroupSocial({ group, members, onCheck, onMemberRemoved, 
                                             />
                                         </button>
                                     ) : (
-                                        <label className={styles.member__checkbox_label}>
+                                        <label 
+                                            className={`${styles.member__checkbox_label} ${hayVotacionActiva ? styles.member__checkbox_disabled : ''}`}
+                                            title={hayVotacionActiva ? 'La asistencia no puede modificarse durante una votación activa.' : ''}
+                                        >
                                             <input
                                                 type="checkbox"
                                                 className={styles.filter__input}
                                                 checked={isChecked}
                                                 onChange={() => onCheck(m.id)}
+                                                disabled={hayVotacionActiva}
                                             />
                                             <span className={styles.checkmark}></span>
                                         </label>
