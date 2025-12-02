@@ -3,19 +3,19 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useToast } from '@/context/ToastContext'
 import { VotingPanel, VotingResults } from '@/components/Voting'
-import { ResultadoVotacion, VotacionActivaResponse, Restaurant } from '@/types'
+import { ResultadoVotacion, VotacionActivaResponse, Restaurant, GroupMember } from '@/types'
 import { useVotingSignalR } from '@/hooks/useVotingSignalR'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import styles from './styles.module.css'
 
 interface Props {
     groupId: string
-    members: unknown[]
+    members: (GroupMember & { checked: boolean })[]
     isAdmin?: boolean
     currentRestaurants: Restaurant[] // Restaurantes visibles en el mapa para usar como candidatos
 }
 
-export default function GroupVoting({ groupId, members: _members, isAdmin = false, currentRestaurants = [] }: Props) {
+export default function GroupVoting({ groupId, members, isAdmin = false, currentRestaurants = [] }: Props) {
     const auth = useAuth()
     const toast = useToast()
     const { user: currentUser } = useCurrentUser() // Obtener el usuario completo con su GUID de BD
@@ -362,6 +362,7 @@ export default function GroupVoting({ groupId, members: _members, isAdmin = fals
                     }}
                     soyAdministrador={soyAdministrador || isAdmin}
                     restaurantesDelMapa={currentRestaurants}
+                    miembros={members}
                 />
             </div>
         )

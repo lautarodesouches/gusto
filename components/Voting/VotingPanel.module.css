@@ -135,6 +135,108 @@
     font-style: italic;
 }
 
+/* Miembros Preview */
+.miembrosPreview {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 238, 207, 0.05);
+    border: 1px solid rgba(255, 238, 207, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.miembrosPreviewToggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #ffeecf;
+    transition: background 0.2s ease;
+}
+
+.miembrosPreviewToggle:hover {
+    background: rgba(255, 238, 207, 0.1);
+}
+
+.miembrosPreviewHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.miembrosPreviewTitle {
+    font-size: 0.95rem;
+    color: #ffeecf;
+    font-weight: 600;
+}
+
+.miembrosPreviewIcon {
+    transition: transform 0.3s ease;
+    color: #ffeecf;
+    flex-shrink: 0;
+}
+
+.miembrosPreviewIcon.expanded {
+    transform: rotate(180deg);
+}
+
+.miembrosPreviewList {
+    border-top: 1px solid rgba(255, 238, 207, 0.1);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.miembroPreviewItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 238, 207, 0.05);
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.miembroPreviewItem:hover {
+    background: rgba(255, 238, 207, 0.1);
+}
+
+.miembroPreviewAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.miembroPreviewAvatarPlaceholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffeecf;
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.miembroPreviewNombre {
+    font-size: 0.9rem;
+    color: #ffeecf;
+    font-weight: 500;
+}
+
 .header {
     display: flex;
     justify-content: space-between;

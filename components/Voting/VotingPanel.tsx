@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { ResultadoVotacion, RestauranteCandidato, Restaurant, VotanteInfo } from '@/types'
+import { ResultadoVotacion, RestauranteCandidato, Restaurant, VotanteInfo, GroupMember } from '@/types'
 import { useToast } from '@/context/ToastContext'
 import { useAuth } from '@/context/AuthContext'
 import styles from './VotingPanel.module.css'
@@ -18,6 +18,7 @@ interface VotingPanelProps {
     onVotar: () => void
     soyAdministrador?: boolean
     restaurantesDelMapa?: Restaurant[] // Para pasar al iniciar votación
+    miembros?: (GroupMember & { checked: boolean })[] // Miembros del grupo para mostrar quiénes participarán
 }
 
 export default function VotingPanel({
@@ -27,6 +28,7 @@ export default function VotingPanel({
     onVotar,
     soyAdministrador = false,
     restaurantesDelMapa = [],
+    miembros = [],
 }: VotingPanelProps) {
     const toast = useToast()
     const auth = useAuth()
@@ -34,6 +36,7 @@ export default function VotingPanel({
     const [comentario, setComentario] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [miembrosExpandidos, setMiembrosExpandidos] = useState(false)
 
     // Verificar si el usuario actual ya votó y a qué restaurante
     // Usar useMemo para recalcular cuando cambie votacionActual o auth.user
@@ -244,6 +247,78 @@ export default function VotingPanel({
                                 : 'Ve al mapa y busca restaurantes antes de iniciar una votación'}
                         </span>
                     </div>
+
+                    {/* Listado de miembros que participarán en la votación */}
+                    {(() => {
+                        const miembrosActivos = miembros.filter(m => m.checked)
+                        if (miembrosActivos.length === 0) return null
+
+                        return (
+                            <div className={styles.miembrosPreview}>
+                                <button
+                                    type="button"
+                                    onClick={() => setMiembrosExpandidos(!miembrosExpandidos)}
+                                    className={styles.miembrosPreviewToggle}
+                                >
+                                    <div className={styles.miembrosPreviewHeader}>
+                                        <svg 
+                                            xmlns="http://www.w3.org/2000/svg" 
+                                            width="20" 
+                                            height="20" 
+                                            viewBox="0 0 24 24" 
+                                            fill="none" 
+                                            stroke="currentColor" 
+                                            strokeWidth="2" 
+                                            strokeLinecap="round" 
+                                            strokeLinejoin="round"
+                                        >
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                            <circle cx="9" cy="7" r="4" />
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                        </svg>
+                                        <span className={styles.miembrosPreviewTitle}>
+                                            {miembrosActivos.length} miembro{miembrosActivos.length > 1 ? 's' : ''} participarán en la votación
+                                        </span>
+                                    </div>
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        width="20" 
+                                        height="20" 
+                                        viewBox="0 0 24 24" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        strokeWidth="2" 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round"
+                                        className={`${styles.miembrosPreviewIcon} ${miembrosExpandidos ? styles.expanded : ''}`}
+                                    >
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </button>
+                                {miembrosExpandidos && (
+                                    <div className={styles.miembrosPreviewList}>
+                                        {miembrosActivos.map((miembro) => (
+                                            <div key={miembro.id} className={styles.miembroPreviewItem}>
+                                                {miembro.fotoPerfilUrl ? (
+                                                    <img 
+                                                        src={miembro.fotoPerfilUrl} 
+                                                        alt={miembro.usuarioNombre}
+                                                        className={styles.miembroPreviewAvatar}
+                                                    />
+                                                ) : (
+                                                    <div className={styles.miembroPreviewAvatarPlaceholder}>
+                                                        {miembro.usuarioNombre[0].toUpperCase()}
+                                                    </div>
+                                                )}
+                                                <span className={styles.miembroPreviewNombre}>{miembro.usuarioNombre}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })()}
 
                     {/* Previsualización de restaurantes disponibles */}
                     {restaurantesDelMapa.length > 0 && (

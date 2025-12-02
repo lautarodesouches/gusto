@@ -30,7 +30,10 @@ export default function GroupClient({ group }: Props) {
     const [kickedInfo, setKickedInfo] = useState<{ grupoId: string; nombreGrupo: string } | null>(null)
 
     const [members, setMembers] = useState(
-        group.miembros.map(m => ({ ...m, checked: true }))
+        group.miembros.map(m => ({ 
+            ...m, 
+            checked: m.afectarRecomendacion ?? true // Usar el valor del backend, por defecto true
+        }))
     )
     
     // Verificar si el usuario actual es administrador
@@ -62,10 +65,13 @@ export default function GroupClient({ group }: Props) {
             const prevById = new Map(prev.map(m => [m.id, m]))
 
             return group.miembros.map(m => {
-                const prevMember = prevById.get(m.id)
+                // Siempre usar el valor del backend (afectarRecomendacion) cuando esté disponible
+                // Por defecto true si no viene definido
+                const checkedFromBackend = m.afectarRecomendacion ?? true
+                
                 return {
                     ...m,
-                    checked: prevMember?.checked ?? true,
+                    checked: checkedFromBackend,
                 }
             })
         })
@@ -103,7 +109,11 @@ export default function GroupClient({ group }: Props) {
 
         // Optimistic update
         setMembers(prev =>
-            prev.map(m => (m.id === id ? { ...m, checked: newCheckedState } : m))
+            prev.map(m => (m.id === id ? { 
+                ...m, 
+                checked: newCheckedState,
+                afectarRecomendacion: newCheckedState // Sincronizar también el valor que viene del backend
+            } : m))
         )
 
         // Call backend action
@@ -114,7 +124,11 @@ export default function GroupClient({ group }: Props) {
         if (!result.success) {
             // Revert on error
             setMembers(prev =>
-                prev.map(m => (m.id === id ? { ...m, checked: isCurrentlyChecked } : m))
+                prev.map(m => (m.id === id ? { 
+                    ...m, 
+                    checked: isCurrentlyChecked,
+                    afectarRecomendacion: isCurrentlyChecked
+                } : m))
             )
             toast.error(result.error || 'Error al actualizar el estado del miembro')
         } else {
@@ -123,6 +137,8 @@ export default function GroupClient({ group }: Props) {
                     ? `${member.usuarioNombre} activado`
                     : `${member.usuarioNombre} desactivado`
             )
+            // Recargar el grupo para sincronizar con el backend
+            router.refresh()
         }
     }
 

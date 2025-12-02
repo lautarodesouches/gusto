@@ -26,6 +26,7 @@ export type GroupMember = {
     usuarioUsername: string
     fechaUnion: string
     esAdministrador: boolean
+    afectarRecomendacion?: boolean // Campo del backend que indica si el miembro está activo (afecta recomendaciones)
     fotoPerfilUrl?: string
 }
 
