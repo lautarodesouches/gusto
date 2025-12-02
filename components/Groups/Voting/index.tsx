@@ -104,6 +104,10 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
                         // Si está cerrada, limpiar el estado
                         console.log('[GroupVoting] Votación cerrada detectada, limpiando estado')
                         setResultados(undefined)
+                        // Emitir evento de votación cerrada
+                        if (typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('votacion:cerrada'))
+                        }
                         return false
                     } else {
                         console.log('[GroupVoting] Estableciendo votación activa en resultados')
@@ -114,12 +118,20 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
                         if (votacionId) {
                             await fetchResultados(votacionId)
                         }
+                        // Emitir evento de votación iniciada
+                        if (typeof window !== 'undefined') {
+                            window.dispatchEvent(new CustomEvent('votacion:iniciada'))
+                        }
                         return true // Votación encontrada
                     }
                 } else {
                     // No hay votación activa
                     console.log('[GroupVoting] No hay votación activa, limpiando resultados')
                     setResultados(undefined)
+                    // Emitir evento de votación cerrada
+                    if (typeof window !== 'undefined') {
+                        window.dispatchEvent(new CustomEvent('votacion:cerrada'))
+                    }
                     return false // No hay votación
                 }
             } else {
@@ -294,6 +306,10 @@ export default function GroupVoting({ groupId, members, isAdmin = false, current
             }
 
             toast.success('Votación cerrada')
+            // Emitir evento de votación cerrada
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('votacion:cerrada'))
+            }
             // SignalR avisará cuando se cierre, no hace falta recargar manualmente
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Error desconocido'
