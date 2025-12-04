@@ -1,0 +1,140 @@
+{
+  "restauranteId": "78462188-8265-469f-d003-08de307a9b3c",
+  "nombreRestaurante": "Celiak2",
+  "periodo": "Últimos 30 días",
+  "favoritosPorDia": [
+    {
+      "fecha": "2024-11-04",
+      "cantidad": 1
+    },
+    {
+      "fecha": "2024-11-05",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-06",
+      "cantidad": 1
+    },
+    {
+      "fecha": "2024-11-07",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-08",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-09",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-10",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-11",
+      "cantidad": 4
+    },
+    {
+      "fecha": "2024-11-12",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-13",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-14",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-15",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-16",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-17",
+      "cantidad": 1
+    },
+    {
+      "fecha": "2024-11-18",
+      "cantidad": 4
+    },
+    {
+      "fecha": "2024-11-19",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-20",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-21",
+      "cantidad": 4
+    },
+    {
+      "fecha": "2024-11-22",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-23",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-24",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-11-25",
+      "cantidad": 4
+    },
+    {
+      "fecha": "2024-11-26",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-27",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-11-28",
+      "cantidad": 5
+    },
+    {
+      "fecha": "2024-11-29",
+      "cantidad": 4
+    },
+    {
+      "fecha": "2024-11-30",
+      "cantidad": 3
+    },
+    {
+      "fecha": "2024-12-01",
+      "cantidad": 2
+    },
+    {
+      "fecha": "2024-12-02",
+      "cantidad": 5
+    },
+    {
+      "fecha": "2024-12-03",
+      "cantidad": 3
+    }
+  ],
+  "estadisticas": {
+    "totalFavoritos": 72,
+    "promedioFavoritosPorDia": 2.4,
+    "diaConMasFavoritos": {
+      "fecha": "2024-11-28",
+      "cantidad": 5
+    },
+    "diaConMenosFavoritos": {
+      "fecha": "2024-11-04",
+      "cantidad": 1
+    },
+    "tendencia": "creciente"
+  }
+}

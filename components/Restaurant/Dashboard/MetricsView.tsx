@@ -1,5 +1,6 @@
 import styles from './page.module.css'
 import { Review } from '@/types'
+import ReviewList from '../Reviews'
 
 type MetricCardData = {
     id: string
@@ -13,11 +14,7 @@ type Props = {
     metricCards: MetricCardData[]
     totalReviews: number
     displayedReviews: Review[]
-    getReviewRating: (review: Review) => number
-    getReviewText: (review: Review) => string
-    getReviewDate: (review: Review) => string
-    getReviewImage: (review: Review) => string | undefined
-    getReviewAuthorImage: (review: Review) => string | undefined
+    localReviewIds?: Set<string>
 }
 
 export default function MetricsView({
@@ -26,15 +23,11 @@ export default function MetricsView({
     metricCards,
     totalReviews,
     displayedReviews,
-    getReviewRating,
-    getReviewText,
-    getReviewDate,
-    getReviewImage,
-    getReviewAuthorImage,
+    localReviewIds,
 }: Props) {
     // Calculate analytics data
     const reviews = displayedReviews.slice(0, 5) // Show only first 5
-    const ratings = reviews.map(r => getReviewRating(r))
+    const ratings = reviews.map(r => r.rating || r.valoracion || 0)
     const avgRating = ratings.length > 0
         ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1)
         : '0.0'
@@ -112,7 +105,7 @@ export default function MetricsView({
                                     <div className={styles.reviewAnalytics__chart}>
                                         <div className={styles.reviewAnalytics__chartTitle}>Distribución</div>
                                         {[5, 4, 3, 2, 1].map(stars => {
-                                            const count = reviews.filter(r => getReviewRating(r) === stars).length
+                                            const count = reviews.filter(r => (r.rating || r.valoracion || 0) === stars).length
                                             const percentage = reviews.length > 0
                                                 ? (count / reviews.length) * 100
                                                 : 0
@@ -145,7 +138,7 @@ export default function MetricsView({
                                                 const reviewsByDay = last7Days.map(date => {
                                                     const dateStr = date.toISOString().split('T')[0]
                                                     const count = reviews.filter(r => {
-                                                        const reviewDate = getReviewDate(r)
+                                                        const reviewDate = r.fecha || r.fechaCreacion || r.fechaVisita || ''
                                                         return reviewDate && reviewDate.startsWith(dateStr)
                                                     }).length
                                                     return { date, count }
@@ -192,86 +185,11 @@ export default function MetricsView({
                 </header>
 
                 <div className={styles.reviewsList}>
-                    {totalReviews === 0 ? (
-                        <p className={styles.reviewsPlaceholder}>
-                            Aquí se mostrarán las reseñas del restaurante.
-                        </p>
-                    ) : (
-                        <ul className={styles.reviewsItems}>
-                            {reviews.map(review => {
-                                const rating = getReviewRating(review)
-                                const text = getReviewText(review)
-                                const date = getReviewDate(review)
-                                const image = getReviewImage(review)
-                                const authorImage = getReviewAuthorImage(review)
-
-                                return (
-                                    <li
-                                        key={review.id}
-                                        className={styles.reviewItem}
-                                    >
-                                        <div className={styles.reviewHeader}>
-                                            <div className={styles.reviewHeaderMain}>
-                                                <div className={styles.reviewAuthorWrapper}>
-                                                    {authorImage && (
-                                                        <img
-                                                            src={authorImage}
-                                                            alt={review.autor}
-                                                            className={styles.reviewAuthorImage}
-                                                        />
-                                                    )}
-                                                    <span className={styles.reviewAuthor}>
-                                                        {review.autor}
-                                                    </span>
-                                                </div>
-                                                {date && (
-                                                    <span className={styles.reviewDate}>
-                                                        {new Date(date).toLocaleDateString('es-AR')}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className={styles.reviewRatingWrapper}>
-                                                <div className={styles.reviewStars}>
-                                                    {Array.from({ length: 5 }).map((_, idx) => (
-                                                        <span
-                                                            key={idx}
-                                                            className={
-                                                                idx < rating
-                                                                    ? styles.starFilled
-                                                                    : styles.starEmpty
-                                                            }
-                                                        >
-                                                            ★
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                                <span className={styles.reviewRatingValue}>
-                                                    {rating}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {image && (
-                                            <div className={styles.reviewImageWrapper}>
-                                                <img
-                                                    src={image}
-                                                    alt={`Foto de reseña de ${review.autor}`}
-                                                    className={styles.reviewImage}
-                                                />
-                                            </div>
-                                        )}
-
-                                        {text && (
-                                            <p className={styles.reviewText}>
-                                                {text}
-                                            </p>
-                                        )}
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    )}
+                    <ReviewList
+                        reviews={reviews}
+                        showImages={true}
+                        localReviewIds={localReviewIds}
+                    />
                 </div>
             </section>
         </>

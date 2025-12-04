@@ -2,6 +2,12 @@
 import { API_URL } from '@/constants'
 import { ApiResponse, Restaurant, Review, RestauranteMetricasDashboard } from '@/types'
 import { cookies } from 'next/headers'
+import path from 'path'
+import { promises as fs } from 'fs'
+
+
+// ID del restaurante Distrito Sabor para usar datos mockeados
+const DISTRITO_SABOR_ID = 'da5cc2dd-a814-49f6-d25b-08de302febdb'
 
 async function getAuthHeaders(): Promise<HeadersInit> {
     const cookieStore = await cookies()
@@ -97,6 +103,18 @@ export async function getRestaurant(
     id: string
 ): Promise<ApiResponse<Restaurant>> {
     try {
+        // Si es Distrito Sabor, intentar cargar reviews mockeadas
+        let mockReviews: Review[] = []
+        if (id === DISTRITO_SABOR_ID) {
+            try {
+                const dataPath = path.join(process.cwd(), 'data', 'distrito-sabor-reviews.json')
+                const fileContents = await fs.readFile(dataPath, 'utf8')
+                mockReviews = JSON.parse(fileContents) as Review[]
+            } catch (error) {
+                console.log('No se pudieron cargar las reviews mockeadas de Distrito Sabor:', error)
+            }
+        }
+
         const res = await fetch(`${API_URL}/api/Restaurantes/${id}`, {
             headers: await getAuthHeaders(),
             cache: 'no-store',
@@ -175,15 +193,21 @@ export async function getRestaurant(
                 }))
             } : null,
 
-            // Reviews separadas
-            reviewsLocales: ((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
-            reviewsGoogle: ((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
+            // Reviews separadas - usar mock si es Celiak2 y hay reviews mockeadas
+            reviewsLocales: mockReviews.length > 0
+                ? mockReviews
+                : ((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
+            reviewsGoogle: mockReviews.length > 0
+                ? []
+                : ((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
 
             // Mantener compatibilidad con reviews antiguas
-            reviews: [
-                ...((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
-                ...((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string))
-            ],
+            reviews: mockReviews.length > 0
+                ? mockReviews
+                : [
+                    ...((data.reviewsLocales || data.ReviewsLocales || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string)),
+                    ...((data.reviewsGoogle || data.ReviewsGoogle || []) as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => mapReview(r, (data.id || data.Id || '') as string))
+                ],
 
             // Estado de favorito (viene directamente del backend)
             esFavorito: data.esFavorito ?? data.EsFavorito ?? false,
@@ -236,6 +260,32 @@ export async function getRestaurantMetrics(
     id: string
 ): Promise<ApiResponse<RestauranteMetricasDashboard>> {
     try {
+        // Si es Distrito Sabor, usar datos mockeados
+        if (id === DISTRITO_SABOR_ID) {
+            try {
+                const dataPath = path.join(process.cwd(), 'data', 'distrito-sabor-favoritos-por-dia.json')
+                const fileContents = await fs.readFile(dataPath, 'utf8')
+                const mockData = JSON.parse(fileContents)
+
+                // Construir el objeto de métricas usando el formato del mock
+                const metrics: RestauranteMetricasDashboard = {
+                    restauranteId: DISTRITO_SABOR_ID,
+                    totalTop3Individual: 45, // Mock
+                    totalTop3Grupo: 23, // Mock
+                    totalVisitasPerfil: 72, // Congruente con favoritos
+                    favoritosPorDia: mockData.favoritosPorDia,
+                }
+
+                return {
+                    success: true,
+                    data: metrics,
+                }
+            } catch (error) {
+                console.log('No se pudieron cargar las métricas mockeadas de Distrito Sabor:', error)
+                // Si falla, continuar con el flujo normal
+            }
+        }
+
         const headers = await getAuthHeaders()
 
         const res = await fetch(`${API_URL}/api/Restaurantes/${id}/metricas`, {

@@ -82,44 +82,6 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
     const allReviews: Review[] = [...localReviews, ...googleReviews]
     const displayedReviews = allReviews.slice(0, 5)
 
-    const getReviewRating = (review: Review): number => {
-        const base = review.rating ?? review.valoracion ?? 0
-        const rounded = Math.round(base)
-        return Math.max(0, Math.min(5, rounded))
-    }
-
-    const getReviewText = (review: Review): string => {
-        return review.texto || review.opinion || ''
-    }
-
-    const getReviewDate = (review: Review): string => {
-        return review.fecha || review.fechaCreacion || review.fechaVisita || ''
-    }
-
-    const getReviewImage = (review: Review): string | undefined => {
-        if (review.foto) return review.foto
-        if (review.images && review.images.length > 0) return review.images[0]
-
-
-        const fotos = (review as { fotos?: unknown }).fotos
-        if (Array.isArray(fotos) && fotos.length > 0) {
-            const f0 = fotos[0]
-
-            if (typeof f0 === 'string') return f0
-
-            if (f0 && typeof f0 === 'object' && 'url' in f0) {
-                const url = (f0 as { url?: unknown }).url
-                if (typeof url === 'string') return url
-            }
-        }
-
-        return undefined
-    }
-
-    const getReviewAuthorImage = (review: Review): string | undefined => {
-        return review.imagenAutor || review.usuario?.fotoPerfilUrl || review.imagenAutorExterno
-    }
-
     // --------------------
     // View State
     // --------------------
@@ -161,11 +123,7 @@ export default function RestaurantDashboard({ restaurant, metrics }: Props) {
                             metricCards={metricCards}
                             totalReviews={totalReviews}
                             displayedReviews={displayedReviews}
-                            getReviewRating={getReviewRating}
-                            getReviewText={getReviewText}
-                            getReviewDate={getReviewDate}
-                            getReviewImage={getReviewImage}
-                            getReviewAuthorImage={getReviewAuthorImage}
+                            localReviewIds={new Set(localReviews.map(r => r.id))}
                         />
                     ) : (
                         <DataView

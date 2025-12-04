@@ -1,0 +1,239 @@
+[
+  {
+    "id": "review-001",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "¡Excelente opción gastronómica!",
+    "opinion": "Me encantó Distrito Sabor. Un lugar con una variedad increíble de platos, desde comida argentina hasta internacional. El ambiente es moderno y la atención de primera. Las empanadas son espectaculares y la carta de vinos muy completa.",
+    "valoracion": 5.0,
+    "fechaCreacion": "2025-12-03T18:30:00Z",
+    "fechaVisita": "2025-12-03",
+    "mesAnioVisita": "12/2025",
+    "motivoVisita": "Cena con amigos",
+    "usuario": {
+      "nombre": "María González",
+      "username": "mariag_celiac",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=1"
+    },
+    "usuarioId": "user-001",
+    "fotos": [
+      {
+        "id": "foto-001",
+        "url": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"
+      },
+      {
+        "id": "foto-002",
+        "url": "https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=800"
+      }
+    ],
+    "esImportada": false
+  },
+  {
+    "id": "review-002",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Excelente variedad gastronómica",
+    "opinion": "La variedad del menú en Distrito Sabor es impresionante. Tienen desde carnes hasta pastas, mariscos y opciones vegetarianas. Todo muy bien preparado y con excelente presentación. Los precios son razonables para la calidad que ofrecen.",
+    "valoracion": 4.5,
+    "fechaCreacion": "2025-12-02T12:15:00Z",
+    "fechaVisita": "2025-12-01",
+    "mesAnioVisita": "12/2025",
+    "motivoVisita": "Almuerzo familiar",
+    "usuario": {
+      "nombre": "Carlos Rodríguez",
+      "username": "carlosr",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=12"
+    },
+    "usuarioId": "user-002",
+    "fotos": [
+      {
+        "id": "foto-003",
+        "url": "https://images.unsplash.com/photo-1608756687911-aa1599ab3bd9?w=800"
+      }
+    ],
+    "esImportada": false
+  },
+  {
+    "id": "review-003",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Perfecto para reuniones familiares",
+    "opinion": "Fuimos con toda la familia a Distrito Sabor y todos quedamos encantados. Hay opciones para todos los gustos. Mi hija pidió las empanadas que estaban deliciosas, y yo probé el bife de chorizo que estaba en su punto perfecto. El ambiente es muy acogedor.",
+    "valoracion": 5.0,
+    "fechaCreacion": "2025-11-30T19:45:00Z",
+    "fechaVisita": "2025-11-30",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Cena familiar",
+    "usuario": {
+      "nombre": "Laura Fernández",
+      "username": "lauraf_mom",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=5"
+    },
+    "usuarioId": "user-003",
+    "fotos": [],
+    "esImportada": false
+  },
+  {
+    "id": "review-004",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Buena comida, precios justos",
+    "opinion": "La comida en Distrito Sabor está muy rica, buena calidad en los ingredientes. Los precios son acordes a lo que ofrecen. Probé la milanesa napolitana y estaba excelente. Me gustaría que tuvieran más promos al mediodía. La atención fue muy buena.",
+    "valoracion": 4.0,
+    "fechaCreacion": "2025-11-29T14:20:00Z",
+    "fechaVisita": "2025-11-28",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Almuerzo de trabajo",
+    "usuario": {
+      "nombre": "Diego Martínez",
+      "username": "diego_m",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=8"
+    },
+    "usuarioId": "user-004",
+    "fotos": [
+      {
+        "id": "foto-004",
+        "url": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800"
+      }
+    ],
+    "esImportada": false
+  },
+  {
+    "id": "review-005",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "¡Celebración perfecta!",
+    "opinion": "Organicé mi cumpleaños en Distrito Sabor y fue un éxito total. El servicio de eventos es excelente, se ocuparon de todo. La comida estuvo deliciosa, desde las entradas hasta el postre. Todos mis invitados felices. Super recomendado para eventos.",
+    "valoracion": 5.0,
+    "fechaCreacion": "2025-11-27T20:30:00Z",
+    "fechaVisita": "2025-11-27",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Celebración",
+    "usuario": {
+      "nombre": "Sofía Romero",
+      "username": "sofi_r",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=9"
+    },
+    "usuarioId": "user-005",
+    "fotos": [
+      {
+        "id": "foto-005",
+        "url": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=800"
+      },
+      {
+        "id": "foto-006",
+        "url": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800"
+      }
+    ],
+    "esImportada": false
+  },
+  {
+    "id": "review-006",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Buena opción con detalles mejorables",
+    "opinion": "Distrito Sabor es una buena opción para comer cerca de casa. La comida en general está bien, aunque a veces las porciones podrían ser un poco más generosas. El servicio puede ser lento en horas pico. Pero la calidad compensa.",
+    "valoracion": 3.5,
+    "fechaCreacion": "2025-11-20T16:00:00Z",
+    "fechaVisita": "2025-11-19",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Cena casual",
+    "usuario": {
+      "nombre": "Roberto Silva",
+      "username": "rober_s",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=13"
+    },
+    "usuarioId": "user-006",
+    "fotos": [],
+    "esImportada": false
+  },
+  {
+    "id": "review-007",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Gran descubrimiento",
+    "opinion": "Distrito Sabor fue un gran descubrimiento. La comida es de excelente calidad, las pastas caseras son increíbles y las salsas espectaculares. El tiramisú es de los mejores que probé. El lugar es acogedor y la atención muy amable. Volveré seguro.",
+    "valoracion": 5.0,
+    "fechaCreacion": "2025-11-15T10:45:00Z",
+    "fechaVisita": "2025-11-14",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Desayuno",
+    "usuario": {
+      "nombre": "Ana Pérez",
+      "username": "anita_p",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=16"
+    },
+    "usuarioId": "user-007",
+    "fotos": [
+      {
+        "id": "foto-007",
+        "url": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800"
+      }
+    ],
+    "esImportada": false
+  },
+  {
+    "id": "review-008",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Excelente relación calidad-precio",
+    "opinion": "Distrito Sabor tiene muy buenos precios para la calidad que ofrece. La porción de la milanesa napolitana con papas fritas es generosa y deliciosa. El local es acogedor y bien decorado. Lo único que mejoraría es el tiempo de espera en horas pico.",
+    "valoracion": 4.5,
+    "fechaCreacion": "2025-11-10T13:30:00Z",
+    "fechaVisita": "2025-11-09",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Almuerzo",
+    "usuario": {
+      "nombre": "Lucía Torres",
+      "username": "lu_torres",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=20"
+    },
+    "usuarioId": "user-008",
+    "fotos": [
+      {
+        "id": "foto-008",
+        "url": "https://images.unsplash.com/photo-1432139509613-5c4255815697?w=800"
+      }
+    ],
+    "esImportada": false
+  },
+  {
+    "id": "review-009",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Ideal para grupos",
+    "opinion": "Fuimos con un grupo grande a Distrito Sabor y todos quedaron satisfechos. La variedad del menú permite que cada uno encuentre algo que le guste. Los ñoquis estaban espectaculares y las carnes al punto perfecto. Gran trabajo de cocina.",
+    "valoracion": 4.5,
+    "fechaCreacion": "2025-11-05T17:20:00Z",
+    "fechaVisita": "2025-11-04",
+    "mesAnioVisita": "11/2025",
+    "motivoVisita": "Reunión de amigos",
+    "usuario": {
+      "nombre": "Fernando López",
+      "username": "fer_lopez",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=11"
+    },
+    "usuarioId": "user-009",
+    "fotos": [],
+    "esImportada": false
+  },
+  {
+    "id": "review-010",
+    "restauranteId": "da5cc2dd-a814-49f6-d25b-08de302febdb",
+    "titulo": "Mi lugar favorito en la ciudad",
+    "opinion": "Vengo a Distrito Sabor al menos dos veces por semana. El personal ya me conoce y siempre están atentos. La calidad es consistente, nunca me decepcionó. Los postres caseros son adictivos, especialmente el flan. Si te gusta la buena comida, este lugar es imperdible.",
+    "valoracion": 5.0,
+    "fechaCreacion": "2025-10-28T15:10:00Z",
+    "fechaVisita": "2025-10-27",
+    "mesAnioVisita": "10/2025",
+    "motivoVisita": "Merienda habitual",
+    "usuario": {
+      "nombre": "Martín Gómez",
+      "username": "martin_g",
+      "fotoPerfilUrl": "https://i.pravatar.cc/150?img=14"
+    },
+    "usuarioId": "user-010",
+    "fotos": [
+      {
+        "id": "foto-009",
+        "url": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800"
+      },
+      {
+        "id": "foto-010",
+        "url": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800"
+      }
+    ],
+    "esImportada": false
+  }
+]
